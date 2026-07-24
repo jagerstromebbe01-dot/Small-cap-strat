@@ -1,12 +1,26 @@
 id: HYP-008
 date_registered: 2026-07-24
 title: "v6-kärna replikerad på small-cap-universum"
-universe: "small-cap, CRSP via WRDS (TBD exakt filter, t.ex. market cap < X) — se öppna beroenden i spec-dokumentet avsnitt 6"
-data_range: "TBD baserat på WRDS-tillgång"
-# pass_fail_criterion lämnas AVSIKTLIGT tomt här. Ska fyllas i manuellt
-# tillsammans med CEO innan någon kod som rör faktisk small-cap-data
-# skrivs (spec-dokumentet avsnitt 4 och 7). Får INTE genereras automatiskt.
-pass_fail_criterion: ""
+universe: "small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla"
+small_cap_definition: "$100M - $2B börsvärde, EODHD All-World som datakälla"
+data_range: "EODHD All-World, så lång historik som täckningen tillåter (mål 2010-2024)"
+# LÅST 2026-07-24 av CEO + användare tillsammans, innan någon backtest
+# på small-cap-data körts. Se pass_fail_criterion nedan för fullständigt
+# ordagrant kriterium.
+pass_fail_criterion: >
+  LÅST 2026-07-24, innan någon backtest på small-cap-data körts.
+  v6-kärnan (identisk kod: beta-neutral OLS pair trading, ingen ejay,
+  ingen Kelly, fast 5% positionsstorlek) körd på small-cap-universum
+  ($100M-$2B börsvärde), EODHD All-World-data, så lång historik som
+  täckningen tillåter (mål 2010-2024).
+  PASS kräver ALLA följande på SAMTLIGA tre kapitalnivåer (100k/1M/10M):
+  1. Sharpe efter borrow-kostnad och bid-ask-spread >= 0.55 (large-cap-
+     basen) OCH >= 0.70 (absolut golv)
+  2. Calmar >= 0.56 (large-cap-basen) OCH >= 0.60 (absolut golv)
+  3. Kriteriet i (1) håller även efter att bästa enskilda traden
+     exkluderats (skydd mot outlier-driven resultat)
+  Om en kapitalnivå faller under: FAIL för den nivån, notera var edgen
+  knäcks. Hela hypotesen = FAIL om inte alla tre nivåer klarar sig.
 status: pre-registered   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 7
 tested_capital_levels: [100000, 1000000, 10000000]
