@@ -1,0 +1,18 @@
+id: HYP-008
+date_registered: 2026-07-24
+title: "v6-kärna replikerad på small-cap-universum"
+universe: "small-cap, CRSP via WRDS (TBD exakt filter, t.ex. market cap < X) — se öppna beroenden i spec-dokumentet avsnitt 6"
+data_range: "TBD baserat på WRDS-tillgång"
+# pass_fail_criterion lämnas AVSIKTLIGT tomt här. Ska fyllas i manuellt
+# tillsammans med CEO innan någon kod som rör faktisk small-cap-data
+# skrivs (spec-dokumentet avsnitt 4 och 7). Får INTE genereras automatiskt.
+pass_fail_criterion: ""
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 7
+tested_capital_levels: [100000, 1000000, 10000000]
+capital_level_results: {}
+date_tested: null
+result_summary: null
+sharpe_raw: null
+deflated_sharpe_ratio: null
+notes: ""
