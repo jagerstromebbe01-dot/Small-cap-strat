@@ -46,10 +46,10 @@ Agenter är **inte** interaktiva Claude Code-chattroller du växlar mellan manue
 **Obligatoriska fält per hypotes:**
 ```yaml
 id: HYP-008
-date_registered: 2026-07-22
+date_registered: 2026-07-24
 title: "v6-kärna replikerad på small-cap-universum"
-universe: "small-cap, CRSP via WRDS (TBD exakt filter, t.ex. market cap < X)"
-data_range: "TBD baserat på WRDS-tillgång"
+universe: "small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla"
+data_range: "EODHD All-World, så lång historik som täckningen tillåter (mål 2010-2024)"
 pass_fail_criterion: >
   Måste låsas HÄR, INNAN backtest körs. Exempel:
   "Sharpe > 0.5 OCH Calmar > 0.5 OCH ingen försämring i MaxDD
@@ -95,9 +95,13 @@ notes: ""
 **Aktiva grenar/agenter i v1:**
 
 - **CTO**
-  - *Data Engineer* — bygger dataabstraktion: yfinance nu (fallback/utveckling), WRDS/CRSP small-cap redo att kopplas in när åtkomst finns. Måste inkludera fält för borrow-kostnad/tillgänglighet och bid-ask-spread från start (kan vara platshållarvärden tills riktig data finns, men schemat ska finnas).
+  - *Data Engineer* — bygger dataabstraktion: yfinance nu (fallback/utveckling), **EODHD All-World som vald datakälla för small-cap** (CEO-beslut 2026-07-24, se avsnitt 6 punkt 1 — WRDS/CRSP är inte längre den aktiva planen för small-cap-data, men kan återkomma separat för fundamentaldata om det behövs senare). Måste inkludera fält för borrow-kostnad/tillgänglighet och bid-ask-spread från start (kan vara platshållarvärden tills riktig data finns, men schemat ska finnas).
   - *Strategy Builder* — **begränsad i v1 till att replikera v6-metodiken** (beta-neutral OLS-par, samma kärnlogik som redan validerad) på det nya universumet. Genererar INTE nya alfa-idéer i v1.
   - *Infrastructure Engineer* — repo-struktur, miljösetup, agent-scheduling.
+- **Hypothesis Miner** (fristående gren, aktiverad genom explicit CEO-beslut 2026-07-24 — se ändringslogg nedan)
+  - Läser papers/teorier om marknadsanomalier och skriver icke-bindande kandidatidéer till `/research/candidate_ideas.md`.
+  - **HÅRDA REGLER:** rör ALDRIG `/research/hypothesis_registry/`; sätter ALDRIG `status`; skriver ALDRIG ett `pass_fail_criterion` (varken helt, delvis, eller som förslag formulerat som låst text) — det är och förblir CEO:s exklusiva område. Ökar ALDRIG `k_total`. En kandidatidé blir bara en riktig, K-räknad hypotes om CEO manuellt lyfter in den i registret med ett låst kriterium.
+  - Fullständig rollprompt: `/agents/hypothesis_miner/ROLE.md`.
 - **Risk**
   - *Backtester* — kör bara pre-registrerade hypoteser (se regel ovan).
   - *Overfitting Detector* — äger `/research/hypothesis_registry/`, blockerar otestade/olåsta hypoteser, beräknar Deflated Sharpe Ratio.
@@ -112,7 +116,8 @@ notes: ""
 **INTE i v1 (medvetet uteslutet, lägg inte till utan explicit beslut):**
 - Hela CIO-grenen (Paper Agent, Market Structure Agent, News Agent, Small Cap Research Agent)
 - ML Engineer
-- "Hypothesis Miner" / idén om att hitta och exploatera andras publicerade hypoteser — **medvetet uppskjuten**, väntar tills v1-disciplinen (pre-registrering, friktionsmodellering) är bevisat robust. Att lägga till fler hypotesgenererande agenter innan spärrarna är på plats skulle återskapa exakt det blinda-sökning-problem som redan gav 7 dödförklarade varianter.
+
+**Tidigare uteslutet, nu aktiverat:** "Hypothesis Miner" var ursprungligen medvetet uppskjuten av samma skäl som ovan (risk att återskapa det blinda-sökning-problemet som gav 7 dödförklarade Ejay-varianter). CEO hävde undantaget explicit 2026-07-24, under förutsättning att rollen hålls strikt icke-bindande (se de hårda reglerna under CTO/Hypothesis Miner ovan) — den genererar bara förslag, den kan aldrig själv registrera, låsa eller godkänna en hypotes.
 
 ---
 
@@ -134,9 +139,9 @@ Om ett antal hypoteser (t.ex. 10 av 200 testade) inte klarar sin förutbestämda
 
 ## 6. Öppna beroenden (måste lösas innan v1 kan köra på riktig data)
 
-1. **WRDS/Compustat/CRSP-åtkomst** — pending, beroende av samtal med Lasse Heje Pedersen. Fråga specifikt om lokal Python-åtkomst (`wrds`-biblioteket) är tillåten under den typ av access som ges, eftersom vissa WRDS-avtal kräver körning i deras molnmiljö istället.
+1. **WRDS/Compustat/CRSP-åtkomst** — ~~pending~~ **superseded 2026-07-24:** CEO har valt EODHD All-World som datakälla för small-cap-arbetet i HYP-008, istället för att vänta på WRDS-åtkomst. WRDS kvarstår som en möjlig framtida källa (t.ex. för fundamentaldata) men är inte längre en blockerande förutsättning för att köra small-cap-backtester.
 2. **Lokal miljö för scheduling** — OS och tillgänglig schemaläggningsmekanism (cron etc.) är inte specificerat här, måste sättas upp konkret i nästa session.
-3. **Definition av "small-cap"** — exakt marknadsvärdesgräns för universumet är inte låst än. Bör beslutas OCH skrivas in i första hypotesens `.yaml`-fil INNAN någon backtest körs (i linje med pre-registreringsprincipen).
+3. **Definition av "small-cap"** — ~~inte låst än~~ **LÅST 2026-07-24:** $100M–$2B börsvärde, EODHD All-World som datakälla. Se `pass_fail_criterion` och `small_cap_definition` i `/research/hypothesis_registry/HYP-008-v6-smallcap-replication.yaml` för den ordagranna, låsta texten (registerfilen är källan till sanning — duplicera den inte här för att undvika att de glider isär).
 
 ---
 
@@ -151,4 +156,11 @@ Om ett antal hypoteser (t.ex. 10 av 200 testade) inte klarar sin förutbestämda
 
 ---
 
-*Detta dokument ska uppdateras av Documentation-agenten när strukturen ändras. Om en ny gren/agent läggs till (t.ex. Hypothesis Miner senare), lägg till den här explicit — bygg inte tyst utanför detta kontrakt.*
+*Detta dokument ska uppdateras av Documentation-agenten när strukturen ändras. Om en ny gren/agent läggs till, lägg till den här explicit — bygg inte tyst utanför detta kontrakt.*
+
+---
+
+## Ändringslogg
+
+- **2026-07-24 (CEO-beslut):** Hypothesis Miner-undantaget hävt — rollen är nu aktiv i v1, strikt begränsad till icke-bindande förslag (se avsnitt 5). `pass_fail_criterion` och `small_cap_definition` för HYP-008 låsta (se avsnitt 4 och 6, punkt 3). EODHD All-World valt som datakälla för small-cap, vilket gör WRDS-beroendet (avsnitt 6, punkt 1) inte längre blockerande.
+- Ej ännu tillagt i detta dokument, kvarstår som öppen post: uppdelningen av Strategy Builder-rollen i separat spec-skrivande (Strategy Builder) och kodimplementerande (ny roll: **Coder**, `/agents/coder/ROLE.md`), samt att `/reference_code/v6_core_large_cap.py` checkats in som återanvändbar referens. Dokumenterat i `CLAUDE.md` men inte ännu synkat hit — flagga för CEO vid nästa uppdatering av detta dokument.
