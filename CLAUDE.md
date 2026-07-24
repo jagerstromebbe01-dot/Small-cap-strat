@@ -43,7 +43,22 @@ Active in v1:
 - **Operations**: Git Manager (commit discipline, registry never overwritten without history), Documentation (keeps the build spec and role prompts current), Reporting (periodic status summaries for the user).
 - **Orchestrator**: coordinates the above; does **not** generate new hypotheses itself in v1.
 
-**Explicitly excluded from v1 — do not add without an explicit user decision:** the entire CIO branch (Paper Agent, Market Structure Agent, News Agent, Small Cap Research Agent), ML Engineer, and the "Hypothesis Miner" concept (mining others' published hypotheses) — deliberately deferred until the v1 pre-registration/friction discipline is proven robust, since adding more hypothesis-generating agents before the guardrails exist would recreate the same blind-search problem that killed the 7 Ejay variants.
+**Explicitly excluded from v1 — do not add without an explicit user decision:** the entire CIO branch (Paper Agent, Market Structure Agent, News Agent, Small Cap Research Agent) and ML Engineer remain excluded. **The "Hypothesis Miner" exclusion was lifted by explicit CEO decision on 2026-07-24** — see the pipeline section below. Do not re-exclude it, and do not add any further agent without an equally explicit decision recorded in a session.
+
+## Full agent pipeline & hard rules (added 2026-07-24)
+
+Three roles were added on top of the original v1 set, splitting what was
+previously undivided in the Strategy Builder role into idea generation,
+spec-writing, and implementation. The full chain, in order:
+
+**Hypothesis Miner → CEO (manual, locks criterion here, never in code) → Strategy Builder → Coder → `validate_hypothesis.py` → Backtester → Overfitting Detector → Performance Analyst/Risk Manager → Git Manager → Reporting**
+
+- **Hypothesis Miner** (`/agents/hypothesis_miner/ROLE.md`, new) — reads papers/theories, appends non-binding candidate ideas to `/research/candidate_ideas.md`. Hard rules: never touches `/research/hypothesis_registry/`, never sets `status`, never writes a `pass_fail_criterion`, never increments `k_total`. A candidate idea only becomes a real hypothesis if the CEO manually promotes it.
+- **Strategy Builder** (`/agents/strategy_builder/ROLE.md`, redefined) — takes a `HYP-*.yaml` that already has `status: pre-registered` and an already-filled `pass_fail_criterion` (written by the CEO, never by an agent), writes a strategy spec to `/research/strategy_specs/HYP-XXX-spec.md` (signals, universe, which existing code module to reuse). Hard rules: never writes runnable backtest code, never touches `pass_fail_criterion` or `tested_capital_levels`, generates no new alpha ideas (still v1-restricted to replicating v6 methodology).
+- **Coder** (`/agents/coder/ROLE.md`, new) — takes a finished spec and implements actual backtest code in `/strategies/HYP-XXX/`. Hard rule: must run `scripts/validate_hypothesis.py` against the hypothesis YAML and get exit code 0 *before* the Backtester agent may run the code; never modifies `pass_fail_criterion`, `tested_capital_levels`, or `status`; copies `/reference_code/` files rather than editing them in place.
+- **`/reference_code/v6_core_large_cap.py`** — the already-validated v6 core (large-cap, no Ejay, no Kelly; Sharpe ~0.55, CAGR ~4.8%, 2010–2024) checked in as a reusable template for Strategy Builder/Coder. This is reference material predating the pre-registration system — it does **not** count as a new hypothesis and requires no new K-increment or registry entry. Never edit it in place; copy and adapt per hypothesis.
+
+The pre-existing rule stands unchanged: no agent other than the CEO, acting manually in chat, may ever write or alter a `pass_fail_criterion`.
 
 ## Open dependencies (spec §6)
 
