@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Small-Cap Edge Lab — Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #F1F2EF;
+    --surface: #FFFFFF;
+    --surface-2: #F4F4F2;
+    --ink: #14171A;
+    --ink-dim: #52514E;
+    --muted: #898781;
+    --hairline: #E1E0D9;
+    --accent: #9C6F22;
+    --good: #0ca30c;
+    --good-bg: #e3f5e3;
+    --warn: #8a5a00;
+    --warn-bg: #FCEFD2;
+    --bad: #d03b3b;
+    --bad-bg: #FADADA;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d0d0d;
+      --surface: #1a1a19;
+      --surface-2: #202020;
+      --ink: #F2EFE8;
+      --ink-dim: #B7B2A6;
+      --muted: #8f8b85;
+      --hairline: #2c2c2a;
+      --accent: #D9AA5A;
+      --good: #3fc23f;
+      --good-bg: #123312;
+      --warn: #ffd579;
+      --warn-bg: #3a2f10;
+      --bad: #f07070;
+      --bad-bg: #3a1414;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 60px; display: flex; flex-direction: column; gap: 32px; }
+  header { display: flex; flex-direction: column; gap: 6px; }
+  header h1 { margin: 0; font-size: 26px; }
+  .meta { font-family: "SF Mono", Consolas, monospace; font-size: 12px; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+  #conn { display: inline-flex; align-items: center; gap: 6px; }
+  #conn::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+  #conn.down::before { background: var(--bad); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden; }
+  .stat { background: var(--surface); padding: 14px 16px; }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .stat-value { font-family: "SF Mono", Consolas, monospace; font-size: 22px; font-weight: 600; }
+
+  section { display: flex; flex-direction: column; gap: 12px; }
+  h2 { font-size: 17px; margin: 0; }
+  .note-hint { font-size: 12px; color: var(--muted); }
+
+  .card { background: var(--surface); border: 1px solid var(--hairline); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+  .card-title { font-weight: 600; font-size: 14.5px; }
+  .badge { font-family: "SF Mono", Consolas, monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; padding: 3px 9px; border-radius: 100px; white-space: nowrap; }
+  .badge.pre-registered { background: var(--warn-bg); color: var(--warn); }
+  .badge.passed { background: var(--good-bg); color: var(--good); }
+  .badge.failed { background: var(--bad-bg); color: var(--bad); }
+  .badge.other { background: var(--surface-2); color: var(--muted); }
+  .badge.archived { background: var(--surface-2); color: var(--muted); }
+
+  .kv { font-size: 13px; color: var(--ink-dim); display: flex; flex-direction: column; gap: 3px; }
+  .kv b { color: var(--ink); }
+  details.criterion { font-size: 12.5px; color: var(--ink-dim); }
+  details.criterion summary { cursor: pointer; color: var(--accent); font-size: 12.5px; }
+  details.criterion pre { white-space: pre-wrap; font-family: inherit; background: var(--surface-2); border-radius: 6px; padding: 10px 12px; margin: 6px 0 0; }
+
+  .notes-list { display: flex; flex-direction: column; gap: 6px; }
+  .note-item { font-size: 12.5px; background: var(--surface-2); border-radius: 6px; padding: 8px 10px; }
+  .note-item .ts { color: var(--muted); font-family: "SF Mono", Consolas, monospace; font-size: 10.5px; display: block; margin-bottom: 2px; }
+
+  .note-form { display: flex; gap: 8px; }
+  .note-form textarea {
+    flex: 1;
+    resize: vertical;
+    min-height: 34px;
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 7px 9px;
+    border-radius: 6px;
+    border: 1px solid var(--hairline);
+    background: var(--bg);
+    color: var(--ink);
+  }
+  button {
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--hairline);
+    background: var(--surface-2);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button:disabled { opacity: .5; cursor: default; }
+  button.primary { background: var(--accent); color: #1a1206; border-color: var(--accent); font-weight: 600; }
+
+  .empty-state { font-size: 13px; color: var(--muted); padding: 14px; text-align: center; border: 1px dashed var(--hairline); border-radius: 10px; }
+
+  .chart-wrap { background: var(--surface); border: 1px solid var(--hairline); border-radius: 10px; padding: 16px 18px; }
+  canvas#sharpeChart { max-height: 260px; }
+
+  footer { font-size: 12px; color: var(--muted); border-top: 1px solid var(--hairline); padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Small-Cap Edge Lab — Dashboard</h1>
+    <div class="meta">
+      <span id="conn" class="down">Ansluter…</span>
+      <span>Senast uppdaterad: <span id="generatedAt">—</span></span>
+      <span>Uppdateras var 5:e sekund, filerna på disk är alltid sanningen</span>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <section>
+    <h2>Hypotesregister</h2>
+    <div class="note-hint">Ingen knapp här kan godkänna en hypotes eller köra ett test — det sker uteslutande genom att du redigerar YAML-filen manuellt efter att kriteriet låsts i chatt.</div>
+    <div id="hypotheses"></div>
+  </section>
+
+  <section>
+    <h2>Sharpe per testad hypotes</h2>
+    <div class="chart-wrap">
+      <canvas id="sharpeChart"></canvas>
+      <div id="chartEmpty" class="empty-state" style="display:none;">Inga testade hypoteser ännu — grafen fylls i när en backtest faktiskt körts.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Kandidatidéer <span class="note-hint">(icke-bindande, från Hypothesis Miner)</span></h2>
+    <div id="candidates"></div>
+  </section>
+
+  <footer>
+    Serverad lokalt från <code>dashboard/server.py</code> — läser om samtliga filer vid varje anrop, ingen cachning.
+    Två skrivbara endpoints existerar: arkivera kandidat, och lägg till en fri anteckning i en separat notes-fil.
+    Ingen endpoint kan ändra <code>pass_fail_criterion</code>, <code>status</code>, kapitalnivåer, eller <code>small_cap_definition</code>.
+  </footer>
+
+</div>
+
+<script>
+const POLL_MS = 5000;
+let chart = null;
+
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return iso.slice(0, 10);
+}
+
+async function fetchState() {
+  const res = await fetch('/api/state', { cache: 'no-store' });
+  if (!res.ok) throw new Error('bad response');
+  return res.json();
+}
+
+function renderStats(state) {
+  const counts = state.status_counts || {};
+  const stats = [
+    { label: 'K, löpande räknare', value: state.counter?.k_total ?? '—' },
+    { label: 'Pre-registered', value: counts['pre-registered'] ?? 0 },
+    { label: 'Passed', value: counts['passed'] ?? 0 },
+    { label: 'Failed', value: counts['failed'] ?? 0 },
+    { label: 'Kandidatidéer', value: (state.candidates || []).length },
+  ];
+  document.getElementById('stats').innerHTML = stats.map(s => `
+    <div class="stat">
+      <div class="stat-label">${esc(s.label)}</div>
+      <div class="stat-value">${esc(s.value)}</div>
+    </div>
+  `).join('');
+}
+
+function notesFor(state, targetType, targetId) {
+  return (state.notes || []).filter(n => n.target_type === targetType && n.target_id === String(targetId));
+}
+
+function renderNoteForm(targetType, targetId) {
+  const formId = `note-form-${targetType}-${targetId}`;
+  return `
+    <form class="note-form" data-target-type="${targetType}" data-target-id="${esc(targetId)}" onsubmit="submitNote(event)">
+      <textarea placeholder="Lägg till en anteckning…" required></textarea>
+      <button type="submit">Spara</button>
+    </form>
+  `;
+}
+
+function renderNotesList(notes) {
+  if (!notes.length) return '';
+  return `<div class="notes-list">${notes.map(n => `
+    <div class="note-item">
+      <span class="ts">${esc(n.timestamp)}</span>${esc(n.text)}
+    </div>
+  `).join('')}</div>`;
+}
+
+function statusBadgeClass(status) {
+  return ['pre-registered', 'passed', 'failed'].includes(status) ? status : 'other';
+}
+
+// Speglar samma spärr som servern (server.py::set_pre_registered) - men
+// servern är den faktiska säkerhetsgränsen, inte detta. Knappen är bara
+// frånvarande här av UX-skäl; om den ändå anropas direkt utan att gå via
+// knappen, är det den programmatiska kontrollen i server.py som blockerar.
+function canSetPreRegistered(h) {
+  const terminal = ['tested', 'passed', 'failed'];
+  const hasCriterion = !!(h.pass_fail_criterion && h.pass_fail_criterion.trim() !== '');
+  return hasCriterion && h.status !== 'pre-registered' && !terminal.includes(h.status);
+}
+
+function renderHypotheses(state) {
+  const el = document.getElementById('hypotheses');
+  const hyps = state.hypotheses || [];
+  if (!hyps.length) {
+    el.innerHTML = `<div class="empty-state">Inga hypoteser i registret ännu.</div>`;
+    return;
+  }
+  el.innerHTML = hyps.map(h => {
+    const notes = notesFor(state, 'hypothesis', h.id);
+    return `
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">${esc(h.id)} — ${esc(h.title)}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          ${canSetPreRegistered(h) ? `<button class="primary" onclick="setPreRegistered('${esc(h.id)}')">Sätt pre-registered</button>` : ''}
+          <span class="badge ${statusBadgeClass(h.status)}">${esc(h.status || 'okänd')}</span>
+        </div>
+      </div>
+      <div class="kv">
+        <div><b>Universum:</b> ${esc(h.universe)}</div>
+        <div><b>Kapitalnivåer:</b> ${esc((h.tested_capital_levels || []).join(' · ') || '—')}</div>
+        <div><b>Registrerad:</b> ${fmtDate(h.date_registered)} &nbsp; <b>Testad:</b> ${fmtDate(h.date_tested)}</div>
+        <div><b>K före denna:</b> ${esc(h.k_total_hypotheses_before_this)}</div>
+        <div><b>Sharpe (rå):</b> ${h.sharpe_raw ?? '—'} &nbsp; <b>Deflated Sharpe Ratio:</b> ${h.deflated_sharpe_ratio ?? '—'}</div>
+      </div>
+      <details class="criterion">
+        <summary>Visa låst pass_fail_criterion (skrivskyddat)</summary>
+        <pre>${esc(h.pass_fail_criterion)}</pre>
+      </details>
+      ${h.yaml_notes ? `<div class="kv"><b>Anteckning i YAML:</b> ${esc(h.yaml_notes)}</div>` : ''}
+      ${renderNotesList(notes)}
+      ${renderNoteForm('hypothesis', h.id)}
+    </div>
+  `;
+  }).join('');
+}
+
+function renderCandidates(state) {
+  const el = document.getElementById('candidates');
+  const cands = state.candidates || [];
+  if (!cands.length) {
+    el.innerHTML = `<div class="empty-state">Inga kandidatidéer ännu — Hypothesis Miner har inte lagt till något i candidate_ideas.md.</div>`;
+    return;
+  }
+  el.innerHTML = cands.map(c => {
+    const notes = notesFor(state, 'candidate', c.id);
+    return `
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">${esc(c.header || ('Kandidat ' + c.id))}</div>
+        ${c.archived
+          ? '<span class="badge archived">Arkiverad</span>'
+          : `<button onclick="archiveCandidate('${esc(c.id)}')">Arkivera</button>`}
+      </div>
+      <div class="kv">
+        <div><b>Källa:</b> ${esc(c.source || '—')}</div>
+        <div><b>Beskrivning:</b> ${esc(c.description || '—')}</div>
+        <div><b>Varför relevant:</b> ${esc(c.relevance || '—')}</div>
+      </div>
+      ${renderNotesList(notes)}
+      ${renderNoteForm('candidate', c.id)}
+    </div>
+  `;
+  }).join('');
+}
+
+function renderChart(state) {
+  const timeline = (state.sharpe_timeline || []).slice().sort((a, b) => (a.date_tested || '').localeCompare(b.date_tested || ''));
+  const emptyEl = document.getElementById('chartEmpty');
+  const canvas = document.getElementById('sharpeChart');
+
+  if (!timeline.length) {
+    emptyEl.style.display = 'block';
+    canvas.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  canvas.style.display = 'block';
+
+  const labels = timeline.map(t => `${t.id} (${fmtDate(t.date_tested)})`);
+  const sharpe = timeline.map(t => t.sharpe_raw);
+  const dsr = timeline.map(t => t.deflated_sharpe_ratio);
+
+  if (chart) chart.destroy();
+  chart = new Chart(canvas.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Sharpe (rå)', data: sharpe, borderColor: '#9C6F22', tension: 0.2 },
+        { label: 'Deflated Sharpe Ratio', data: dsr, borderColor: '#0ca30c', tension: 0.2 },
+      ],
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } },
+  });
+}
+
+async function refresh() {
+  try {
+    const state = await fetchState();
+    document.getElementById('conn').textContent = 'Ansluten';
+    document.getElementById('conn').classList.remove('down');
+    document.getElementById('generatedAt').textContent = state.generated_at ? state.generated_at.replace('T', ' ').slice(0, 19) + ' UTC' : '—';
+    renderStats(state);
+    renderHypotheses(state);
+    renderCandidates(state);
+    renderChart(state);
+  } catch (err) {
+    document.getElementById('conn').textContent = 'Kunde inte nå servern';
+    document.getElementById('conn').classList.add('down');
+  }
+}
+
+async function archiveCandidate(id) {
+  await fetch(`/api/candidate/${encodeURIComponent(id)}/archive`, { method: 'POST' });
+  refresh();
+}
+
+async function setPreRegistered(id) {
+  const res = await fetch(`/api/hypothesis/${encodeURIComponent(id)}/set-pre-registered`, { method: 'POST' });
+  const data = await res.json();
+  if (!data.ok) {
+    alert('Kunde inte sätta pre-registered:\n' + data.message);
+  }
+  refresh();
+}
+
+async function submitNote(event) {
+  event.preventDefault();
+  const form = event.target;
+  const targetType = form.dataset.targetType;
+  const targetId = form.dataset.targetId;
+  const textarea = form.querySelector('textarea');
+  const text = textarea.value.trim();
+  if (!text) return;
+
+  await fetch('/api/note', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ target_type: targetType, target_id: targetId, text }),
+  });
+  textarea.value = '';
+  refresh();
+}
+
+refresh();
+setInterval(refresh, POLL_MS);
+</script>
+</body>
+</html>

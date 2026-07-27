@@ -21,6 +21,16 @@ pass_fail_criterion: >
      exkluderats (skydd mot outlier-driven resultat)
   Om en kapitalnivå faller under: FAIL för den nivån, notera var edgen
   knäcks. Hela hypotesen = FAIL om inte alla tre nivåer klarar sig.
+
+  FRIKTIONSMETODIK (tillägg LÅST 2026-07-26, innan någon backtest körs):
+  - Bid-ask-spread: Corwin-Schultz-estimatorn (Corwin & Schultz, 2012),
+    beräknad per aktie från rullande high/low-data. Applicera halva den
+    skattade spreaden som kostnad vid varje trade-öppning, halva vid
+    varje stängning.
+  - Borrow-kostnad: fast 3% årlig ränta på det korta benets positions-
+    värde, proportionellt mot faktisk hålltid per trade.
+  Båda kostnaderna ska vara aktiva i ALLA backtest-körningar för denna
+  hypotes - inte en valfri flagga, inte något som testas med/utan.
 status: pre-registered   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 7
 tested_capital_levels: [100000, 1000000, 10000000]
