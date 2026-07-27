@@ -50,11 +50,11 @@ sharpe_raw:
   100000: -0.4109
   1000000: -0.4056
   10000000: -0.4541
+# Beräknad mot K=8 (7 döda ejay-varianter + HYP-008 själv), via scripts/deflated_sharpe_ratio.py
 deflated_sharpe_ratio:
   100000: 0.0112
   1000000: 0.0120
   10000000: 0.0093
-  note: "Beräknad mot K=8 (7 döda ejay-varianter + HYP-008 själv), via scripts/deflated_sharpe_ratio.py"
 notes: >
   Känd begränsning: small-cap-universumet 2010-2012 har något glesare
   täckning än 2013+ (5 procentenheters skillnad i tidiga avlistningar,

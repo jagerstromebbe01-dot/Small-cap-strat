@@ -20,4 +20,26 @@ kapacitetsbegränsning i small-cap, eller en annan mekanism]
 
 ---
 
-*(Inga poster ännu.)*
+## [Datum, 2026-07-27]
+
+**Källa:** Do, B., & Faff, R. (2010). "Does Simple Pairs Trading Still
+Work?" Financial Analysts Journal, 66(4), 47-62.
+
+**Kort beskrivning:** Studerar lönsamheten av enkel, distansbaserad
+parhandel (samma familj av strategi som v6-kärnan) över en längre
+tidsperiod och finner att den genomsnittliga överavkastningen minskat
+över tid i takt med att fler aktörer replikerat metoden, samtidigt som
+lönsamheten som återstår tenderar att koncentreras till perioder och
+segment med hög volatilitet och sämre likviditet - inte jämnt
+utspridd över hela marknaden.
+
+**Varför relevant:** HYP-008 (v6-kärnan replikerad på small-cap)
+misslyckades nyligen (FAILED, 2026-07-27) med negativ Sharpe på alla
+kapitalnivåer. Do & Faffs fynd - att kvarvarande parhandels-edge
+koncentreras till volatila/illikvida segment snarare än att small-cap
+generellt skulle vara ett sådant segment - ger en möjlig förklaring:
+kapacitetsbegränsning (stora fonder får inte plats) och "svårhandlat
+segment" (hög volatilitet/låg likviditet) är inte nödvändigtvis samma
+sak. Om en framtida hypotes vill undersöka parhandel igen, kan den
+behöva rikta in sig på volatilitet/likviditet specifikt snarare än
+enbart börsvärde som urvalskriterium.

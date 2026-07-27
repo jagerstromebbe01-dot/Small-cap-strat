@@ -176,6 +176,21 @@ function fmtDate(iso) {
   return iso.slice(0, 10);
 }
 
+// sharpe_raw/deflated_sharpe_ratio kan vara antingen ett enkelt tal
+// (äldre/enklare hypoteser) eller ett objekt per kapitalnivå (HYP-008
+// och senare, sedan flernivå-backtester infördes) - visa båda korrekt
+// istället för "[object Object]".
+function fmtMaybePerLevel(val) {
+  if (val === null || val === undefined) return '—';
+  if (typeof val === 'number') return val.toFixed(4);
+  if (typeof val === 'object') {
+    return Object.entries(val)
+      .map(([level, v]) => `${Number(level).toLocaleString('sv-SE')}: ${Number(v).toFixed(4)}`)
+      .join(' · ');
+  }
+  return esc(val);
+}
+
 async function fetchState() {
   const res = await fetch('/api/state', { cache: 'no-store' });
   if (!res.ok) throw new Error('bad response');
@@ -261,7 +276,7 @@ function renderHypotheses(state) {
         <div><b>Kapitalnivåer:</b> ${esc((h.tested_capital_levels || []).join(' · ') || '—')}</div>
         <div><b>Registrerad:</b> ${fmtDate(h.date_registered)} &nbsp; <b>Testad:</b> ${fmtDate(h.date_tested)}</div>
         <div><b>K före denna:</b> ${esc(h.k_total_hypotheses_before_this)}</div>
-        <div><b>Sharpe (rå):</b> ${h.sharpe_raw ?? '—'} &nbsp; <b>Deflated Sharpe Ratio:</b> ${h.deflated_sharpe_ratio ?? '—'}</div>
+        <div><b>Sharpe (rå):</b> ${fmtMaybePerLevel(h.sharpe_raw)} &nbsp; <b>Deflated Sharpe Ratio:</b> ${fmtMaybePerLevel(h.deflated_sharpe_ratio)}</div>
       </div>
       <details class="criterion">
         <summary>Visa låst pass_fail_criterion (skrivskyddat)</summary>
@@ -317,9 +332,22 @@ function renderChart(state) {
   emptyEl.style.display = 'none';
   canvas.style.display = 'block';
 
+  // Vid flera kapitalnivåer (objekt istället för ett enkelt tal): plotta
+  // snittet över nivåerna - grafen är en enkel linje per hypotes, inte
+  // uppdelad per nivå (det får report.md/dashboardkortets textvy göra).
+  const numericOrAvg = (val) => {
+    if (val === null || val === undefined) return null;
+    if (typeof val === 'number') return val;
+    if (typeof val === 'object') {
+      const nums = Object.values(val).map(Number).filter((n) => !Number.isNaN(n));
+      return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : null;
+    }
+    return null;
+  };
+
   const labels = timeline.map(t => `${t.id} (${fmtDate(t.date_tested)})`);
-  const sharpe = timeline.map(t => t.sharpe_raw);
-  const dsr = timeline.map(t => t.deflated_sharpe_ratio);
+  const sharpe = timeline.map(t => numericOrAvg(t.sharpe_raw));
+  const dsr = timeline.map(t => numericOrAvg(t.deflated_sharpe_ratio));
 
   if (chart) chart.destroy();
   chart = new Chart(canvas.getContext('2d'), {
