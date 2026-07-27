@@ -31,14 +31,30 @@ pass_fail_criterion: >
     värde, proportionellt mot faktisk hålltid per trade.
   Båda kostnaderna ska vara aktiva i ALLA backtest-körningar för denna
   hypotes - inte en valfri flagga, inte något som testas med/utan.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 7
 tested_capital_levels: [100000, 1000000, 10000000]
-capital_level_results: {}
-date_tested: null
-result_summary: null
-sharpe_raw: null
-deflated_sharpe_ratio: null
+capital_level_results:
+  100000: {sharpe: -0.4109, calmar: -0.0568, sharpe_excl_best_trade: -0.4377, max_drawdown: -0.4353, win_rate: 0.4563, profit_factor: 0.8395, n_trades: 962, deflated_sharpe_ratio: 0.0112}
+  1000000: {sharpe: -0.4056, calmar: -0.0556, sharpe_excl_best_trade: -0.4328, max_drawdown: -0.4292, win_rate: 0.4563, profit_factor: 0.8395, n_trades: 962, deflated_sharpe_ratio: 0.0120}
+  10000000: {sharpe: -0.4541, calmar: -0.0505, sharpe_excl_best_trade: -0.4833, max_drawdown: -0.3780, win_rate: 0.4579, profit_factor: 0.8437, n_trades: 963, deflated_sharpe_ratio: 0.0093}
+date_tested: 2026-07-27
+result_summary: >
+  FAILED på samtliga tre kapitalnivåer och båda periodvarianterna
+  (2011-2024 och 2013-2024). Negativ Sharpe genomgående (-0.41 till
+  -0.45), negativ Calmar, profit factor under 1 (0.84-0.84) på alla
+  nivåer. Ingen skillnad mellan kapitalnivåer som skulle stödja
+  kapacitets-hypotesen - v6-kärnan visar ingen exploaterbar edge på
+  small-cap-universumet, varken vid $100k, $1M, eller $10M kapital.
+sharpe_raw:
+  100000: -0.4109
+  1000000: -0.4056
+  10000000: -0.4541
+deflated_sharpe_ratio:
+  100000: 0.0112
+  1000000: 0.0120
+  10000000: 0.0093
+  note: "Beräknad mot K=8 (7 döda ejay-varianter + HYP-008 själv), via scripts/deflated_sharpe_ratio.py"
 notes: >
   Känd begränsning: small-cap-universumet 2010-2012 har något glesare
   täckning än 2013+ (5 procentenheters skillnad i tidiga avlistningar,

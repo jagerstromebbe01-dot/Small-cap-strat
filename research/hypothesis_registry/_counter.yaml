@@ -1,2 +1,2 @@
-k_total: 7
-note: "7 ejay-varianter redan dödförklarade innan detta projekt startade (se spec-dokumentet avsnitt 1)"
+k_total: 8
+note: "7 ejay-varianter + HYP-008 (v6-kärna replikerad på small-cap, FAILED 2026-07-27) - se spec-dokumentet avsnitt 1 och research/hypothesis_registry/HYP-008-v6-smallcap-replication.yaml"
