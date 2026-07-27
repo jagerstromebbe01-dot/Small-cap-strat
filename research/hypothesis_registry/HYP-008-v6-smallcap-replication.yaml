@@ -39,4 +39,10 @@ date_tested: null
 result_summary: null
 sharpe_raw: null
 deflated_sharpe_ratio: null
-notes: ""
+notes: >
+  Känd begränsning: small-cap-universumet 2010-2012 har något glesare
+  täckning än 2013+ (5 procentenheters skillnad i tidiga avlistningar,
+  cik_found_no_shares_data-gruppen). Bedömd som måttlig, ej allvarlig -
+  89% av dataluckorna är orelaterade till avlistningstidpunkt. Om
+  resultat skiljer sig markant mellan 2010-2012 och 2013+, tolka med
+  denna begränsning i åtanke.
