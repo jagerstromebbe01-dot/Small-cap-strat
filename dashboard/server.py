@@ -222,24 +222,38 @@ def _entries_start_offset(raw: str) -> int:
     return 0
 
 
-def archive_candidate(candidate_id: str) -> bool:
+def _find_candidate_entry(candidate_id: str):
+    """
+    Delad uppslagslogik mellan archive_candidate och nedladdning - samma
+    1-baserade id-ordning som read_candidates() anvander. Returnerar
+    (tail, entry_start, entry_end, entry) eller None om id inte finns.
+    """
     if not CANDIDATES_FILE.exists():
-        return False
+        return None
     raw = CANDIDATES_FILE.read_text(encoding="utf-8")
     start = _entries_start_offset(raw)
-    head, tail = raw[:start], raw[start:]
+    tail = raw[start:]
 
     header_positions = [m.start() for m in re.finditer(r"(?m)^## +", tail)]
     try:
         idx = int(candidate_id) - 1
     except ValueError:
-        return False
+        return None
     if idx < 0 or idx >= len(header_positions):
-        return False
+        return None
 
     entry_start = header_positions[idx]
     entry_end = header_positions[idx + 1] if idx + 1 < len(header_positions) else len(tail)
-    entry = tail[entry_start:entry_end]
+    return tail, entry_start, entry_end, tail[entry_start:entry_end]
+
+
+def archive_candidate(candidate_id: str) -> bool:
+    found = _find_candidate_entry(candidate_id)
+    if found is None:
+        return False
+    tail, entry_start, entry_end, entry = found
+    raw = CANDIDATES_FILE.read_text(encoding="utf-8")
+    head = raw[:_entries_start_offset(raw)]
 
     if _ARCHIVED_RE.search(entry):
         return True  # redan arkiverad - inget att göra, inte ett fel
@@ -513,6 +527,28 @@ def api_add_note():
 def api_set_pre_registered(hyp_id):
     result = set_pre_registered(hyp_id)
     return jsonify(result), (200 if result["ok"] else 400)
+
+
+@app.route("/api/candidate/<candidate_id>/download")
+def api_download_candidate(candidate_id):
+    """
+    Ren lasoperation - laddar ner EN specifik kandidatides text som en
+    fristående .md-fil (samma post som visas i kandidatidé-listan,
+    identifierad med samma 1-baserade id som read_candidates() ger den).
+    Rör write-spärren inte alls (GET ar inte i write_methods i
+    _assert_no_unauthorized_write_routes nedan), och skriver ingenting.
+    """
+    found = _find_candidate_entry(candidate_id)
+    if found is None:
+        return jsonify({"error": f"okänd kandidatidé: {candidate_id}"}), 404
+    _tail, _start, _end, entry = found
+    header_line = entry.splitlines()[0].strip() if entry.splitlines() else f"Kandidat {candidate_id}"
+    filename = f"candidate-{candidate_id}-{re.sub(r'[^a-zA-Z0-9]+', '-', header_line).strip('-')[:60]}.md"
+    return app.response_class(
+        entry.strip() + "\n",
+        mimetype="text/markdown",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 # ---------------------------------------------------------------------------
