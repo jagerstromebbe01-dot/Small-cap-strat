@@ -1,0 +1,54 @@
+# Coder-B-granskning av strategies/HYP-008/backtest.py, retroaktiv
+# (skriven 2026-07-28, efter att HYP-008 redan kördes och sattes till
+# failed 2026-07-27 - se agents/coder_b/ROLE.md för varför denna roll
+# finns: två riktiga buggar i denna fil (merge_asof-tolerans,
+# pd.bdate_range-kalendern) hittades tidigare via manuell testning
+# efteråt, inte via granskning i förväg. Denna genomläsning letar efter
+# fler sådana, nu.
+coder_b_approved: false
+coder_b_notes: >
+  Godkänner INTE utan reservation, trots att jag inte hittat något fel
+  som ändrar HYP-008:s redan fastställda slutsats (FAILED). Ett
+  genuint, kvarstående problem hittat vid granskning mot specen
+  (research/strategy_specs/HYP-008-spec.md):
+
+  best_trade_excluded_metrics() (backtest.py, rad 425-446) uppskattar
+  den bästa tradens dollarbidrag som
+  `best_trade["ret"] * capital_level * FIXED_FRAC` - dvs den ANTAR att
+  positionen hade den fulla, ospärrade FIXED_FRAC-storleken. Men
+  run_backtest() sätter faktisk positionsstorlek till
+  `min(desired, cap)` där `cap` kommer från den volymbaserade
+  kapacitetsspärren (MAX_ADV_PCT av 20-dagars snittvolym, rad ~354-362).
+  Om kapacitetsspärren band för just den bästa traden (troligare vid
+  10M-nivån än 100k) blir denna uppskattning FÖR HÖG - den drar bort
+  mer vinst än vad traden faktiskt bidrog med, vilket gör
+  sharpe_excl_best/calmar_excl_best-talen något FÖR PESSIMISTISKA vid
+  högre kapitalnivåer. Grundorsaken: trade_log lagrar bara `ret`
+  (procent), inte den faktiska dollarstorleken `sz` som användes -
+  informationen för att räkna rätt finns inte kvar att slå upp i
+  efterhand.
+
+  Detta påverkar INTE huvudkriteriet (rå Sharpe/Calmar, som redan är
+  djupt negativa på alla tre nivåer, långt under tröskeln oavsett) -
+  bara det sekundära utlier-skyddsmåttet. Det ändrar alltså inte
+  HYP-008:s FAILED-status. Men det är en reell brist i mätnoggrannheten
+  som bör fixas innan nästa hypotes använder samma mall: trade_log
+  behöver spara faktisk positionsstorlek (`sz`) per trade, inte bara
+  avkastningsprocenten, så bästa-trade-exkluderad-beräkningen kan
+  använda det verkliga beloppet istället för en approximation.
+
+  Utöver detta: koden matchar specen väl på övriga punkter jag
+  granskade - par-identifiering/z-score/beta är kopierade oförändrade
+  från v6-kärnan (bekräftat, ingen avvikelse), friktionsfunktionerna
+  anropas korrekt på rätt ställen (Corwin-Schultz vid entry/exit,
+  borrow-kostnad på hedge-notionalet, konsekvent med kriteriets
+  ordalydelse), och kapitalnivå-hanteringen (cash=capital_level istället
+  för cash=1.0) är korrekt gjord.
+revision_history:
+  - date: 2026-07-28
+    approved: false
+    notes: >
+      Första granskningen. Ett reellt fel i best_trade_excluded_metrics()
+      dollarbidrags-uppskattning (ignorerar kapacitetsspärrens min()-cap),
+      påverkar inte huvudresultatet men bör fixas i nästa hypotes som
+      återanvänder mallen. Se coder_b_notes för fullständig förklaring.

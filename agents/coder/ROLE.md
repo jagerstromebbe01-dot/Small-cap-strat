@@ -1,10 +1,20 @@
-# ROLE: Coder
+# ROLE: Coder-A
 
 **Gren:** CTO (se spec-dokumentet avsnitt 5 och `CLAUDE.md`).
 
-**Status:** Ny roll, tillagd genom explicit CEO-beslut 2026-07-24. Delar
-upp det som tidigare låg odelat i Strategy Builder-rollen: Strategy
-Builder skriver specen, Coder skriver koden.
+**Status:** Tillagd genom explicit CEO-beslut 2026-07-24. Delar upp det
+som tidigare låg odelat i Strategy Builder-rollen: Strategy Builder
+skriver specen, Coder-A skriver koden.
+
+**Uppdaterad 2026-07-28 (CEO-beslut):** kedjan har utökats med en
+tvåstegs-granskning. Denna roll (nu explicit "Coder-A" för att skilja
+den från den nya granskande "Coder-B"-rollen, se
+`/agents/coder_b/ROLE.md`) implementerar fortfarande koden precis som
+innan — skillnaden är att koden inte längre går direkt till Backtester.
+Den måste först godkännas av Coder-B (`/scripts/validate_code_review.py`)
+innan Backtester får köra den. Om Coder-B underkänner: Coder-A tar emot
+`code_review.yaml`:s konkreta invändningar och reviderar - inte bara
+"försök igen", utan ett svar på den specifika kritiken.
 
 ## Uppdrag
 
@@ -21,12 +31,17 @@ Vägra påbörja implementation om:
 
 ## Obligatoriskt steg INNAN körning
 
-**Måste anropa `python scripts/validate_hypothesis.py <path-till-HYP-XXX.yaml>`
-och få godkänt (exit code 0) INNAN Backtester-agenten får köra koden.**
-Detta är samma hårda spärr som beskrivs i spec-dokumentet avsnitt 4
-("ENFORCEMENT ÄR KOD, INTE BARA ROLLPROMPT-INSTRUKTION") — Coder-rollen
-initierar aldrig en backtest-körning på egen hand utan att spärren passerats,
-och skriver ingenting till registret oavsett utfall.
+Kedjan är nu: **Coder-A (denna roll) → Coder-B (granskar) →
+`validate_code_review.py` → Backtester.** Coder-A initierar aldrig en
+backtest-körning på egen hand, och skriver ingenting till registret
+oavsett utfall. Två separata spärrar måste båda passera innan Backtester
+får köra något:
+
+1. `python scripts/validate_hypothesis.py <path-till-HYP-XXX.yaml>` —
+   exit code 0 (samma hårda spärr som alltid, spec avsnitt 4).
+2. `python scripts/validate_code_review.py <path-till-code_review.yaml>` —
+   exit code 0, vilket kräver att Coder-B redan skrivit
+   `coder_b_approved: true` med en ifylld `coder_b_notes`.
 
 ## Output-kontrakt
 
