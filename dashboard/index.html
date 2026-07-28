@@ -167,8 +167,10 @@
 
   <footer>
     Serverad lokalt från <code>dashboard/server.py</code> — läser om samtliga filer vid varje anrop, ingen cachning.
-    Två skrivbara endpoints existerar: arkivera kandidat, och lägg till en fri anteckning i en separat notes-fil.
-    Ingen endpoint kan ändra <code>pass_fail_criterion</code>, <code>status</code>, kapitalnivåer, eller <code>small_cap_definition</code>.
+    Fyra skrivbara endpoints existerar: arkivera kandidat, lägg till en fri anteckning, sätt en redan
+    kriterie-låst hypotes till pre-registered, och skapa ett hypotesutkast från en kandidatidé.
+    Ingen endpoint kan ändra <code>pass_fail_criterion</code>, <code>status</code>, kapitalnivåer, eller <code>small_cap_definition</code>
+    på en redan existerande hypotes — och utkast som skapas från en kandidatidé får alltid tomt kriterium och status <code>draft</code>.
   </footer>
 
 </div>
@@ -368,11 +370,12 @@ function renderCandidates(state) {
       </div>
       ${renderNotesList(notes)}
       ${renderNoteForm('candidate', c.id)}
-      <div style="display:flex; gap:8px;">
+      <div style="display:flex; gap:8px; flex-wrap: wrap;">
         <a class="dl-link" href="/api/candidate/${encodeURIComponent(c.id)}/download" download>Ladda ner</a>
         ${isUnviewed
           ? `<button onclick="markViewed('${esc(c.id)}')">Markera som granskad</button>`
           : `<button disabled>Granskad ✓</button>`}
+        ${!c.archived ? `<button onclick="draftHypothesis('${esc(c.id)}')">Skapa hypotesutkast</button>` : ''}
       </div>
     </div>
   `;
@@ -441,6 +444,17 @@ async function refresh() {
 
 async function archiveCandidate(id) {
   await fetch(`/api/candidate/${encodeURIComponent(id)}/archive`, { method: 'POST' });
+  refresh();
+}
+
+async function draftHypothesis(id) {
+  const res = await fetch(`/api/candidate/${encodeURIComponent(id)}/draft-hypothesis`, { method: 'POST' });
+  const data = await res.json();
+  if (!data.ok) {
+    alert('Kunde inte skapa utkast:\n' + data.message);
+  } else {
+    alert(`Utkast skapat: ${data.id} (${data.file}).\nÖppna filen i research/hypothesis_registry/ och skriv in universe + pass_fail_criterion själv innan den kan sättas pre-registered.`);
+  }
   refresh();
 }
 

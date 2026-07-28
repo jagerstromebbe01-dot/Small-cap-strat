@@ -115,6 +115,8 @@ denna typ av edge rimligen borde finnas kvar.
 
 ---
 
+**Arkiverad:** true
+
 ## [Datum, 2026-07-28]
 
 **Källa:** D'Avolio, G. (2002). "The Market for Borrowing Stock."
