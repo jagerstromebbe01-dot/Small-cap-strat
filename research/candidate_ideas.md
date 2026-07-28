@@ -77,3 +77,38 @@ mer edge" utan att kvantifiera mekanismen. Kan vara relevant om en
 framtida hypotes vill modellera hur mycket edge som borde finnas kvar
 vid olika kapitalnivåer, snarare än att bara testa binärt om edgen
 existerar.
+
+---
+
+## [Datum, 2026-07-28]
+
+**Källa:** Shleifer, A., & Vishny, R. W. (1997). "The Limits of
+Arbitrage." Journal of Finance, 52(1), 35-55.
+
+**Kort beskrivning:** Klassisk teoretisk artikel som visar att
+arbitrage i verkligheten utförs av ett fåtal specialiserade,
+professionella förvaltare som handlar med andras kapital (inte sitt
+eget), snarare än av en anonym massa "rationella arbitrageurer" som i
+läroboksmodeller. Eftersom dessa förvaltares kapitalbas beror på hur
+investerare uppfattar deras löpande resultat, kan de tvingas stänga
+positioner just när mispricing är som störst (t.ex. vid tillfälliga
+förluster som utlöser inlösenkrav), vilket gör att arbitrage kan
+förbli ofullständigt - särskilt i tillgångar som redan är volatila,
+har begränsad likviditet, eller kräver mycket specialiserat kapital
+för att handlas i skala.
+
+**Varför relevant:** Ger en kompletterande mekanism till Berk & Green
+(2004, se ovan) för VARFÖR kapacitetsbegränsning kan lämna kvar edge i
+small-cap: det handlar inte bara om att skickliga förvaltares alfa
+konkurreras bort i jämvikt via kapitalinflöden, utan också om att
+professionella arbitrageurers agentur-problem (förvaltat kapital,
+inlösenrisk) gör dem strukturellt ovilliga eller oförmögna att delta i
+just de segment - lågt likvida, volatila small-cap-namn - där
+mispricing annars skulle kunna bestå längst. Kopplar även till
+Do & Faff (2010, se ovan) fynd att kvarvarande parhandels-edge
+koncentreras till volatila/illikvida segment: Shleifer & Vishny ger en
+teoretisk grund för VARFÖR just dessa segment är de professionella
+arbitrageurerna undviker, snarare än en slump. Relevant om en framtida
+hypotes vill formulera urvalskriterier bortom enbart börsvärde (t.ex.
+kombinerat med likviditets- eller volatilitetsmått) för att fånga var
+denna typ av edge rimligen borde finnas kvar.
