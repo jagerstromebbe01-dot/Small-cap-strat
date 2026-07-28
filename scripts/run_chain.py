@@ -96,8 +96,15 @@ def run_claude_step(prompt: str, step_name: str) -> tuple[bool, str]:
     tid: ok=False med ett tydligt felmeddelande - kraschar aldrig tyst.
     """
     try:
+        # --allowedTools kravs har: utan den fragar `-p` interaktivt om lov att
+        # anvanda Write/Edit, vilket aldrig kan besvaras nar detta kors som en
+        # icke-blockerande bakgrundsprocess - CLI:t svarar da bara "jag behover
+        # tillatelse" i klartext och avslutar med exit 0 utan att ha gjort
+        # nagot. Upptackt 2026-07-28 vid forsta riktiga korningen av HYP-009 -
+        # samma buggmonster som redan hittades och atgardades i
+        # scripts/run_hypothesis_miner.py samma dag.
         result = subprocess.run(
-            [CLAUDE_EXECUTABLE, "-p", prompt],
+            [CLAUDE_EXECUTABLE, "-p", prompt, "--allowedTools", "Read,Write,Edit,Bash,Glob,Grep"],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
