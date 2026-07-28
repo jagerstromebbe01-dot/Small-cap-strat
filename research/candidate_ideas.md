@@ -43,3 +43,37 @@ segment" (hög volatilitet/låg likviditet) är inte nödvändigtvis samma
 sak. Om en framtida hypotes vill undersöka parhandel igen, kan den
 behöva rikta in sig på volatilitet/likviditet specifikt snarare än
 enbart börsvärde som urvalskriterium.
+
+---
+
+## [Datum, 2026-07-28]
+
+**Källa:** Berk, J. B., & Green, R. C. (2004). "Mutual Fund Flows and
+Performance in Rational Markets." Journal of Political Economy, 112(6),
+1269-1295.
+
+**Kort beskrivning:** Bygger en rationell jämviktsmodell där kapital
+strömmar till fonder/förvaltare som visat god historisk avkastning, men
+där varje förvaltares strategi har avtagande skalavkastning (decreasing
+returns to scale) - ju mer kapital som förvaltas i strategin, desto mer
+urholkas alfa genom marknadspåverkan (market impact) och minskad
+kapacitet. I jämvikt flödar kapital in tills förväntat alfa netto efter
+avgifter pressas ner mot noll, oavsett hur skicklig förvaltaren
+ursprungligen var. Modellen förutsäger alltså INTE att skickliga
+förvaltare ger hög framtida avkastning till investerare, utan att
+kapacitetsbegränsningen i sig är den mekanism som håller marknaden
+ungefär effektiv.
+
+**Varför relevant:** Detta är den teoretiska grundmekanismen bakom
+projektets huvudhypotes om small-cap: att stora institutioner inte kan
+allokera meningsfullt kapital till illikvida small-cap-namn utan att
+själva äta upp edgen via market impact, vilket skulle kunna lämna kvar
+outnyttjad edge för mindre, kapacitetsobegränsade aktörer. Berk & Greens
+modell ger ett formellt ramverk för att tänka på VILKEN storlek på edge
+som rimligen borde finnas kvar givet en given kapacitetsbegränsning
+(kopplat till projektets krav på `tested_capital_levels` vid $100k/$1M/
+$10M) - snarare än att bara anta att "small-cap = mindre konkurrens =
+mer edge" utan att kvantifiera mekanismen. Kan vara relevant om en
+framtida hypotes vill modellera hur mycket edge som borde finnas kvar
+vid olika kapitalnivåer, snarare än att bara testa binärt om edgen
+existerar.
