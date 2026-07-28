@@ -48,7 +48,7 @@ CHAIN_STATUS_FILE = DASHBOARD_DIR / "chain_status.json"
 REGISTRY_DIR = REPO_ROOT / "research" / "hypothesis_registry"
 STRATEGY_SPECS_DIR = REPO_ROOT / "research" / "strategy_specs"
 
-MAX_CODER_REVISIONS = 2  # Coder-A får max detta många omtag efter Coder-B-underkännande
+MAX_STEP_RETRIES = 2  # varje LLM-steg (Strategy Builder, Coder-A, Coder-B) får max detta många omtag
 CLAUDE_TIMEOUT_SECONDS = 1800  # 30 min per LLM-anrop innan det räknas som fel, inte hänger for evigt
 
 
@@ -117,6 +117,21 @@ def run_claude_step(prompt: str, step_name: str) -> tuple[bool, str]:
     return True, result.stdout
 
 
+def _check_file_produced(path: Path, step_name: str) -> tuple[bool, str]:
+    """
+    Verifierar att ett steg FAKTISKT producerade sin förväntade fil, inte
+    bara att subprocessen returnerade exit-kod 0. Upptäckt 2026-07-28,
+    testfall HYP-TEST998: Claude kan svara konversationellt (och därmed
+    ge exit 0) på ett uppenbart test-/påhittat underlag utan att skriva
+    någon fil alls - "lyckades men tomt" ska ALDRIG räknas som lyckat.
+    """
+    if not path.exists():
+        return False, f"[{step_name}] förväntad fil skapades inte: {path}"
+    if not path.read_text(encoding="utf-8", errors="replace").strip():
+        return False, f"[{step_name}] filen skapades men är tom: {path}"
+    return True, ""
+
+
 def run_python_step(args: list, step_name: str) -> tuple[bool, str]:
     try:
         result = subprocess.run(
@@ -146,25 +161,35 @@ def run_chain(hyp_id: str) -> int:
     backtest_path = strategy_dir / "backtest.py"
     review_path = strategy_dir / "code_review.yaml"
 
-    # ── Steg 1: Strategy Builder ──────────────────────────────
-    set_chain_status(hyp_id, "running", step="strategy_builder")
-    ok, msg = run_claude_step(
-        f"Du agerar Strategy Builder-rollen (/agents/strategy_builder/ROLE.md). "
-        f"Hypotesen {hyp_id} ({hyp_path.relative_to(REPO_ROOT)}) har status pre-registered "
-        f"och ett redan ifyllt pass_fail_criterion. Skriv en strategispec till "
-        f"research/strategy_specs/{hyp_id}-spec.md enligt din rolls mall - vilka signaler, "
-        f"vilket universum, vilken befintlig kodmodul (reference_code/v6_core_large_cap.py, "
-        f"strategies/common/friction.py) som återanvänds. Skriv INGEN körbar kod, ändra "
-        f"INGET i hypotesens YAML-fil.",
-        "Strategy Builder",
-    )
-    if not ok:
-        set_chain_status(hyp_id, "error", step="strategy_builder", message=msg)
-        return 1
+    # ── Steg 1: Strategy Builder, med omtag om spec.md inte faktiskt skapas ──
+    for attempt in range(1, MAX_STEP_RETRIES + 2):
+        set_chain_status(hyp_id, "running", step=f"strategy_builder (försök {attempt})")
+        ok, msg = run_claude_step(
+            f"Du agerar Strategy Builder-rollen (/agents/strategy_builder/ROLE.md). "
+            f"Hypotesen {hyp_id} ({hyp_path.relative_to(REPO_ROOT)}) har status pre-registered "
+            f"och ett redan ifyllt pass_fail_criterion. Skriv en strategispec till "
+            f"research/strategy_specs/{hyp_id}-spec.md enligt din rolls mall - vilka signaler, "
+            f"vilket universum, vilken befintlig kodmodul (reference_code/v6_core_large_cap.py, "
+            f"strategies/common/friction.py) som återanvänds. Skriv INGEN körbar kod, ändra "
+            f"INGET i hypotesens YAML-fil.",
+            f"Strategy Builder försök {attempt}",
+        )
+        if ok:
+            ok, msg = _check_file_produced(spec_path, "Strategy Builder")
+        if ok:
+            break
+        if attempt > MAX_STEP_RETRIES:
+            set_chain_status(hyp_id, "error", step="strategy_builder", message=msg)
+            return 1
 
     # ── Steg 2-4: Coder-A -> Coder-B -> validate_code_review.py, med begränsat antal omtag ──
+    # Filkontroll direkt efter Coder-A/Coder-B (inte bara exit-kod) - upptäckt
+    # 2026-07-28: ett "lyckat" (exit 0) LLM-anrop kan ändå producera INGEN
+    # fil alls om Claude svarar konversationellt på ett uppenbart test-/
+    # påhittat underlag. Ger upp TIDIGARE nu - hoppar över nästa steg i
+    # samma omtag istället för att köra det i onödan mot en fil som inte finns.
     coder_b_notes_feedback = ""
-    for attempt in range(1, MAX_CODER_REVISIONS + 2):
+    for attempt in range(1, MAX_STEP_RETRIES + 2):
         set_chain_status(hyp_id, "running", step=f"coder_a (försök {attempt})")
         ok, msg = run_claude_step(
             f"Du agerar Coder-A-rollen (/agents/coder/ROLE.md). Implementera backtest-kod för "
@@ -175,9 +200,14 @@ def run_chain(hyp_id: str) -> int:
                f"{coder_b_notes_feedback}" if coder_b_notes_feedback else ""),
             f"Coder-A försök {attempt}",
         )
+        if ok:
+            ok, msg = _check_file_produced(backtest_path, "Coder-A")
         if not ok:
-            set_chain_status(hyp_id, "error", step="coder_a", message=msg)
-            return 1
+            if attempt > MAX_STEP_RETRIES:
+                set_chain_status(hyp_id, "error", step="coder_a", message=msg)
+                return 1
+            coder_b_notes_feedback = msg
+            continue  # hoppar över Coder-B/validate helt - ingen kod finns att granska
 
         set_chain_status(hyp_id, "running", step=f"coder_b (försök {attempt})")
         ok, msg = run_claude_step(
@@ -188,9 +218,14 @@ def run_chain(hyp_id: str) -> int:
             f"(lägg till en ny post, radera aldrig gamla). Ändra ALDRIG Coder-A:s kod själv.",
             f"Coder-B försök {attempt}",
         )
+        if ok:
+            ok, msg = _check_file_produced(review_path, "Coder-B")
         if not ok:
-            set_chain_status(hyp_id, "error", step="coder_b", message=msg)
-            return 1
+            if attempt > MAX_STEP_RETRIES:
+                set_chain_status(hyp_id, "error", step="coder_b", message=msg)
+                return 1
+            coder_b_notes_feedback = msg
+            continue  # hoppar över validate_code_review.py - vi vet redan att den skulle avvisa
 
         ok, msg = run_python_step(
             ["scripts/validate_code_review.py", str(review_path.relative_to(REPO_ROOT))],
@@ -199,10 +234,10 @@ def run_chain(hyp_id: str) -> int:
         if ok:
             break
 
-        if attempt > MAX_CODER_REVISIONS:
+        if attempt > MAX_STEP_RETRIES:
             set_chain_status(
                 hyp_id, "error", step="validate_code_review",
-                message=f"Coder-B godkände inte koden efter {MAX_CODER_REVISIONS} omtag: {msg}",
+                message=f"Coder-B godkände inte koden efter {MAX_STEP_RETRIES} omtag: {msg}",
             )
             return 1
 
