@@ -2,6 +2,8 @@
 __pycache__/
 *.pyc
 /data/.env
+/dashboard/notes.jsonl
+/dashboard/chain_status.json
 /data/cache/*
 # Undantag: den SLUTGILTIGA, filtrerade small-cap-universumlistan (1,6MB)
 # är liten nog och viktig nog att versionshanteras - allt annat i

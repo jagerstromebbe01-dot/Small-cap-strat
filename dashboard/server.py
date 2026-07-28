@@ -33,6 +33,20 @@ small_cap_definition. Den vägrar även flytta en hypotes som redan är
 ett redan existerande testresultat kräver ett manuellt CEO-beslut i
 YAML-filen, inte en knapptryckning.
 
+Sedan 2026-07-28: EFTER en lyckad statusändring triggar endpointen även
+(via launch_chain_if_not_running()) en LOKAL, icke-blockerande
+bakgrundsprocess (scripts/run_chain.py) som kör Strategy Builder ->
+Coder-A -> Coder-B -> validate_code_review.py ->
+validate_friction_usage.py -> validate_hypothesis.py -> Backtester.
+Detta är EN process, startad av redan godkänd statusändring - ingen ny
+skrivbar endpoint, och triggas därför fortfarande ALDRIG för en hypotes
+med tomt pass_fail_criterion (samma spärr som innan, oförändrad).
+Kedjekörningen sker som en lokal subprocess (kräver `claude` CLI,
+autentiserad via `claude /login` en gång interaktivt) - INTE en
+cloud-routine, eftersom kedjan behöver den lokala datacachen i
+data/cache/. Status för en pågående/klar/misslyckad kedja läses från
+dashboard/chain_status.json och exponeras read-only i /api/state.
+
 Godkännande av SJÄLVA KRITERIET sker UTESLUTANDE genom att CEO manuellt
 skriver pass_fail_criterion i YAML-filen efter att ha låst det i chatt
 med Claude - exakt som med HYP-008. Dashboarden är ett fönster in i
@@ -63,6 +77,8 @@ REGISTRY_DIR = BASE_DIR / "research" / "hypothesis_registry"
 COUNTER_FILE = REGISTRY_DIR / "_counter.yaml"
 CANDIDATES_FILE = BASE_DIR / "research" / "candidate_ideas.md"
 NOTES_FILE = DASHBOARD_DIR / "notes.jsonl"
+CHAIN_STATUS_FILE = DASHBOARD_DIR / "chain_status.json"
+RUN_CHAIN_SCRIPT = BASE_DIR / "scripts" / "run_chain.py"
 
 PORT = 5151
 
@@ -163,6 +179,17 @@ def read_candidates() -> list:
             "archived": bool(_ARCHIVED_RE.search(body)),
         })
     return candidates
+
+
+def read_chain_status() -> dict:
+    """Alltid från disk, aldrig cachat - samma princip som allt annat här."""
+    if not CHAIN_STATUS_FILE.exists():
+        return {}
+    try:
+        with CHAIN_STATUS_FILE.open("r", encoding="utf-8") as f:
+            return json.load(f) or {}
+    except (json.JSONDecodeError, OSError):
+        return {}
 
 
 def read_notes() -> list:
@@ -299,6 +326,52 @@ def _git_commit_status_change(path: Path, hyp_id: str) -> dict:
         return {"committed": False, "error": str(exc), "message": message}
 
 
+def launch_chain_if_not_running(hyp_id: str) -> dict:
+    """
+    Startar scripts/run_chain.py <hyp_id> som en LOKAL, icke-blockerande
+    subprocess - kallaren (api_set_pre_registered) väntar ALDRIG på att
+    detta blir klart, det kan ta lång tid (se HYP-008, timmar).
+
+    Dubbelklicksskydd: om chain_status.json redan visar "running" för
+    detta ID, startas INGEN ny process - den befintliga körningens
+    status returneras bara. Detta är en enkel, icke-atomär
+    read-then-write-kontroll (gott nog för ett lokalt, en-användar-
+    verktyg som detta - ingen verklig samtidighetsrisk i praktiken).
+    """
+    all_status = read_chain_status()
+    existing = all_status.get(hyp_id)
+    if existing and existing.get("status") == "running":
+        return {"launched": False, "reason": "kedjan körs redan för denna hypotes", "current": existing}
+
+    all_status[hyp_id] = {
+        "status": "running",
+        "step": "start",
+        "message": "",
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    DASHBOARD_DIR.mkdir(exist_ok=True)
+    with CHAIN_STATUS_FILE.open("w", encoding="utf-8") as f:
+        json.dump(all_status, f, ensure_ascii=False, indent=2)
+
+    try:
+        subprocess.Popen(
+            ["python", str(RUN_CHAIN_SCRIPT), hyp_id],
+            cwd=BASE_DIR,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            stdin=subprocess.DEVNULL,
+        )
+    except Exception as exc:
+        all_status[hyp_id]["status"] = "error"
+        all_status[hyp_id]["message"] = f"kunde inte starta kedjan: {exc}"
+        with CHAIN_STATUS_FILE.open("w", encoding="utf-8") as f:
+            json.dump(all_status, f, ensure_ascii=False, indent=2)
+        return {"launched": False, "reason": str(exc)}
+
+    return {"launched": True}
+
+
 def set_pre_registered(hyp_id: str) -> dict:
     """
     Flyttar en hypotes till status: pre-registered - men ENDAST om
@@ -356,7 +429,13 @@ def set_pre_registered(hyp_id: str) -> dict:
     path.write_text(new_text, encoding="utf-8")
 
     git_result = _git_commit_status_change(path, hyp_id)
-    return {"ok": True, "message": "status satt till pre-registered", "git": git_result}
+    chain_result = launch_chain_if_not_running(hyp_id)
+    return {
+        "ok": True,
+        "message": "status satt till pre-registered",
+        "git": git_result,
+        "chain": chain_result,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -371,6 +450,9 @@ def index():
 @app.route("/api/state")
 def api_state():
     hypotheses = read_hypotheses()
+    chain_status = read_chain_status()
+    for h in hypotheses:
+        h["chain"] = chain_status.get(h["id"])
 
     status_counts = {"pre-registered": 0, "passed": 0, "failed": 0, "other": 0}
     for h in hypotheses:

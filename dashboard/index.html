@@ -251,6 +251,18 @@ function canSetPreRegistered(h) {
   return hasCriterion && h.status !== 'pre-registered' && !terminal.includes(h.status);
 }
 
+// Kedjestatus (Strategy Builder -> Coder-A -> Coder-B -> Backtester),
+// läst från dashboard/chain_status.json via /api/state - visar bara
+// att NÅGOT händer efter klick, ingen egen sanning utöver det filen säger.
+function chainBadge(chain) {
+  if (!chain || !chain.status) return '';
+  const labelMap = { running: 'Kedja: körs', done: 'Kedja: klar', error: 'Kedja: fel' };
+  const label = labelMap[chain.status] || `Kedja: ${chain.status}`;
+  const cls = chain.status === 'done' ? 'passed' : chain.status === 'error' ? 'failed' : 'pre-registered';
+  const title = [chain.step, chain.message].filter(Boolean).join(' — ');
+  return `<span class="badge ${cls}" title="${esc(title)}">${esc(label)}</span>`;
+}
+
 function renderHypotheses(state) {
   const el = document.getElementById('hypotheses');
   const hyps = state.hypotheses || [];
@@ -268,6 +280,7 @@ function renderHypotheses(state) {
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           ${canSetPreRegistered(h) ? `<button class="primary" onclick="setPreRegistered('${esc(h.id)}')">Sätt pre-registered</button>` : ''}
+          ${chainBadge(h.chain)}
           <span class="badge ${statusBadgeClass(h.status)}">${esc(h.status || 'okänd')}</span>
         </div>
       </div>
