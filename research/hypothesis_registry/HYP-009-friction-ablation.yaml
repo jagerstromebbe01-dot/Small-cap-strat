@@ -1,13 +1,8 @@
-# UTKAST - skapat manuellt (ej fran kandidatide) 2026-07-28.
-# Syfte: ren metodologisk ablation av HYP-008 - identisk kod, men
-# friktionskostnader neutraliserade till noll, for att isolera om
-# HYP-008:s FAILED-resultat berodde pa friktion eller pa signalen/
-# universumet sjalvt. pass_fail_criterion ar TOMT MED FLIT - se
-# CEO-forslag i chatt (2026-07-28), maste godkannas/justeras och
-# skrivas in av CEO sjalv innan status kan bli pre-registered.
-# universe/data_range har forifyllts identiskt med HYP-008 sedan
-# ablationen per definition anvander samma universum - justera om
-# CEO vill nagot annat.
+# Ren metodologisk ablation av HYP-008 - identisk kod, men friktionskostnader
+# neutraliserade till noll, for att isolera om HYP-008:s FAILED-resultat
+# berodde pa friktion eller pa signalen/universumet sjalvt.
+# universe/data_range identiskt med HYP-008 sedan ablationen per definition
+# anvander samma universum.
 
 id: HYP-009
 date_registered: '2026-07-28'
@@ -15,7 +10,33 @@ title: v6-kärna på small-cap, friktion nollställd (ablation mot HYP-008)
 universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
 small_cap_definition: $100M - $2B börsvärde, EODHD All-World som datakälla
 data_range: EODHD All-World, samma period som HYP-008 (2011-2024)
-pass_fail_criterion: ''
+# LÅST 2026-07-28 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+pass_fail_criterion: >
+  Ren metodologisk ablation av HYP-008: identisk kod (v6-kärnan, beta-neutral
+  OLS pair trading, samma small-cap-universum $100M-$2B, EODHD All-World,
+  samma period 2011-2024) - men friktionskostnaderna neutraliserade till
+  noll. Implementation: borrow_cost() anropas med annual_rate=0.0;
+  Corwin-Schultz-spreaden beräknas och appliceras som vanligt men
+  multipliceras med 0 innan den räknas som kostnad. Båda friktionsfunktionerna
+  ska fortfarande importeras och anropas (bara med noll-effekt) - inte tas
+  bort ur koden - så att validate_friction_usage.py:s kontroll fortfarande
+  går igenom korrekt. Volymbaserad kapacitetsspärr förblir AKTIV (den mäter
+  handelsbarhet, inte kostnad).
+
+  Syfte: isolera om HYP-008:s FAILED-resultat berodde på friktion, eller om
+  signalen/universumet saknar edge redan före kostnader.
+
+  PASS/FAIL (diagnostiskt - inte ett godkännande för produktionsdrift):
+  PASS om Sharpe (utan friktion) >= 0.55 på minst kapitalnivå $100k - edge
+  existerar teoretiskt före kostnader; stärker underlaget för att pröva en
+  annan par-selektionsmetod (kandidat 5). FAIL om Sharpe (utan friktion)
+  fortfarande < 0.55 på ALLA tre kapitalnivåer - signalen/universumet
+  saknar edge oavsett kostnader; talar emot att bygga ut kandidat 5 innan
+  en mer grundläggande förändring (annan signal/urvalskriterium) övervägs.
+
+  Ett PASS här betyder INTE att strategin är lönsam att handla - bara att
+  den underliggande signalen har teoretisk edge före kostnader.
 status: draft
 k_total_hypotheses_before_this: 8
 tested_capital_levels:
