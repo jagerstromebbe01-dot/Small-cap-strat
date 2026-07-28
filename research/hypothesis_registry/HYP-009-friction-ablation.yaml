@@ -37,7 +37,7 @@ pass_fail_criterion: >
 
   Ett PASS här betyder INTE att strategin är lönsam att handla - bara att
   den underliggande signalen har teoretisk edge före kostnader.
-status: draft
+status: pre-registered   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 8
 tested_capital_levels:
 - 100000
