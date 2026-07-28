@@ -1,0 +1,24 @@
+# UTKAST skapat via dashboarden fran kandidatide 2 (2026-07-28).
+# pass_fail_criterion ar TOMT MED FLIT - CEO maste skriva det sjalv,
+# i chatt, innan status nagonsin kan bli pre-registered. Ingen agent
+# fyller i det ha faltet at dig. source_candidate/draft_notes_from_dashboard
+# ar bara REFERENS - inte ett kriterium.
+# status: draft -> (CEO fyller i universe/pass_fail_criterion/tested_capital_levels) -> pre-registered -> tested -> passed/failed
+
+id: HYP-009
+date_registered: '2026-07-28'
+title: '[Datum, 2026-07-28]'
+universe: ''
+small_cap_definition: ''
+data_range: ''
+pass_fail_criterion: ''
+status: draft
+k_total_hypotheses_before_this: 8
+tested_capital_levels: []
+source_candidate:
+  id: '2'
+  header: '[Datum, 2026-07-28]'
+  source: Berk, J. B., & Green, R. C. (2004). "Mutual Fund Flows and
+  description: Bygger en rationell jämviktsmodell där kapital
+  relevance: Detta är den teoretiska grundmekanismen bakom
+draft_notes_from_dashboard: null
