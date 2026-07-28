@@ -1,0 +1,19 @@
+id: HYP-TEST999
+date_registered: 2026-07-28
+title: "TEMPORÄR TESTFIL - kedjetrigger-test, raderas efter test"
+universe: "test, ingen riktig hypotes"
+data_range: "n/a"
+pass_fail_criterion: >
+  TESTKRITERIUM för att verifiera att kedjetriggern (Strategy Builder ->
+  Coder-A -> Coder-B -> Backtester) faktiskt startar en lokal
+  bakgrundsprocess när "Sätt pre-registered" anropas. INTE en riktig
+  hypotes, ska raderas efter testet.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 8
+tested_capital_levels: [100000]
+capital_level_results: {}
+date_tested: null
+result_summary: null
+sharpe_raw: null
+deflated_sharpe_ratio: null
+notes: ""
