@@ -144,3 +144,37 @@ lönsam ut i en backtest utan denna friktion inräknad. Relevant om en
 framtida hypotes vill kvantifiera hur mycket av ett eventuellt small-cap-
 edge som är en artefakt av att inte modellera borrow-kostnad och
 recall-risk korrekt, snarare än verklig, realiserbar avkastning.
+
+---
+
+## [Datum, 2026-07-28]
+
+**Källa:** Gatev, E., Goetzmann, W. N., & Rouwenhorst, K. G. (2006). "Pairs
+Trading: Performance of a Relative-Value Arbitrage Rule." Review of
+Financial Studies, 19(3), 797-827.
+
+**Kort beskrivning:** Den ursprungliga och mest citerade empiriska studien
+av distansbaserad ("distance method") parhandel - exakt den familj av
+strategi som v6-kärnan bygger på. Författarna bildar par genom att
+minimera summan av kvadrerade avstånd mellan normaliserade prisserier
+under en formationsperiod, handlar sedan avvikelser från det historiska
+spreadet under en efterföljande handelsperiod, och visar signifikant
+positiv riskjusterad avkastning över lång amerikansk aktiedata
+(1962-2002), även efter rimliga antaganden om transaktionskostnader. De
+visar också att en stor del av lönsamheten kommer från par bildade inom
+samma bransch/undergrupp, och tolkar en del av avkastningen som
+kompensation för att bära en form av "limits of arbitrage"-risk snarare
+än ren riskfri arbitrage.
+
+**Varför relevant:** Detta är grundstudien för hela strategifamiljen som
+v6 tillhör, och kompletterar Do & Faff (2010, se ovan) - som studerar hur
+lönsamheten föll över tid - genom att visa en möjlig förklaring till
+VARFÖR metoden fungerade från början (branschmatchning vid parbildning,
+avkastning som kompensation för arbitrage-risk snarare än gratislunch).
+Om en framtida hypotes vill undersöka small-cap-parhandel igen kan Gatev
+et al.:s betoning på branschmatchning i parbildningssteget vara ett
+konkret metodval att testa (t.ex. begränsa par till samma
+bransch/undergrupp) snarare än att para ihop aktier enbart baserat på
+pris-distans över hela small-cap-universumet - vilket enligt Do & Faff
+(2010) kan vara en del av förklaringen till varför edgen urholkats över
+tid.
