@@ -112,3 +112,35 @@ arbitrageurerna undviker, snarare än en slump. Relevant om en framtida
 hypotes vill formulera urvalskriterier bortom enbart börsvärde (t.ex.
 kombinerat med likviditets- eller volatilitetsmått) för att fånga var
 denna typ av edge rimligen borde finnas kvar.
+
+---
+
+## [Datum, 2026-07-28]
+
+**Källa:** D'Avolio, G. (2002). "The Market for Borrowing Stock."
+Journal of Financial Economics, 66(2-3), 271-306.
+
+**Kort beskrivning:** Empirisk studie av den amerikanska aktielånemarknaden
+som visar att de flesta aktier är lätta och billiga att låna ("general
+collateral"), men att en mindre delmängd - "specials" - har kraftigt
+förhöjda lånekostnader och begränsat utbud. Dessa specials är
+systematiskt koncentrerade till aktier med lägre börsvärde, lägre
+institutionellt ägande och högre volatilitet. Studien visar också att
+långivare kan återkalla utlånade aktier ("recall risk"), vilket kan
+tvinga en blankare att stänga positionen i förtid oavsett om tesen
+fortfarande gäller.
+
+**Varför relevant:** Detta är en direkt, konkret mekanism för den
+friktion som spec avsnitt 2 punkt 3 kräver ska modelleras från början
+(short availability, borrow cost) - inte en abstrakt kapacitetsmekanism
+som Berk & Green eller Shleifer & Vishny (se ovan), utan empirisk
+dokumentation av att just mindre bolag har systematiskt dyrare och mer
+osäker tillgång till blankningsben. Detta är särskilt relevant för v6,
+som är en beta-neutral parhandelsstrategi där varje position har ett
+blankningsben: om short-benet i en small-cap-baserad parhandel
+regelbundet hamnar bland "specials" (hög lånekostnad, recall-risk), kan
+det urholka eller helt äta upp en Sharpe-förbättring som annars ser
+lönsam ut i en backtest utan denna friktion inräknad. Relevant om en
+framtida hypotes vill kvantifiera hur mycket av ett eventuellt small-cap-
+edge som är en artefakt av att inte modellera borrow-kostnad och
+recall-risk korrekt, snarare än verklig, realiserbar avkastning.
