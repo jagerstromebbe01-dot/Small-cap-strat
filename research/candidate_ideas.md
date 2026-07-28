@@ -178,3 +178,38 @@ bransch/undergrupp) snarare än att para ihop aktier enbart baserat på
 pris-distans över hela small-cap-universumet - vilket enligt Do & Faff
 (2010) kan vara en del av förklaringen till varför edgen urholkats över
 tid.
+
+---
+
+## [Datum, 2026-07-28]
+
+**Källa:** Frazzini, A., Israel, R., & Moskowitz, T. J. (2012, working
+paper, University of Chicago Booth School of Business / AQR Capital
+Management). "Trading Costs of Asset Pricing Anomalies."
+
+**Kort beskrivning:** Använder verkliga, realiserade handelsdata från en
+stor institutionell förvaltare (inte modellerade/uppskattade
+transaktionskostnader) för att mäta faktisk genomförandekostnad för ett
+brett antal kända anomalier, inklusive storlekseffekten. Författarna
+visar att pris-impact (market impact) - inte bara bid-ask-spreaden -
+dominerar den verkliga kostnaden, att denna impact växer olinjärt med
+handelsstorlek relativt genomsnittlig daglig volym, och att den är
+kraftigt koncentrerad till just de minsta och minst likvida aktierna.
+En konsekvens är att många anomaliers "papper-Sharpe" i akademiska
+studier kraftigt överskattar vad som faktiskt är implementerbart i
+skala, medan kostnaden vid blygsam kapitalstorlek ofta är betydligt
+lägre än den naiva bid-ask-baserade uppskattningen antyder.
+
+**Varför relevant:** Kompletterar D'Avolio (2002, se ovan) - som
+dokumenterar friktion på blankningsbenet (borrow cost, recall risk) -
+med motsvarande empirisk dokumentation för själva handelsutförandet
+(price impact) på båda benen i en parhandel, vilket är precis den typ
+av friktion spec avsnitt 2 punkt 3 kräver ska modelleras från början.
+Den olinjära relationen mellan impact och handelsstorlek relativt
+daglig volym ger en konkret, empiriskt grundad mekanism för VARFÖR
+edgen kan degradera med kapitalstorlek - direkt kopplat till projektets
+krav på att testa `tested_capital_levels` vid $100k/$1M/$10M snarare än
+att anta ett binärt "fungerar/fungerar inte". Relevant om en framtida
+hypotes vill bygga en explicit impact-kostnadsmodell (skalad mot
+genomsnittlig daglig volym per aktie) i stället för en platt
+kostnadsantagande per trade.
