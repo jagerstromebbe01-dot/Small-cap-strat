@@ -90,7 +90,33 @@ def _write_status(status: str, message: str, started_at: str, commit_hash: str =
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
 
+def _already_ran_today() -> bool:
+    """
+    Skyddar mot dubbla korningar samma dag - sedan schemat 2026-07-29 fick
+    en extra "vid inloggning"-trigger (utover den dagliga 07:00) for att
+    fanga upp dagar da datorn var avstangd/sovande vid 07:00. Utan detta
+    skulle flera inloggningar samma dag kunna ge flera kandidatposter.
+    Kollar bara status-filens senaste LYCKADE korning - ett fel/timeout
+    samma dag blockerar INTE ett nytt forsok.
+    """
+    if not STATUS_FILE.exists():
+        return False
+    try:
+        with STATUS_FILE.open("r", encoding="utf-8") as f:
+            status = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return False
+    if status.get("status") != "success":
+        return False
+    finished_at = status.get("finished_at", "")
+    return finished_at[:10] == datetime.now(timezone.utc).date().isoformat()
+
+
 def main() -> int:
+    if _already_ran_today():
+        print("Redan kort en lyckad Miner-korning idag (UTC-datum) - hoppar over.")
+        return 0
+
     started_at = _now()
     before_hash = _git("rev-parse", "HEAD")
 
