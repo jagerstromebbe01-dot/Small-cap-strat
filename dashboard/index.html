@@ -83,6 +83,26 @@
   .list-controls { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-dim); }
   .list-controls input { cursor: pointer; }
 
+  .pipeline-active { font-size: 12.5px; color: var(--ink-dim); margin-bottom: 2px; }
+  .pipeline-active b { color: var(--ink); }
+  .pipeline-flow { display: flex; align-items: stretch; flex-wrap: wrap; gap: 0; }
+  .pipeline-stage {
+    display: flex; flex-direction: column; gap: 3px; justify-content: center;
+    min-width: 118px; padding: 10px 12px; border-radius: 8px;
+    border: 1.5px solid var(--hairline); background: var(--surface);
+    font-size: 12px; text-align: center;
+  }
+  .pipeline-stage .stage-name { font-weight: 600; }
+  .pipeline-stage .stage-sub { font-size: 10.5px; color: var(--muted); }
+  .pipeline-arrow { display: flex; align-items: center; padding: 0 6px; color: var(--muted); font-size: 16px; }
+  .pipeline-stage.manual { border-style: dashed; opacity: .75; }
+  .pipeline-stage.done { border-color: var(--good); background: var(--good-bg); }
+  .pipeline-stage.done .stage-name { color: var(--good); }
+  .pipeline-stage.current { border-color: var(--warn); background: var(--warn-bg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 20%, transparent); }
+  .pipeline-stage.current .stage-name { color: var(--warn); }
+  .pipeline-stage.error { border-color: var(--bad); background: var(--bad-bg); }
+  .pipeline-stage.error .stage-name { color: var(--bad); }
+
   .kv { font-size: 13px; color: var(--ink-dim); display: flex; flex-direction: column; gap: 3px; }
   .kv b { color: var(--ink); }
   details.criterion { font-size: 12.5px; color: var(--ink-dim); }
@@ -141,6 +161,12 @@
   </header>
 
   <div class="stats" id="stats"></div>
+
+  <section>
+    <h2>Agent-pipeline</h2>
+    <div class="note-hint">Visar hela flödet (spec-dokumentet avsnitt 5) - fyllda steg är automatiserade och spåras live via <code>chain_status.json</code>, streckade steg är manuella och görs utanför dashboarden.</div>
+    <div id="pipelineMap"></div>
+  </section>
 
   <section>
     <h2>Hypotesregister</h2>
@@ -295,6 +321,81 @@ function chainBadge(chain) {
   return `<span class="badge ${cls}" title="${esc(title)}">${esc(label)}</span>`;
 }
 
+// Hela agent-pipelinen per CLAUDE.md/spec-dokumentet avsnitt 5. "match"
+// kollar mot chain_status.json:s "step"-strang (t.ex. "coder_a (forsok 2)")
+// for de steg som faktiskt sparas automatiskt av scripts/run_chain.py -
+// manuella steg (Miner, CEO-las, Overfitting Detector osv) har ingen
+// match och visas alltid som "manual", aldrig som klara/pagaende, eftersom
+// inget i repot spar dem live idag.
+const PIPELINE_STAGES = [
+  { name: 'Hypothesis Miner', sub: 'schemalagt/manuellt', manual: true },
+  { name: 'CEO låser kriterium', sub: 'i chatt, aldrig i kod', manual: true },
+  { name: 'Strategy Builder', match: s => s.startsWith('strategy_builder') },
+  { name: 'Coder-A', match: s => s.startsWith('coder_a') },
+  { name: 'Coder-B', sub: '+ kodgranskning', match: s => s.startsWith('coder_b') },
+  { name: 'Friktionsvalidering', match: s => s === 'validate_friction_usage' },
+  { name: 'Kriterievalidering', match: s => s === 'validate_hypothesis' },
+  { name: 'Backtester', match: s => s === 'backtester' },
+  { name: 'Overfitting Detector', sub: 'DSR, K-räknare', manual: true },
+  { name: 'Performance/Risk', sub: 'Sharpe, Calmar, friktion', manual: true },
+  { name: 'Reporting', manual: true },
+];
+
+function pickActiveChainHyp(state) {
+  const withChain = (state.hypotheses || []).filter(h => h.chain && h.chain.step);
+  if (!withChain.length) return null;
+  const running = withChain.find(h => h.chain.status === 'running');
+  if (running) return running;
+  // Ingen kör just nu - visa den senast uppdaterade (klar eller fel).
+  return withChain.slice().sort((a, b) => (b.chain.updated_at || '').localeCompare(a.chain.updated_at || ''))[0];
+}
+
+function renderPipelineMap(state) {
+  const el = document.getElementById('pipelineMap');
+  const active = pickActiveChainHyp(state);
+
+  if (!active) {
+    el.innerHTML = `<div class="empty-state">Ingen kedja har körts än - pipelinen nedan visar bara den statiska strukturen.</div>` +
+      renderPipelineFlow(null, '');
+    return;
+  }
+
+  const chain = active.chain;
+  const label = chain.status === 'running' ? 'kör just nu' : chain.status === 'done' ? 'senast klar' : 'senast avslutad med fel';
+  el.innerHTML = `
+    <div class="pipeline-active"><b>${esc(active.id)}</b> — ${esc(label)}${chain.message ? ` (${esc(chain.message.slice(0, 160))})` : ''}</div>
+  ` + renderPipelineFlow(chain, chain.step || '');
+}
+
+function renderPipelineFlow(chain, currentStep) {
+  let reachedCurrent = false;
+  const isChainDone = chain && chain.status === 'done';
+  const isChainError = chain && chain.status === 'error';
+
+  const stageHtml = PIPELINE_STAGES.map((stage, i) => {
+    let cls = stage.manual ? 'manual' : '';
+    if (!stage.manual && chain) {
+      const isCurrentStage = stage.match(currentStep);
+      if (isCurrentStage) {
+        cls = isChainError ? 'error' : (isChainDone ? 'done' : 'current');
+        reachedCurrent = true;
+      } else if (!reachedCurrent) {
+        cls = 'done';  // steg fore det aktuella - redan avklarat
+      }
+      // annars: steg efter det aktuella, inte natt dit an - forvald (grabone) stil
+    }
+    return `
+      <div class="pipeline-stage ${cls}">
+        <span class="stage-name">${esc(stage.name)}</span>
+        ${stage.sub ? `<span class="stage-sub">${esc(stage.sub)}</span>` : ''}
+      </div>
+      ${i < PIPELINE_STAGES.length - 1 ? '<div class="pipeline-arrow">→</div>' : ''}
+    `;
+  }).join('');
+
+  return `<div class="pipeline-flow">${stageHtml}</div>`;
+}
+
 function renderHypotheses(state) {
   const el = document.getElementById('hypotheses');
   const hyps = state.hypotheses || [];
@@ -335,21 +436,6 @@ function renderHypotheses(state) {
   }).join('');
 }
 
-function renderCandidates(state) {
-  const el = document.getElementById('candidates');
-  const countEl = document.getElementById('unviewedCount');
-  const allCands = state.candidates || [];
-  const viewed = getViewedSet();
-  const unviewedTotal = allCands.filter(c => !viewed.has(String(c.id))).length;
-  countEl.textContent = unviewedTotal ? `(${unviewedTotal} ej granskade)` : '';
-
-  const onlyUnviewed = document.getElementById('unviewedOnly').checked;
-  const cands = onlyUnviewed ? allCands.filter(c => !viewed.has(String(c.id))) : allCands;
-
-  if (!cands.length) {
-    el.innerHTML = `<div class="empty-state">${onlyUnviewed ? 'Inga ogranskade kandidatidéer — allt granskat.' : 'Inga kandidatidéer ännu — Hypothesis Miner har inte lagt till något i candidate_ideas.md.'}</div>`;
-    return;
-  }
 function candidateTriageRow(c, hasNotes) {
   if (c.archived) return `<span class="badge archived">Släng (arkiverad)</span>`;
   if (c.component) return `<span class="badge other">Komponent</span>`;
@@ -460,6 +546,7 @@ async function refresh() {
     document.getElementById('conn').classList.remove('down');
     document.getElementById('generatedAt').textContent = state.generated_at ? state.generated_at.replace('T', ' ').slice(0, 19) + ' UTC' : '—';
     renderStats(state);
+    renderPipelineMap(state);
     renderHypotheses(state);
     renderCandidates(state);
     renderChart(state);
