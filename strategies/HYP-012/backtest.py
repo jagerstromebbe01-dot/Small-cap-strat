@@ -257,7 +257,8 @@ def run_backtest(close, hedge, mom_df, beta_df, spread_df, volume,
                     cash += proceeds
                     ret = proceeds / holdings[t]["cost"] - 1
                     trade_log.append({"date": date, "ticker": t, "ret": ret,
-                                       "gross_ret": cp / holdings[t]["entry"] - 1, "type": "rebalance_exit"})
+                                       "gross_ret": cp / holdings[t]["entry"] - 1, "type": "rebalance_exit",
+                                       "cost": holdings[t]["cost"]})
                     del holdings[t]
 
             # ── Kop nya namn i toppdecilen (lika viktat, kapacitetsspärrat) ──
@@ -337,12 +338,24 @@ def trade_stats(tl):
 
 
 def best_trade_excluded_metrics(pv, tl, capital_level):
+    """
+    Kriteriets punkt 3. Anvander den FAKTISKA kostnaden (dollarstorleken)
+    for den basta traden - inte en uppskattning baserad pa startkapitalet
+    (den buggen hittades 2026-07-29 i HYP-008/009/011s motsvarande
+    funktion: best_dollar_pnl = ret * capital_level * FIXED_FRAC antar
+    att varje position alltid var exakt FIXED_FRAC av det URSPRUNGLIGA
+    kapitalet, vilket ignorerar att cash driver over tid och att
+    kapacitetsspärren kan kapa en enskild positions storlek - kan
+    over/underskatta traden dollarpaverkan rejalt over en 14-arig
+    backtest). Har spara vi den riktiga "cost" per trade direkt i
+    trade_log istallet for att gissa den i efterhand.
+    """
     if len(tl) == 0:
         return {"sharpe_excl_best": None, "calmar_excl_best": None}
     best_idx = tl["ret"].idxmax()
     best_trade = tl.loc[best_idx]
     best_date = best_trade["date"]
-    best_dollar_pnl = best_trade["ret"] * best_trade.get("cost", capital_level * DECILE_FRACTION)
+    best_dollar_pnl = best_trade["ret"] * best_trade["cost"]
     pv_adj = pv.copy()
     pv_adj.loc[pv_adj.index >= best_date] -= best_dollar_pnl
     return {"sharpe_excl_best": sharpe(pv_adj), "calmar_excl_best": calmar(pv_adj)}
@@ -390,7 +403,7 @@ def main():
     print(f"  Prismatris: {close.shape}\n")
 
     print("Sanerar prisdata (nollpriser/orimliga engångsrörelser, se strategies/common/data_hygiene.py)...")
-    close, high, low = clean_price_matrix(close, high, low)
+    close, high, low = clean_price_matrix(close, high, low, volume=volume)
 
     print("Beräknar momentum-signal (12-1 manader, vektoriserad)...")
     mom_df = compute_momentum(close)

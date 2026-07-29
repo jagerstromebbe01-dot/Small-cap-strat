@@ -1,31 +1,28 @@
 """
-HYP-013: Enskild-aktie kortsiktig reversal pa small-cap - INGEN
-partner-aktie kravs (till skillnad fran v6-karnan/HYP-008/009/011).
+HYP-014: Low-volatility-faktor pa small-cap-universumet.
 
-Andra av tre "pivot"-hypoteser (HYP-012/013/014). Testar direkt om
-HYP-008/009/011:s problem (lag korrelation mellan small-cap-aktier gor
-par-baserad reversal svag) loses genom att ta bort partnerkravet helt -
-signalen ar en z-score av aktiens EGEN avkastning mot sin EGEN trailing-
-fordelning, ingen regression, ingen par-identifiering.
+Tredje av tre "pivot"-hypoteser (HYP-012/013/014). Testar en helt annan
+kapacitetsmekanism an de tidigare hypoteserna: institutionella
+hävstångs-/benchmarkbegransningar (Ang, Frazzini/Pedersen "betting
+against beta") snarare an ren AUM-kapacitetsbegransning eller
+korrelations-/reversion-mekanismer.
 
-Se research/hypothesis_registry/HYP-013-enskild-aktie-kortsiktig-reversal-pa.yaml
+Se research/hypothesis_registry/HYP-014-low-volatility-faktor-pa-small-cap.yaml
 for det lasta kriteriet.
 
-Aterananvander samma redan validerade infrastruktur som HYP-008/009/011:
-universum, prisdata, friktionsmodell, SPY-beta-hedge (med
-sakerhetsspärren mot degenererad beta, se compute_beta() nedan -
-upptackt 2026-07-29 vid HYP-012), kapacitetsspärr.
+Aterananvander samma redan validerade infrastruktur som HYP-012:
+universum, prisdata (MED datasanering, se strategies/common/data_hygiene.py),
+friktionsmodell, SPY-beta-hedge (med sakerhetsspärren mot degenererad
+beta), kapacitetsspärr, manatlig-rebalanserings-motor (samma struktur
+som HYP-012, bara signalen och ombalanseringsfrekvensen skiljer sig).
 
 METODIK:
-- Signal: z(t) = (r_5d(t) - mean(r_5d, 63d)) / std(r_5d, 63d), dar r_5d
-  ar aktiens EGEN kumulativa avkastning senaste 5 handelsdagarna. Kop
-  nar z < -1.5 (oversald mot sin egen historik).
-- Exit: konvergens (|z| < 0.3) ELLER max hålltid 20 handelsdagar (kortare
-  an v6:s hålltid - reversal ar en snabbare effekt per litteraturen,
-  Lehmann 1990/Jegadeesh 1990).
-- Position: samma FIXED_FRAC/MAX_POS-modell som HYP-008 (individuella
-  handelstillfallen, inte manatlig portfolj-ombalansering som HYP-012).
-- Friktion/hedge/kapacitetsspärr: identiskt med HYP-008.
+- Signal: trailing 120-dagars realiserad volatilitet (std av dagliga
+  avkastningar). Ga lang i LAGSTA volatilitetsdecilen (kapacitetsbegransat).
+- Ombalansering: KVARTALSVIS (lagfrekvent, matchar litteraturens standard
+  for denna faktor - till skillnad fran momentum/reversal ar low-vol
+  en langsamt roterande, lag-turnover-faktor per konvention).
+- Kapacitetsspärr, friktion, SPY-hedge: identiskt med HYP-012.
 
 Kör vid flera kapitalnivåer via --capital <belopp>, eller alla tre
 (100000, 1000000, 10000000) via --all-levels.
@@ -60,20 +57,15 @@ from data_hygiene import clean_price_matrix  # noqa: E402
 FULL_START = "2010-01-01"
 FULL_END = "2024-12-31"
 
-RET_WINDOW = 5           # dagars avkastning som mats
-ZSCORE_WINDOW = 63       # trailing-fonster for z-score (samma som v6)
-MIN_HISTORY = 68         # RET_WINDOW + ZSCORE_WINDOW
-TRADE_Z_THRESH = 1.5     # samma troskel som v6 - INTE reverse-engineered
-TARGET_Z = 0.3           # samma konvergensmal som v6
-MAX_HOLDING_DAYS = 20    # kortare an v6 (60/oandligt) - reversal ar snabbare
+VOL_LOOKBACK_DAYS = 120   # trailing realiserad volatilitet
+VOL_MIN_HISTORY = 130
 
-STOP_LOSS = 0.06         # samma som v6/HYP-008 - oforandrad
-MAX_POS = 12             # samma som HYP-008
-FIXED_FRAC = 0.05        # samma som HYP-008
+DECILE_FRACTION = 0.10    # lagsta volatilitetsdecilen
+REBAL_FREQ = "QE"         # kvartalsvis - langfrekvent, standard for low-vol
 RF_ANNUAL = 0.02
 BETA_WINDOW = 126
 
-BORROW_ANNUAL_RATE = 0.03  # samma som HYP-008 - riktig friktion
+BORROW_ANNUAL_RATE = 0.03  # riktig friktion
 MAX_ADV_PCT = 0.10
 ADV_WINDOW = 20
 
@@ -81,7 +73,7 @@ HEDGE = "SPY"
 
 
 # ════════════════════════════════════════════════════════════
-#  DATA (identiskt med HYP-008)
+#  DATA (identiskt med HYP-012)
 # ════════════════════════════════════════════════════════════
 def load_universe():
     with UNIVERSE_FILE.open(encoding="utf-8") as f:
@@ -160,10 +152,6 @@ def compute_beta(prices, hedge, beta_window):
     enough_obs = (n >= 20).values
     valid_var = (var_y > 1e-8).values
     beta_arr = np.where(enough_obs & valid_var, beta_raw.values, 1.0).astype("float32")
-
-    # SÄKERHETSSPÄRR (upptäckt 2026-07-29, HYP-012): se den filens
-    # backtest.py for full forklaring - extremt tunt handlade tickers kan
-    # fa en nastan-noll varians och darmed en astronomisk beta-skattning.
     beta_arr = np.clip(beta_arr, -5.0, 5.0)
 
     return pd.DataFrame(beta_arr, index=prices.index, columns=prices.columns)
@@ -177,162 +165,120 @@ def compute_spread_matrix(high, low):
 
 
 # ════════════════════════════════════════════════════════════
-#  REVERSAL-SIGNAL (ny, ersatter par-identifiering + par-regression-zscore)
+#  LOW-VOL-SIGNAL (ny, ersatter momentum/reversal-signalen)
 # ════════════════════════════════════════════════════════════
-def compute_own_zscore(close, ret_window, zscore_window):
-    """
-    z(t) = (r_5d(t) - rullande_medel(r_5d, 63d)) / rullande_std(r_5d, 63d).
-    Helt vektoriserad over alla tickers samtidigt - ingen per-ticker-loop,
-    ingen regression, inget par-krav.
-    """
-    r5 = close.pct_change(ret_window)
-    roll_mean = r5.rolling(zscore_window).mean()
-    roll_std = r5.rolling(zscore_window).std()
-    z = (r5 - roll_mean) / roll_std
-    return z.astype("float32")
+def compute_realized_vol(close, lookback_days):
+    """Trailing realiserad volatilitet - vektoriserad over alla tickers."""
+    ret = close.pct_change()
+    return ret.rolling(lookback_days).std().astype("float32")
 
 
 # ════════════════════════════════════════════════════════════
-#  BACKTEST-MOTOR (samma struktur som HYP-008/009/011, ny signal + kortare hålltid)
+#  BACKTEST-MOTOR: manatlig->kvartalsvis ombalansering, lika viktad LAGSTA-vol-decil
+#  (samma struktur som HYP-012, bara REBAL_FREQ och signalriktningen skiljer)
 # ════════════════════════════════════════════════════════════
-def run_backtest(prices, hedge, zscore_df, beta_df, spread_df, volume,
-                 capital_level: float):
-    hedge_ret = hedge.pct_change()
-    rf_daily = RF_ANNUAL / 252
-    tickers = list(prices.columns)
+def run_backtest(close, hedge, vol_df, beta_df, spread_df, volume,
+                 universe_by_month, capital_level: float):
+    tickers = list(close.columns)
     tidx = {t: i for i, t in enumerate(tickers)}
+    hedge_ret = hedge.pct_change()
+    dollar_volume = (close * volume).rolling(ADV_WINDOW).mean()
 
-    dollar_volume = (prices * volume).rolling(ADV_WINDOW).mean()
+    rebal_dates = close.resample(REBAL_FREQ).last().index
+    rebal_dates = rebal_dates[(rebal_dates >= close.index[VOL_MIN_HISTORY]) & (rebal_dates <= close.index[-1])]
 
-    trade_state_vals = np.where(zscore_df.values < -TRADE_Z_THRESH, 1, 0)
+    start_idx = close.index.get_indexer([rebal_dates[0]])[0]
+    trade_dates = close.index[start_idx:]
 
-    start_idx = MIN_HISTORY + BETA_WINDOW
-    trade_dates = prices.index[start_idx:]
-
-    prices_v = prices.values
-    zscore_v = zscore_df.values
+    prices_v = close.values
     beta_v = beta_df.values
-    dollar_volume_v = dollar_volume.values
-    hedge_ret_v = hedge_ret.values
     spread_v = spread_df.reindex(columns=tickers).values
-    volume_v = volume.reindex(columns=tickers).values
+    hedge_ret_v = hedge_ret.values
 
-    cash, positions, pv_list, trade_log = float(capital_level), {}, [float(capital_level)], []
+    cash = float(capital_level)
+    holdings = {}
+    pv_list = [float(capital_level)]
+    trade_log = []
+    rebal_set = set(rebal_dates)
 
-    for date_i in range(start_idx, len(prices.index)):
-        date = prices.index[date_i]
+    for date_i in range(start_idx, len(close.index)):
+        date = close.index[date_i]
         hr_raw = hedge_ret_v[date_i]
         hr = float(hr_raw) if not np.isnan(hr_raw) else 0.0
-        cash += cash * rf_daily
+        cash += cash * (RF_ANNUAL / 252)
 
-        # ── Stäng positioner (stop, mal, ELLER max hålltid) ──
-        row_volume_today = volume_v[date_i]
-        to_close = []
-        for t, pos in positions.items():
-            ti = tidx[t]
-            cp = float(prices_v[date_i, ti])
-            cz = float(zscore_v[date_i, ti])
-            if np.isnan(cp):
-                continue
-            # Volym=0 (upptackt 2026-07-29): flera tickers har enstaka
-            # dagar med korrupt pris OCH noll handel samma dag (t.ex.
-            # IARED gav 8749x "vinst" via en falsk target-utgang driven av
-            # en sadan dag). Utan riktig handel gar dagens pris inte att
-            # lita pa for varken stop/target/tid - hoppa over hela dagen
-            # for just den har positionen, kolla igen nasta dag.
-            vt = row_volume_today[ti]
-            if np.isnan(vt) or vt <= 0:
-                continue
-            hit_stop = cp <= pos["stop"]
-            hit_target = not np.isnan(cz) and abs(cz) < TARGET_Z
-            hit_time = (date_i - pos["entry_day_i"]) >= MAX_HOLDING_DAYS
-            if hit_stop or hit_target or hit_time:
-                # Sakerhetsklipp (upptackt 2026-07-29): tickers som JET
-                # (936x) och PCD (99x) gav fysiskt omojliga vinster pa en
-                # 20-dagars hålltid - sannolikt oadjusterade omvanda
-                # aktiesplittar i datacachen, inte verkliga utfall. Ett
-                # enskilt smabolag kan i extremfall verkligen dubblas eller
-                # mer pa kort tid, men flera hundra ganger ar alltid ett
-                # datafel. Klipp prisforhallandet, inte bara den loggade
-                # returen, sa proceeds/cash forblir konsistenta.
-                price_ratio = np.clip(cp / pos["entry"], 0.05, 4.0)
-                gross_ret = price_ratio - 1
-                proceeds = pos["size"] * price_ratio
-                exit_spread = spread_v[date_i, ti]
-                if not np.isnan(exit_spread):
-                    proceeds -= proceeds * (exit_spread / 2)
-                cash += proceeds
-                net_ret = proceeds / pos["size"] - 1
-                to_close.append(t)
-                exit_type = "stop" if hit_stop else ("target" if hit_target else "time")
-                trade_log.append({"date": date, "ticker": t, "ret": net_ret, "gross_ret": gross_ret,
-                                   "type": exit_type, "cost": pos["size"]})
-        for t in to_close:
-            del positions[t]
+        if date in rebal_set:
+            month_key = date.strftime("%Y-%m-%d")
+            # Anvand samma manads-universumnyckel som narmast fore detta
+            # kvartalsslut (universumet ar byggt manadsvis, kvartalsslut
+            # faller alltid pa ett manadsslut ocksa - "QE" ar en delmangd
+            # av "ME").
+            eligible = [t for t in universe_by_month.get(month_key, []) if t in tidx]
+            vol_today = vol_df.loc[date]
+            scores = []
+            for t in eligible:
+                v = vol_today[t]
+                cp = prices_v[date_i, tidx[t]]
+                if not np.isnan(v) and not np.isnan(cp) and cp > 0:
+                    scores.append((v, t, cp))
+            scores.sort()  # LAGST volatilitet forst
+            n_top = max(1, int(len(scores) * DECILE_FRACTION)) if scores else 0
+            target_tickers = {t for _, t, _ in scores[:n_top]}
 
-        # ── Öppna nya positioner (kapacitetsspärrad storlek) ──
-        if len(positions) < MAX_POS:
-            cands = []
-            row_state = trade_state_vals[date_i]
-            row_prices = prices_v[date_i]
-            row_z = zscore_v[date_i]
-            row_volume = volume_v[date_i]
-            # row_prices > 0 kravs har (upptackt 2026-07-29): nagra tickers
-            # har enstaka rader med pris exakt 0.0 i cachen (dataartefakt,
-            # inte NaN) - utan detta filter kan effective_entry bli 0 och
-            # senare ge ZeroDivisionError vid utgang.
-            # row_volume > 0 kravs har (upptackt 2026-07-29, konkret fall:
-            # ticker MDVL fick close=12.39 den 2014-04-16 med VOLYM=0,
-            # mellan tva dagar runt ~7000-7500 - ett rent datafel, inte en
-            # verklig prisrorelse. En dag utan handel gar inte att handla i
-            # verkligheten heller - rimligt filter oavsett detta specifika
-            # fall, gav en falsk 594x-"vinst" i traden innan detta lades till.
-            buy_signal = (row_state == 1) & (row_z < -TRADE_Z_THRESH) & \
-                         ~np.isnan(row_prices) & (row_prices > 0) & \
-                         ~np.isnan(row_z) & (row_volume > 0)
-            for ti in np.flatnonzero(buy_signal):
-                t = tickers[ti]
-                if t in positions:
-                    continue
-                cands.append((abs(row_z[ti]), t, float(row_prices[ti])))
-            cands.sort(reverse=True)
-            slots = max(0, MAX_POS - len(positions))
-            for _, t, cp in cands[:slots]:
-                ti = tidx[t]
-                desired = FIXED_FRAC * cash
-                adv = dollar_volume_v[date_i, ti]
-                cap = adv * MAX_ADV_PCT if not np.isnan(adv) else desired
-                sz = min(desired, cap)
-                if sz < capital_level * 0.0001:
-                    continue
-                entry_spread = spread_v[date_i, ti]
-                if not np.isnan(entry_spread):
-                    effective_entry = cp * (1 + entry_spread / 2)
-                else:
-                    effective_entry = cp
-                cash -= sz
-                positions[t] = {"entry": effective_entry, "size": sz,
-                                "stop": effective_entry * (1 - STOP_LOSS),
-                                "entry_day_i": date_i}
+            # ── Salj namn som inte langre ar i lagsta volatilitetsdecilen ──
+            for t in list(holdings.keys()):
+                if t not in target_tickers:
+                    ti = tidx[t]
+                    cp = prices_v[date_i, ti]
+                    if np.isnan(cp):
+                        cp = holdings[t]["last_price"]
+                    proceeds = holdings[t]["shares"] * cp
+                    exit_spread = spread_v[date_i, ti]
+                    if not np.isnan(exit_spread):
+                        proceeds -= proceeds * (exit_spread / 2)
+                    cash += proceeds
+                    ret = proceeds / holdings[t]["cost"] - 1
+                    trade_log.append({"date": date, "ticker": t, "ret": ret,
+                                       "gross_ret": cp / holdings[t]["entry"] - 1, "type": "rebalance_exit",
+                                       "cost": holdings[t]["cost"]})
+                    del holdings[t]
 
-        # ── Portföljvärde (beta-neutral hedge mot SPY + borrow-kostnad) ──
-        # Samma sakerhetsklipp som vid stangning (upptackt 2026-07-29,
-        # se kommentaren dar) appliceras har pa MARKNADSVARDERINGEN av
-        # fortfarande OPPNA positioner - en korrupt/oadjusterad-split-pris
-        # en enda dag kan annars fa hela portfoljvardet att spika (konkret
-        # exempel: 2012-12-26 gav en dagsrorelse pa 2449% innan detta
-        # lades till, fran en oppen positions dagsvarde, inte en trade).
-        long_beta = 0.0
+            # ── Kop nya namn i lagsta volatilitetsdecilen (lika viktat, kapacitetsspärrat) ──
+            new_names = [t for t in target_tickers if t not in holdings]
+            if new_names:
+                target_dollar_per_name = cash / len(new_names) if len(new_names) > 0 else 0.0
+                for t in new_names:
+                    ti = tidx[t]
+                    cp = prices_v[date_i, ti]
+                    if np.isnan(cp) or cp <= 0:
+                        continue
+                    adv = dollar_volume.values[date_i, ti]
+                    cap_dollar = adv * MAX_ADV_PCT if not np.isnan(adv) else target_dollar_per_name
+                    sz = min(target_dollar_per_name, cap_dollar)
+                    if sz < capital_level * 0.0001 or sz > cash:
+                        sz = min(sz, cash)
+                    if sz <= 0:
+                        continue
+                    entry_spread = spread_v[date_i, ti]
+                    effective_entry = cp * (1 + entry_spread / 2) if not np.isnan(entry_spread) else cp
+                    shares = sz / effective_entry
+                    cash -= sz
+                    holdings[t] = {"shares": shares, "entry": effective_entry, "cost": sz, "last_price": cp}
+
+        # ── Portföljvärde (mark-to-market + SPY-beta-hedge) ──
         long_val = 0.0
-        for t, pos in positions.items():
+        long_beta = 0.0
+        for t, h in holdings.items():
             ti = tidx[t]
             cp = float(prices_v[date_i, ti])
-            vt = volume_v[date_i, ti]
-            if np.isnan(cp) or np.isnan(vt) or vt <= 0:
-                cp = pos["entry"]  # ingen handel/korrupt pris denna dag - behall senast kanda kostnadsvarde
-            price_ratio = np.clip(cp / pos["entry"], 0.05, 4.0)
-            long_beta += pos["size"] * price_ratio * float(beta_v[date_i, ti])
-            long_val += pos["size"] * price_ratio
+            if np.isnan(cp):
+                cp = h["last_price"]
+            else:
+                h["last_price"] = cp
+            val = h["shares"] * cp
+            long_val += val
+            long_beta += val * float(beta_v[date_i, ti])
+
         daily_borrow = borrow_cost(position_value=abs(long_beta), holding_days=1, annual_rate=BORROW_ANNUAL_RATE)
         hedge_pnl = -long_beta * hr - long_beta * (RF_ANNUAL / 2 / 252) - daily_borrow
 
@@ -344,7 +290,7 @@ def run_backtest(prices, hedge, zscore_df, beta_df, spread_df, volume,
 
 
 # ════════════════════════════════════════════════════════════
-#  METRICS (identiska definitioner mot HYP-008)
+#  METRICS (identiska definitioner mot HYP-012)
 # ════════════════════════════════════════════════════════════
 def sharpe(s, rf=0.02):
     r = s.pct_change().dropna()
@@ -374,13 +320,6 @@ def trade_stats(tl):
 
 
 def best_trade_excluded_metrics(pv, tl, capital_level):
-    """
-    Kriteriets punkt 3. Anvander den FAKTISKA positionskostnaden ("cost")
-    for den basta traden, inte en uppskattning fran capital_level*FIXED_FRAC
-    (samma bugg som hittades 2026-07-29 i HYP-008/009/011 - se
-    strategies/HYP-012/backtest.py for full forklaring. Fixad har direkt
-    istallet for att atenskapas.)
-    """
     if len(tl) == 0:
         return {"sharpe_excl_best": None, "calmar_excl_best": None}
     best_idx = tl["ret"].idxmax()
@@ -395,9 +334,9 @@ def best_trade_excluded_metrics(pv, tl, capital_level):
 # ════════════════════════════════════════════════════════════
 #  KÖRNING
 # ════════════════════════════════════════════════════════════
-def run_for_capital_level(capital_level, close, hedge, zscore_df, beta_df, spread_df, volume):
+def run_for_capital_level(capital_level, close, hedge, vol_df, beta_df, spread_df, volume, universe_by_month):
     print(f"    Kör backtest (kapitalnivå {capital_level:,.0f})...")
-    pv, tl = run_backtest(close, hedge, zscore_df, beta_df, spread_df, volume, capital_level)
+    pv, tl = run_backtest(close, hedge, vol_df, beta_df, spread_df, volume, universe_by_month, capital_level)
 
     result = {
         "capital_level": capital_level,
@@ -433,11 +372,11 @@ def main():
     hedge = load_hedge(FULL_START, FULL_END)
     print(f"  Prismatris: {close.shape}\n")
 
-    print("Sanerar prisdata (nollpriser/orimliga engångsrörelser, se strategies/common/data_hygiene.py)...")
+    print("Sanerar prisdata (nollpriser/orimliga engångsrörelser/volym=0, se strategies/common/data_hygiene.py)...")
     close, high, low = clean_price_matrix(close, high, low, volume=volume)
 
-    print("Beräknar reversal-z-score (enskild aktie, vektoriserad)...")
-    zscore_df = compute_own_zscore(close, RET_WINDOW, ZSCORE_WINDOW)
+    print("Beräknar volatilitets-signal (trailing 120 dagar, vektoriserad)...")
+    vol_df = compute_realized_vol(close, VOL_LOOKBACK_DAYS)
 
     print("Estimerar beta (görs en gång)...")
     beta_df = compute_beta(close, hedge, BETA_WINDOW)
@@ -448,7 +387,7 @@ def main():
     all_results = []
     for level in levels:
         print(f"--- Kapitalnivå: ${level:,.0f} ---")
-        result = run_for_capital_level(level, close, hedge, zscore_df, beta_df, spread_df, volume)
+        result = run_for_capital_level(level, close, hedge, vol_df, beta_df, spread_df, volume, universe_by_month)
         all_results.append(result)
         print(f"    CAGR={result['cagr']:+.2%}  Sharpe={result['sharpe']:.2f}  "
               f"Calmar={result['calmar']:.2f}  MaxDD={result['max_drawdown']:.1%}  "

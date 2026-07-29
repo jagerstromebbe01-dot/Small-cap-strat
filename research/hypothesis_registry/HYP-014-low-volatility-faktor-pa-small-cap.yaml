@@ -22,9 +22,37 @@ pass_fail_criterion: 'Samma universum/friktion/hedge som HYP-008. Signal: rangor
   Diagnostiskt syfte: low-vol-anomalin forklaras i litteraturen av institutionella hävstångs-/benchmarkbegransningar
   (en ANNAN kapacitetsmekanism an ren AUM-kapacitet) - testar om den mekanismen ger utnyttjbar edge specifikt
   i small-cap.'
-status: pre-registered
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 10
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: 0.3883, calmar: 0.2289, sharpe_excl_best_trade: 0.2073, max_drawdown: -0.4746, win_rate: 0.5620, profit_factor: 2.3107, n_trades: 1096, deflated_sharpe_ratio: 0.3512}
+  1000000: {sharpe: 0.3861, calmar: 0.1964, sharpe_excl_best_trade: 0.1895, max_drawdown: -0.4686, win_rate: 0.5630, profit_factor: 2.3107, n_trades: 1096, deflated_sharpe_ratio: 0.3691}
+  10000000: {sharpe: 0.2058, calmar: 0.1072, sharpe_excl_best_trade: 0.1399, max_drawdown: -0.3617, win_rate: 0.5620, profit_factor: 2.3107, n_trades: 1096, deflated_sharpe_ratio: 0.1766}
+date_tested: 2026-07-29
+result_summary: >
+  FAILED på samtliga tre kapitalnivåer (Sharpe 0.39/0.39/0.21), men det
+  BÄSTA resultatet av alla hypoteser testade hittills i projektet (över
+  K=13 försök) - tydligt positivt, högst DSR (0.35/0.37/0.18) av alla
+  testade hypoteser, men fortfarande under 0.55-tröskeln. Institutionella
+  hävstångs-/benchmarkbegränsningar (den teoretiska mekanismen bakom
+  low-vol-anomalin) verkar ge ett svagt men mätbart utslag i small-cap,
+  till skillnad från de rena kapacitets- och reversionsmekanismerna som
+  testats i HYP-008/009/011/012/013. KAND BEGRANSNING: en ticker (ESSA)
+  visade tecken pa ett universumklassificeringsfel (pris ~$700-800 med
+  tiotals miljoner i daglig volym - orimligt for ett $100M-$2B-bolag),
+  ej annu undersokt vidare - se scripts-loggen for detaljer. Paverkar
+  sannolikt inte FAIL-slutsatsen (Sharpe langt under tröskeln aven om
+  denna enskilda position exkluderas) men bor granskas separat.
+sharpe_raw:
+  100000: 0.3883
+  1000000: 0.3861
+  10000000: 0.2058
+# Beräknad mot K=13 (7 döda ejay-varianter + HYP-008/009/011 + HYP-012/013/014 själva), via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.3512
+  1000000: 0.3691
+  10000000: 0.1766

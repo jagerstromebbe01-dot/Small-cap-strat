@@ -1,2 +1,2 @@
-k_total: 10
-note: "7 ejay-varianter + HYP-008 (v6-kärna på small-cap, FAILED 2026-07-27) + HYP-009 (friktionsablation, FAILED 2026-07-29) + HYP-011 (högre kapitalutnyttjande + tidsstopp, FAILED 2026-07-29, sämre än HYP-008/009) - se research/hypothesis_registry/"
+k_total: 13
+note: "7 ejay-varianter + HYP-008 (v6-kärna på small-cap, FAILED 2026-07-27) + HYP-009 (friktionsablation, FAILED 2026-07-29) + HYP-011 (högre kapitalutnyttjande + tidsstopp, FAILED 2026-07-29) + HYP-012 (momentum, FAILED 2026-07-29) + HYP-013 (enskild-aktie-reversal, FAILED 2026-07-29) + HYP-014 (low-volatility, FAILED 2026-07-29, bästa resultatet hittills men fortfarande under tröskeln) - se research/hypothesis_registry/"
