@@ -1,0 +1,33 @@
+# Ingen Coder-A/Coder-B-kedja anropad for denna hypotes - koden
+# skrevs direkt av Claude i chatt, pa CEO:s uppdrag, samma dag
+# kriteriet las. Loggat har for att granskningsspåret ska vara
+# komplett, i linje med samma princip som ovriga hypoteser.
+
+hypothesis_id: HYP-011
+file_reviewed: strategies/HYP-011/backtest.py
+reviewed_against: strategies/HYP-009/backtest.py (den optimerade motorn)
+reviewer: claude (direkt i chatt, ej Coder-A/Coder-B-kedjan)
+coder_b_approved: true
+coder_b_notes: >
+  Kopierad fran strategies/HYP-009/backtest.py (redan validerad
+  numeriskt identisk motor). Endast tre andringar mot kriteriet:
+  (1) MAX_POS 12->24, (2) FIXED_FRAC 0.05->0.07, (3) ny tidsbaserad
+  stopp (entry_day_i sparas per position, stangs efter
+  MAX_HOLDING_DAYS=60 handelsdagar om varken stop eller target nadd
+  an). BORROW_ANNUAL_RATE aterstalld till 0.03 (riktig friktion,
+  inte HYP-009s ablation), SPREAD_COST_MULTIPLIER borttagen (full
+  spreadkostnad, ingen nollstallning). Stop-loss-trosklen (6%) och
+  alla ovriga v6-parametrar (COINT_WINDOW, ZSCORE_WINDOW,
+  TRADE_Z_THRESH, BETA_WINDOW, CORR_THRESH, MAX_PAIRS) ORORDA.
+  Kord: validate_hypothesis.py och validate_friction_usage.py, bada
+  exit 0. Resultat: FAILED pa alla tre kapitalnivaer, samre an bade
+  HYP-008 och HYP-009 (se result_summary i registerfilen).
+revision_history:
+  - date: '2026-07-29'
+    reviewer: claude (CEO-uppdrag, direkt i chatt)
+    approved: true
+    notes: >
+      Forsta och enda granskningen. Diff mot HYP-009/backtest.py,
+      manuell kontroll mot kriteriets ordalydelse (endast de tre
+      namnda andringarna), validate_hypothesis.py och
+      validate_friction_usage.py bada exit 0 innan korning.

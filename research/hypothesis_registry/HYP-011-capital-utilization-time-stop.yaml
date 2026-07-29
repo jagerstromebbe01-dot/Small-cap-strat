@@ -1,0 +1,72 @@
+# LÅST 2026-07-29 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Se konversationen 2026-07-29 for full motivering:
+# HYP-009 visade svagt POSITIV trade-nivå-ekonomi (profit factor 1.19,
+# vinstandel 51.8%) men djupt negativ portfoljniva-Sharpe, sannolikt pa
+# grund av lagt kapitalutnyttjande (~73 trades/ar over upp till 12
+# platser). Denna hypotes testar OM battre positionshantering later
+# den underliggande edgen synas pa portfoljniva - INTE en ny alfa-idé.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-011
+date_registered: '2026-07-29'
+title: v6-kärna på small-cap - högre kapitalutnyttjande + tidsbaserad stopp
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008 (2011-2024)
+pass_fail_criterion: 'Samma v6-signal/universum/period som HYP-008, MED riktig friktion (Corwin-Schultz-spread
+  + 3% borrow-kostnad, ej nollställd som i HYP-009). Två principiellt motiverade ändringar mot HYP-008
+  (INTE valda utifrån HYP-008/009s facit-siffror):
+
+  1. Hogre kapitalutnyttjande: MAX_POS 12 -> 24, FIXED_FRAC 5% -> 7%. Motiverat av att positionsplatserna
+  bara var ~35% fyllda i snitt i HYP-008/009, inte av vad som gav bäst resultat.
+
+  2. Tidsbaserad stopp: stäng en position efter max 60 handelsdagar om den inte konvergerat (|z|<0.3),
+  oavsett pris. Valt for att det är ungefär samma storleksordning som ZSCORE_WINDOW (63 dagar) - INTE
+  en omtrimmad procent-stop-loss baserad pa HYP-009s observerade -8.2% snittförlust pa stop-utgangar (det
+  vore data-snooping mot redan sett resultat).
+
+  Stop-loss-tröskeln (6%) och alla ovriga v6-parametrar (COINT_WINDOW, ZSCORE_WINDOW, TRADE_Z_THRESH,
+  BETA_WINDOW, korrelationskrav) forblir OFORANDRADE.
+
+
+  PASS kräver Sharpe (efter friktion) >= 0.55 pa MINST kapitalnivå $100k. FAIL annars.
+
+
+  Diagnostiskt syfte: avgöra om lagt kapitalutnyttjande och for sen exit (inte sjalva signalen) var huvudorsaken
+  till HYP-008/009s negativa resultat, eller om problemet ligger djupare (i sjalva signalens prediktiva
+  formaga pa small-cap).'
+status: failed
+k_total_hypotheses_before_this: 9
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: -0.3215, calmar: -0.0643, sharpe_excl_best_trade: -0.3325, max_drawdown: -0.6018, win_rate: 0.4691, profit_factor: 1.0101, n_trades: 2852, deflated_sharpe_ratio: 0.0037}
+  1000000: {sharpe: -0.3057, calmar: -0.0616, sharpe_excl_best_trade: -0.3170, max_drawdown: -0.5914, win_rate: 0.4691, profit_factor: 1.0101, n_trades: 2852, deflated_sharpe_ratio: 0.0043}
+  10000000: {sharpe: -0.2662, calmar: -0.0515, sharpe_excl_best_trade: -0.2800, max_drawdown: -0.5184, win_rate: 0.4693, profit_factor: 1.0112, n_trades: 2849, deflated_sharpe_ratio: 0.0064}
+date_tested: 2026-07-29
+result_summary: >
+  FAILED på samtliga tre kapitalnivåer, och SÄMRE än både HYP-008
+  (Sharpe -0.41 till -0.45) och HYP-009 (-0.17 till -0.21) på flera
+  mått, trots högre kapitalutnyttjande. Antal trades gick fran 1027
+  till 2852 (nästan 3x), men vinstandel FÖLL fran 51.8% till 46.9% och
+  profit factor fran 1.19 till nastan exakt 1.01 (i praktiken
+  nollresultat pa trade-nivå) - de extra platserna (12->24) fylldes med
+  lagre kvalitets-signaler, inte fler bra tillfallen. Max drawdown
+  nastan fordubblades (-60% mot -34%). Den tidsbaserade 60-dagarsstoppen
+  var INTE boven (86 sadana utgangar hade 91.9% vinstandel och +14.4%
+  snittavkastning - om nagot stangdes de for tidigt, inte for sent).
+  Slutsats: lagt kapitalutnyttjande var INTE huvudorsaken till
+  HYP-008/009s svaghet - att tvinga in mer kapital spadde bara ut
+  signalkvaliteten och okade risken, utan att forbattra riskjusterad
+  avkastning.
+sharpe_raw:
+  100000: -0.3215
+  1000000: -0.3057
+  10000000: -0.2662
+# Beräknad mot K=10 (7 döda ejay-varianter + HYP-008 + HYP-009 + HYP-011), via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.0037
+  1000000: 0.0043
+  10000000: 0.0064
