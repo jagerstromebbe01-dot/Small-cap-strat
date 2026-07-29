@@ -167,8 +167,9 @@
 
   <footer>
     Serverad lokalt från <code>dashboard/server.py</code> — läser om samtliga filer vid varje anrop, ingen cachning.
-    Fyra skrivbara endpoints existerar: arkivera kandidat, lägg till en fri anteckning, sätt en redan
-    kriterie-låst hypotes till pre-registered, och skapa ett hypotesutkast från en kandidatidé.
+    Fem skrivbara endpoints existerar: arkivera kandidat ("Släng"), tagga kandidat som komponent ("Komponent"),
+    lägg till en fri anteckning, sätt en redan kriterie-låst hypotes till pre-registered, och skapa ett
+    hypotesutkast från en kandidatidé ("Godkänn").
     Ingen endpoint kan ändra <code>pass_fail_criterion</code>, <code>status</code>, kapitalnivåer, eller <code>small_cap_definition</code>
     på en redan existerande hypotes — och utkast som skapas från en kandidatidé får alltid tomt kriterium och status <code>draft</code>.
   </footer>
@@ -349,6 +350,33 @@ function renderCandidates(state) {
     el.innerHTML = `<div class="empty-state">${onlyUnviewed ? 'Inga ogranskade kandidatidéer — allt granskat.' : 'Inga kandidatidéer ännu — Hypothesis Miner har inte lagt till något i candidate_ideas.md.'}</div>`;
     return;
   }
+function candidateTriageRow(c, hasNotes) {
+  if (c.archived) return `<span class="badge archived">Släng (arkiverad)</span>`;
+  if (c.component) return `<span class="badge other">Komponent</span>`;
+  if (c.draft_hypothesis_id) return `<span class="badge pre-registered">Godkänd → ${esc(c.draft_hypothesis_id)} (utkast)</span>`;
+  if (!hasNotes) return `<span class="note-hint">Skriv en anteckning ovan för att kunna kategorisera denna kandidat.</span>`;
+  return `
+    <button onclick="markComponent('${esc(c.id)}')">Komponent</button>
+    <button class="primary" onclick="draftHypothesis('${esc(c.id)}')">Godkänn</button>
+    <button onclick="archiveCandidate('${esc(c.id)}')">Släng</button>
+  `;
+}
+
+function renderCandidates(state) {
+  const el = document.getElementById('candidates');
+  const countEl = document.getElementById('unviewedCount');
+  const allCands = state.candidates || [];
+  const viewed = getViewedSet();
+  const unviewedTotal = allCands.filter(c => !viewed.has(String(c.id))).length;
+  countEl.textContent = unviewedTotal ? `(${unviewedTotal} ej granskade)` : '';
+
+  const onlyUnviewed = document.getElementById('unviewedOnly').checked;
+  const cands = onlyUnviewed ? allCands.filter(c => !viewed.has(String(c.id))) : allCands;
+
+  if (!cands.length) {
+    el.innerHTML = `<div class="empty-state">${onlyUnviewed ? 'Inga ogranskade kandidatidéer — allt granskat.' : 'Inga kandidatidéer ännu — Hypothesis Miner har inte lagt till något i candidate_ideas.md.'}</div>`;
+    return;
+  }
   el.innerHTML = cands.map(c => {
     const notes = notesFor(state, 'candidate', c.id);
     const isUnviewed = !viewed.has(String(c.id));
@@ -358,9 +386,6 @@ function renderCandidates(state) {
         <div class="card-title">${esc(c.header || ('Kandidat ' + c.id))}</div>
         <div style="display:flex; align-items:center; gap:8px; flex-wrap: wrap;">
           ${isUnviewed ? `<span class="badge unviewed">Ny</span>` : ''}
-          ${c.archived
-            ? '<span class="badge archived">Arkiverad</span>'
-            : `<button onclick="archiveCandidate('${esc(c.id)}')">Arkivera</button>`}
         </div>
       </div>
       <div class="kv">
@@ -370,12 +395,14 @@ function renderCandidates(state) {
       </div>
       ${renderNotesList(notes)}
       ${renderNoteForm('candidate', c.id)}
-      <div style="display:flex; gap:8px; flex-wrap: wrap;">
+      <div style="display:flex; gap:8px; flex-wrap: wrap; align-items:center;">
         <a class="dl-link" href="/api/candidate/${encodeURIComponent(c.id)}/download" download>Ladda ner</a>
         ${isUnviewed
           ? `<button onclick="markViewed('${esc(c.id)}')">Markera som granskad</button>`
           : `<button disabled>Granskad ✓</button>`}
-        ${!c.archived ? `<button onclick="draftHypothesis('${esc(c.id)}')">Skapa hypotesutkast</button>` : ''}
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap: wrap; align-items:center; border-top: 1px solid var(--hairline); padding-top: 10px;">
+        ${candidateTriageRow(c, notes.length > 0)}
       </div>
     </div>
   `;
@@ -444,6 +471,11 @@ async function refresh() {
 
 async function archiveCandidate(id) {
   await fetch(`/api/candidate/${encodeURIComponent(id)}/archive`, { method: 'POST' });
+  refresh();
+}
+
+async function markComponent(id) {
+  await fetch(`/api/candidate/${encodeURIComponent(id)}/mark-component`, { method: 'POST' });
   refresh();
 }
 

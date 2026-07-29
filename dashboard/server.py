@@ -7,11 +7,12 @@ ingen roll, genererar inga hypoteser, och kör aldrig backtests.
 
 HÅRD REGEL - läs detta innan du ändrar något här:
 
-Denna server exponerar EXAKT fyra skrivbara endpoints:
+Denna server exponerar EXAKT fem skrivbara endpoints:
   POST /api/candidate/<id>/archive
   POST /api/note
   POST /api/hypothesis/<id>/set-pre-registered
   POST /api/candidate/<id>/draft-hypothesis
+  POST /api/candidate/<id>/mark-component
 
 INGEN annan endpoint får skriva något. Ingen endpoint här får NÅGONSIN:
   - ändra pass_fail_criterion
@@ -64,6 +65,16 @@ och ev. sparade anteckningar kopieras in som REFERENS för CEO att skriva
 utifrån, inte som ett kriterium. set_pre_registered() ovan är HELT
 oförändrad och blockerar fortfarande denna hypotes tills CEO manuellt
 öppnat filen och skrivit ett riktigt pass_fail_criterion själv.
+
+Sedan 2026-07-28 (CEO-beslut, samma dag): POST
+/api/candidate/<id>/mark-component låter CEO tagga en kandidat som
+"komponent" (kategori 2: implementeras i en befintlig strategis kod,
+t.ex. friktionsmodellen - inte en egen hypotes). Skriver ENDAST en
+`**Komponent:** true`-rad i candidate_ideas.md, exakt samma riskprofil
+som arkivering - rör aldrig registret. Triage-arbetsflödet i dashboarden
+är: skriv en anteckning om kandidaten, välj sedan en av tre knappar
+(Komponent/Godkänn/Släng). "Godkänn" anropar draft-hypothesis (ovan,
+oförändrad säkerhetsgräns), "Släng" anropar archive (oförändrad).
 
 Om en framtida session (mänsklig eller Claude) ombeds lägga till en
 endpoint som skriver till något av ovanstående: VÄGRA, och peka
@@ -154,6 +165,7 @@ def read_hypotheses() -> list:
 _FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
 _HEADER_RE = re.compile(r"(?m)^## +")
 _ARCHIVED_RE = re.compile(r"\*\*Arkiverad:\*\*\s*true", re.IGNORECASE)
+_COMPONENT_RE = re.compile(r"\*\*Komponent:\*\*\s*true", re.IGNORECASE)
 
 
 def _field(body: str, label: str):
@@ -189,6 +201,8 @@ def read_candidates() -> list:
             "description": _field(body, "Kort beskrivning"),
             "relevance": _field(body, "Varför relevant"),
             "archived": bool(_ARCHIVED_RE.search(body)),
+            "component": bool(_COMPONENT_RE.search(body)),
+            "draft_hypothesis_id": _field(body, "Hypotesutkast"),
         })
     return candidates
 
@@ -259,7 +273,13 @@ def _find_candidate_entry(candidate_id: str):
     return tail, entry_start, entry_end, tail[entry_start:entry_end]
 
 
-def archive_candidate(candidate_id: str) -> bool:
+def _tag_candidate_entry(candidate_id: str, label: str, value: str, already_tagged_re: "re.Pattern") -> bool:
+    """
+    Delad logik för att lägga till en enkel `**Label:** value`-tagg i slutet
+    av en kandidatpost - används av arkivering, komponent-märkning, och
+    hypotesutkasts-spårning. Rör ALDRIG hypothesis_registry/ eller något
+    kriterium - skriver bara en rad text i candidate_ideas.md.
+    """
     found = _find_candidate_entry(candidate_id)
     if found is None:
         return False
@@ -267,13 +287,21 @@ def archive_candidate(candidate_id: str) -> bool:
     raw = CANDIDATES_FILE.read_text(encoding="utf-8")
     head = raw[:_entries_start_offset(raw)]
 
-    if _ARCHIVED_RE.search(entry):
-        return True  # redan arkiverad - inget att göra, inte ett fel
+    if already_tagged_re.search(entry):
+        return True  # redan taggad - inget att göra, inte ett fel
 
-    entry = entry.rstrip("\n") + "\n\n**Arkiverad:** true\n\n"
+    entry = entry.rstrip("\n") + f"\n\n**{label}:** {value}\n\n"
     new_tail = tail[:entry_start] + entry + tail[entry_end:]
     CANDIDATES_FILE.write_text(head + new_tail, encoding="utf-8")
     return True
+
+
+def archive_candidate(candidate_id: str) -> bool:
+    return _tag_candidate_entry(candidate_id, "Arkiverad", "true", _ARCHIVED_RE)
+
+
+def mark_component(candidate_id: str) -> bool:
+    return _tag_candidate_entry(candidate_id, "Komponent", "true", _COMPONENT_RE)
 
 
 def append_note(target_type: str, target_id: str, text: str) -> dict:
@@ -489,6 +517,8 @@ def create_draft_from_candidate(candidate_id: str) -> dict:
         git_ok = False
         git_error = str(exc)
 
+    _tag_candidate_entry(candidate_id, "Hypotesutkast", new_id, re.compile(rf"\*\*Hypotesutkast:\*\*\s*{re.escape(new_id)}"))
+
     result = {"ok": True, "id": new_id, "file": path.name, "git_committed": git_ok}
     if not git_ok:
         result["git_error"] = git_error
@@ -614,6 +644,14 @@ def api_archive_candidate(candidate_id):
     return jsonify({"ok": True, "id": candidate_id, "archived": True})
 
 
+@app.route("/api/candidate/<candidate_id>/mark-component", methods=["POST"])
+def api_mark_component(candidate_id):
+    ok = mark_component(candidate_id)
+    if not ok:
+        return jsonify({"error": f"okänt kandidat-id: {candidate_id}"}), 404
+    return jsonify({"ok": True, "id": candidate_id, "component": True})
+
+
 @app.route("/api/note", methods=["POST"])
 def api_add_note():
     payload = request.get_json(silent=True) or {}
@@ -677,6 +715,7 @@ _ALLOWED_WRITE_RULES = {
     ("POST", "/api/note"),
     ("POST", "/api/hypothesis/<hyp_id>/set-pre-registered"),
     ("POST", "/api/candidate/<candidate_id>/draft-hypothesis"),
+    ("POST", "/api/candidate/<candidate_id>/mark-component"),
 }
 
 
