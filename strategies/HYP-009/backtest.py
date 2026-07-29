@@ -293,6 +293,17 @@ def compute_beta(prices, hedge, beta_window):
     valid_var = (var_y > 1e-8).values
     beta_arr = np.where(enough_obs & valid_var, beta_raw.values, 1.0).astype("float32")
 
+    # SÄKERHETSSPÄRR (upptäckt 2026-07-29, vid HYP-012): var_y > 1e-8 räcker
+    # INTE för att fånga extremt tunt handlade tickers med nästan-noll
+    # varians i det rullande fönstret - cov/var_y kan da bli miljontals
+    # (konkret exempel: ticker "PPCBD" fick beta -5 492 368 den 2020-09-23
+    # i samma universum), vilket gör long_beta/hedge_pnl astronomiskt och
+    # kan ge negativt portföljvärde. Beta utanför [-5, 5] ar aldrig en
+    # meningsfull riskexponering for en enskild aktie mot ett marknadsindex.
+    # Denna fix appliceras retroaktivt pa HYP-009 - resultatet kors om for
+    # att se om det redan rapporterade resultatet paverkas.
+    beta_arr = np.clip(beta_arr, -5.0, 5.0)
+
     return pd.DataFrame(beta_arr, index=prices.index, columns=prices.columns)
 
 

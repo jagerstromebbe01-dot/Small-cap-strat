@@ -1,0 +1,30 @@
+# LÅST 2026-07-29 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Del av en grupp om tre (HYP-012/013/014) -
+# pivot fran par-baserad handel (HYP-008/009/011, alla FAILED) till
+# klassiska, litteraturgrundade faktorer som inte kraver korrelerade par.
+# Se konversationen 2026-07-29 for full motivering och kallor.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-014
+date_registered: '2026-07-29'
+title: Low-volatility-faktor pa small-cap
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008 (2011-2024)
+pass_fail_criterion: 'Samma universum/friktion/hedge som HYP-008. Signal: rangordna efter trailing 120-dagars
+  realiserad volatilitet (std av dagliga avkastningar), ga lang i lagsta volatilitetsdecilen (kapacitetsbegransat),
+  kvartalsvis ombalansering (laagfrekvent, matchar litteraturens standard for denna faktor - se t.ex.
+  Ang, Hjalmarsson m.fl.). Samma kapacitetsspärr som HYP-008.
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer. FAIL om nagon nivå faller
+  under.
+
+  Diagnostiskt syfte: low-vol-anomalin forklaras i litteraturen av institutionella hävstångs-/benchmarkbegransningar
+  (en ANNAN kapacitetsmekanism an ren AUM-kapacitet) - testar om den mekanismen ger utnyttjbar edge specifikt
+  i small-cap.'
+status: pre-registered
+k_total_hypotheses_before_this: 10
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000

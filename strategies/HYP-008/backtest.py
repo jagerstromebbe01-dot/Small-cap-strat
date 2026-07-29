@@ -255,6 +255,14 @@ def compute_beta(prices, hedge, beta_window):
             if cov[1, 1] > 1e-8:
                 beta_arr[i, si] = cov[0, 1] / cov[1, 1]
 
+    # SÄKERHETSSPÄRR (upptäckt 2026-07-29, vid HYP-012): cov[1,1] > 1e-8
+    # räcker INTE för att fånga extremt tunt handlade tickers med nästan-noll
+    # varians - kvoten kan da bli miljontals. Beta utanför [-5, 5] ar aldrig
+    # en meningsfull riskexponering for en enskild aktie mot ett
+    # marknadsindex. Denna fix appliceras retroaktivt pa HYP-008 - resultatet
+    # kors om for att se om det redan rapporterade resultatet paverkas.
+    beta_arr = np.clip(beta_arr, -5.0, 5.0)
+
     return pd.DataFrame(beta_arr, index=prices.index, columns=prices.columns)
 
 
