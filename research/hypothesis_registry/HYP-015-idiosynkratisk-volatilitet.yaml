@@ -1,0 +1,102 @@
+# LÅST 2026-07-29 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Uppfoljare till HYP-014 (low-volatility,
+# FAILED men basta resultatet av K=13 hypoteser sa langt) - se
+# research/candidate_ideas.md, posten om Ang/Hodrick/Xing/Zhang (2006),
+# for kallmotiveringen. Se konversationen 2026-07-29 for full motivering,
+# inklusive granskningen som hittade ombalanseringsbuggen och
+# ESSA-artefakten i HYP-014.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-015
+date_registered: '2026-07-29'
+title: Idiosynkratisk volatilitet pa small-cap (uppfoljare till HYP-014)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/012/014 (2011-2024)
+pass_fail_criterion: 'Samma universum/friktion/hedge/kapacitetsspärr och kvartalsvisa ombalansering som HYP-014.
+  Signal: IDIOSYNKRATISK volatilitet i stallet for total volatilitet - dvs std av REGRESSIONSRESIDUALEN
+  (daglig aktieavkastning minus beta*daglig SPY-avkastning, med beta fran den redan befintliga
+  compute_beta()-funktionen, 126-dagars fonster, klippt till [-5,5]) over samma 120-dagars trailing-fonster
+  som HYP-014 anvande for total std (Ang, Hodrick, Xing & Zhang 2006). Ga lang i LAGSTA idiosynkratiska-vol-decilen,
+  kvartalsvis ombalansering (QE), samma som HYP-014.
+
+  Friktion: Corwin-Schultz-spread + 3% arlig borrow-kostnad, identiskt med HYP-008/012/014 - AKTIV fran
+  dag ett, inte valfri.
+
+  MOTORKRAV (LOCKAT som en del av detta kriterium, inte valfritt - se granskningen 2026-07-29 som hittade
+  dessa tre defekter delade med HYP-012/014):
+  1. Ombalanseringsdatum SKA snappas till narmaste faktiska handelsdag via strategies/common/rebalancing.py
+     (snap_rebalance_dates) - INTE rakt av kalender-periodslutsetiketter fran resample().last().index, vilket
+     tystnar ~32% av alla kvartalsvisa ombalanseringar (se ESSA-fallet i HYP-014).
+  2. Avkastnings-/volatilitetsberakning SKA anvanda adjusted_close-kolumnen (redan i cachen, tidigare oanvand),
+     INTE ra close, for att undvika falska volatilitetsspikar fran ojusterade aktiesplitar (se ARDMQ-fallet
+     i HYP-012). Positionsvarde/exekvering far fortsatta anvanda ra close.
+  3. strategies/common/data_hygiene.py:s flag_implausible_liquidity() SKA anvandas (max_market_cap=2_000_000_000,
+     window=20, multiplier=1.0) for att maska ticker-dagar dar leverantors-datafel (tickerkollisioner av
+     ESSA-typ) ger orimlig dollarvolym relativt universumets marknadsvardesband - clean_price_matrix() ensam
+     fangar INTE detta monster (se granskningen 2026-07-29).
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M). FAIL om nagon
+  niva faller under.
+
+  Diagnostiskt syfte: HYP-014 visade en svag men matbar edge fran institutionella hävstångs-/
+  benchmarkbegransningar via TOTAL volatilitet, men foll under trosklen och hade dessutom en dokumenterat
+  overskattad Sharpe (ESSA-artefakten, en enda felaktig trade som stod for halva den rapporterade Sharpen).
+  Idiosynkratisk volatilitet ar den i litteraturen starkare, renare formen av samma anomali (Ang et al. 2006)
+  - detta testar om en mer prеcis signal, pa en korrigerad motor, tar sig over trosklen dar total-vol-varianten
+  inte gjorde det.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 13
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 0.4474, calmar: 0.1707, sharpe_excl_best_trade: 0.4320, max_drawdown: -0.4798, win_rate: 0.6075, profit_factor: 2.2731, n_trades: 1432, deflated_sharpe_ratio: 0.4672}
+  1000000: {sharpe: 0.4608, calmar: 0.1771, sharpe_excl_best_trade: 0.4452, max_drawdown: -0.4709, win_rate: 0.6068, profit_factor: 2.2731, n_trades: 1432, deflated_sharpe_ratio: 0.4871}
+  10000000: {sharpe: 0.5231, calmar: 0.2637, sharpe_excl_best_trade: 0.5161, max_drawdown: -0.3054, win_rate: 0.6075, profit_factor: 2.2731, n_trades: 1432, deflated_sharpe_ratio: 0.5800}
+date_tested: 2026-07-29
+result_summary: >
+  FAILED på samtliga tre kapitalnivåer, men det BÄSTA resultatet av alla
+  hypoteser testade hittills i projektet (över K=15 försök): Sharpe
+  0.45/0.46/0.52, DSR 0.47/0.49/0.58 (samtliga högre än HYP-014:s
+  ursprungliga 0.39/0.39/0.21 och DSR 0.35/0.37/0.18). Ovanligt mönster
+  (delat med HYP-014): Sharpe OKAR med kapitalnivå (0.45 -> 0.52) snarare
+  än att falla, motsatsen till nästan alla andra hypoteser i registret -
+  sannolikt eftersom kapacitetsspärren (MAX_ADV_PCT) vid högre kapital
+  tvingar bort de minst likvida/mest volatila namnen ur decilen, vilket
+  händelsevis minskar just den typ av risk idiosynkratisk volatilitet
+  ska fånga. Trade-ekonomin är stark (win rate 61%, profit factor 2.27,
+  bättre än HYP-014:s redan goda 2.31... nästan identisk). Körd på en
+  motor med TRE fixar jämfört med HYP-014: (1) ombalanseringsdatum
+  snappade till faktisk handelsdag (ingen tyst överhoppning), (2)
+  adjusted_close använd genomgående - även för positionsvärdering, INTE
+  bara signalen (en kvarvarande split-artefakt, ticker "COL" +1362% i en
+  första körning, upptäcktes och fixades innan detta slutresultat), (3)
+  likviditets-rimlighetsfilter (488 ticker-dagar maskade totalt, inkl.
+  ESSA som nu korrekt säljs 2023-06-30, FÖRE datafelet 2023-12-15, i
+  stället för att rida igenom det som i HYP-014).
+sharpe_raw:
+  100000: 0.4474
+  1000000: 0.4608
+  10000000: 0.5231
+# Beräknad mot K=15 (7 döda ejay-varianter + HYP-008/009/011/012/013/014 + HYP-015/016 själva),
+# via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.4672
+  1000000: 0.4871
+  10000000: 0.5800
+notes: >
+  KÄND, EJ LÖST BEGRÄNSNING: dominerande traden vid $100k är nu "RLH"
+  (+922%, 2011-2012), inte en klar tickerkollision av ESSA-typ (rå close
+  rör sig normalt, ~7-8 -> ~6.9, en rimlig -11%), MEN dess egen
+  adjusted_close-faktor förändras dramatiskt under samma period (0.80 ->
+  6.93, en ~8.6x förändring i själva justeringsfaktorn) UTAN en
+  motsvarande rörelse i rå close - tyder på ett möjligt fel i
+  LEVERANTÖRENS adjusted_close-beräkning för denna ticker (skiljer sig
+  från ESSA/ARDMQ-mönstren, som båda var fel i antingen rå close eller i
+  en äkta men ojusterad split). Flaggat för framtida granskning, ej
+  undersökt djupare - påverkar sannolikt inte FAIL-slutsatsen
+  (sharpe_excl_best_trade är nästan identisk med full-sharpe, 0.43-0.52
+  mot 0.45-0.52, till skillnad från HYP-014 där denna typ av trade stod
+  för halva resultatet).

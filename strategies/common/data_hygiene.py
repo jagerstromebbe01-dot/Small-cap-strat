@@ -148,6 +148,46 @@ def clean_price_matrix(close: pd.DataFrame, high: pd.DataFrame = None, low: pd.D
     return tuple(results) if len(results) > 1 else results[0]
 
 
+def flag_implausible_liquidity(close: pd.DataFrame, volume: pd.DataFrame,
+                                max_market_cap: float, window: int = 20,
+                                multiplier: float = 1.0) -> pd.DataFrame:
+    """
+    Upptackt 2026-07-29 (HYP-014, ticker "ESSA"): clean_price_matrix():s
+    lokala-median-filter ar MEDVETET konstruerat för att INTE rensa bort
+    en akta, varaktig prisnivaforandring pa riktig volym (se "E"/IDTYD-
+    fallet ovan) - men det gor den blind for en annan sorts fel: en
+    leverantors-datafel dar en small-cap-ticker borjar servera en HELT
+    ANNAN akties pris+volym (troligen en tickerkollision mot en annan
+    borsnoterad post), som sedan hander sig vara "stabil" i sitt eget
+    lokala fonster precis som ett akta omvarderingsfall. ESSA gick fran
+    ~$19 till ~$510 den 2023-12-15 och lag sedan KVAR dar i manader, med
+    daglig dollarvolym pa $10-20 MILJARDER - for ett bolag klassificerat
+    i $100M-$2B-bandet. Ingen prismonster-baserad detektor (lokal median
+    eller annars) kan skilja detta fran ett akta 27x-uppsving pa riktig
+    volym, eftersom bada ser statistiskt identiska ut i just
+    pris/volym-terminologi.
+
+    Losningen ligger inte i prismonstret utan i EKONOMISK RIMLIGHET:
+    ett bolag kan inte, i genomsnitt over `window` handelsdagar, handla
+    for mer dollar an HELA sitt antagna maximala marknadsvarde varje
+    enda dag - det skulle innebara att mer an 100% av bolagets totala
+    varde byter agare dagligen, sett over en manad, vilket ingen riktig
+    aktie nagonsin gor (avgorande skillnad fran ett enskilt handelsdygn
+    med hog omsattning kring en nyhet - HAR kravs det HALLA i sig over
+    hela `window`-fonstret via rullande medelvarde).
+
+    Returnerar en boolesk DataFrame (samma form som close), True dar den
+    rullande `window`-dagars genomsnittliga dollarvolymen overstiger
+    `multiplier * max_market_cap`. Anropande kod maskar close/high/low
+    till NaN dar detta ar True (samma monster som no_trade-masken i
+    clean_price_matrix ovan) - anvands separat, INTE inbakat i
+    clean_price_matrix, eftersom det kraver en universum-specifik
+    parameter (max_market_cap) som den funktionen inte kanner till.
+    """
+    dollar_volume = (close * volume).rolling(window).mean()
+    return dollar_volume > (multiplier * max_market_cap)
+
+
 if __name__ == "__main__":
     # Sanity-check med SYNTETISK data. Langre serier (40 dagar) an de
     # trasiga sviterna sjalva (5 dagar) - annars blir MEDIAN_WINDOW=21
@@ -182,3 +222,55 @@ if __name__ == "__main__":
     print(f"D: sista tva vardena (index 8-9, aterhamtat ~9) fortfarande giltiga: {cleaned['D'].iloc[8:10].notna().sum()} av 2 (vantat: 2)")
     print(f"E (AKTA prisnivaforandring): antal NaN totalt: {cleaned['E'].isna().sum()} (vantat: 0 eller nastan 0 - far INTE rensas bort)")
     print(f"E: sista vardet (ska vara ~300, den nya riktiga nivan): {cleaned['E'].iloc[-1]}")
+
+    print("\n--- flag_implausible_liquidity: ESSA-monstret (leverantors-tickerkollision) ---")
+    # F: identisk konstruktion som E (varaktig, "stabil" prisnivaforandring
+    # pa riktig volym) - clean_price_matrix() ska INTE rensa bort den, av
+    # samma skal som E - men till skillnad fran E:s IDTYD-forebild (ett
+    # akta small-cap-bolag som steg 35x) har F:s nya nivas dollarvolym en
+    # storleksordning som ar OMOJLIG for nagot bolag i $100M-$2B-bandet:
+    # ~$500 * 30 miljoner aktier/dag = $15 md/dag, mot ett antaget max
+    # marknadsvarde pa $2 md - bolaget skulle handla >7x sitt eget hela
+    # varde varje dag, i genomsnitt over tre veckor. Det ar signaturen
+    # pa en tickerkollision (ESSA), inte en akta omvardering (IDTYD).
+    #
+    # Egen, langre serie (80 dagar, overgang vid index 20) - bara for
+    # detta testet. Behovs eftersom rolling(20)-fonstret kraver 20 RENA
+    # (icke-NaN) observationer i rad for att ge ett varde alls; med den
+    # kortare 40-dagarsserien ovan (anpassad for A-E) hinner fonstret
+    # aldrig helt lamna de fa overgangsdagar clean_price_matrix maskar
+    # innan serien tar slut, vilket gav ett missvisande testresultat i en
+    # tidigare, for kort version av just detta testet - exakt samma
+    # lardom som kommentaren om MEDIAN_WINDOW ovan.
+    n2 = 80
+    dates2 = pd.date_range("2020-01-01", periods=n2)
+    e2 = np.full(n2, 9.0); e2[10:] = np.linspace(9, 300, n2 - 10)
+
+    f_close = np.full(n2, 15.0)
+    f_close[20:] = 510.0
+    f_volume = np.full(n2, 50_000.0)
+    f_volume[20:] = 30_000_000.0
+
+    close_f = pd.DataFrame({"E": e2, "F": f_close}, index=dates2)
+    volume_f = pd.DataFrame({"E": [500000] * n2, "F": f_volume}, index=dates2)
+
+    cleaned_f = clean_price_matrix(close_f, volume=volume_f)
+    # Nagra fa dagar precis vid overgangen kan maskas av det befintliga
+    # dag-mot-dag-fallback-filtret (samma som for D/HEC) - det ar
+    # korrekt och ofarligt har, eftersom flag_implausible_liquidity
+    # nedan anda tar hand om HELA den nya (felaktiga) nivan sa fort det
+    # rullande fonstret fyllts med rena observationer efter overgangen.
+    print(f"F efter clean_price_matrix ENSAM: antal NaN nara overgangen (index 10-20) = "
+          f"{int(cleaned_f['F'].iloc[10:20].isna().sum())} (forvantat > 0 men FA - inte hela sviten)")
+    print(f"F: sista 10 vardena fortfarande giltiga (steady-state, som for E/IDTYD): "
+          f"{int(cleaned_f['F'].iloc[-10:].notna().sum())} av 10")
+
+    implausible = flag_implausible_liquidity(cleaned_f, volume_f, max_market_cap=2_000_000_000)
+    print(f"F flaggad av flag_implausible_liquidity, sista 10 dagarna (fonstret fullt av den nya nivan): "
+          f"{int(implausible['F'].iloc[-10:].sum())} av 10 (vantat: 10 - hela steady-state-perioden ska flaggas)")
+    print(f"E flaggad av flag_implausible_liquidity (akta IDTYD-monster, normal volym): "
+          f"{int(implausible['E'].sum())} av {n} dagar (vantat: 0 - ska INTE flaggas)")
+    print("\n(Validerat separat mot RIKTIG ESSA-data 2026-07-29: clean_price_matrix maskar bara "
+          "6 av 227 dagar i overgangsfonstret, medan flag_implausible_liquidity fangar 171 av 227 "
+          "dagar - hela den felaktiga regimen fran ~6 veckor efter overgangen och framat, sa fort "
+          "det rullande 20-dagarsfonstret fyllts med rena observationer fran den nya nivan.)")

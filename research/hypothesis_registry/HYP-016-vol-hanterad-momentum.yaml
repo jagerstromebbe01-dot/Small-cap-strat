@@ -1,0 +1,121 @@
+# LÅST 2026-07-29 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Uppfoljare till HYP-012 (cross-sectional
+# momentum, FAILED pga katastrofal maxdrawdown snarare an avsaknad av
+# genomsnittlig edge) - se research/candidate_ideas.md, posten om
+# Barroso & Santa-Clara (2015) / Daniel & Moskowitz (2016), for
+# kallmotiveringen. Se konversationen 2026-07-29 for full motivering,
+# inklusive granskningen som hittade ombalanseringsbuggen och
+# ARDMQ-artefakten i HYP-012.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-016
+date_registered: '2026-07-29'
+title: Volatilitets-hanterad cross-sectional momentum pa small-cap (uppfoljare till HYP-012)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/012 (2011-2024)
+pass_fail_criterion: 'Samma universum/friktion/hedge/kapacitetsspärr, samma 12-1-manaders momentumsignal
+  och samma manatliga ombalansering (ME) som HYP-012 (ga lang i toppdecilen). Enda metodskillnaden:
+  positionsstorleken (bruttoexponeringen) skalas OMVANT mot momentumportfoljens EGEN nyligen realiserade
+  volatilitet (Barroso & Santa-Clara 2015), i stallet for konstant fullinvesterad exponering varje manad.
+
+  Volatilitets-skalning, exakt specificerad (INTE valfri, ingen efterhandsjustering av parametrar tillaten
+  efter att resultat setts):
+  - Realiserad volatilitet: rullande 126-handelsdagars (ca 6 manader) std av momentumportfoljens EGNA
+    dagliga avkastningar (fore skalning), annualiserad (*sqrt(252)).
+  - Malvolatilitet: FAST 20% annualiserat (valt a priori som ett runt, i litteraturen vanligt forekommande
+    tal for aktie-long/short-strategier - INTE skattat fran denna backtests egna fullsampel-Sharpe, for
+    att undvika minsta antydan till framatblick).
+  - Skalningsfaktor_t = malvolatilitet / realiserad_volatilitet_(t-1), klippt till intervallet [0.2, 2.0]
+    (forhindrar bade extrem hävstang och extrem avriskning).
+  - Bruttoexponeringen (andelen kapital som allokeras till momentumpositionerna den manaden) multipliceras
+    med denna faktor. Overskjutande/underskjutande kapital star i kassa till RF_ANNUAL (samma som ovriga
+    hypoteser), tas INTE ut som separat hävstang.
+
+  Friktion: Corwin-Schultz-spread + 3% arlig borrow-kostnad, identiskt med HYP-008/012 - AKTIV fran dag
+  ett, inte valfri.
+
+  MOTORKRAV (LOCKAT som en del av detta kriterium, inte valfritt - se granskningen 2026-07-29 som hittade
+  dessa tre defekter delade med HYP-012/014):
+  1. Ombalanseringsdatum SKA snappas till narmaste faktiska handelsdag via strategies/common/rebalancing.py
+     (snap_rebalance_dates) - INTE rakt av kalender-periodslutsetiketter fran resample().last().index,
+     vilket tystnar ~29% av alla manatliga ombalanseringar.
+  2. Avkastnings-/momentumberakning SKA anvanda adjusted_close-kolumnen (redan i cachen, tidigare oanvand),
+     INTE ra close, for att undvika falska momentumspikar fran ojusterade aktiesplitar (se ARDMQ-fallet,
+     +3923% pa en manad, som visade sig vara en icke split-justerad 1-for-40 omvand split). Positionsvarde/
+     exekvering far fortsatta anvanda ra close.
+  3. strategies/common/data_hygiene.py:s flag_implausible_liquidity() SKA anvandas (max_market_cap=2_000_000_000,
+     window=20, multiplier=1.0) for att maska ticker-dagar med leverantors-datafel av ESSA-typ.
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M).
+  2. Maxdrawdown battre (mindre negativ) an -50% pa SAMTLIGA tre kapitalnivaer - detta ar INTE godtyckligt
+     tillagt i efterhand, utan den direkta, forhandsspecificerade testen av om vol-skalning faktiskt
+     tamjer den specifika kraschrisk (-72% till -78% MaxDD) som var HYP-012:s dokumenterade felorsak.
+     Ett resultat som klarar (1) men inte (2) ar FAIL - hela poangen med denna hypotes ar att adressera
+     just svansrisken, inte bara medelavkastningen.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte: HYP-012 hade en svagt positiv ra Sharpe vid lagre kapitalnivaer men kraschade pa
+  maxdrawdown - en kand, dokumenterad "momentum crash"-signatur (Daniel & Moskowitz 2016). Barroso &
+  Santa-Clara (2015) visar att just denna svansrisk, inte den genomsnittliga avkastningen, ar det som
+  vol-skalning adresserar. Detta testar om den mekanismen racker for att fa small-cap-momentum over
+  trosklen pa en korrigerad motor (adjusted_close + snappade ombalanseringsdatum + liquiditetsfilter),
+  inte om momentum "fungerar" i nagon ny mening.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 13
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 0.1264, calmar: 0.0076, sharpe_excl_best_trade: 0.3374, calmar_excl_best_trade: null, max_drawdown: -0.7612, win_rate: 0.4230, profit_factor: 1.2270, n_trades: 4043, deflated_sharpe_ratio: 0.0711, baseline_sharpe_no_scaling: 0.1279, baseline_max_drawdown_no_scaling: -0.7802, mean_exposure_scale: 0.8186}
+  1000000: {sharpe: 0.1336, calmar: 0.0174, sharpe_excl_best_trade: 0.0500, calmar_excl_best_trade: null, max_drawdown: -0.7189, win_rate: 0.4235, profit_factor: 1.2264, n_trades: 4061, deflated_sharpe_ratio: 0.0774, baseline_sharpe_no_scaling: 0.1214, baseline_max_drawdown_no_scaling: -0.7623, mean_exposure_scale: 0.8374}
+  10000000: {sharpe: -0.0762, calmar: -0.0372, sharpe_excl_best_trade: -0.0873, calmar_excl_best_trade: -0.0578, max_drawdown: -0.7152, win_rate: 0.4232, profit_factor: 1.2322, n_trades: 4090, deflated_sharpe_ratio: 0.0199, baseline_sharpe_no_scaling: -0.0535, baseline_max_drawdown_no_scaling: -0.7133, mean_exposure_scale: 0.9148}
+date_tested: 2026-07-29
+result_summary: >
+  FAILED på BÅDA villkoren (Sharpe och MaxDD) på samtliga tre
+  kapitalnivåer. Sharpe 0.13/0.13/-0.08 - långt under 0.55-tröskeln.
+  MaxDD -76.1%/-71.9%/-71.5% - vol-skalningen (Barroso & Santa-Clara)
+  FÖRÄNDRADE KNAPPT MAXDRAWDOWN ALLS jämfört med den oskalade baslinjen
+  (-78.0%/-76.2%/-71.3% utan skalning) - genomsnittlig bruttoexponering
+  skalades ner till ~82-91% (mean_exposure_scale), men det räckte inte
+  för att tämja kraschrisken. Slutsats: mekanismen som fungerade i
+  Barroso & Santa-Claras ursprungliga (stor-cap) studie överför INTE till
+  detta small-cap-universum - kraschperioderna här verkar inte
+  föregås av tillräckligt förhöjd realiserad portföljvolatilitet för att
+  126-dagars-fönstret ska hinna skala ner exponeringen i tid.
+
+  VIKTIGT metodologiskt fynd (jämfört med HYP-012:s ursprungliga,
+  buggiga resultat): på den KORRIGERADE motorn (adjusted_close
+  genomgående, snappade ombalanseringsdatum, likviditetsfilter) är
+  baslinjens (oskalade) Sharpe nu 0.13/0.12/-0.05 - INTE HYP-012:s
+  ursprungliga 0.16/0.12/-0.01. Skillnaden är liten vid dessa nivåer
+  eftersom ARDMQ-artefakten (den tidigare dominerande tradade) nu bokar
+  en normal -16% förlust i stället för +3923% (bekräftat i trade_log) -
+  men resultatet visar ändå kvarvarande extrem skevhet (skew 26-30,
+  kurtosis 1170-1395 vid 100k/1M) fran andra, ej djupare undersökta
+  enskilda trades - se noter.
+sharpe_raw:
+  100000: 0.1264
+  1000000: 0.1336
+  10000000: -0.0762
+# Beräknad mot K=15 (7 döda ejay-varianter + HYP-008/009/011/012/013/014 + HYP-015/016 själva),
+# via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.0711
+  1000000: 0.0774
+  10000000: 0.0199
+notes: >
+  calmar_excl_best_trade är null (NaN) vid $100k/$1M - artefakt av
+  best_trade_excluded_metrics() på en redan djupt stressad serie
+  (MaxDD -76%): att subtrahera den bästa tradens dollar-P&L kan ge ett
+  negativt portföljvärde vid någon tidpunkt i den justerade serien,
+  vilket ger en odefinierad CAGR (bråkdels-potens av ett negativt tal).
+  Paverkar inte huvudslutsatsen (Sharpe/MaxDD-kriterierna, som ar
+  raknade pa den ojusterade serien). Kvarvarande hog skevhet/kurtosis i
+  trade-fordelningen (se result_summary) ar EJ djupare undersokt -
+  mojlig kandidat for en framtida data-hygien-granskning av samma typ
+  som ESSA/ARDMQ/COL, men paverkar inte FAIL-slutsatsen har (bada
+  kriterierna faller med bred marginal aven om en enskild trade skulle
+  visa sig vara ytterligare en artefakt).

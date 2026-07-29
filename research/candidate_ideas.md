@@ -215,3 +215,75 @@ att anta ett binärt "fungerar/fungerar inte". Relevant om en framtida
 hypotes vill bygga en explicit impact-kostnadsmodell (skalad mot
 genomsnittlig daglig volym per aktie) i stället för en platt
 kostnadsantagande per trade.
+
+---
+
+## [Datum, 2026-07-29]
+
+**Källa:** Ang, A., Hodrick, R. J., Xing, Y., & Zhang, X. (2006). "The
+Cross-Section of Volatility and Expected Returns." Journal of Finance,
+61(1), 259-299.
+
+**Kort beskrivning:** Visar att det är den IDIOSYNKRATISKA
+volatiliteten - residualvolatiliteten efter att marknadsbetan räknats
+bort via en faktormodell - snarare än TOTAL realiserad volatilitet, som
+är den robusta, starkare formen av lågvolatilitetsanomalin. Aktier med
+hög idiosynkratisk volatilitet har historiskt haft anmärkningsvärt lägre
+genomsnittlig framtida avkastning, ett resultat som är svårförklarat
+inom standardmodeller och renare än sorteringar på total std.
+
+**Varför relevant:** HYP-014 (low-volatility-faktorn på small-cap,
+testad 2026-07-29) sorterade på TOTAL realiserad volatilitet och gav
+det hittills bästa resultatet av alla K=13 testade hypoteser (Sharpe
+0.39/0.39/0.21, DSR 0.35-0.37) - men fortfarande FAILED. Ang et al. ger
+en konkret, väldokumenterad, annorlunda signal att testa i stället:
+residualen efter att marknadsbetan (redan beräknad via `compute_beta()`
+i delad kod) dragits bort, snarare än total std - inte en omkörning av
+samma sak, utan en specifik metodskillnad med egen litteraturgrund.
+OBS (upptäckt vid granskning 2026-07-29): HYP-014:s befintliga
+backtest-motor har en ombalanseringsbugg (kalenderdatum från
+`resample().last()` matchas mot handelskalendern, och ~32% av
+kvartalsslut hoppas tyst över när de faller på en icke-handelsdag) som
+lät en felklassificerad ticker (ESSA) rida igenom ett datafel
+okontrollerat i 9 månader och dominera det rapporterade resultatet
+(dess enda trade stod för hela skillnaden mellan Sharpe 0.39 och 0.21
+exkl. bästa traden). En idiosynkratisk-vol-uppföljare bör byggas på en
+FIXAD ombalanseringsmotor, inte ärva samma defekt.
+
+---
+
+## [Datum, 2026-07-29]
+
+**Källa:** Barroso, P., & Santa-Clara, P. (2015). "Momentum has its
+Moments." Journal of Financial Economics, 116(1), 111-120. Se även
+Daniel, K., & Moskowitz, T. J. (2016). "Momentum Crashes." Journal of
+Financial Economics, 122(2), 221-247.
+
+**Kort beskrivning:** Daniel & Moskowitz dokumenterar att
+momentumstrategier drabbas av sällsynta men extrema "krascher" -
+kraftiga, kortvariga reverseringar, typiskt strax efter marknadsbottnar
+när tidigare förlorare rekylerar kraftigt medan momentumportföljen är
+kort dem. Barroso & Santa-Clara visar att man kan eliminera merparten
+av denna svansrisk, med bibehållen genomsnittlig avkastning, genom att
+skala positionsstorleken OMVÄNT mot momentumportföljens EGEN nyligen
+realiserade volatilitet (inte marknadens) - dvs minska exponeringen när
+portföljen själv blivit ovanligt volatil, ett tecken på att en krasch
+är nära förestående.
+
+**Varför relevant:** HYP-012 (cross-sectional momentum 12-1 mån på
+small-cap, testad 2026-07-29) misslyckades INTE på grund av avsaknad av
+genomsnittlig edge (rå Sharpe var faktiskt positivt vid $100k/$1M:
+0.16/0.12) utan på grund av katastrofal maxdrawdown (-72% till -78%) -
+exakt den typ av svansrisk Daniel & Moskowitz beskriver, och exakt den
+mekanism Barroso & Santa-Clara adresserar direkt. Detta är alltså inte
+"testa momentum igen" utan en riktad fix mot en redan diagnostiserad
+felorsak. OBS (upptäckt vid granskning 2026-07-29): samma
+ombalanseringsbugg som i HYP-014 finns även i HYP-012:s backtest-motor
+(~29% av månadsslut hoppas tyst över), och det dominerande vinsttradet
+(ARDMQ, +3923% på en månad) ser ut att vara en icke split-justerad
+omvänd aktiesplit snarare än en riktig kursrörelse - samma mekanism som
+möjliggjorde ESSA-fallet ovan gav sannolikt en konstlat hög rapporterad
+Sharpe även här. En vol-hanterad-momentum-uppföljare bör byggas på en
+fixad ombalanseringsmotor OCH kontrollera att prisserien är
+split-justerad, inte bara återanvända befintlig infrastruktur
+oförändrad.

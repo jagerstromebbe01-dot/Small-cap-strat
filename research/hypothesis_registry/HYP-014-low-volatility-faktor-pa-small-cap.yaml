@@ -34,25 +34,46 @@ capital_level_results:
   10000000: {sharpe: 0.2058, calmar: 0.1072, sharpe_excl_best_trade: 0.1399, max_drawdown: -0.3617, win_rate: 0.5620, profit_factor: 2.3107, n_trades: 1096, deflated_sharpe_ratio: 0.1766}
 date_tested: 2026-07-29
 result_summary: >
-  FAILED på samtliga tre kapitalnivåer (Sharpe 0.39/0.39/0.21), men det
-  BÄSTA resultatet av alla hypoteser testade hittills i projektet (över
-  K=13 försök) - tydligt positivt, högst DSR (0.35/0.37/0.18) av alla
-  testade hypoteser, men fortfarande under 0.55-tröskeln. Institutionella
+  FAILED på samtliga tre kapitalnivåer (Sharpe 0.39/0.39/0.21). Var det
+  BÄSTA resultatet av K=13 hypoteser vid testtillfället, men har SEDAN
+  DESS överträffats av HYP-015 (idiosynkratisk vol, Sharpe 0.45/0.46/0.52,
+  DSR 0.47/0.49/0.58 vid K=15) - se den hypotesen. Institutionella
   hävstångs-/benchmarkbegränsningar (den teoretiska mekanismen bakom
   low-vol-anomalin) verkar ge ett svagt men mätbart utslag i small-cap,
   till skillnad från de rena kapacitets- och reversionsmekanismerna som
-  testats i HYP-008/009/011/012/013. KAND BEGRANSNING: en ticker (ESSA)
-  visade tecken pa ett universumklassificeringsfel (pris ~$700-800 med
-  tiotals miljoner i daglig volym - orimligt for ett $100M-$2B-bolag),
-  ej annu undersokt vidare - se scripts-loggen for detaljer. Paverkar
-  sannolikt inte FAIL-slutsatsen (Sharpe langt under tröskeln aven om
-  denna enskilda position exkluderas) men bor granskas separat.
+  testats i HYP-008/009/011/012/013.
+
+  UPPDATERING 2026-07-29 (granskning inför HYP-015/016): ESSA-tickern som
+  flaggades som en KAND BEGRANSNING nedan visade sig vara en leverantors-
+  datafel (permanent felaktig prisniva fran 2023-12-15, sannolikt en
+  tickerkollision) som via en DELAD ombalanseringsbugg (kalenderdatum-
+  etiketter matchades aldrig mot handelskalendern for ~32% av alla
+  kvartalsvisa ombalanseringar) fick rida okontrollerat i 9 manader och
+  bokade en enskild +5424%-trade som stod for HALVA denna hypotes
+  rapporterade Sharpe (0.39 fullt, 0.21 exkl. den traden - se
+  sharpe_excl_best nedan, som redan visade detta vid testtillfället).
+  Bekraftat i strategies/HYP-014/results/trade_log_100000.csv. Buggen
+  ar delad med HYP-012 (dar den paverkade ticker ARDMQ pa liknande satt)
+  och ar FIXAD i strategies/common/rebalancing.py + motsvarande fix av
+  adjusted_close-anvandning, tillampad i HYP-015/016. Denna hypotes
+  (HYP-014) kors INTE om - resultatet star kvar som testat, men
+  sharpe_excl_best (0.21/0.19/0.14) ar den mer PALITLIGA uppskattningen
+  av vad total-vol-signalen faktiskt levererade, inte den rapporterade
+  0.39/0.39/0.21. Paverkar INTE FAIL-slutsatsen (bada siffrorna ar under
+  0.55-tröskeln).
 sharpe_raw:
   100000: 0.3883
   1000000: 0.3861
   10000000: 0.2058
-# Beräknad mot K=13 (7 döda ejay-varianter + HYP-008/009/011 + HYP-012/013/014 själva), via scripts/deflated_sharpe_ratio.py
+# Ursprungligen beräknad mot K=13 (7 döda ejay-varianter + HYP-008/009/011
+# + HYP-012/013/014 själva) vid testtillfället 2026-07-29: 0.3512/0.3691/0.1766.
+# OMRÄKNAD 2026-07-29 mot K=15 (+ HYP-015/016) eftersom denna hypotes
+# fortfarande är "under övervägande" (direkt motiverande föregångare till
+# HYP-015) - Overfitting Detector-ansvar, se CLAUDE.md/spec §4. HYP-008/009/011
+# (redan entydigt FAILED med djupt negativ Sharpe) räknas INTE om, i linje med
+# hur 012/013/014 tidigare delade en gemensam slutgiltig K utan att räkna om
+# de äldre, redan avslutade parhandels-hypoteserna.
 deflated_sharpe_ratio:
-  100000: 0.3512
-  1000000: 0.3691
-  10000000: 0.1766
+  100000: 0.3122
+  1000000: 0.3353
+  10000000: 0.1596

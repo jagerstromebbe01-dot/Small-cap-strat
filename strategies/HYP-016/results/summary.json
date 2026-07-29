@@ -1,0 +1,59 @@
+[
+  {
+    "capital_level": 100000,
+    "cagr": 0.00578470086866778,
+    "sharpe": 0.12639483149427896,
+    "calmar": 0.007599816747522367,
+    "max_drawdown": -0.7611632044356417,
+    "trade_stats": {
+      "n": 4043,
+      "win_rate": 0.4229532525352461,
+      "avg_ret": 0.027440906878338528,
+      "pf": 1.226976961396441
+    },
+    "baseline_cagr": 0.0020810616688322625,
+    "baseline_sharpe": 0.12786717543858195,
+    "baseline_max_drawdown": -0.7801732933882576,
+    "mean_exposure_scale": 0.8185522478752238,
+    "sharpe_excl_best": 0.33735402820033067,
+    "calmar_excl_best": NaN
+  },
+  {
+    "capital_level": 1000000,
+    "cagr": 0.012476309312680067,
+    "sharpe": 0.13362109895345176,
+    "calmar": 0.017353643640102393,
+    "max_drawdown": -0.7189446534357007,
+    "trade_stats": {
+      "n": 4061,
+      "win_rate": 0.42354099975375525,
+      "avg_ret": 0.027372027124834695,
+      "pf": 1.22644973794777
+    },
+    "baseline_cagr": 0.0037466343476126873,
+    "baseline_sharpe": 0.12144786713972706,
+    "baseline_max_drawdown": -0.7622724574072588,
+    "mean_exposure_scale": 0.8373539312906425,
+    "sharpe_excl_best": 0.049959022517490806,
+    "calmar_excl_best": NaN
+  },
+  {
+    "capital_level": 10000000,
+    "cagr": -0.02660256146227824,
+    "sharpe": -0.07620257565172124,
+    "calmar": -0.03719404153831039,
+    "max_drawdown": -0.7152371821405109,
+    "trade_stats": {
+      "n": 4090,
+      "win_rate": 0.4232273838630807,
+      "avg_ret": 0.027915239936347862,
+      "pf": 1.232216583756345
+    },
+    "baseline_cagr": -0.026997482085366897,
+    "baseline_sharpe": -0.05354472083812919,
+    "baseline_max_drawdown": -0.7132671941596609,
+    "mean_exposure_scale": 0.9148085098238098,
+    "sharpe_excl_best": -0.08731307601689502,
+    "calmar_excl_best": -0.05777568184164121
+  }
+]
