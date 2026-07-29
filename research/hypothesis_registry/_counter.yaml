@@ -1,2 +1,2 @@
-k_total: 8
-note: "7 ejay-varianter + HYP-008 (v6-kärna replikerad på small-cap, FAILED 2026-07-27) - se spec-dokumentet avsnitt 1 och research/hypothesis_registry/HYP-008-v6-smallcap-replication.yaml"
+k_total: 9
+note: "7 ejay-varianter + HYP-008 (v6-kärna replikerad på small-cap, FAILED 2026-07-27) + HYP-009 (friktionsablation av HYP-008, FAILED 2026-07-29) - se spec-dokumentet avsnitt 1, research/hypothesis_registry/HYP-008-v6-smallcap-replication.yaml, och HYP-009-friction-ablation.yaml"
