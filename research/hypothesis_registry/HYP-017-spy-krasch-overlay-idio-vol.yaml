@@ -177,6 +177,23 @@ result_summary: >
   en andra, sektorspecifik krasch-trigger (t.ex. en regionbanksindex-
   baserad signal i stallet for/utover SPY) - flaggat som en konkret,
   val motiverad nasta atgard, inte byggt i denna session.
+
+  UPPDATERING 2026-07-30 (CEO-BESLUT - REFERENSSTATUS OVERFORD):
+  branschkoncentrationen adresserades i tva uppfoljande hypoteser.
+  HYP-022 (statiskt 15%-tak pa bank-/finansinnehav) FAILED - loste
+  mars 2023 men forsamrade MaxDD vid $1M/$10M genom att ta bort
+  banksektorns stabiliserande roll under en langre, icke-bankrelaterad
+  2022-bjornmarknad. HYP-023 (dynamisk, handelsetriggad sektor-krasch-
+  trigger pa ett bank-/finanskompositindex, samma arkitektur som denna
+  hypotes SPY-overlay) PASSED - loser mars 2023-sarbarheten (mars
+  2023-episoden -14.0%/-8.2%/-2.3% mot denna hypotes -14.8%) UTAN att
+  ge upp nagot pa Sharpe eller MaxDD (MaxDD battre pa alla tre nivaer,
+  om an marginellt vid $1M/$10M). CEO har DARFOR UTSETT HYP-023 TILL
+  DEN NYA REFERENSIMPLEMENTATIONEN. Denna hypotes (HYP-017) FORBLIR
+  PASSED och kvarstar i registret som forsta godkanda hypotesen och
+  grunden HYP-023 byggde vidare pa - men ar INTE langre den aktiva
+  referensen for framtida jamforelser/utveckling. Se
+  research/hypothesis_registry/HYP-023-sektor-krasch-trigger-hyp017.yaml.
 sharpe_raw:
   100000: 0.7162
   1000000: 0.7500
