@@ -1,0 +1,123 @@
+# LÅST 2026-07-30 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Uppfoljare till HYP-017 (SPY-krasch-overlay
+# pa idiosynkratisk vol, PASSED, K=16) - riktad mot en KVARVARANDE,
+# konkret diagnostiserad risk-lucka: krasch-overlayen bevakar bara SPY,
+# och missar darfor helt koncentrerade enskilda-namn-forluster som INTE
+# sammanfaller med en bred marknadsnedgang. Diagnostik 2026-07-30
+# (dekomponering av HYP-017:s drawdown-historik i separata episoder)
+# hittade ett konkret exempel: 2020-06-30 (kvartalsutgang) exekverade
+# flera regionbanks-positioner (BHLB -65.6%, EBSB -41.7%, HTBK -34.0%,
+# GWB -33.0%, BRKL_old -30.9%) medan SPY:s egen 10-dagars-avkastning
+# aldrig gick under -4.25% samma period - krasch-overlayen triggade
+# aldrig, och positionerna red hela kvartalet till kvartalsutgangen
+# innan de saldes. Se konversationen 2026-07-30 for full motivering.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-018
+date_registered: '2026-07-30'
+title: Per-position stop-loss pa HYP-017 (idiosynkratisk vol + SPY-krasch-overlay)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-017 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD - samma 10-dagars/-10%/40%-mekanism - samma friktion/hedge/
+  kapacitetsspärr, samma tre motorfixar). Enda tillagget: ett DAGLIGT per-position stop-loss, ett
+  KOMPLEMENT till krasch-overlayen (inte en ersattning) - riktat mot enskilda-namn-forluster som INTE
+  sammanfaller med en bred SPY-nedgang och darfor missas av overlayen helt.
+
+  Stop-loss, exakt specificerad (INTE valfri, ingen parameter anpassad efter HYP-017:s redan observerade
+  forluster - -20% ar ett runt, i praktiken vanligt forekommande individuellt aktie-stop-loss-tal,
+  INTE fitted mot BHLB/EBSB/HTBK:s exakta -30% till -66%-forluster):
+  - Kontrolleras VARJE handelsdag (inte bara vid kvartalsvis ombalansering) - hela poangen ar att
+    reagera SNABBARE an att vanta till nasta kvartalsutgang, vilket var exakt vad som gick fel i
+    2020-06-30-fallet.
+  - Trigger: en enskild positions avkastning sedan koptillfallet (pa adjusted_close, konsekvent med
+    hur aktieantal/positionsvarde redan racknas - INTE ra close) faller under -20%.
+  - Vid trigger: STANG HELA positionen (till skillnad fran krasch-overlayens partiella 40%-nedskarning
+    av HELA portfoljen - stop-loss ar riktat mot EN position i taget, inte portfoljbrett).
+  - Aterkop sker INTE automatiskt - fritt kapital star i kassa till nasta ordinarie kvartalsvisa
+    decil-ombalansering (samma asymmetriska monster - snabb ut, normal hastighet in - som redan
+    anvands for krasch-overlayen i HYP-017, av samma skal: undviker en andra uppsattning fria
+    tidsparametrar for aterintrade).
+  - Ordning vid samtidig trigger: krasch-overlayen (portfoljbrett) kors forst, sedan stop-loss-kollen
+    (per position, pa vad som ateratstar efter en eventuell krasch-nedskarning samma dag).
+  - Kapacitetsspärr, friktion (Corwin-Schultz + 3% borrow), SPY-beta-hedge, SPY-krasch-overlay: ALLA
+    oforandrade och AKTIVA fran HYP-017, INTE ersatta.
+
+  MOTORKRAV (samma tre som HYP-015/016/017, redan byggda i strategies/common/): snappade
+  ombalanseringsdatum, adjusted_close genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M) - samma golv som HYP-017.
+  2. Maxdrawdown STRIKT BATTRE (mindre negativ) an HYP-017:s EGET redan uppnadda resultat pa SAMMA
+     kapitalniva (100k: battre an -26.96%, 1M: battre an -19.77%, 10M: battre an -13.39%) - INTE bara
+     samma -30%-golv som HYP-017 redan klarade. Motiveringen: hela poangen med denna hypotes ar att
+     tamja EN KVARVARANDE, redan diagnostiserad risk-lucka utover vad HYP-017 redan uppnar - ett
+     resultat som bara matchar HYP-017 (utan att forbattra MaxDD) vore INTE ett meningsfullt tillskott,
+     aven om det tekniskt klarar -30%-golvet.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte: testar om ett enkelt, komplementart per-position-stop-loss kan stanga den
+  specifika, redan bekraftade risk-lucka krasch-overlayen inte tacker (koncentrerade enskilda-namn-
+  forluster utan samtidig bred marknadsnedgang), utan att forstora den underliggande edgen eller
+  krascha-overlayens redan bevisade skydd (se HYP-017:s "lamna-en-kris-ute"-robusthetstest).'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 16
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1116, sharpe: 0.6911, calmar: 0.4714, sharpe_excl_best_trade: 0.6506, max_drawdown: -0.2368, win_rate: 0.5422, profit_factor: 1.8687, n_trades: 2040, deflated_sharpe_ratio: 0.7843}
+  1000000: {cagr: 0.1124, sharpe: 0.7092, calmar: 0.5588, sharpe_excl_best_trade: 0.6673, max_drawdown: -0.2012, win_rate: 0.5431, profit_factor: 1.8687, n_trades: 2040, deflated_sharpe_ratio: 0.8044}
+  10000000: {cagr: 0.0894, sharpe: 0.6669, calmar: 0.6665, sharpe_excl_best_trade: 0.6586, max_drawdown: -0.1342, win_rate: 0.5431, profit_factor: 1.8687, n_trades: 2040, deflated_sharpe_ratio: 0.7544}
+date_tested: 2026-07-30
+result_summary: >
+  FAILED - Sharpe (0.69/0.71/0.67) klarar fortfarande 0.55-golvet pa alla
+  tre nivaer, MEN MaxDD-forbattringsvillkoret (strikt battre an HYP-017:s
+  EGET resultat pa samma niva) haller BARA vid $100k (-23.68% mot -26.96%,
+  en verklig forbattring). Vid $1M blir MaxDD SVAGT SAMRE (-20.12% mot
+  -19.77%), och vid $10M i praktiken oforandrat (-13.42% mot -13.39%).
+  Kriteriet kravde forbattring pa SAMTLIGA tre nivaer, sa hypotesen ar
+  FAILED trots ett tekniskt friskt Sharpe-tal.
+
+  MEKANISMEN FUNGERAR EXAKT SOM DIAGNOSTISERAD FOR MALFALLET - detta ar
+  INTE ett implementationsfel: de fem regionbanks-positionerna som
+  motiverade hypotesen (BHLB/EBSB/HTBK/GWB/BRKL_old) stoppas nu ut i
+  mars-maj 2020 vid -21% till -30%, i stallet for att rida till
+  kvartalsutgangen 2020-06-30 och sluta pa -33% till -66% (bekraftat i
+  trade_log_100000.csv). Den ursprungliga, konkreta risk-luckan ar
+  faktiskt tappt.
+
+  VARFOR DET ANDA INTE RACKER I AGGREGAT: 282 stop_loss_exit-trades
+  totalt over 13 ar (snittavkastning -25%, 0% win rate per definition -
+  alla trades under -20% nar de triggar). -20%-trosklen ar for los for
+  small-cap-volatilitet i allmanhet - den kapar forlust pa massor av
+  helt NORMALA, tillfalliga nedgangar som annars hade aterhamtat sig,
+  inte bara de sallsynta katastrofala fallen (som motiverade hypotesen).
+  Den kumulativa "forsakringspremien" fran alla dessa falska larm ater
+  upp (och vid hogre kapitalnivaer nagot overstiger) vinsten fran att
+  ratt fanga de riktiga blow-ups:en - samma dynamik som redan sags i
+  HYP-017:s egen krasch-overlay (overlay-trades hade -7.9% snitt/31%
+  win rate DAR ocksa), men har vager kostnaden tyngre an nyttan i
+  aggregat, till skillnad fran HYP-017 dar den vagde ratt.
+
+  MOJLIG FRAMTIDA FORFINING (ej byggd har, skulle krava en ny
+  pre-registrerad hypotes): en snavare eller mer selektiv trigger (t.ex.
+  ett djupare trosklevarde, eller ett krav pa flera dagars sammanhangande
+  nedgang i stallet for en punktkontroll) skulle kunna minska antalet
+  falska larm utan att tappa formagan att fanga genuina blow-ups - men
+  detta far INTE trimmas i efterhand mot just denna backtests resultat
+  (det vore precis den typ av facit-anpassning projektet finns till for
+  att undvika) - det skulle behova sin egen, oberoende motivering och
+  lasta kriterium.
+sharpe_raw:
+  100000: 0.6911
+  1000000: 0.7092
+  10000000: 0.6669
+# Beräknad mot K=17 (7 döda ejay-varianter + HYP-008/009/011/012/013/014/015/016/017 + HYP-018 sjalv),
+# via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.7843
+  1000000: 0.8044
+  10000000: 0.7544

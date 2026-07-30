@@ -287,3 +287,32 @@ Sharpe även här. En vol-hanterad-momentum-uppföljare bör byggas på en
 fixad ombalanseringsmotor OCH kontrollera att prisserien är
 split-justerad, inte bara återanvända befintlig infrastruktur
 oförändrad.
+
+---
+
+## [Datum, 2026-07-30]
+
+**Källa:** Daniel, K., & Moskowitz, T. J. (2016). "Momentum Crashes."
+Journal of Financial Economics, 122(2), 221-247 (samma källa som redan
+citerad ovan för HYP-016, men en annan del av dess mekanism).
+
+**Kort beskrivning:** Daniel & Moskowitz visar att de värsta momentum-
+kraschperioderna inte nödvändigtvis sammanfaller med när marknaden
+faller snabbt, utan uppstår när tidigare FÖRLORARE studsar kraftigt
+tillbaka strax efter en marknadsbotten (momentumportföljen är kort
+dessa, eller i alla fall inte lång dem, och missar/förlorar på studsen).
+Det är en annan signatur än en generell, snabb marknadsnedgång.
+
+**Varför relevant:** Testade 2026-07-30 (diagnostik, se
+scripts/diagnostic_momentum_crash_overlay.py) om HYP-017:s SPY-krasch-
+overlay (triggar på SPY:s egen 10-dagars-nedgång < -10%) även skulle
+tämja HYP-012/016:s momentum-signals MaxDD-problem. Svar: nej -
+MaxDD rörde sig praktiskt taget inte (-76.6% med overlay mot -76.6%
+utan). Det bekräftar att momentums kraschmekanism är en ANNAN än den
+generella marknadspanik som drabbade lågvol-signalen (HYP-015/017) -
+overlayen bevakar fel sak för just momentum. En framtida momentum-
+uppföljare skulle behöva en signal som specifikt bevakar rebound hos
+tidigare förlorare (t.ex. avkastningen för BOTTENdecilen av samma
+momentum-rankning, inte SPY-index), inte en generell marknadsnedgångs-
+trigger. Inte byggt eller testat - bara en riktad idé grundad i en
+konkret, redan observerad negativ diagnostik.
