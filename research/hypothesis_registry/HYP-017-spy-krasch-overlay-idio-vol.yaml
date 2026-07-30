@@ -112,6 +112,22 @@ result_summary: >
   inte helt - flaggat explicit för framtida granskning/replikering
   (t.ex. out-of-sample-test pa data efter 2024 nar sådan finns
   tillgänglig).
+
+  UPPDATERING 2026-07-30 ("lamna-en-kris-ute"-robusthetstest, diagnostik
+  - INGEN K-kostnad, INGEN andring av status/kriterium): kort om
+  scripts/diagnostic_hyp017_leave_one_crisis_out.py kor om HYP-017:s
+  exakta backtest 5 ganger, en gang per krisepisod, med overlayen
+  FORHINDRAD att trigga just under DEN episoden (men aktiv for de andra
+  4). Resultat: PASS haller pa ALLA SEX scenarier (fullt resultat + 5
+  lamna-ute-varianter) pa alla tre kapitalnivaer. Covid ar, vantat, mest
+  paverkande - utan covid-skydd blir MaxDD vid $1M -23.8% (mot -19.8%
+  fullt) - men aven DA passerar alla tre nivaer fortfarande bade
+  Sharpe- och MaxDD-kriteriet. Detta ar den starkaste robusthetssignal
+  som gar att fa utan riktig out-of-sample-data: resultatet ar INTE
+  skort av att ha "tur" med en enda kand historisk handelse. Loser inte
+  HELT den metodologiska reservationen ovan (parametrarna las fortfarande
+  med vetskap om vilken TYP av handelser som skulle behova fangas) men
+  ett rejalt styrkebesked.
 sharpe_raw:
   100000: 0.7162
   1000000: 0.7500
