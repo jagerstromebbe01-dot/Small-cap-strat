@@ -1,0 +1,44 @@
+"""
+Grov, reproducerbar bank-/finanssektor-klassificering baserad pa
+ticker-namn (INTE GICS-sektorkoder - de finns inte i nagon av vara
+befintliga datakallor). Samma metod som anvandes for att upptacka
+HYP-017:s 27.3%-mot-7.0%-branschkoncentrationsfynd (se
+research/hypothesis_registry/HYP-017-spy-krasch-overlay-idio-vol.yaml,
+"ALLVARLIGT NEGATIVT"-avsnittet).
+
+Nyckelord (case-insensitive substring i bolagsnamnet): bancorp, savings,
+bank, thrift, financial, trust.
+"""
+
+import json
+from pathlib import Path
+
+COMMON_DIR = Path(__file__).resolve().parent
+DATA_DIR = COMMON_DIR.parent.parent / "data"
+CLASSIFICATION_FILE = DATA_DIR / "cache" / "smallcap_classification.jsonl"
+
+BANK_FINANCIAL_KEYWORDS = ("bancorp", "savings", "bank", "thrift", "financial", "trust")
+
+
+def load_ticker_names() -> dict:
+    """ticker -> bolagsnamn, fran data/cache/smallcap_classification.jsonl."""
+    names = {}
+    with CLASSIFICATION_FILE.open(encoding="utf-8") as f:
+        for line in f:
+            d = json.loads(line)
+            names[d["ticker"]] = d.get("name", "")
+    return names
+
+
+def is_bank_financial_name(name: str) -> bool:
+    n = (name or "").lower()
+    return any(kw in n for kw in BANK_FINANCIAL_KEYWORDS)
+
+
+def load_bank_financial_flags(tickers) -> dict:
+    """ticker -> bool (True om bolagsnamnet matchar bank-/finansnyckelord).
+    Tickers utan namn-entry i klassificeringsfilen klassas som False
+    (samma begransning som redan galler for den ursprungliga
+    27.3%-mot-7.0%-diagnosen - okand namn kan inte klassificeras)."""
+    names = load_ticker_names()
+    return {t: is_bank_financial_name(names.get(t, "")) for t in tickers}

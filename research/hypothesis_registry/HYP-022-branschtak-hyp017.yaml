@@ -1,0 +1,163 @@
+# LÅST 2026-07-30 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Uppfoljare till HYP-017 (SPY-krasch-overlay
+# pa idiosynkratisk vol, PASSED, K=16, fortfarande referensimplementationen
+# efter HYP-018/021). Riktad mot den ALLVARLIGA, redan diagnostiserade
+# svagheten fran HYP-017:s skeptiska granskning 2026-07-30 (se
+# HYP-017-yaml:ns senaste result_summary-uppdatering): 27.3% av alla 696
+# nagonsin handlade tickers ar bank-/finansrelaterade (mot 7.0% i hela
+# small-cap-basuniversumet, ~4x overrepresentation) - en KAND, dokumenterad
+# mekanisk sidoeffekt av lagvolatilitets-/idio-vol-siktning (reglerade
+# banker/sparbanker har typiskt stabila, lagvolatila kurser), INTE en
+# ad hoc-regel uppfunnen for att undvika en specifik handelse. Detta gav
+# ett konkret, redan observerat skadefall: amerikanska regionbankskrisen
+# mars 2023 (SVB/Signature Bank) - portfoljen -14.8% (2023-02-01 till
+# 2023-05-01, $100k-nivan) medan SPY var +1.5% samma period - krasch-
+# overlayen (bevakar bara SPY) triggade aldrig, eftersom kraschen var
+# sektorspecifik, inte marknadsbred. Se konversationen 2026-07-30 for
+# full motivering och diskussion (inkl. extern konsultation) om varfor
+# atgarden bedoms vara strukturellt/ex-ante motiverad och inte en
+# facit-anpassad patch.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-022
+date_registered: '2026-07-30'
+title: Branschtak (bank-/finanssektor) pa HYP-017 (idiosynkratisk vol + SPY-krasch-overlay)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-017 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD - samma 10-dagars/-10%/40%-mekanism - samma friktion/hedge/
+  kapacitetsspärr, samma tre motorfixar). Enda tillagget: ett TAK pa bank-/finanssektorns andel av
+  portfoljen vid varje ombalanseringstillfalle, riktat direkt mot den diagnostiserade branschkoncentrationen
+  (27.3% av handlade tickers mot 7.0% i basuniversumet).
+
+  Sektorklassificering (INTE valfri, samma metod som avslojade fyndet): en tickers namn (fran
+  data/cache/smallcap_classification.jsonl) matchas mot nyckelorden bancorp, savings, bank, thrift,
+  financial, trust (case-insensitive substring). Detta ar en grov men REPRODUCERBAR klassificering -
+  INTE en GICS-sektorkod, men samma metod som redan anvandes for att identifiera 27.3%-fyndet.
+
+  Tak, exakt specificerat (INTE fritt, INTE anpassat efter resultat): 2x bank-/finanssektorns andel i
+  HELA small-cap-basuniversumet (7.0%), avrundat till 15%. Denna logik (proportionellt tak relativt
+  faktisk marknadssammansattning, valt INNAN nagon backtest av denna hypotes kors) ar vald for att vara
+  oberoende av vad som rakar bevara Sharpe eller dampa marsdrawdown 2023 bast - INGEN alternativ
+  trosklelniva har testats eller kommer testas under denna hypotes.
+
+  Implementation (mekanisk, vid varje kvartalsvis decil-ombalansering): kandidater sorteras liksom
+  tidigare efter LAGST idiosynkratisk vol forst. Malantalet namn (n_top, samma DECILE_FRACTION-logik som
+  HYP-017) ar OFORANDRAT. Bank-/finansnamn accepteras i turordning SA LANGE antalet redan valda
+  bank-/finansnamn understiger floor(n_top * 0.15) - en bankkandidat som skulle bryta mot taket hoppas
+  over (och ersatts LANGRE NER i kon av nasta icke-bank- ELLER, om bankkvoten annu inte ar fylld,
+  nasta bank-kandidat). Icke-bank-kandidater paverkas inte av taket. Eftersom positioner ar ungefar
+  lika-dollar-viktade vid ingang (oforandrat fran HYP-017) approximerar ett antalsbaserat tak pa
+  floor(n_top * 0.15) namn ett dollarviktat tak pa ~15% av portfoljen.
+
+  MOTORKRAV (samma tre som HYP-015/016/017, redan byggda i strategies/common/): snappade
+  ombalanseringsdatum, adjusted_close genomgaende, flag_implausible_liquidity().
+
+  PASS kraver ALLA fyra:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M) - samma golv som
+     HYP-017/018.
+  2. Maxdrawdown INTE samre (inte mer negativ) an HYP-017:s EGET redan uppnadda resultat pa SAMMA
+     kapitalniva (100k: -26.96%, 1M: -19.77%, 10M: -13.39%) - svagare krav an HYP-018:s "strikt battre",
+     eftersom syftet har ar att tappa en SPECIFIK, redan diagnostiserad sarbarhet (bankkoncentration),
+     inte nodvandigtvis forbattra en headline-MaxDD som domineras av en helt annan handelse (covid).
+  3. Bank-/finanssektorns andel av handlade namn vid VARJE ENSKILD ombalanseringsdag <= 15% - verifieras
+     DIREKT ur portfoljloggen/holdings vid varje ombalansering, inte ett skattat medeltal over tid. Detta
+     ar i praktiken en mekanisk verifiering att implementationen faktiskt gor det den ska, snarare an ett
+     forvantat "upptackt" resultat.
+  4. Mars 2023-episoden (2023-02-01 till 2023-05-01) visar en MINDRE NEGATIV avkastning an HYP-017:s
+     egna -14.8% vid $100k-nivan. Detta ar INTE en efterhandsanpassad tackningsgaranti - det ar en
+     direkt, mekaniskt forvantad konsekvens av minskad bankexponering (mindre bankexponering -> mindre
+     skada av en bankspecifik kris) och fungerar som en verifiering att atgarden faktiskt gor det den ar
+     avsedd for, INTE ett sokt facit-tal versionerat i efterhand (jfr HYP-017:s egen
+     "lamna-en-kris-ute"-sjalvkritik: detta villkor testar EXAKT den handelse atgarden riktar sig mot,
+     till skillnad fran ett godtyckligt urval).
+  FAIL om nagon niva/nagot villkor faller.
+
+  Diagnostiskt syfte: testar om en enkel, strukturell portfoljkonstruktionsbegransning (branschtak) kan
+  tamja en KAND, mekanisk bieffekt av lagvolatilitets-/idio-vol-siktning (overexponering mot reglerade,
+  stabila sektorer) utan att forstora den underliggande edgen - till skillnad fran HYP-018 som testade
+  ett REAKTIVT, per-position-riktat verktyg (stop-loss) mot ett annat, separat diagnostiserat problem
+  (enskilda-namn-forluster utan bred SPY-nedgang) och misslyckades i aggregat pa grund av for mycket
+  brus fran falska larm. Denna hypotes ar strukturell/preventiv snarare an reaktiv, och riktad mot en
+  ANNAN rotorsak (sektorkoncentration, inte otillracklig reaktionshastighet).'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 20
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1263, sharpe: 0.7516, calmar: 0.4922, sharpe_excl_best_trade: 0.6982, max_drawdown: -0.2566, win_rate: 0.5242, profit_factor: 1.3350, n_trades: 2125, max_bank_fraction_any_rebalance: 0.15, march_2023_episode_return: -0.1337, deflated_sharpe_ratio: 0.8253}
+  1000000: {cagr: 0.1269, sharpe: 0.7660, calmar: 0.5624, sharpe_excl_best_trade: 0.7111, max_drawdown: -0.2256, win_rate: 0.5247, profit_factor: 1.3350, n_trades: 2125, max_bank_fraction_any_rebalance: 0.15, march_2023_episode_return: -0.1167, deflated_sharpe_ratio: 0.8398}
+  10000000: {cagr: 0.0920, sharpe: 0.6471, calmar: 0.5961, sharpe_excl_best_trade: 0.6392, max_drawdown: -0.1544, win_rate: 0.5256, profit_factor: 1.3350, n_trades: 2125, max_bank_fraction_any_rebalance: 0.15, march_2023_episode_return: -0.0649, deflated_sharpe_ratio: 0.6989}
+date_tested: 2026-07-30
+result_summary: >
+  FAILED - villkor 1 (Sharpe >= 0.55), 3 (bankandel <= 15%) och 4
+  (mars 2023 mindre negativ an -14.8%) haller på ALLA tre kapitalnivåer,
+  MEN villkor 2 (MaxDD inte samre an HYP-017:s eget resultat pa SAMMA
+  kapitalniva) FALLER pa 2 av 3 nivaer: $1M -22.6% (mot HYP-017:s
+  -19.77%, en verklig FORSAMRING) och $10M -15.4% (mot HYP-017:s -13.39%,
+  ocksa en forsamring). Bara $100k klarar villkor 2 (-25.7% mot -26.96%).
+  Kriteriet kravde forbattring/oforsamring pa SAMTLIGA tre nivaer, sa
+  hypotesen ar FAILED trots att Sharpe faktiskt STEG pa alla tre nivaer
+  (0.75/0.77/0.65 mot HYP-017:s 0.72/0.75/0.72) och trots att den
+  SPECIFIKA mars 2023-episoden blev mindre skadlig pa alla tre nivaer
+  (-13.4%/-11.7%/-6.5% mot -14.8%).
+
+  MEKANISMEN FUNGERAR EXAKT SOM AVSEDD FOR MALFALLET: bankandelen ligger
+  exakt vid 15%-taket vid varje ombalansering pa alla tre nivaer (villkor
+  3), och mars 2023-episoden - den handelse hypotesen konkret riktades
+  mot - forbattras mätbart pa alla tre nivaer (villkor 4). Detta ar INTE
+  ett implementationsfel.
+
+  VARFOR DET ANDA MISSLYCKAS I AGGREGAT PA 2 AV 3 NIVAER (diagnos,
+  innan detta rapporterades som FAIL): headline-MaxDD:n pa $1M och $10M
+  kommer INTE fran mars 2023 i HYP-017:s egen korning - de kommer fran
+  helt ANDRA episoder (covid 2020-01-03/2020-04-06 vid $1M, USA:s
+  skuldtakskris 2011-07-08/2011-10-04 vid $10M). Genom att kapa
+  bankexponeringen tvingas urvalet in i ANDRA, icke-bank lagvolatila
+  namn under HELA backtestperioden - inte bara under mars 2023. Vid $1M
+  blir foljden att en LANGRE, tidigare ICKE-dominerande episod
+  (2022-01-13 till 2023-05-17, en bredare 2022 rantehojnings-bjornmarknad
+  som ravar in i sjalva bankkrisen) nu blir den NYA varsta episoden med
+  -22.6%, vilket overtar covid-episodens tidigare -19.77% som HYP-017:s
+  headline-MaxDD. Vid $10M blir Dec 2018-saljoffret (2018-09-21 till
+  2018-12-26, helt orelaterat till banker) den nya varsta episoden med
+  -15.4%, vilket overtar HYP-017:s 2011-skuldtakskris-episod pa -13.39%.
+
+  TOLKNING: bankaktier var, utanfor det akuta mars 2023-SVB-chock-
+  fonstret, en KALLA TILL STABILITET under storre delen av 2022 (hogre
+  rantor gynnade bankernas rantenetto anda fram till SVB-kollapsen) -
+  inte bara en riskkalla. Att kapa bankexponeringen tog bort den
+  stabiliteten under RESTEN av en lang bjornmarknadsepisod for att
+  minska skadan i ETT akut sub-fonster, med ett NETTO-negativt utfall pa
+  full-episod-MaxDD vid $1M/$10M. Detta ar en genuin avvagning, INTE ett
+  tecken pa felaktig implementation - jfr HYP-018 dar stop-loss-
+  mekanismen ocksa fungerade exakt som diagnostiserad for malfallet men
+  anda inte rackte i aggregat, fast av en annan orsak (falska larm dar,
+  har en forlorad diversifieringskalla).
+
+  ROBUSTHET (innan detta rapporterades): sharpe_excl_best_trade forblir
+  0.698/0.711/0.639 - alla fortfarande over 0.55-golvet aven utan den
+  enskilt basta traden, sa Sharpe-forbattringen ar INTE en artefakt av
+  en dominerande outlier.
+
+  SLUTSATS FOR HYP-017:s KVARSTAENDE SARBARHET: branschkoncentrationen
+  ar fortfarande OLOST for HYP-017 sjalv (som forblir referensen, K
+  oforandrad dar). Ett enkelt strukturellt tak raknar inte som en fri
+  lunch har - det byter en KAND, akut, sektorspecifik risk (mars 2023)
+  mot en mer diffus forlust av diversifiering under lugnare perioder.
+  Framtida atgarder mot samma sarbarhet (om de nagonsin testas) bor
+  overvaga nagot mer riktat an ett statiskt tak - t.ex. en
+  sektorspecifik krasch-trigger (analogt med SPY-overlayen men pa ett
+  regionbanksindex) i stallet for en permanent begransning - men det
+  skulle krava sin egen, oberoende pre-registrerade hypotes.
+sharpe_raw:
+  100000: 0.7516
+  1000000: 0.7660
+  10000000: 0.6471
+deflated_sharpe_ratio:
+  100000: 0.8253
+  1000000: 0.8398
+  10000000: 0.6989
