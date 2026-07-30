@@ -128,13 +128,66 @@ result_summary: >
   HELT den metodologiska reservationen ovan (parametrarna las fortfarande
   med vetskap om vilken TYP av handelser som skulle behova fangas) men
   ett rejalt styrkebesked.
+
+  UPPDATERING 2026-07-30 (friktions-stresstest + skeptisk granskning,
+  diagnostik - INGEN K-kostnad): tva separata fynd, ett positivt och ett
+  allvarligt negativt.
+
+  (a) POSITIVT - friktions-stresstest (scripts/diagnostic_hyp017_friction_stress_test.py):
+  aven vid kraftigt pessimistiska antaganden (2x Corwin-Schultz-spread,
+  9% arlig borrow-kostnad - 3x baslinjens 3%) hall Sharpe sig over
+  0.55-golvet pa alla tre nivaer (0.633/0.674/0.654 mot baslinjens
+  0.716/0.750/0.724), och MaxDD rorde sig knappt. Strategin ar INTE skor
+  mot att friktionsmodellen underskattar verkliga kostnader.
+
+  (b) ALLVARLIGT NEGATIVT - branschkoncentration: en granskning av
+  ALLA 696 unika tickers som nagonsin handlats visar att 27.3% har ett
+  bank-/finansrelaterat namn (bancorp, savings, bank, thrift, financial,
+  trust) - mot bara 7.0% i HELA small-cap-basuniversumet (5162 tickers).
+  En ~4x overrepresentation. Forklaringen ar begriplig (reglerade banker/
+  sparbanker har typiskt mycket stabila, lagvolatila kurser, vilket en
+  lagst-volatilitet-siktning naturligt plockar upp) - men det betyder att
+  strategins verkliga risk INTE ar generell aktiemarknadsrisk minus lite,
+  utan i hog grad bankspecifik risk (ranteneto, kreditcykel, regulatorisk
+  risk, korrelerad bankpanik).
+
+  Detta ar INTE hypotetiskt - det hande i var egen data: den amerikanska
+  regionbankskrisen mars 2023 (SVB/Signature Bank) gav portfoljen en
+  -14.8% nedgang (2023-02-01 till 2023-05-01, $100k-nivan) MEDAN SPY VAR
+  +1.5% SAMMA PERIOD. Krasch-overlayen (som bara bevakar SPY:s egen
+  rorelse) triggade ALDRIG under denna period, eftersom SPY sjalv knappt
+  paverkades - kraschen var sektorspecifik, inte marknadsbred. Detta ar
+  exakt den typ av handelse strategins koncentrerade bankexponering gor
+  den mest sarbar for, och det enda befintliga skyddsverktyget ar
+  strukturellt blint for just den.
+
+  SJALVKRITIK: det tidigare "lamna-en-kris-ute"-testet (2026-07-30,
+  ovan) missade detta helt, eftersom det bara undersokte de 5 datum dar
+  overlayen FAKTISKT triggade - inte perioder dar portfoljen tog skada
+  UTAN att overlayen nagonsin reagerade. Marsdrawdown 2023 foll dessutom
+  kronologiskt inom en langre, redan "crash_related"-klassificerad
+  drawdown-episod (2022-03-30 till 2023-05-12) i en tidigare, for grov
+  episod-dekomponering - vilket felaktigt dolde att just mars 2023-delen
+  av den episoden var HELT oskyddad. En battre metodik hade kollat
+  overlay-status dag-for-dag under HELA episoden, inte bara klassificerat
+  hela episoden som "skyddad" for att ETT av flera kanda krisdatum rakade
+  falla nagonstans inom dess langa tidsspann.
+
+  ATGARDAT: INTE HAR. Kraver antingen ett branschtak i decilvalet eller
+  en andra, sektorspecifik krasch-trigger (t.ex. en regionbanksindex-
+  baserad signal i stallet for/utover SPY) - flaggat som en konkret,
+  val motiverad nasta atgard, inte byggt i denna session.
 sharpe_raw:
   100000: 0.7162
   1000000: 0.7500
   10000000: 0.7241
-# Beräknad mot K=16 (7 döda ejay-varianter + HYP-008/009/011/012/013/014/015/016 + HYP-017 själv),
-# via scripts/deflated_sharpe_ratio.py
+# Ursprungligen beräknad mot K=16: 0.8208/0.8535/0.8250.
+# OMRAKNAD 2026-07-30 mot K=19 (efter HYP-018/019/020, alla FAILED) -
+# fortfarande "under övervägande" som flaggskeppsresultatet. DSR sjonk
+# bara marginellt (K=16->19, en 19% okning i antal forsok) eftersom
+# Sharpen ligger sa pass langt over "forvantat maximum av en slump"-
+# niva att en mattlig K-okning knappt paverkar den.
 deflated_sharpe_ratio:
-  100000: 0.8208
-  1000000: 0.8535
-  10000000: 0.8250
+  100000: 0.7993
+  1000000: 0.8345
+  10000000: 0.8042
