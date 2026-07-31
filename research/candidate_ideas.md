@@ -46,6 +46,8 @@ enbart börsvärde som urvalskriterium.
 
 ---
 
+**Arkiverad:** true
+
 ## [Datum, 2026-07-28]
 
 **Källa:** Berk, J. B., & Green, R. C. (2004). "Mutual Fund Flows and
@@ -149,6 +151,8 @@ recall-risk korrekt, snarare än verklig, realiserbar avkastning.
 
 ---
 
+**Arkiverad:** true
+
 ## [Datum, 2026-07-28]
 
 **Källa:** Gatev, E., Goetzmann, W. N., & Rouwenhorst, K. G. (2006). "Pairs
@@ -182,6 +186,8 @@ pris-distans över hela small-cap-universumet - vilket enligt Do & Faff
 tid.
 
 ---
+
+**Arkiverad:** true
 
 ## [Datum, 2026-07-28]
 
@@ -217,6 +223,8 @@ genomsnittlig daglig volym per aktie) i stället för en platt
 kostnadsantagande per trade.
 
 ---
+
+**Arkiverad:** true
 
 ## [Datum, 2026-07-29]
 
