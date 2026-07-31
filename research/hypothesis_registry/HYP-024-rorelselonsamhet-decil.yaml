@@ -1,0 +1,127 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Forsta hypotesen i en helt NY faktorfamilj
+# (kvalitet/lonsamhet) - INTE en vidareutveckling av HYP-017/023-linjen
+# (idiosynkratisk vol). Motiverad av att kvalitet/lonsamhet var den sista
+# mekaniskt distinkta, otestade klassiska faktorn (jfr momentum HYP-016,
+# storlek HYP-019, PEAD HYP-020, low-vol HYP-014 - alla redan testade).
+#
+# DATA-PIVOT (2026-07-31, INNAN kriteriet lastes): ursprunglig plan var
+# Novy-Marx bruttovinst (GrossProfit/Assets) - stickprov pa 40 tickers
+# via SEC EDGAR companyfacts visade GrossProfit-taggen direkt hos bara
+# 25% av bolagen (och COGS-rekonstruktion raddar inte det - lika glest
+# taggat). OperatingIncomeLoss har 75% tacking, Assets 90% - pivoterade
+# till rorelselonsamhet (OperatingIncomeLoss/Assets), nara Fama-French
+# RMW-metodiken, INTE en urvattnad kompromiss.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-024
+date_registered: '2026-07-31'
+title: Rörelselönsamhet (OperatingIncomeLoss/Assets) - rå signal utan krasch-skydd
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017 (2011-2024)
+pass_fail_criterion: 'Samma bas-motor som HYP-014/015 (SPY-beta-hedge med sakerhetsspärr, friktion
+  - Corwin-Schultz-spread + 3% arlig borrow-kostnad, 10% ADV-kapacitetsspärr, kvartalsvis
+  ombalansering) och samma tre motorfixar som HYP-015/017/022/023 (snappade ombalanseringsdatum,
+  adjusted_close genomgaende, flag_implausible_liquidity()) - INTE HYP-014:s aldre kod, som
+  foregick dessa fixar.
+
+  Signal (ny, ersatter idiosynkratisk vol/lagvolatilitet helt - detta ar EN NY FAKTORFAMILJ, inte
+  en vidareutveckling av HYP-017/023): rorelselonsamhet = senaste FILED 10-K:s OperatingIncomeLoss
+  delat med samma 10-K:s Assets (data/cache/profitability_by_ticker.jsonl, hamtad fran SEC EDGAR
+  companyfacts, fp=FY/form=10-K enbart - se datapivot-motivering ovan). Anvander ENDAST den senaste
+  10-K som var FILED (inte periodens slutdatum) fore respektive ombalanseringsdatum - undviker
+  framatblick, samma princip som HYP-020:s SUE-pipeline.
+
+  Universum-begransning (INTE valfri): bank-/finansklassificerade namn (samma sector.py-metod/
+  nyckelord som HYP-022/023: bancorp, savings, bank, thrift, financial, trust) EXKLUDERAS helt fran
+  urvalet - rorelseresultat ar inte ett jamforbart begrepp for banker/REITs (ingen traditionell
+  "operating income"-struktur), samma princip som Fama-French och Novy-Marx exkluderar finansbolag
+  fran lonsamhetsfaktorer.
+
+  Decilval: TOPP-decilen av rorelselonsamhet (HOGST lonsamhet, motsatt riktning mot low-vol/idio-vol-
+  hypotesernas LAGSTA-decil-val). Kvartalsvis ombalansering (samma frekvens som befintlig motor,
+  akademisk praxis for arsvis uppdaterande bokslutsdata - se HYP-014:s motivering for lagfrekvent
+  ombalansering hos langsamt roterande faktorer).
+
+  INGEN krasch-overlay eller annat riskverktyg i detta forsta test - rå signal, samma ordning som
+  idio-vol testades (HYP-015 rå -> HYP-017 med SPY-overlay lagd pa EFTER att den råa signalen visat
+  lofte).
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M) - samma
+  golv som HYP-014/015/021. FAIL om nagon niva faller under.
+
+  Diagnostiskt syfte: testar om rorelselonsamhet (Fama-French RMW-lik faktor) ger utnyttjbar rå edge
+  i small-cap - den sista mekaniskt distinkta, otestade klassiska faktorn i projektet (momentum,
+  storlek, PEAD, low-vol/idio-vol alla redan testade och antingen FAILED eller adresserade via
+  HYP-017/023-linjen).'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 22
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.0017, sharpe: 0.1355, calmar: 0.0023, sharpe_excl_best_trade: 0.1271, max_drawdown: -0.7444, win_rate: 0.4729, profit_factor: 1.5301, n_trades: 203, deflated_sharpe_ratio: 0.0743}
+  1000000: {cagr: 0.0291, sharpe: 0.1871, calmar: 0.0476, sharpe_excl_best_trade: 0.1867, max_drawdown: -0.6109, win_rate: 0.4417, profit_factor: 1.2680, n_trades: 600, deflated_sharpe_ratio: 0.1053}
+  10000000: {cagr: 0.0002, sharpe: 0.0905, calmar: 0.0003, sharpe_excl_best_trade: 0.0903, max_drawdown: -0.6534, win_rate: 0.4417, profit_factor: 1.2624, n_trades: 600, deflated_sharpe_ratio: 0.0529}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED - INTE NARA GRANSEN. Sharpe 0.14/0.19/0.09 mot 0.55-golvet,
+  DSR 0.07/0.11/0.05 vid K=23 (i praktiken brus - samma nivå som
+  HYP-020:s PEAD-fiasko). MaxDD -74%/-61%/-65% ar bland de samsta i
+  hela projektet, jamforbart med HYP-019:s misslyckade kapacitetstest.
+
+  DIAGNOS (innan detta rapporterades): tva separata problem identifierade.
+
+  (1) Datakvalitet 2010-2012: OperatingIncomeLoss/Assets-tackningen fran
+  SEC EDGAR XBRL ar mycket gles fore ~2012 (SEC:s XBRL-krav for mindre
+  bolag infordes stegvis runt 2011) - forsta ombalanseringen (2010-09-30)
+  hade bara 9 kandidater totalt, vilket gav en 1-aktie-portfolj (n_top=1)
+  under flera kvartal, och tackningen nadde inte en stabil, anvandbar
+  niva (700+ av ~950 berattigade namn) forran runt 2012-06.
+
+  (2) MEN detta FORKLARAR INTE resultatet: aven med start FORST 2012-06-30
+  (efter att tackningen stabiliserats) forblir Sharpe 0.10 och TOTALAVKASTNINGEN
+  AR NEGATIV (-13% over 12 ar) - detta ar INTE en tidig-data-artefakt,
+  utan ett genuint utebliven/negativ ra edge. MaxDD-toppen (2014-01-13)
+  till botten (2020-03-24, covid) visar en strategi som redan var i
+  langvarig nedgang i flera ar INNAN covid-kraschen - konsistent med att
+  signalen helt enkelt inte bar nagon anvandbar information i denna
+  implementation, inte att den "rakade" ha otur med en enskild kris.
+
+  MOJLIGA FORKLARINGAR (INTE testade har, skulle krava egna
+  pre-registrerade hypoteser om de nagonsin foljs upp): arsvis
+  uppdaterande bokslutsdata (bara en ny observation per bolag och ar)
+  kan vara for trog for en kvartalsvis ombalanserad small-cap-strategi
+  jamfort med akademisk praxis (Fama-French RMW ombalanserar arsvis i
+  juni, inte kvartalsvis); ELLER sa ar rorelselonsamhet specifikt (till
+  skillnad fran t.ex. bruttovinst) helt enkelt en svagare/annorlunda
+  signal i just detta small-cap-band; ELLER sa ar den etablerade
+  lonsamhetspremien (Novy-Marx 2013, Fama-French RMW) genuint svag eller
+  frånvarande i just denna small-cap-datakalla/period - konsistent med
+  projektets ovriga fynd att IMPORTERADE klassiska faktorer (momentum,
+  storlek, PEAD) genomgaende misslyckas, och att bara idiosynkratisk
+  volatilitet (HYP-015/017/023-linjen) nagonsin visat en riktig signal.
+
+  ROBUSTHET (innan detta rapporterades): sharpe_excl_best_trade forblir
+  0.127/0.187/0.090 - i praktiken oforandrat fran huvudresultatet, sa
+  det svaga resultatet ar INTE en artefakt av att en enskild bra trade
+  saknas - signalen ar genomgaende svag, inte "nastan bra men olycklig".
+
+  SLUTSATS: kvalitet/lonsamhet-faktorn (den sista mekaniskt distinkta,
+  otestade klassiska faktorn i projektet) ger INGEN anvandbar ra edge i
+  denna small-cap-datakalla/period, med denna specifika implementation
+  (rorelselonsamhet, arsvisa bokslut, topp-decil). HYP-023 forblir
+  projektets enda referensimplementation. Foljer samma monster som
+  HYP-016/019/020: varje importerad klassisk faktor utom
+  (idiosynkratisk) volatilitet har hittills misslyckats i denna
+  datamiljo.
+sharpe_raw:
+  100000: 0.1355
+  1000000: 0.1871
+  10000000: 0.0905
+deflated_sharpe_ratio:
+  100000: 0.0743
+  1000000: 0.1053
+  10000000: 0.0529
