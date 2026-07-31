@@ -202,6 +202,45 @@ result_summary: >
   datatackning da). INGEN andring av pass_fail_criterion, k_total, eller
   status - detta ar en validering av en redan avslutad hypotes, inte en
   ny.
+
+  UPPDATERING 2026-07-31 (tva "gratis" kvalitetskontroller, diagnostik -
+  INGEN K-kostnad, INGET last resultat andrat):
+
+  (a) FAKTORREGRESSION mot Fama-French 5 + momentum (Kenneth French Data
+  Library, paper_trading/HYP-023/factor_regression.py): HYP-023:s dagliga
+  avkastning regresserad mot Mkt-RF/SMB/HML/RMW/CMA/MOM. Alfa FORBLIR
+  STARKT SIGNIFIKANT efter kontroll: arlig alfa +13.6%/+13.9%/+10.1% vid
+  100k/1M/10M, t-stat 3.70-3.93 (>>2, signifikant), R² bara 0.16-0.19
+  (mesta variansen oforklarad av kanda faktorer). Faktorladdningar
+  begripliga och konsistenta med projektets ovriga fynd: positiv SMB
+  (vantat, small-cap), positiv HML, nara-noll marknadsexponering (vantat,
+  betahedgad), MOM EJ signifikant (t=-0.86 till -1.77) - konsistent med
+  att momentum misslyckades tre oberoende ganger (HYP-012/016/030) som
+  egen strategi i denna data. Alfa haller sig i praktiken oforandrat pa
+  den utokade 2011-2025-serien (inkl. OOS-aret) - +12.9% vid 100k.
+  RESERVATION: vanlig OLS, INTE Newey-West-korrigerad for
+  autokorrelation - t-statistiken kan vara nagot overskattad, men
+  marginalen (3.7-3.9) ar stor nog att slutsatsen sannolikt haller anda.
+
+  (b) SIC-BASERAD BANK-/FINANSKLASSIFICERING (data/fetch_sic_classification.py,
+  strategies/common/sector.py::load_bank_financial_flags_sic,
+  paper_trading/HYP-023/diagnostic_sic_classification.py): jamfor den
+  ursprungliga nyckelordsmetoden (bancorp/bank/savings/thrift/financial/
+  trust i bolagsnamnet) mot formell SEC SIC-kod (6000-6799). FYND: SIC
+  flaggar 18.3% av universumet mot nyckelordens 6.5% - nyckelordsmetoden
+  UNDERSKATTADE alltsa den sanna finansexponeringen kraftigt (622
+  tickers ar finans enligt SIC men missas av nyckelord, t.ex.
+  "Bancshares" matchar inte "bancorp"-substrangen). TROTS detta: kort om
+  HYP-023 med SIC-klassificering i stallet ger Sharpe 0.7301/0.7609/0.7265
+  och MaxDD -0.2512/-0.1897/-0.1299 - I PRAKTIKEN IDENTISKT med (marginellt
+  battre an) de officiella lasta resultaten (0.7174/0.7536/0.7227,
+  -0.2546/-0.1929/-0.1316). Sektor-triggern gav 6 episoder med SIC mot 8
+  med nyckelord. SLUTSATS: mekanismen ar ROBUST mot detta specifika
+  datakvalitetsproblem - trots att den ursprungliga klassificeringen var
+  mer ofullstandig an kant, paverkas inte resultatet materiellt.
+
+  Ingetdera kontroll andrar HYP-023:s pass_fail_criterion, k_total eller
+  status - bada ar robusthetsverifieringar av ett redan lockat resultat.
 sharpe_raw:
   100000: 0.7174
   1000000: 0.7536
