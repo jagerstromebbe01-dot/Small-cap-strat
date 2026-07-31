@@ -145,6 +145,63 @@ result_summary: >
   pa) men ar INTE langre den aktiva referensen for framtida jamforelser
   eller utveckling. Se motsvarande uppdatering i
   research/hypothesis_registry/HYP-017-spy-krasch-overlay-idio-vol.yaml.
+
+  UPPDATERING 2026-07-31 (GENUIN OOS-VALIDERING over 2025, diagnostik -
+  INGEN K-kostnad, INGA parametrar andrade): efter att "skarp"
+  pappershandel visade sig blockerad av EODHD:s glesa realtidstackning
+  for small-cap (se CLAUDE.md, "Open dependencies" §4), koddes i stallet
+  en genuin blind OOS-test - HYP-023:s OFORANDRADE, redan lasta kod
+  (paper_trading/HYP-023/oos_backtest_2025.py, importerar
+  strategies/HYP-023/backtest.py direkt, INTE omskriven) kord over ett
+  utokat universum genom 2025 (data/build_universe_2025.py - manatlig
+  $100M-$2B-bandbestamning via faktiska SEC EDGAR-aktieantal x
+  faktiska stangningskurser, INTE en "idag"-ogonblicksbild). Detta ar en
+  ARIKTIGARE OOS-test an att dela upp den befintliga 2011-2024-backtesten
+  i IS/OOS-fonster, eftersom Claude redan kanner till vad som hande
+  2015-2024 (covid, 2022 rantehojningar, SVB-krisen) fran sin
+  traningsdata - 2025 ligger delvis EFTER traningsgransen (januari 2026)
+  och galler i ovrigt specifika, obskyra smabolagskurser som inte ar
+  memorerade fakta, och HYP-023:s regler las helt innan nagon tittade
+  pa 2025-data.
+
+  RESULTAT: full kontinuerlig serie (2011-2025) Sharpe 0.69/0.72/0.70 -
+  konsistent med den redan kanda 2011-2024-backtesten (0.72/0.75/0.72),
+  som forvantat nar ett svagare 2025-svans blandas in. ISOLERAT till
+  ENDAST 2025 (den faktiska OOS-perioden): Sharpe 0.39/0.17/0.08,
+  totalavkastning +6.3%/+3.3%/+2.2%, MaxDD -11.8%/-10.7%/-2.4%, 46
+  trades, 250 handelsdagar.
+
+  TOLKNING (bade det positiva och det oroande, ingetdera doljs):
+  (a) POSITIVT: fortfarande POSITIV Sharpe och avkastning pa ALLA tre
+  nivaer, ingen krasch, MaxDD valkontrollerad (klart battre an
+  backtestens varsta historiska episoder) - ingen kollaps.
+  (b) ORONANDE: OOS-Sharpen ar tydligt LAGRE an backtestens IS-Sharpe pa
+  alla nivaer, och nedgangen ar STORRE vid hogre kapitalnivaer (0.39/0.72
+  ~54% vid 100k, men bara 0.08/0.72 ~11% vid 10M) - motsatt monster mot
+  vad man skulle onska (edgen borde helst vara STABILARE vid hog
+  kapacitetsspärr, inte svagare).
+  (c) VIKTIG KONFOUND: universumets storlek i 2025-utokningen TUNNAS UT
+  KRAFTIGT INOM ARET SJALVT (202 bolag i januari -> 66 i december) pa
+  grund av EODHD:s dataglesnad, INTE ett verkligt marknadsfenomen -
+  detta trycker mekaniskt hardast pa just de hoga kapitalnivaerna
+  (mindre kandidatpool = hardare kapacitetsspärr = farre/mindre likvida
+  namn att sprida sig over), vilket sannolikt FORKLARAR en del - men INTE
+  nodvandigtvis ALLT - av den kapitalnivaberoende nedgangen i (b). Kan
+  INTE sarskiljas fran en genuin kapacitetssvaghet med denna data allena.
+  (d) STATISTISK RESERVATION: en Sharpe skattad pa BARA 250 handelsdagar
+  (ett enda ar) har mycket hog standardosakerhet - ett sant Sharpe-varde
+  pa 0.7 skulle mycket val kunna ge ett enskilt-ars-utfall pa 0.39 (eller
+  lagre) av ren slump. Detta resultat kan darfor INTE ensamt vare sig
+  bekrafta eller motbevisa HYP-023:s DSR-implicerade edge - det ar en
+  forsta, informativ datapunkt, inte en dom.
+
+  SLUTSATS: inget som kraver atgard eller andrar HYP-023:s status - men
+  den kapitalnivaberoende nedgangen (b), aven med konfounden (c) i
+  atanke, ar vard att halla ogonen pa i framtida OOS-uppdateringar
+  (t.ex. nar 2026 nagon gang kan testas pa liknande satt, forutsatt battre
+  datatackning da). INGEN andring av pass_fail_criterion, k_total, eller
+  status - detta ar en validering av en redan avslutad hypotes, inte en
+  ny.
 sharpe_raw:
   100000: 0.7174
   1000000: 0.7536
