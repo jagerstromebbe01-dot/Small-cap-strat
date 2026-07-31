@@ -60,6 +60,18 @@ spec-writing, and implementation. The full chain, in order:
 
 The pre-existing rule stands unchanged: no agent other than the CEO, acting manually in chat, may ever write or alter a `pass_fail_criterion`.
 
+## Batch Hypothesis Generation (added 2026-07-31, explicit CEO decision)
+
+An LLM-driven agent may propose multiple candidate hypotheses, but **only as a single, non-adaptive batch — never as an iterative in-sample/out-of-sample loop.** This was explicitly evaluated and rejected in a 2026-07-31 session: an agent that tries a rule in-sample, sees the result, and adjusts is doing exactly the p-hacking the pre-registration system exists to prevent, no matter how the out-of-sample step is framed. It is also structurally different from a human doing the same thing — the agent's underlying model has training data covering the entire backtest period, so there is no historical window that is genuinely unknown to it the way a true forward period is. "Out-of-sample" against historical data is therefore never a substitute for real validation here; the only genuine validation for anything produced this way is **forward paper trading from the batch's approval date.**
+
+Rules, enforced procedurally (not yet code-enforced beyond the existing `validate_hypothesis.py` gate applied per-file):
+
+1. **Fixed, bounded search space, agreed with the CEO before a single candidate is drafted.** The 2026-07-31 pilot scope: parameter variants *within* an already-validated mechanism type only (e.g. threshold/window values inside an event-triggered overlay or stop-loss shape already proven to work somewhere in the registry) — not new structural mechanisms or new alpha signals. A wider scope requires a fresh, equally explicit CEO decision.
+2. **All N candidates are drafted in one pass, with zero backtests run and zero results seen by the agent in between.** Each candidate gets its own `HYP-XXX.yaml` and its own independently-motivated rationale — not minor cosmetic variants of each other.
+3. **The CEO reviews and locks the entire batch at once**, the same manual-lock-in-chat rule as any other hypothesis. `k_total` increments by N at the moment of locking, not one at a time as results come in.
+4. All N then run through the unmodified existing pipeline (`validate_hypothesis.py` → Backtester → Overfitting Detector). Results are reported for **every** candidate, winners and losers together — cherry-picking only the winner from a batch and quietly dropping the rest is exactly the same violation as not counting K in the first place.
+5. Any candidate that passes is **provisional, not adopted as a reference implementation, until it has accumulated real forward paper-trading track record** — a historical-data PASS from this process is treated as weaker evidence than a normal single pre-registered hypothesis, precisely because the search space, even if narrow, was chosen by the same system being evaluated.
+
 ## Open dependencies (spec §6)
 
 1. WRDS/Compustat/CRSP access is pending (contingent on a conversation with Lasse Heje Pedersen) — specifically need to confirm whether local Python access via the `wrds` library is permitted, or whether the agreement requires running in WRDS's cloud environment instead.
