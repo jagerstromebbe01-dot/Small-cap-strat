@@ -1,0 +1,111 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Sista otestade klassiska faktorn i projektet
+# (momentum HYP-012/016/030, storlek HYP-019, PEAD HYP-020, lonsamhet
+# HYP-024 alla redan testade och FAILED - bara idiosynkratisk vol-linjen
+# HYP-015/017/023 har nagonsin visat en riktig signal).
+#
+# DATA-FEASIBILITY (kontrollerad 2026-07-31 INNAN kriteriet lastes,
+# samma metod som HYP-024:s pivot-motivering): StockholdersEquity-taggen
+# (SEC EDGAR companyfacts) har 90% tacking pa ett 40-tickers-stickprov,
+# aktieantal (dei:EntityCommonStockSharesOutstanding/us-gaap fallback)
+# 85%. Praktiskt anvandbart, samma datakalla/metod som redan fungerade
+# for HYP-024.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-033
+date_registered: '2026-07-31'
+title: Book-to-Market (värdefaktor) - topp-decilen, rå signal utan krasch-skydd
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/024 (2011-2024)
+pass_fail_criterion: 'Samma bas-motor som HYP-014/015/024 (SPY-beta-hedge med sakerhetsspärr, friktion
+  - Corwin-Schultz-spread + 3% arlig borrow-kostnad, 10% ADV-kapacitetsspärr, kvartalsvis
+  ombalansering) och samma tre motorfixar (snappade ombalanseringsdatum, adjusted_close genomgaende,
+  flag_implausible_liquidity()).
+
+  Signal (ny, HELT NY FAKTORFAMILJ - inte en vidareutveckling av HYP-017/023-linjen):
+  Book-to-Market = senaste FILED 10-K:s StockholdersEquity delat med marknadsvarde vid samma
+  bokslutsdatum (pris x aktieantal, BADA fran SAMMA 10-K:s balansrakningsdatum - data/cache/
+  value_factor_by_ticker.jsonl, hamtad fran SEC EDGAR companyfacts, fp=FY/form=10-K enbart).
+  Anvander ENDAST senaste 10-K som var FILED (inte periodens slutdatum) fore respektive
+  ombalanseringsdatum - undviker framatblick, samma princip som HYP-020/024.
+
+  INGEN bankexkludering (till skillnad fran HYP-024:s lonsamhetsfaktor): Book-to-Market ar ett
+  meningsfullt matt aven for finansbolag (till skillnad fran rorelseresultat, som inte ar ett
+  jamforbart begrepp for banker) - samma princip som Fama-French HML inte exkluderar finansbolag.
+
+  Decilval: TOPP-decilen av Book-to-Market (HOGST B/M = billigast/mest "varde" - klassisk
+  HML-riktning, Fama & French 1992/1993). Kvartalsvis ombalansering (samma frekvens som befintlig
+  motor).
+
+  INGEN krasch-overlay eller annat riskverktyg i detta forsta test - rå signal, samma ordning som
+  idio-vol (HYP-015 rå forst) och lonsamhet (HYP-024 rå forst) redan testades i.
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M) - samma
+  golv som HYP-014/015/021/024. FAIL om nagon niva faller under.
+
+  Diagnostiskt syfte: testar om Book-to-Market (den mest klassiska av alla vardefaktorer, Fama &
+  French 1992) ger utnyttjbar ra edge i small-cap - den sista mekaniskt distinkta, otestade
+  klassiska faktorn i projektet.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 31
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1188, sharpe: 0.3310, calmar: 0.2122, sharpe_excl_best_trade: 0.3284, max_drawdown: -0.5598, win_rate: 0.5714, profit_factor: 2.0037, n_trades: 56, deflated_sharpe_ratio: 0.0841}
+  1000000: {cagr: 0.0354, sharpe: 0.1801, calmar: 0.0542, sharpe_excl_best_trade: 0.1783, max_drawdown: -0.6534, win_rate: 0.5614, profit_factor: 1.9988, n_trades: 57, deflated_sharpe_ratio: 0.0706}
+  10000000: {cagr: -0.0942, sharpe: -0.1845, calmar: -0.1036, sharpe_excl_best_trade: -0.1841, max_drawdown: -0.9096, win_rate: 0.5614, profit_factor: 1.9988, n_trades: 57, deflated_sharpe_ratio: 0.0026}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED, KRAFTIGT och FORSAMRANDE MED KAPITAL - Sharpe 0.33/0.18/-0.18
+  (blir NEGATIV vid $10M), DSR 0.08/0.07/0.003 vid K=32 (brus). MaxDD
+  KATASTROFAL och forvarrande: -56.0%/-65.3%/-91.0%.
+
+  KRITISK DATA-BEGRANSNING (diagnostiserad INNAN detta rapporterades,
+  paverkar tolkningen av HELA resultatet): bara 475 av 5162 tickers
+  (9.2%) hade ANVANDBAR book-to-market-data - langt lagre an HYP-024:s
+  4041/5162 (78%). Orsaken: StockholdersEquity och aktieantal maste
+  matchas pa EXAKT SAMMA 10-K-bokslutsdatum (undviker att jamfora tva
+  icke-samtidiga matt) - denna striktare matchning (jamfort med
+  HYP-024:s OperatingIncomeLoss+Assets, som visade sig latare att para
+  ihop) tappade merparten av universumet. Konkret konsekvens: decilstorleken
+  var 1-6 NAMN per kvartal genom HELA perioden (2010: 1 namn, 2013: 2,
+  2018: 6 som mest, 2024: 1 namn igen) - ALDRIG i narheten av
+  idio-vol-hypotesernas 50-76 namn. Detta ar en EXTREMT under-
+  diversifierad portfolj genom hela backtesten, inte bara i en tidig
+  datasvag period som HYP-024:s 2010-2012.
+
+  TOLKNING: till skillnad fran HYP-024 (dar den svaga perioden 2010-2012
+  kunde uteslutas och resultatet forblev svagt anda, vilket gav ett
+  rent svar) KAN denna hypotes INTE ge ett lika rent svar pa om
+  book-to-market-signalen sjalv saknar edge, eftersom testet ALDRIG
+  hade tillrackligt breda deciler for att ge signalen en rattvis chans -
+  MaxDD-katastrofen (-56% till -91%) drivs sannolikt lika mycket av
+  extrem koncentrationsrisk (1-6 namn) som av signalens egen kvalitet.
+
+  ROBUSTHET: sharpe_excl_best_trade forblir nara identisk med
+  huvudresultatet (0.328/0.178/-0.184) - INTE en enskild-trade-artefakt,
+  men det andrar inte koncentrationsproblemet.
+
+  SLUTSATS: HYP-033 ar FORMELLT FAILED enligt det lasta kriteriet (Sharpe
+  under 0.55-golvet pa alla tre nivaer, ingen tvekan om det numeriska
+  utfallet) - HYP-023 forblir referensimplementationen OFORANDRAD. MEN
+  till skillnad fran de tidigare faktormisslyckandena (momentum, storlek,
+  PEAD, lonsamhet) ar detta INTE ett lika rent, entydigt svar pa
+  "fungerar book-to-market i small-cap" - fragan forblir egentligen
+  OBESVARAD pa grund av den svara datamatchningen, inte definitivt
+  motbevisad. En framtida forsok (om nagot) skulle behova en mindre
+  strikt eller battre datakalla for aktieantal (t.ex. kvartalsvisa
+  10-Q-varden i stallet for bara 10-K, eller en annan matchningslogik
+  som inte kraver EXAKT samma bokslutsdatum) - kraver sin egen, nya,
+  oberoende pre-registrerade hypotes.'
+sharpe_raw:
+  100000: 0.3310
+  1000000: 0.1801
+  10000000: -0.1845
+deflated_sharpe_ratio:
+  100000: 0.0841
+  1000000: 0.0706
+  10000000: 0.0026
