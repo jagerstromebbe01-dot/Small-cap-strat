@@ -1,0 +1,160 @@
+# LÅST 2026-08-01 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Foljd av 5-AI-brainstormen 2026-07-31 (se
+# minnesanteckning/session samma datum): alla 5 externa AI:er flaggade
+# oberoende likviditet/mikrostruktur som trolig forklaring till att
+# HYP-023:s genuina OOS-test over 2025 visade en Sharpe-nedgang som var
+# STORRE vid hogre kapitalniva (motsatt vad kapacitetstesen skulle onska).
+# Detta ar den forsta, billigaste av tre foreslagna atgarder (ingen ny
+# data, ren matningsfels-fix): stale/ohandlade priser (vendorn upprepar
+# samma stangningskurs flera dagar i rad) trycker mekaniskt ner den matta
+# volatiliteten utan att aktien genuint ar lagrisk - en sadan aktie kan
+# felaktigt hamna i den lagsta idio-vol-decilen bara for att den inte
+# handlades, inte for att den ar stabil.
+#
+# Byggd PA HYP-023 (nuvarande referensimplementation), INTE en ny
+# mekanism - ett FILTER som korsimplementement fore idio-vol-rankningen
+# vid varje ombalansering. Allt annat (signal, universum, friktion,
+# hedge, kapacitetsspärr, SPY-krasch-overlay, sektor-krasch-trigger)
+# AR OFORANDRAT.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-034
+date_registered: '2026-08-01'
+title: Stale-price/nolldags-filter (>12/120 dagar) fore idio-vol-rankning i HYP-023
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD, sektor-krasch-trigger pa bank-/finanskomposit
+  OFORANDRAD - samma friktion/hedge/kapacitetsspärr, samma tre motorfixar). Enda tillagget: ett
+  FILTER som korsimplementeras FORE idio-vol-rankningen vid varje kvartalsvis ombalansering.
+
+  Filter, exakt specificerat (INTE fritt, INTE anpassat efter denna eller nagon annan kandidats
+  resultat - vald INNAN nagon backtest kors, den "vassaste" av tre AI-forslag fran 2026-07-31-
+  brainstormen):
+  - Vid varje ombalanseringstillfalle, for varje kandidat i manadens eligible-universum: rakna
+    antalet dagar med adjusted_close.pct_change() == 0.0 (genuint noll, ingen prisrorelse alls -
+    tecken pa att aktien inte handlades och vendorn upprepade forra stangningskursen) inom det
+    TRAILING 120-dagarsfonster som redan matar idio-vol-signalen (VOL_LOOKBACK_DAYS, oforandrat).
+  - Om antalet nolldagar > 12 (av upp till 120): kandidaten EXKLUDERAS HELT fran rankningen den
+    ombalanseringen, oavsett dess idio-vol-rank.
+  - Filtret paverkar ENDAST kandidatpoolen vid ombalansering (motsvarande "eligible"-listan i
+    strategies/HYP-023/backtest.py, fore scores.sort()) - INGEN effekt mellan ombalanseringar,
+    redan hallna namn saljs INTE ut for att de blir stale mitt i kvartalet (samma asymmetri-
+    princip som overlayernas ateruppbyggnad redan anvander).
+  - Sjalva idio-vol-BERAKNINGEN (VOL_LOOKBACK_DAYS=120, residual mot SPY-beta) AR OFORANDRAD -
+    filtret paverkar bara VILKA namn som far tavla om decilplatserna, inte hur volen raknas.
+
+  MOTORKRAV (samma som HYP-015/017/022/023): snappade ombalanseringsdatum, adjusted_close
+  genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer - samma golv som hela projektet.
+  2. Maxdrawdown INTE samre (inte mer negativ) an HYP-023:s EGET redan uppnadda resultat pa SAMMA
+     kapitalniva (100k: -25.46%, 1M: -19.29%, 10M: -13.16%) - samma "maste inte skada"-standard
+     som HYP-023 sjalv holls till mot HYP-017, och som BATCH-001 (HYP-025-029) foll pa vid $1M.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  UTOVER PASS/FAIL-grinden (diagnostik, rapporteras oavsett utfall, GATAR INTE resultatet):
+  (a) genomsnittligt antal kandidater exkluderade av filtret per ombalanseringstillfalle, och hur
+      decilstorleken (n_top) paverkas - for att verifiera att filtret faktiskt bits pa den
+      historiska decilen och inte ar en no-op.
+  (b) en fornyad blind OOS-2025-korning (samma metod och samma motiv-for-genuin-blindhet som
+      HYP-023:s redan gjorda OOS-test, paper_trading/HYP-023/oos_backtest_2025.py - HYP-034:s
+      oforandrade, redan lasta kod korfd over samma utokade 2025-universum) for att se om just
+      DEN diagnostiserade kapitalnivaberoende avklingningen (HYP-023: Sharpe 0.39/0.17/0.08
+      isolerat till 2025) mildras. Detta GATAR INTE PASS/FAIL - samma statistiska reservation som
+      redan dokumenterad i HYP-023 (ett enda ars Sharpe-skattning har hog standardosakerhet) - men
+      rapporteras fullstandigt, INTE cherry-pickat.
+
+  Diagnostiskt syfte: testar om en ren matningsfels-korrigering (exkludera aktier vars matta
+  "laga volatilitet" sannolikt ar en artefakt av att de inte handlades, inte av genuin stabilitet)
+  forbattrar eller atminstone inte skadar HYP-023, och om den mildrar den redan diagnostiserade
+  kapitalnivaberoende OOS-avklingningen - den forsta av tre AI-foreslagna likviditets-atgarder,
+  vald for att den kraver ingen ny data och ar billigast att testa forst.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 32
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1212, sharpe: 0.7155, calmar: 0.3754, sharpe_excl_best_trade: 0.6664, max_drawdown: -0.3228, win_rate: 0.4914, profit_factor: 1.2612, n_trades: 2149, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.1596, avg_stale_excluded_per_rebal: 34.3, avg_n_top_post_filter: 63.4, avg_n_pre_filter: 672.4, deflated_sharpe_ratio: 0.7250}
+  1000000: {cagr: 0.1226, sharpe: 0.7415, calmar: 0.4615, sharpe_excl_best_trade: 0.6899, max_drawdown: -0.2658, win_rate: 0.4914, profit_factor: 1.2612, n_trades: 2149, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0886, avg_stale_excluded_per_rebal: 34.3, avg_n_top_post_filter: 63.4, avg_n_pre_filter: 672.4, deflated_sharpe_ratio: 0.7580}
+  10000000: {cagr: 0.0967, sharpe: 0.7217, calmar: 0.7117, sharpe_excl_best_trade: 0.7137, max_drawdown: -0.1359, win_rate: 0.4914, profit_factor: 1.2612, n_trades: 2149, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0236, avg_stale_excluded_per_rebal: 34.3, avg_n_top_post_filter: 63.4, avg_n_pre_filter: 672.4, deflated_sharpe_ratio: 0.7297}
+date_tested: '2026-08-01'
+result_summary: >
+  FAILED - RENT OCH ENTYDIGT, PA ALLA TRE NIVAER (till skillnad fran de
+  flesta tidigare varianterna i denna serie, som ofta klarade sig vid
+  nagon enstaka niva).
+
+  Villkor 1 (Sharpe >= 0.55): 0.72/0.74/0.72 - PASS pa alla tre, i
+  praktiken ofrandrat fran HYP-023:s egna 0.72/0.75/0.72.
+
+  Villkor 2 (MaxDD INTE samre an HYP-023:s -25.46%/-19.29%/-13.16%):
+  FAIL PA ALLA TRE NIVAER. -32.28% mot -25.46% vid 100k (6.82pp SAMRE),
+  -26.58% mot -19.29% vid 1M (7.28pp SAMRE), -13.59% mot -13.16% vid 10M
+  (0.44pp SAMRE, marginellt men anda ett brutet villkor). De tva lagre
+  nivaerna visar en STOR forsamring, inte en marginell brusskillnad.
+
+  Mars 2023-episoden (rapporterad for kontext, ej del av villkoren):
+  ocksa samre pa alla tre nivaer (-16.0%/-8.9%/-2.4% mot HYP-023:s
+  -14.0%/-8.2%/-2.3%) - samma riktning som huvudresultatet, inte en
+  isolerad avvikelse fran en annan episod.
+
+  ROBUSTHET: sharpe_excl_best_trade forblir 0.666/0.690/0.714 - den
+  forsamrade MaxDD ar INTE en enskild-trade-artefakt.
+
+  DIAGNOSTIK (a) - filtrets faktiska bett: i genomsnitt 34.3 kandidater
+  (av ett forfilter-genomsnitt pa 672.4, ~5.1%) exkluderades per
+  ombalansering, vilket krympte den genomsnittliga decilstorleken fran
+  en implicit ~67 (HYP-023, ofiltrerad) till 63.4 - ett REELLT, INTE
+  forsumbart, filterbett, sa resultatet ar inte en no-op-artefakt.
+
+  DIAGNOSTIK (b) - fornyad blind OOS-2025-korning
+  (paper_trading/HYP-034/oos_backtest_2025.py, HYP-034:s egna
+  ofrandrade kod, identisk metod som HYP-023:s motsvarande test):
+  isolerat till 2025 blev Sharpe 0.265/0.052/-0.022 vid 100k/1M/10M -
+  SAMRE an HYP-023:s egna 0.39/0.17/0.08 PA ALLA TRE NIVAER, och Sharpen
+  blir rentav NEGATIV vid $10M (jamfort med HYP-023:s redan svaga men
+  positiva 0.08). Filtret exkluderade i genomsnitt 5.5 kandidater per
+  ombalansering under 2025 - fran en redan kraftigt utunnad pool
+  (202->66 bolag under aret, kand konfound fran HYP-023:s eget
+  OOS-test). Detta AR den diagnostiserade kapitalnivaberoende
+  avklingningen filtret var avsett att motverka, och den blev VARRE,
+  inte battre.
+
+  TOLKNING: hypotesen att stale/ohandlade priser mekaniskt trycker ner
+  matt volatilitet och darigenom smygler in falskt "stabila" namn i
+  lagvol-decilen fick INTE stod i praktiken - att ta bort dem skadade
+  bade huvudbacktesten och den specifika OOS-svagheten filtret siktade
+  pa. Mest sannolika forklaring: manga av de exkluderade "stale-
+  liknande" namnen ar sannolikt INTE matningsfelsartefakter utan
+  genuint lagvolatila, tunt handlade mikrobolag vars stillastaende pris
+  reflekterar verklig affarsmassig stabilitet snarare an ett vendor-fel
+  - att ta bort dem fran den konkurrerande poolen forskjuter den
+  overlevande decilen mot namn som handlas mer aktivt men OCKSA ar
+  objektivt mer volatila, vilket OKAR den realiserade svansrisken
+  snarare an att minska den. Detta ar samma monster som redan setts i
+  HYP-018/022/025-029: ett riskverktyg motiverat av en rimlig teori kan
+  anda skada i praktiken, nar den specifika sammansattningen av just
+  denna decil inte matchar det forenklade antagandet bakom teorin.
+
+  SLUTSATS: HYP-023 forblir referensimplementationen OFORANDRAD. Den
+  forsta (billigaste) av de tre AI-foreslagna likviditets-atgarderna ar
+  nu testad och avfard - INTE bara overflodig utan aktivt skadlig,
+  bade i huvudbacktesten och i den specifika OOS-diagnostik den
+  syftade till att forbattra. De tva atervarande AI-forslagen
+  (villkorat overlay-aterintrade, likviditetsviktad allokering inom
+  decilen) kravs fortfarande en egen, oberoende lasning innan de testas
+  - detta resultat avfar INTE dem automatiskt (de ar mekaniskt distinkta
+  fran ett enkelt exkluderingsfilter), men det bor tona ner forvantningarna
+  pa att "likviditet ar problemet" ar en enkel fix.
+sharpe_raw:
+  100000: 0.7155
+  1000000: 0.7415
+  10000000: 0.7217
+deflated_sharpe_ratio:
+  100000: 0.7250
+  1000000: 0.7580
+  10000000: 0.7297
