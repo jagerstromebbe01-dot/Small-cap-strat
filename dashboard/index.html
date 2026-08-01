@@ -179,6 +179,10 @@
   <section>
     <h2>Hypotesregister</h2>
     <div class="note-hint">Ingen knapp här kan godkänna en hypotes eller köra ett test — det sker uteslutande genom att du redigerar YAML-filen manuellt efter att kriteriet låsts i chatt.</div>
+    <div class="list-controls">
+      <label><input type="checkbox" id="passedOnly" checked onchange="refresh()"> Visa bara godkända (passed)</label>
+      <span id="hiddenCount"></span>
+    </div>
     <div id="hypotheses"></div>
   </section>
 
@@ -406,9 +410,19 @@ function renderPipelineFlow(chain, currentStep) {
 
 function renderHypotheses(state) {
   const el = document.getElementById('hypotheses');
-  const hyps = state.hypotheses || [];
-  if (!hyps.length) {
+  const allHyps = state.hypotheses || [];
+  const onlyPassed = document.getElementById('passedOnly').checked;
+  const hyps = onlyPassed ? allHyps.filter(h => h.status === 'passed') : allHyps;
+  const hiddenCountEl = document.getElementById('hiddenCount');
+  const hiddenCount = allHyps.length - hyps.length;
+  hiddenCountEl.textContent = hiddenCount ? `(${hiddenCount} dolda - status inte "passed")` : '';
+
+  if (!allHyps.length) {
     el.innerHTML = `<div class="empty-state">Inga hypoteser i registret ännu.</div>`;
+    return;
+  }
+  if (!hyps.length) {
+    el.innerHTML = `<div class="empty-state">Inga hypoteser med status "passed" ännu — avmarkera filtret ovan för att se alla ${allHyps.length}.</div>`;
     return;
   }
   el.innerHTML = hyps.map(h => {
