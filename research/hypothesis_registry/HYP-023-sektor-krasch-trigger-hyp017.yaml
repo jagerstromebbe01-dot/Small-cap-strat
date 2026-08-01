@@ -241,6 +241,25 @@ result_summary: >
 
   Ingetdera kontroll andrar HYP-023:s pass_fail_criterion, k_total eller
   status - bada ar robusthetsverifieringar av ett redan lockat resultat.
+
+  UPPDATERING 2026-08-01 (CEO-BESLUT - REFERENSSTATUS OVERFORD): efter
+  ett genuint diagnostiserat problem (OOS-2025-testet visade en Sharpe-
+  nedgang som VAXTE med kapitalniva) testades tre uppfoljande hypoteser.
+  HYP-034 (stale-price-filter) och HYP-036 (sektorneutral rankning)
+  BADA FAILED - bada visade att ingrepp i sjalva URVALET/kompositionen
+  konsekvent skadar denna strategi (branschexponeringen, sarskilt
+  bankandelen, ar en STABILISERANDE FEATURE, inte bara en riskkalla -
+  tredje oberoende bekraftelsen efter HYP-022). HYP-037 (villkorat
+  SPY-krasch-overlay-aterintrade, som ENDAST andrar EXPONERINGSTIMING,
+  inte urval) PASSED - forsta gangen en modifiering forbattrar BADE
+  Sharpe OCH MaxDD PA ALLA TRE kapitalnivaer samtidigt (Sharpe
+  0.73/0.75/0.70 mot denna hypotes 0.72/0.75/0.72, MaxDD -23.10%/
+  -19.12%/-13.11% mot denna hypotes -25.46%/-19.29%/-13.16%, battre
+  pa alla tre). CEO har DARFOR UTSETT HYP-037 TILL DEN NYA
+  REFERENSIMPLEMENTATIONEN. Denna hypotes (HYP-023) FORBLIR PASSED och
+  kvarstar i registret - men ar INTE langre den aktiva referensen for
+  framtida jamforelser/utveckling. Se
+  research/hypothesis_registry/HYP-037-villkorat-overlay-aterintrade-hyp023.yaml.
 sharpe_raw:
   100000: 0.7174
   1000000: 0.7536

@@ -162,13 +162,12 @@ result_summary: >
   ar TEKNISKT klarad men SVAGT bekraftad (0.083 mot kravet 0.08), och
   bor granskas igen nar mer OOS-data (2026 och framat) blir tillganglig.
 
-  HUR DETTA PAVERKAR REFERENSIMPLEMENTATIONEN (HYP-023) AR INTE AVGJORT
-  HAR - i linje med hur HYP-017->023-overgangen krävde ett explicit,
-  separat CEO-beslut i chatt (INTE nagot en agent eller registerpost
-  beslutar sjalv), inväntar denna fraga CEO:s stallningstagande. Se
-  konversationen 2026-08-01 for diskussionen; om/nar CEO beslutar
-  nagot, dokumenteras det har OCH i HYP-023:s egen registerpost, samma
-  monster som anvandes forra gangen.
+  CEO-BESLUT 2026-08-01: HYP-037 AR DEN NYA REFERENSIMPLEMENTATIONEN,
+  i stallet for HYP-023 (samma typ av beslut som forde over referens-
+  statusen fran HYP-017 till HYP-023 2026-07-30). HYP-023 FORBLIR
+  PASSED i registret men ar INTE langre den aktiva referensen for
+  framtida jamforelser/utveckling. Se motsvarande uppdatering i
+  research/hypothesis_registry/HYP-023-sektor-krasch-trigger-hyp017.yaml.
 sharpe_raw:
   100000: 0.7339
   1000000: 0.7537
