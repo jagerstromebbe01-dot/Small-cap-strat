@@ -58,6 +58,9 @@ FF_DIR = REPO_ROOT / "data" / "cache" / "famafrench"
 SIC_FILE = REPO_ROOT / "data" / "cache" / "sic_classification.jsonl"
 STRATEGIES_DIR = REPO_ROOT / "strategies"
 
+sys.path.insert(0, str(STRATEGIES_DIR / "common"))
+from sector import load_ticker_major_group  # noqa: E402
+
 DEFAULT_LEVELS = [100_000, 1_000_000, 10_000_000]
 
 
@@ -138,11 +141,14 @@ def factor_regression(pv: pd.Series, ff: pd.DataFrame) -> dict:
 # ════════════════════════════════════════════════════════════
 def load_sic_lookup() -> tuple:
     """Returnerar (ticker -> 2-siffrig SIC-huvudgrupp, huvudgrupp ->
-    representativ branschbeskrivning). Beskrivningen valjs som den
-    VANLIGASTE sic_description bland ALLA kanda tickers i den
-    huvudgruppen (inte bara de i den aktuella hypotesens universum) -
-    en stabil, ateranvandbar etikett."""
-    ticker_to_major = {}
+    representativ branschbeskrivning). ticker_to_major kommer fran
+    strategies/common/sector.py::load_ticker_major_group() - SAMMA
+    funktion HYP-036 anvander for sin sektorneutrala rankning, med
+    flit, sa diagnostik och strategikod aldrig kan glida isar.
+    Beskrivningen valjs har separat som den VANLIGASTE sic_description
+    bland ALLA kanda tickers i huvudgruppen - en stabil, ateranvandbar
+    etikett, bara for lasbarhet i rapporten."""
+    all_tickers_with_sic = []
     major_desc_votes = {}
     with SIC_FILE.open(encoding="utf-8") as f:
         for line in f:
@@ -150,10 +156,11 @@ def load_sic_lookup() -> tuple:
             sic = row.get("sic")
             if not sic:
                 continue
+            all_tickers_with_sic.append(row["ticker"])
             major = str(sic)[:2]
-            ticker_to_major[row["ticker"]] = major
             major_desc_votes.setdefault(major, Counter())[row.get("sic_description", "")] += 1
 
+    ticker_to_major = load_ticker_major_group(all_tickers_with_sic)
     major_to_label = {mg: votes.most_common(1)[0][0] for mg, votes in major_desc_votes.items()}
     return ticker_to_major, major_to_label
 

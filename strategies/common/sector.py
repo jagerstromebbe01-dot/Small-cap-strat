@@ -73,3 +73,17 @@ def load_bank_financial_flags_sic(tickers) -> dict:
     sic_map = load_ticker_sic()
     lo, hi = SIC_FINANCE_RANGE
     return {t: (sic_map.get(t) is not None and lo <= sic_map[t] <= hi) for t in tickers}
+
+
+def load_ticker_major_group(tickers) -> dict:
+    """ticker -> 2-siffrig SIC-huvudgrupp (str), eller "XX" om SIC-kod
+    saknas - okand/ej klassificerad behandlas som sin egen grupp,
+    exkluderas ALDRIG tyst. Anvands av HYP-036 (sektorneutral rankning)
+    och scripts/attribution.py (sektorexponeringsdiagnostik) - SAMMA
+    grupperingslogik pa bade strategi- och diagnostiksidan, med flit."""
+    sic_map = load_ticker_sic()
+    result = {}
+    for t in tickers:
+        sic = sic_map.get(t)
+        result[t] = str(sic)[:2] if sic else "XX"
+    return result

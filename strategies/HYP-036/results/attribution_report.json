@@ -1,0 +1,1535 @@
+[
+  {
+    "capital_level": 100000,
+    "factor_regression": {
+      "n_obs": 3586,
+      "alpha_daily": 0.0004960686488251018,
+      "alpha_annual": 0.13312386758972683,
+      "alpha_t_stat": 3.0684581146048706,
+      "alpha_significant": true,
+      "r_squared": 0.21701612946603321,
+      "factor_loadings": {
+        "Mkt-RF": {
+          "coef": -0.08894578360049477,
+          "se": 0.015947456666049884,
+          "t_stat": -5.577427514811755
+        },
+        "SMB": {
+          "coef": 0.7001216347487913,
+          "se": 0.02909974829769719,
+          "t_stat": 24.059370809203713
+        },
+        "HML": {
+          "coef": 0.11227749134075578,
+          "se": 0.029200770287929584,
+          "t_stat": 3.8450181359485147
+        },
+        "RMW": {
+          "coef": -0.06269858412918072,
+          "se": 0.0386332745818688,
+          "t_stat": -1.622916638772478
+        },
+        "CMA": {
+          "coef": 0.021542969315142973,
+          "se": 0.05069433280633047,
+          "t_stat": 0.42495813876167216
+        },
+        "MOM": {
+          "coef": -0.0959859686447245,
+          "se": 0.018386070262848605,
+          "t_stat": -5.22058097638604
+        }
+      }
+    },
+    "friction_drag": {
+      "n_trades": 2991,
+      "mean_gross_ret": 0.005784406390477896,
+      "mean_net_ret": 0.0015495130297378391,
+      "mean_drag_pp": 0.4234893360740062,
+      "median_drag_pp": 0.08999913419907024,
+      "dollar_weighted_drag_pct_of_turnover": 0.4235115618414615
+    },
+    "sector_exposure": {
+      "weight_method": "dollarkostnad (trade_log['cost'])",
+      "sectors": [
+        {
+          "sic_major_group": "28",
+          "label": "Pharmaceutical Preparations",
+          "pct_of_portfolio": 0.14438440862736607,
+          "pct_of_base_universe": 0.16485858194498257,
+          "overrepresentation_ratio": 0.875807658442378
+        },
+        {
+          "sic_major_group": "73",
+          "label": "Services-Prepackaged Software",
+          "pct_of_portfolio": 0.09220608959845236,
+          "pct_of_base_universe": 0.13948082138705928,
+          "overrepresentation_ratio": 0.661066436815571
+        },
+        {
+          "sic_major_group": "60",
+          "label": "State Commercial Banks",
+          "pct_of_portfolio": 0.06966849424365679,
+          "pct_of_base_universe": 0.05424254165052305,
+          "overrepresentation_ratio": 1.284388454591987
+        },
+        {
+          "sic_major_group": "36",
+          "label": "Semiconductors & Related Devices",
+          "pct_of_portfolio": 0.037565933608362384,
+          "pct_of_base_universe": 0.05075552111584657,
+          "overrepresentation_ratio": 0.7401349209403306
+        },
+        {
+          "sic_major_group": "67",
+          "label": "Real Estate Investment Trusts",
+          "pct_of_portfolio": 0.034526224050013335,
+          "pct_of_base_universe": 0.063541263076327,
+          "overrepresentation_ratio": 0.543366977274905
+        },
+        {
+          "sic_major_group": "38",
+          "label": "Surgical & Medical Instruments & Apparatus",
+          "pct_of_portfolio": 0.03350087068311579,
+          "pct_of_base_universe": 0.044556373498643935,
+          "overrepresentation_ratio": 0.7518760628967117
+        },
+        {
+          "sic_major_group": "13",
+          "label": "Crude Petroleum & Natural Gas",
+          "pct_of_portfolio": 0.02948540263931244,
+          "pct_of_base_universe": 0.04959318093762108,
+          "overrepresentation_ratio": 0.594545501656761
+        },
+        {
+          "sic_major_group": "35",
+          "label": "Special Industry Machinery, NEC",
+          "pct_of_portfolio": 0.02363449947225017,
+          "pct_of_base_universe": 0.027121270825261525,
+          "overrepresentation_ratio": 0.8714377591125384
+        },
+        {
+          "sic_major_group": "34",
+          "label": "Miscellaneous Fabricated Metal Products",
+          "pct_of_portfolio": 0.02021609004867212,
+          "pct_of_base_universe": 0.007167764432390546,
+          "overrepresentation_ratio": 2.8204177521958242
+        },
+        {
+          "sic_major_group": "58",
+          "label": "Retail-Eating  Places",
+          "pct_of_portfolio": 0.02008818180015349,
+          "pct_of_base_universe": 0.01162340178225494,
+          "overrepresentation_ratio": 1.7282532408732052
+        },
+        {
+          "sic_major_group": "80",
+          "label": "Services-Health Services",
+          "pct_of_portfolio": 0.01935606596322594,
+          "pct_of_base_universe": 0.02402169701666021,
+          "overrepresentation_ratio": 0.8057742943723573
+        },
+        {
+          "sic_major_group": "50",
+          "label": "Wholesale-Metals & Minerals (No Petroleum)",
+          "pct_of_portfolio": 0.0192843767451437,
+          "pct_of_base_universe": 0.01239829523440527,
+          "overrepresentation_ratio": 1.5554055118504964
+        },
+        {
+          "sic_major_group": "59",
+          "label": "Retail-Miscellaneous Retail",
+          "pct_of_portfolio": 0.017763222679800402,
+          "pct_of_base_universe": 0.017241379310344827,
+          "overrepresentation_ratio": 1.0302669154284234
+        },
+        {
+          "sic_major_group": "44",
+          "label": "Deep Sea Foreign Transportation of  Freight",
+          "pct_of_portfolio": 0.01639702173145318,
+          "pct_of_base_universe": 0.008136381247578458,
+          "overrepresentation_ratio": 2.01527205185146
+        },
+        {
+          "sic_major_group": "20",
+          "label": "Beverages",
+          "pct_of_portfolio": 0.01562410522707033,
+          "pct_of_base_universe": 0.015304145679969005,
+          "overrepresentation_ratio": 1.0209067238245195
+        },
+        {
+          "sic_major_group": "56",
+          "label": "Retail-Apparel & Accessory Stores",
+          "pct_of_portfolio": 0.015002853481933559,
+          "pct_of_base_universe": 0.0065865943432778,
+          "overrepresentation_ratio": 2.277786166874736
+        },
+        {
+          "sic_major_group": "63",
+          "label": "Fire, Marine & Casualty Insurance",
+          "pct_of_portfolio": 0.014499875655688077,
+          "pct_of_base_universe": 0.016079039132119333,
+          "overrepresentation_ratio": 0.9017874474055646
+        },
+        {
+          "sic_major_group": "65",
+          "label": "Real Estate",
+          "pct_of_portfolio": 0.014486414955230802,
+          "pct_of_base_universe": 0.011235955056179775,
+          "overrepresentation_ratio": 1.2892909310155414
+        },
+        {
+          "sic_major_group": "61",
+          "label": "Finance Services",
+          "pct_of_portfolio": 0.014169758585757237,
+          "pct_of_base_universe": 0.023634250290585045,
+          "overrepresentation_ratio": 0.5995433919645808
+        },
+        {
+          "sic_major_group": "49",
+          "label": "Electric Services",
+          "pct_of_portfolio": 0.014108363736248086,
+          "pct_of_base_universe": 0.018597442851607904,
+          "overrepresentation_ratio": 0.7586184750678397
+        },
+        {
+          "sic_major_group": "82",
+          "label": "Services-Educational Services",
+          "pct_of_portfolio": 0.013985811364578103,
+          "pct_of_base_universe": 0.005424254165052305,
+          "overrepresentation_ratio": 2.5783842237125776
+        },
+        {
+          "sic_major_group": "30",
+          "label": "Plastics Products, NEC",
+          "pct_of_portfolio": 0.013807468467333866,
+          "pct_of_base_universe": 0.003487020534676482,
+          "overrepresentation_ratio": 3.9596751237987453
+        },
+        {
+          "sic_major_group": "37",
+          "label": "Motor Vehicles & Passenger Car Bodies",
+          "pct_of_portfolio": 0.013261109873569614,
+          "pct_of_base_universe": 0.024215420379697792,
+          "overrepresentation_ratio": 0.5476307933389308
+        },
+        {
+          "sic_major_group": "33",
+          "label": "Steel Works, Blast Furnaces & Rolling & Finishing Mills",
+          "pct_of_portfolio": 0.01290893871120954,
+          "pct_of_base_universe": 0.004261913986826811,
+          "overrepresentation_ratio": 3.0289064376028927
+        },
+        {
+          "sic_major_group": "79",
+          "label": "Services-Miscellaneous Amusement & Recreation",
+          "pct_of_portfolio": 0.012761509203346422,
+          "pct_of_base_universe": 0.006974041069352964,
+          "overrepresentation_ratio": 1.8298586252131732
+        },
+        {
+          "sic_major_group": "87",
+          "label": "Services-Management Consulting Services",
+          "pct_of_portfolio": 0.012523507236602026,
+          "pct_of_base_universe": 0.017047655947307245,
+          "overrepresentation_ratio": 0.7346175494924961
+        },
+        {
+          "sic_major_group": "62",
+          "label": "Investment Advice",
+          "pct_of_portfolio": 0.012491177877116866,
+          "pct_of_base_universe": 0.011429678419217357,
+          "overrepresentation_ratio": 1.0928722068080892
+        },
+        {
+          "sic_major_group": "47",
+          "label": "Transportation Services",
+          "pct_of_portfolio": 0.012072743796392813,
+          "pct_of_base_universe": 0.007555211158465711,
+          "overrepresentation_ratio": 1.597935986589223
+        },
+        {
+          "sic_major_group": "46",
+          "label": "Pipe Lines (No Natural Gas)",
+          "pct_of_portfolio": 0.011746184072127578,
+          "pct_of_base_universe": 0.0021309569934134056,
+          "overrepresentation_ratio": 5.512163834574778
+        },
+        {
+          "sic_major_group": "14",
+          "label": "Mining & Quarrying of  Nonmetallic Minerals (No Fuels)",
+          "pct_of_portfolio": 0.011426070093680204,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 2.8086368487417723
+        },
+        {
+          "sic_major_group": "51",
+          "label": "Wholesale-Drugs, Proprietaries & Druggists' Sundries",
+          "pct_of_portfolio": 0.011303525599329334,
+          "pct_of_base_universe": 0.010461061604029445,
+          "overrepresentation_ratio": 1.08053331747663
+        },
+        {
+          "sic_major_group": "48",
+          "label": "Telephone Communications (No Radiotelephone)",
+          "pct_of_portfolio": 0.010900238378525873,
+          "pct_of_base_universe": 0.01898488957768307,
+          "overrepresentation_ratio": 0.5741533725505159
+        },
+        {
+          "sic_major_group": "55",
+          "label": "Retail-Auto Dealers & Gasoline Stations",
+          "pct_of_portfolio": 0.010710338684313848,
+          "pct_of_base_universe": 0.004261913986826811,
+          "overrepresentation_ratio": 2.513034922201277
+        },
+        {
+          "sic_major_group": "45",
+          "label": "Air Transportation, Scheduled",
+          "pct_of_portfolio": 0.01049112973022354,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 2.5788196032101864
+        },
+        {
+          "sic_major_group": "57",
+          "label": "Retail-Home Furniture, Furnishings & Equipment Stores",
+          "pct_of_portfolio": 0.010465436510965704,
+          "pct_of_base_universe": 0.0032932971716389,
+          "overrepresentation_ratio": 3.177799015859115
+        },
+        {
+          "sic_major_group": "39",
+          "label": "Miscellaneous Manufacturing Industries",
+          "pct_of_portfolio": 0.010167867528267071,
+          "pct_of_base_universe": 0.006392870980240217,
+          "overrepresentation_ratio": 1.590500975179231
+        },
+        {
+          "sic_major_group": "26",
+          "label": "Paper Mills",
+          "pct_of_portfolio": 0.009943945178387674,
+          "pct_of_base_universe": 0.0036807438977140643,
+          "overrepresentation_ratio": 2.7016128953072194
+        },
+        {
+          "sic_major_group": "32",
+          "label": "Concrete, Gypsum & Plaster Products",
+          "pct_of_portfolio": 0.009373047087686711,
+          "pct_of_base_universe": 0.003487020534676482,
+          "overrepresentation_ratio": 2.6879816148132667
+        },
+        {
+          "sic_major_group": "27",
+          "label": "Periodicals: Publishing or  Publishing & Printing",
+          "pct_of_portfolio": 0.00933844822582611,
+          "pct_of_base_universe": 0.004455637349864394,
+          "overrepresentation_ratio": 2.0958725974658425
+        },
+        {
+          "sic_major_group": "12",
+          "label": "Bituminous Coal & Lignite Surface Mining",
+          "pct_of_portfolio": 0.008678876927711857,
+          "pct_of_base_universe": 0.005230530802014723,
+          "overrepresentation_ratio": 1.6592726926240227
+        },
+        {
+          "sic_major_group": "10",
+          "label": "Metal Mining",
+          "pct_of_portfolio": 0.00832904133020099,
+          "pct_of_base_universe": 0.029252227818674932,
+          "overrepresentation_ratio": 0.28473186322183786
+        },
+        {
+          "sic_major_group": "XX",
+          "label": "Okand/ej SIC-klassificerad",
+          "pct_of_portfolio": 0.007682970042531493,
+          "pct_of_base_universe": 0.005036807438977141,
+          "overrepresentation_ratio": 1.5253650522902908
+        },
+        {
+          "sic_major_group": "78",
+          "label": "Services-Motion Picture & Video Tape Production",
+          "pct_of_portfolio": 0.007537113417440705,
+          "pct_of_base_universe": 0.005036807438977141,
+          "overrepresentation_ratio": 1.4964069023395736
+        },
+        {
+          "sic_major_group": "25",
+          "label": "Household Furniture",
+          "pct_of_portfolio": 0.007193604800873207,
+          "pct_of_base_universe": 0.0019372336303758234,
+          "overrepresentation_ratio": 3.7133387982107493
+        },
+        {
+          "sic_major_group": "54",
+          "label": "Retail-Food Stores",
+          "pct_of_portfolio": 0.006959660427562687,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 2.5661262233627564
+        },
+        {
+          "sic_major_group": "24",
+          "label": "Millwood, Veneer, Plywood, & Structural Wood Members",
+          "pct_of_portfolio": 0.006579398828315757,
+          "pct_of_base_universe": 0.0013560635412630763,
+          "overrepresentation_ratio": 4.851836678823706
+        },
+        {
+          "sic_major_group": "53",
+          "label": "Retail-Department Stores",
+          "pct_of_portfolio": 0.006493306007898987,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 4.189805701596821
+        },
+        {
+          "sic_major_group": "17",
+          "label": "Construction - Special Trade Contractors",
+          "pct_of_portfolio": 0.006184859771552707,
+          "pct_of_base_universe": 0.0030995738086013174,
+          "overrepresentation_ratio": 1.995390383797192
+        },
+        {
+          "sic_major_group": "42",
+          "label": "Trucking (No Local)",
+          "pct_of_portfolio": 0.006065948865966953,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 3.9140535057651764
+        },
+        {
+          "sic_major_group": "72",
+          "label": "Services-Personal Services",
+          "pct_of_portfolio": 0.005402943482499499,
+          "pct_of_base_universe": 0.0048430840759395586,
+          "overrepresentation_ratio": 1.1155997702664966
+        },
+        {
+          "sic_major_group": "70",
+          "label": "Hotels & Motels",
+          "pct_of_portfolio": 0.005058623907358774,
+          "pct_of_base_universe": 0.0048430840759395586,
+          "overrepresentation_ratio": 1.0445046643914395
+        },
+        {
+          "sic_major_group": "23",
+          "label": "Apparel & Other Finishd Prods of  Fabrics & Similar Matl",
+          "pct_of_portfolio": 0.0050132916892478546,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 1.2323148428522583
+        },
+        {
+          "sic_major_group": "15",
+          "label": "Operative Builders",
+          "pct_of_portfolio": 0.00450122096110632,
+          "pct_of_base_universe": 0.0019372336303758234,
+          "overrepresentation_ratio": 2.323530260123082
+        },
+        {
+          "sic_major_group": "29",
+          "label": "Petroleum Refining",
+          "pct_of_portfolio": 0.004012154529911055,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 1.4793386916714903
+        },
+        {
+          "sic_major_group": "16",
+          "label": "Heavy Construction Other Than Bldg Const - Contractors",
+          "pct_of_portfolio": 0.003987542221866943,
+          "pct_of_base_universe": 0.0021309569934134056,
+          "overrepresentation_ratio": 1.8712448135706512
+        },
+        {
+          "sic_major_group": "52",
+          "label": "Retail-Lumber & Other Building Materials Dealers",
+          "pct_of_portfolio": 0.002944582702184324,
+          "pct_of_base_universe": 0.0013560635412630763,
+          "overrepresentation_ratio": 2.171419415525069
+        },
+        {
+          "sic_major_group": "22",
+          "label": "Broadwoven Fabric Mills, Cotton",
+          "pct_of_portfolio": 0.0021019903742062287,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 5.425237155826276
+        },
+        {
+          "sic_major_group": "41",
+          "label": "Local & Suburban Transit & Interurban Hwy Passenger Trans",
+          "pct_of_portfolio": 0.0019519373069123674,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 5.03795018914082
+        },
+        {
+          "sic_major_group": "90",
+          "label": "?",
+          "pct_of_portfolio": 0.0018174660935224428,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 4.690879987381424
+        },
+        {
+          "sic_major_group": "75",
+          "label": "Services-Auto Rental & Leasing (No Drivers)",
+          "pct_of_portfolio": 0.0017588255371485636,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 1.1348821778451106
+        },
+        {
+          "sic_major_group": "64",
+          "label": "Insurance Agents, Brokers & Service",
+          "pct_of_portfolio": 0.0017214385114749987,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 0.6347189711595674
+        },
+        {
+          "sic_major_group": "21",
+          "label": "Cigarettes",
+          "pct_of_portfolio": 0.0014765667167250369,
+          "pct_of_base_universe": 0.001162340178225494,
+          "overrepresentation_ratio": 1.2703395652891067
+        },
+        {
+          "sic_major_group": "31",
+          "label": "Leather & Leather Products",
+          "pct_of_portfolio": 0.0005858704015888283,
+          "pct_of_base_universe": 0.0009686168151879117,
+          "overrepresentation_ratio": 0.6048526026003064
+        },
+        {
+          "sic_major_group": "83",
+          "label": "Services-Social Services",
+          "pct_of_portfolio": 0.000157006995901121,
+          "pct_of_base_universe": 0.000581170089112747,
+          "overrepresentation_ratio": 0.27015670428052885
+        },
+        {
+          "sic_major_group": "89",
+          "label": "Services-Services, NEC",
+          "pct_of_portfolio": 0.000157006995901121,
+          "pct_of_base_universe": 0.0009686168151879117,
+          "overrepresentation_ratio": 0.16209402256831731
+        }
+      ]
+    }
+  },
+  {
+    "capital_level": 1000000,
+    "factor_regression": {
+      "n_obs": 3586,
+      "alpha_daily": 0.0005063485881194438,
+      "alpha_annual": 0.13606160673183987,
+      "alpha_t_stat": 3.198383844941226,
+      "alpha_significant": true,
+      "r_squared": 0.21791725156186204,
+      "factor_loadings": {
+        "Mkt-RF": {
+          "coef": -0.08741413123146952,
+          "se": 0.015616685688988155,
+          "t_stat": -5.597482908496271
+        },
+        "SMB": {
+          "coef": 0.6891527861906157,
+          "se": 0.028496181699070162,
+          "t_stat": 24.184039583559468
+        },
+        "HML": {
+          "coef": 0.10555295851662311,
+          "se": 0.02859510836193383,
+          "t_stat": 3.691294230489315
+        },
+        "RMW": {
+          "coef": -0.05108612944691124,
+          "se": 0.03783197025804247,
+          "t_stat": -1.350342821123654
+        },
+        "CMA": {
+          "coef": 0.02928799098725696,
+          "se": 0.04964286646000455,
+          "t_stat": 0.5899738084393904
+        },
+        "MOM": {
+          "coef": -0.09702643758400428,
+          "se": 0.018004719270491628,
+          "t_stat": -5.388944760889623
+        }
+      }
+    },
+    "friction_drag": {
+      "n_trades": 2991,
+      "mean_gross_ret": 0.005784406390477896,
+      "mean_net_ret": 0.0015495130297378296,
+      "mean_drag_pp": 0.423489336074006,
+      "median_drag_pp": 0.08999913419904249,
+      "dollar_weighted_drag_pct_of_turnover": 0.4181370980484646
+    },
+    "sector_exposure": {
+      "weight_method": "dollarkostnad (trade_log['cost'])",
+      "sectors": [
+        {
+          "sic_major_group": "28",
+          "label": "Pharmaceutical Preparations",
+          "pct_of_portfolio": 0.1400158280557607,
+          "pct_of_base_universe": 0.16485858194498257,
+          "overrepresentation_ratio": 0.849308700850572
+        },
+        {
+          "sic_major_group": "73",
+          "label": "Services-Prepackaged Software",
+          "pct_of_portfolio": 0.09265876885101659,
+          "pct_of_base_universe": 0.13948082138705928,
+          "overrepresentation_ratio": 0.6643118955679829
+        },
+        {
+          "sic_major_group": "60",
+          "label": "State Commercial Banks",
+          "pct_of_portfolio": 0.06283930285430873,
+          "pct_of_base_universe": 0.05424254165052305,
+          "overrepresentation_ratio": 1.1584874333355062
+        },
+        {
+          "sic_major_group": "36",
+          "label": "Semiconductors & Related Devices",
+          "pct_of_portfolio": 0.03847810830250806,
+          "pct_of_base_universe": 0.05075552111584657,
+          "overrepresentation_ratio": 0.7581068513646816
+        },
+        {
+          "sic_major_group": "38",
+          "label": "Surgical & Medical Instruments & Apparatus",
+          "pct_of_portfolio": 0.03609600115540592,
+          "pct_of_base_universe": 0.044556373498643935,
+          "overrepresentation_ratio": 0.8101198172356755
+        },
+        {
+          "sic_major_group": "67",
+          "label": "Real Estate Investment Trusts",
+          "pct_of_portfolio": 0.03462929700061566,
+          "pct_of_base_universe": 0.063541263076327,
+          "overrepresentation_ratio": 0.5449891192596891
+        },
+        {
+          "sic_major_group": "13",
+          "label": "Crude Petroleum & Natural Gas",
+          "pct_of_portfolio": 0.030065232542916712,
+          "pct_of_base_universe": 0.04959318093762108,
+          "overrepresentation_ratio": 0.6062372280724065
+        },
+        {
+          "sic_major_group": "35",
+          "label": "Special Industry Machinery, NEC",
+          "pct_of_portfolio": 0.02454593969469672,
+          "pct_of_base_universe": 0.027121270825261525,
+          "overrepresentation_ratio": 0.9050438621716034
+        },
+        {
+          "sic_major_group": "34",
+          "label": "Miscellaneous Fabricated Metal Products",
+          "pct_of_portfolio": 0.020803517792642164,
+          "pct_of_base_universe": 0.007167764432390546,
+          "overrepresentation_ratio": 2.9023718606924014
+        },
+        {
+          "sic_major_group": "58",
+          "label": "Retail-Eating  Places",
+          "pct_of_portfolio": 0.020722896407119683,
+          "pct_of_base_universe": 0.01162340178225494,
+          "overrepresentation_ratio": 1.7828598542258633
+        },
+        {
+          "sic_major_group": "80",
+          "label": "Services-Health Services",
+          "pct_of_portfolio": 0.020460048139430174,
+          "pct_of_base_universe": 0.02402169701666021,
+          "overrepresentation_ratio": 0.8517320039978916
+        },
+        {
+          "sic_major_group": "50",
+          "label": "Wholesale-Metals & Minerals (No Petroleum)",
+          "pct_of_portfolio": 0.019881557467641486,
+          "pct_of_base_universe": 0.01239829523440527,
+          "overrepresentation_ratio": 1.6035718694994585
+        },
+        {
+          "sic_major_group": "44",
+          "label": "Deep Sea Foreign Transportation of  Freight",
+          "pct_of_portfolio": 0.017925486372384312,
+          "pct_of_base_universe": 0.008136381247578458,
+          "overrepresentation_ratio": 2.203127634624948
+        },
+        {
+          "sic_major_group": "20",
+          "label": "Beverages",
+          "pct_of_portfolio": 0.01741674068212195,
+          "pct_of_base_universe": 0.015304145679969005,
+          "overrepresentation_ratio": 1.1380407012799176
+        },
+        {
+          "sic_major_group": "59",
+          "label": "Retail-Miscellaneous Retail",
+          "pct_of_portfolio": 0.01654395643699852,
+          "pct_of_base_universe": 0.017241379310344827,
+          "overrepresentation_ratio": 0.9595494733459141
+        },
+        {
+          "sic_major_group": "56",
+          "label": "Retail-Apparel & Accessory Stores",
+          "pct_of_portfolio": 0.016492044426116265,
+          "pct_of_base_universe": 0.0065865943432778,
+          "overrepresentation_ratio": 2.503880391988593
+        },
+        {
+          "sic_major_group": "49",
+          "label": "Electric Services",
+          "pct_of_portfolio": 0.015132267543737206,
+          "pct_of_base_universe": 0.018597442851607904,
+          "overrepresentation_ratio": 0.8136746360497027
+        },
+        {
+          "sic_major_group": "63",
+          "label": "Fire, Marine & Casualty Insurance",
+          "pct_of_portfolio": 0.014783061120590637,
+          "pct_of_base_universe": 0.016079039132119333,
+          "overrepresentation_ratio": 0.9193995361986611
+        },
+        {
+          "sic_major_group": "30",
+          "label": "Plastics Products, NEC",
+          "pct_of_portfolio": 0.013868312842350508,
+          "pct_of_base_universe": 0.003487020534676482,
+          "overrepresentation_ratio": 3.9771239384562955
+        },
+        {
+          "sic_major_group": "79",
+          "label": "Services-Miscellaneous Amusement & Recreation",
+          "pct_of_portfolio": 0.013846097166819294,
+          "pct_of_base_universe": 0.006974041069352964,
+          "overrepresentation_ratio": 1.985376488197811
+        },
+        {
+          "sic_major_group": "37",
+          "label": "Motor Vehicles & Passenger Car Bodies",
+          "pct_of_portfolio": 0.013708422286769169,
+          "pct_of_base_universe": 0.024215420379697792,
+          "overrepresentation_ratio": 0.5661030067544196
+        },
+        {
+          "sic_major_group": "33",
+          "label": "Steel Works, Blast Furnaces & Rolling & Finishing Mills",
+          "pct_of_portfolio": 0.01341588368114559,
+          "pct_of_base_universe": 0.004261913986826811,
+          "overrepresentation_ratio": 3.1478541619124334
+        },
+        {
+          "sic_major_group": "82",
+          "label": "Services-Educational Services",
+          "pct_of_portfolio": 0.013287537427125838,
+          "pct_of_base_universe": 0.005424254165052305,
+          "overrepresentation_ratio": 2.4496524356722706
+        },
+        {
+          "sic_major_group": "61",
+          "label": "Finance Services",
+          "pct_of_portfolio": 0.012917851007077581,
+          "pct_of_base_universe": 0.023634250290585045,
+          "overrepresentation_ratio": 0.5465733352338891
+        },
+        {
+          "sic_major_group": "65",
+          "label": "Real Estate",
+          "pct_of_portfolio": 0.01258870681964586,
+          "pct_of_base_universe": 0.011235955056179775,
+          "overrepresentation_ratio": 1.1203949069484815
+        },
+        {
+          "sic_major_group": "87",
+          "label": "Services-Management Consulting Services",
+          "pct_of_portfolio": 0.01244942359775252,
+          "pct_of_base_universe": 0.017047655947307245,
+          "overrepresentation_ratio": 0.7302718705863467
+        },
+        {
+          "sic_major_group": "46",
+          "label": "Pipe Lines (No Natural Gas)",
+          "pct_of_portfolio": 0.012196174304187728,
+          "pct_of_base_universe": 0.0021309569934134056,
+          "overrepresentation_ratio": 5.723331978019732
+        },
+        {
+          "sic_major_group": "51",
+          "label": "Wholesale-Drugs, Proprietaries & Druggists' Sundries",
+          "pct_of_portfolio": 0.011916922825955457,
+          "pct_of_base_universe": 0.010461061604029445,
+          "overrepresentation_ratio": 1.1391695486589273
+        },
+        {
+          "sic_major_group": "47",
+          "label": "Transportation Services",
+          "pct_of_portfolio": 0.011569950607464225,
+          "pct_of_base_universe": 0.007555211158465711,
+          "overrepresentation_ratio": 1.5313867957879572
+        },
+        {
+          "sic_major_group": "55",
+          "label": "Retail-Auto Dealers & Gasoline Stations",
+          "pct_of_portfolio": 0.011464769074782487,
+          "pct_of_base_universe": 0.004261913986826811,
+          "overrepresentation_ratio": 2.6900517256376
+        },
+        {
+          "sic_major_group": "45",
+          "label": "Air Transportation, Scheduled",
+          "pct_of_portfolio": 0.011396971210288698,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 2.801484066071917
+        },
+        {
+          "sic_major_group": "39",
+          "label": "Miscellaneous Manufacturing Industries",
+          "pct_of_portfolio": 0.011299100937366227,
+          "pct_of_base_universe": 0.006392870980240217,
+          "overrepresentation_ratio": 1.7674533042025595
+        },
+        {
+          "sic_major_group": "62",
+          "label": "Investment Advice",
+          "pct_of_portfolio": 0.011134519886902871,
+          "pct_of_base_universe": 0.011429678419217357,
+          "overrepresentation_ratio": 0.9741761297659767
+        },
+        {
+          "sic_major_group": "48",
+          "label": "Telephone Communications (No Radiotelephone)",
+          "pct_of_portfolio": 0.011130213118344345,
+          "pct_of_base_universe": 0.01898488957768307,
+          "overrepresentation_ratio": 0.586266939968301
+        },
+        {
+          "sic_major_group": "14",
+          "label": "Mining & Quarrying of  Nonmetallic Minerals (No Fuels)",
+          "pct_of_portfolio": 0.011106251833142735,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 2.7300224744134667
+        },
+        {
+          "sic_major_group": "26",
+          "label": "Paper Mills",
+          "pct_of_portfolio": 0.010947356352677464,
+          "pct_of_base_universe": 0.0036807438977140643,
+          "overrepresentation_ratio": 2.9742238680274244
+        },
+        {
+          "sic_major_group": "27",
+          "label": "Periodicals: Publishing or  Publishing & Printing",
+          "pct_of_portfolio": 0.009706072253988103,
+          "pct_of_base_universe": 0.004455637349864394,
+          "overrepresentation_ratio": 2.1783802163081125
+        },
+        {
+          "sic_major_group": "32",
+          "label": "Concrete, Gypsum & Plaster Products",
+          "pct_of_portfolio": 0.009422452109152532,
+          "pct_of_base_universe": 0.003487020534676482,
+          "overrepresentation_ratio": 2.7021498770802985
+        },
+        {
+          "sic_major_group": "12",
+          "label": "Bituminous Coal & Lignite Surface Mining",
+          "pct_of_portfolio": 0.009012310882599428,
+          "pct_of_base_universe": 0.005230530802014723,
+          "overrepresentation_ratio": 1.7230203250362315
+        },
+        {
+          "sic_major_group": "XX",
+          "label": "Okand/ej SIC-klassificerad",
+          "pct_of_portfolio": 0.007925541709252812,
+          "pct_of_base_universe": 0.005036807438977141,
+          "overrepresentation_ratio": 1.573524857813962
+        },
+        {
+          "sic_major_group": "57",
+          "label": "Retail-Home Furniture, Furnishings & Equipment Stores",
+          "pct_of_portfolio": 0.007896039822664049,
+          "pct_of_base_universe": 0.0032932971716389,
+          "overrepresentation_ratio": 2.397609268505401
+        },
+        {
+          "sic_major_group": "78",
+          "label": "Services-Motion Picture & Video Tape Production",
+          "pct_of_portfolio": 0.007859241268681596,
+          "pct_of_base_universe": 0.005036807438977141,
+          "overrepresentation_ratio": 1.5603616703436305
+        },
+        {
+          "sic_major_group": "25",
+          "label": "Household Furniture",
+          "pct_of_portfolio": 0.00756547667073027,
+          "pct_of_base_universe": 0.0019372336303758234,
+          "overrepresentation_ratio": 3.905299057430965
+        },
+        {
+          "sic_major_group": "54",
+          "label": "Retail-Food Stores",
+          "pct_of_portfolio": 0.007238200355473731,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 2.668827873925386
+        },
+        {
+          "sic_major_group": "24",
+          "label": "Millwood, Veneer, Plywood, & Structural Wood Members",
+          "pct_of_portfolio": 0.006948565652273154,
+          "pct_of_base_universe": 0.0013560635412630763,
+          "overrepresentation_ratio": 5.124070842433432
+        },
+        {
+          "sic_major_group": "53",
+          "label": "Retail-Department Stores",
+          "pct_of_portfolio": 0.006776685100787519,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 4.372656061283147
+        },
+        {
+          "sic_major_group": "42",
+          "label": "Trucking (No Local)",
+          "pct_of_portfolio": 0.006420664862550814,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 4.142934002560913
+        },
+        {
+          "sic_major_group": "72",
+          "label": "Services-Personal Services",
+          "pct_of_portfolio": 0.005691795665859235,
+          "pct_of_base_universe": 0.0048430840759395586,
+          "overrepresentation_ratio": 1.175241969086615
+        },
+        {
+          "sic_major_group": "10",
+          "label": "Metal Mining",
+          "pct_of_portfolio": 0.005674250830612628,
+          "pct_of_base_universe": 0.029252227818674932,
+          "overrepresentation_ratio": 0.19397670720279725
+        },
+        {
+          "sic_major_group": "23",
+          "label": "Apparel & Other Finishd Prods of  Fabrics & Similar Matl",
+          "pct_of_portfolio": 0.005108931966336287,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 1.2558241338203768
+        },
+        {
+          "sic_major_group": "70",
+          "label": "Hotels & Motels",
+          "pct_of_portfolio": 0.0050915451060266,
+          "pct_of_base_universe": 0.0048430840759395586,
+          "overrepresentation_ratio": 1.0513022334923723
+        },
+        {
+          "sic_major_group": "17",
+          "label": "Construction - Special Trade Contractors",
+          "pct_of_portfolio": 0.00502073053572294,
+          "pct_of_base_universe": 0.0030995738086013174,
+          "overrepresentation_ratio": 1.6198131890876135
+        },
+        {
+          "sic_major_group": "15",
+          "label": "Operative Builders",
+          "pct_of_portfolio": 0.0046921852457734595,
+          "pct_of_base_universe": 0.0019372336303758234,
+          "overrepresentation_ratio": 2.4221060238682597
+        },
+        {
+          "sic_major_group": "29",
+          "label": "Petroleum Refining",
+          "pct_of_portfolio": 0.004243029806673475,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 1.5644657044320343
+        },
+        {
+          "sic_major_group": "52",
+          "label": "Retail-Lumber & Other Building Materials Dealers",
+          "pct_of_portfolio": 0.0032787413928353276,
+          "pct_of_base_universe": 0.0013560635412630763,
+          "overrepresentation_ratio": 2.41783758140228
+        },
+        {
+          "sic_major_group": "16",
+          "label": "Heavy Construction Other Than Bldg Const - Contractors",
+          "pct_of_portfolio": 0.003168356218191151,
+          "pct_of_base_universe": 0.0021309569934134056,
+          "overrepresentation_ratio": 1.4868231634820657
+        },
+        {
+          "sic_major_group": "22",
+          "label": "Broadwoven Fabric Mills, Cotton",
+          "pct_of_portfolio": 0.0021037804494642163,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 5.429857340067142
+        },
+        {
+          "sic_major_group": "41",
+          "label": "Local & Suburban Transit & Interurban Hwy Passenger Trans",
+          "pct_of_portfolio": 0.0020493328139190767,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 5.289327992725137
+        },
+        {
+          "sic_major_group": "90",
+          "label": "?",
+          "pct_of_portfolio": 0.001821981692137226,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 4.7025347474061805
+        },
+        {
+          "sic_major_group": "64",
+          "label": "Insurance Agents, Brokers & Service",
+          "pct_of_portfolio": 0.0017832009793362093,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 0.6574916753809652
+        },
+        {
+          "sic_major_group": "21",
+          "label": "Cigarettes",
+          "pct_of_portfolio": 0.0015358829826576106,
+          "pct_of_base_universe": 0.001162340178225494,
+          "overrepresentation_ratio": 1.3213713260797642
+        },
+        {
+          "sic_major_group": "75",
+          "label": "Services-Auto Rental & Leasing (No Drivers)",
+          "pct_of_portfolio": 0.0012793532408190186,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 0.8255026786384717
+        },
+        {
+          "sic_major_group": "31",
+          "label": "Leather & Leather Products",
+          "pct_of_portfolio": 0.000622530368734632,
+          "pct_of_base_universe": 0.0009686168151879117,
+          "overrepresentation_ratio": 0.6427003526816341
+        },
+        {
+          "sic_major_group": "83",
+          "label": "Services-Social Services",
+          "pct_of_portfolio": 0.00016430009546842536,
+          "pct_of_base_universe": 0.000581170089112747,
+          "overrepresentation_ratio": 0.28270569760267056
+        },
+        {
+          "sic_major_group": "89",
+          "label": "Services-Services, NEC",
+          "pct_of_portfolio": 0.00016430009546842536,
+          "pct_of_base_universe": 0.0009686168151879117,
+          "overrepresentation_ratio": 0.16962341856160235
+        }
+      ]
+    }
+  },
+  {
+    "capital_level": 10000000,
+    "factor_regression": {
+      "n_obs": 3586,
+      "alpha_daily": 0.00045251966794713735,
+      "alpha_annual": 0.12076239390500554,
+      "alpha_t_stat": 3.20116749015236,
+      "alpha_significant": true,
+      "r_squared": 0.21527372067312078,
+      "factor_loadings": {
+        "Mkt-RF": {
+          "coef": -0.07604011244285896,
+          "se": 0.013944370434983939,
+          "t_stat": -5.453104734803078
+        },
+        "SMB": {
+          "coef": 0.6184027166218233,
+          "se": 0.025444663580226696,
+          "t_stat": 24.30382758537984
+        },
+        "HML": {
+          "coef": 0.07345330900758411,
+          "se": 0.02553299666576997,
+          "t_stat": 2.8767993811731873
+        },
+        "RMW": {
+          "coef": 0.0022406692549461343,
+          "se": 0.03378072774656836,
+          "t_stat": 0.06632981005489896
+        },
+        "CMA": {
+          "coef": 0.04302388424095555,
+          "se": 0.04432685226295255,
+          "t_stat": 0.970605446687989
+        },
+        "MOM": {
+          "coef": -0.09855222765596136,
+          "se": 0.016076681063169698,
+          "t_stat": -6.130135148462707
+        }
+      }
+    },
+    "friction_drag": {
+      "n_trades": 2991,
+      "mean_gross_ret": 0.005784406390477896,
+      "mean_net_ret": 0.0015495130297378343,
+      "mean_drag_pp": 0.423489336074006,
+      "median_drag_pp": 0.08999913419907024,
+      "dollar_weighted_drag_pct_of_turnover": 0.40352218230953646
+    },
+    "sector_exposure": {
+      "weight_method": "dollarkostnad (trade_log['cost'])",
+      "sectors": [
+        {
+          "sic_major_group": "28",
+          "label": "Pharmaceutical Preparations",
+          "pct_of_portfolio": 0.12748225507879027,
+          "pct_of_base_universe": 0.16485858194498257,
+          "overrepresentation_ratio": 0.7732824920290428
+        },
+        {
+          "sic_major_group": "73",
+          "label": "Services-Prepackaged Software",
+          "pct_of_portfolio": 0.1033958298821,
+          "pct_of_base_universe": 0.13948082138705928,
+          "overrepresentation_ratio": 0.7412906581269447
+        },
+        {
+          "sic_major_group": "60",
+          "label": "State Commercial Banks",
+          "pct_of_portfolio": 0.04129412869376357,
+          "pct_of_base_universe": 0.05424254165052305,
+          "overrepresentation_ratio": 0.7612867582757412
+        },
+        {
+          "sic_major_group": "38",
+          "label": "Surgical & Medical Instruments & Apparatus",
+          "pct_of_portfolio": 0.040454341939042675,
+          "pct_of_base_universe": 0.044556373498643935,
+          "overrepresentation_ratio": 0.9079361438666882
+        },
+        {
+          "sic_major_group": "36",
+          "label": "Semiconductors & Related Devices",
+          "pct_of_portfolio": 0.037265544404167385,
+          "pct_of_base_universe": 0.05075552111584657,
+          "overrepresentation_ratio": 0.734216565703481
+        },
+        {
+          "sic_major_group": "67",
+          "label": "Real Estate Investment Trusts",
+          "pct_of_portfolio": 0.03565473963010543,
+          "pct_of_base_universe": 0.063541263076327,
+          "overrepresentation_ratio": 0.5611273352762325
+        },
+        {
+          "sic_major_group": "13",
+          "label": "Crude Petroleum & Natural Gas",
+          "pct_of_portfolio": 0.030730482946758845,
+          "pct_of_base_universe": 0.04959318093762108,
+          "overrepresentation_ratio": 0.6196513787936295
+        },
+        {
+          "sic_major_group": "34",
+          "label": "Miscellaneous Fabricated Metal Products",
+          "pct_of_portfolio": 0.026941409760423963,
+          "pct_of_base_universe": 0.007167764432390546,
+          "overrepresentation_ratio": 3.7586907346840133
+        },
+        {
+          "sic_major_group": "35",
+          "label": "Special Industry Machinery, NEC",
+          "pct_of_portfolio": 0.024421397369855418,
+          "pct_of_base_universe": 0.027121270825261525,
+          "overrepresentation_ratio": 0.9004518087370976
+        },
+        {
+          "sic_major_group": "50",
+          "label": "Wholesale-Metals & Minerals (No Petroleum)",
+          "pct_of_portfolio": 0.024294858736340838,
+          "pct_of_base_universe": 0.01239829523440527,
+          "overrepresentation_ratio": 1.9595321999529907
+        },
+        {
+          "sic_major_group": "56",
+          "label": "Retail-Apparel & Accessory Stores",
+          "pct_of_portfolio": 0.02248838668904192,
+          "pct_of_base_universe": 0.0065865943432778,
+          "overrepresentation_ratio": 3.4142662379068938
+        },
+        {
+          "sic_major_group": "59",
+          "label": "Retail-Miscellaneous Retail",
+          "pct_of_portfolio": 0.02197135539529658,
+          "pct_of_base_universe": 0.017241379310344827,
+          "overrepresentation_ratio": 1.2743386129272019
+        },
+        {
+          "sic_major_group": "80",
+          "label": "Services-Health Services",
+          "pct_of_portfolio": 0.020888320974035007,
+          "pct_of_base_universe": 0.02402169701666021,
+          "overrepresentation_ratio": 0.869560587644909
+        },
+        {
+          "sic_major_group": "58",
+          "label": "Retail-Eating  Places",
+          "pct_of_portfolio": 0.01974532569543752,
+          "pct_of_base_universe": 0.01162340178225494,
+          "overrepresentation_ratio": 1.6987561873308081
+        },
+        {
+          "sic_major_group": "20",
+          "label": "Beverages",
+          "pct_of_portfolio": 0.019594316608544344,
+          "pct_of_base_universe": 0.015304145679969005,
+          "overrepresentation_ratio": 1.2803273713076697
+        },
+        {
+          "sic_major_group": "45",
+          "label": "Air Transportation, Scheduled",
+          "pct_of_portfolio": 0.015831713230502538,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 3.891585890278767
+        },
+        {
+          "sic_major_group": "44",
+          "label": "Deep Sea Foreign Transportation of  Freight",
+          "pct_of_portfolio": 0.015511669604304916,
+          "pct_of_base_universe": 0.008136381247578458,
+          "overrepresentation_ratio": 1.906458059462428
+        },
+        {
+          "sic_major_group": "49",
+          "label": "Electric Services",
+          "pct_of_portfolio": 0.014397840578893867,
+          "pct_of_base_universe": 0.018597442851607904,
+          "overrepresentation_ratio": 0.7741838861276056
+        },
+        {
+          "sic_major_group": "30",
+          "label": "Plastics Products, NEC",
+          "pct_of_portfolio": 0.014310939449110988,
+          "pct_of_base_universe": 0.003487020534676482,
+          "overrepresentation_ratio": 4.104059413128384
+        },
+        {
+          "sic_major_group": "51",
+          "label": "Wholesale-Drugs, Proprietaries & Druggists' Sundries",
+          "pct_of_portfolio": 0.014008276319979796,
+          "pct_of_base_universe": 0.010461061604029445,
+          "overrepresentation_ratio": 1.339087451180291
+        },
+        {
+          "sic_major_group": "33",
+          "label": "Steel Works, Blast Furnaces & Rolling & Finishing Mills",
+          "pct_of_portfolio": 0.013875333467027644,
+          "pct_of_base_universe": 0.004261913986826811,
+          "overrepresentation_ratio": 3.2556577889453044
+        },
+        {
+          "sic_major_group": "55",
+          "label": "Retail-Auto Dealers & Gasoline Stations",
+          "pct_of_portfolio": 0.013536183784225672,
+          "pct_of_base_universe": 0.004261913986826811,
+          "overrepresentation_ratio": 3.1760809406442236
+        },
+        {
+          "sic_major_group": "39",
+          "label": "Miscellaneous Manufacturing Industries",
+          "pct_of_portfolio": 0.013448415655762514,
+          "pct_of_base_universe": 0.006392870980240217,
+          "overrepresentation_ratio": 2.1036582307589726
+        },
+        {
+          "sic_major_group": "46",
+          "label": "Pipe Lines (No Natural Gas)",
+          "pct_of_portfolio": 0.013338044306626615,
+          "pct_of_base_universe": 0.0021309569934134056,
+          "overrepresentation_ratio": 6.259180428255144
+        },
+        {
+          "sic_major_group": "79",
+          "label": "Services-Miscellaneous Amusement & Recreation",
+          "pct_of_portfolio": 0.012504018011664755,
+          "pct_of_base_universe": 0.006974041069352964,
+          "overrepresentation_ratio": 1.792937249339263
+        },
+        {
+          "sic_major_group": "37",
+          "label": "Motor Vehicles & Passenger Car Bodies",
+          "pct_of_portfolio": 0.012014213326009559,
+          "pct_of_base_universe": 0.024215420379697792,
+          "overrepresentation_ratio": 0.4961389535108907
+        },
+        {
+          "sic_major_group": "87",
+          "label": "Services-Management Consulting Services",
+          "pct_of_portfolio": 0.011925940166886527,
+          "pct_of_base_universe": 0.017047655947307245,
+          "overrepresentation_ratio": 0.6995648084257756
+        },
+        {
+          "sic_major_group": "47",
+          "label": "Transportation Services",
+          "pct_of_portfolio": 0.011760152673721248,
+          "pct_of_base_universe": 0.007555211158465711,
+          "overrepresentation_ratio": 1.5565617461986945
+        },
+        {
+          "sic_major_group": "14",
+          "label": "Mining & Quarrying of  Nonmetallic Minerals (No Fuels)",
+          "pct_of_portfolio": 0.011662583613909712,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 2.866774124523902
+        },
+        {
+          "sic_major_group": "26",
+          "label": "Paper Mills",
+          "pct_of_portfolio": 0.011590347313759086,
+          "pct_of_base_universe": 0.0036807438977140643,
+          "overrepresentation_ratio": 3.148914359664442
+        },
+        {
+          "sic_major_group": "63",
+          "label": "Fire, Marine & Casualty Insurance",
+          "pct_of_portfolio": 0.011454769331417024,
+          "pct_of_base_universe": 0.016079039132119333,
+          "overrepresentation_ratio": 0.712403846852707
+        },
+        {
+          "sic_major_group": "12",
+          "label": "Bituminous Coal & Lignite Surface Mining",
+          "pct_of_portfolio": 0.01137995564884254,
+          "pct_of_base_universe": 0.005230530802014723,
+          "overrepresentation_ratio": 2.175678928123155
+        },
+        {
+          "sic_major_group": "61",
+          "label": "Finance Services",
+          "pct_of_portfolio": 0.011052229755138344,
+          "pct_of_base_universe": 0.023634250290585045,
+          "overrepresentation_ratio": 0.46763614750839455
+        },
+        {
+          "sic_major_group": "48",
+          "label": "Telephone Communications (No Radiotelephone)",
+          "pct_of_portfolio": 0.010716503852626515,
+          "pct_of_base_universe": 0.01898488957768307,
+          "overrepresentation_ratio": 0.5644754376250823
+        },
+        {
+          "sic_major_group": "25",
+          "label": "Household Furniture",
+          "pct_of_portfolio": 0.010576625407848386,
+          "pct_of_base_universe": 0.0019372336303758234,
+          "overrepresentation_ratio": 5.4596540355313365
+        },
+        {
+          "sic_major_group": "82",
+          "label": "Services-Educational Services",
+          "pct_of_portfolio": 0.010462697584730311,
+          "pct_of_base_universe": 0.005424254165052305,
+          "overrepresentation_ratio": 1.9288730332992097
+        },
+        {
+          "sic_major_group": "32",
+          "label": "Concrete, Gypsum & Plaster Products",
+          "pct_of_portfolio": 0.009988548985497777,
+          "pct_of_base_universe": 0.003487020534676482,
+          "overrepresentation_ratio": 2.8644938812855294
+        },
+        {
+          "sic_major_group": "53",
+          "label": "Retail-Department Stores",
+          "pct_of_portfolio": 0.009244526270303673,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 5.9650305759134445
+        },
+        {
+          "sic_major_group": "24",
+          "label": "Millwood, Veneer, Plywood, & Structural Wood Members",
+          "pct_of_portfolio": 0.009083844032882158,
+          "pct_of_base_universe": 0.0013560635412630763,
+          "overrepresentation_ratio": 6.698686128248243
+        },
+        {
+          "sic_major_group": "XX",
+          "label": "Okand/ej SIC-klassificerad",
+          "pct_of_portfolio": 0.009081862696325374,
+          "pct_of_base_universe": 0.005036807438977141,
+          "overrepresentation_ratio": 1.8030990476319837
+        },
+        {
+          "sic_major_group": "57",
+          "label": "Retail-Home Furniture, Furnishings & Equipment Stores",
+          "pct_of_portfolio": 0.009046747698877209,
+          "pct_of_base_universe": 0.0032932971716389,
+          "overrepresentation_ratio": 2.747018330682597
+        },
+        {
+          "sic_major_group": "65",
+          "label": "Real Estate",
+          "pct_of_portfolio": 0.008397239810403493,
+          "pct_of_base_universe": 0.011235955056179775,
+          "overrepresentation_ratio": 0.747354343125911
+        },
+        {
+          "sic_major_group": "78",
+          "label": "Services-Motion Picture & Video Tape Production",
+          "pct_of_portfolio": 0.00836972098991724,
+          "pct_of_base_universe": 0.005036807438977141,
+          "overrepresentation_ratio": 1.6617115288443383
+        },
+        {
+          "sic_major_group": "54",
+          "label": "Retail-Food Stores",
+          "pct_of_portfolio": 0.00793828354062961,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 2.9269585454807174
+        },
+        {
+          "sic_major_group": "27",
+          "label": "Periodicals: Publishing or  Publishing & Printing",
+          "pct_of_portfolio": 0.007840815297363619,
+          "pct_of_base_universe": 0.004455637349864394,
+          "overrepresentation_ratio": 1.7597516767387391
+        },
+        {
+          "sic_major_group": "62",
+          "label": "Investment Advice",
+          "pct_of_portfolio": 0.007678468540713339,
+          "pct_of_base_universe": 0.011429678419217357,
+          "overrepresentation_ratio": 0.6718009255451229
+        },
+        {
+          "sic_major_group": "72",
+          "label": "Services-Personal Services",
+          "pct_of_portfolio": 0.006486618134139482,
+          "pct_of_base_universe": 0.0048430840759395586,
+          "overrepresentation_ratio": 1.3393569123371203
+        },
+        {
+          "sic_major_group": "42",
+          "label": "Trucking (No Local)",
+          "pct_of_portfolio": 0.0056190290485681905,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 3.625678493588625
+        },
+        {
+          "sic_major_group": "70",
+          "label": "Hotels & Motels",
+          "pct_of_portfolio": 0.005432039671420143,
+          "pct_of_base_universe": 0.0048430840759395586,
+          "overrepresentation_ratio": 1.1216075513548311
+        },
+        {
+          "sic_major_group": "15",
+          "label": "Operative Builders",
+          "pct_of_portfolio": 0.004900951555121394,
+          "pct_of_base_universe": 0.0019372336303758234,
+          "overrepresentation_ratio": 2.5298711927536637
+        },
+        {
+          "sic_major_group": "10",
+          "label": "Metal Mining",
+          "pct_of_portfolio": 0.004753162959952682,
+          "pct_of_base_universe": 0.029252227818674932,
+          "overrepresentation_ratio": 0.16248892184950822
+        },
+        {
+          "sic_major_group": "29",
+          "label": "Petroleum Refining",
+          "pct_of_portfolio": 0.004079268606672665,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 1.5040846105460213
+        },
+        {
+          "sic_major_group": "23",
+          "label": "Apparel & Other Finishd Prods of  Fabrics & Similar Matl",
+          "pct_of_portfolio": 0.0034582315161069436,
+          "pct_of_base_universe": 0.004068190623789229,
+          "overrepresentation_ratio": 0.8500662421973354
+        },
+        {
+          "sic_major_group": "52",
+          "label": "Retail-Lumber & Other Building Materials Dealers",
+          "pct_of_portfolio": 0.002530369480166524,
+          "pct_of_base_universe": 0.0013560635412630763,
+          "overrepresentation_ratio": 1.8659667509456568
+        },
+        {
+          "sic_major_group": "16",
+          "label": "Heavy Construction Other Than Bldg Const - Contractors",
+          "pct_of_portfolio": 0.0025033948367046165,
+          "pct_of_base_universe": 0.0021309569934134056,
+          "overrepresentation_ratio": 1.1747749224608393
+        },
+        {
+          "sic_major_group": "17",
+          "label": "Construction - Special Trade Contractors",
+          "pct_of_portfolio": 0.0022685181899093116,
+          "pct_of_base_universe": 0.0030995738086013174,
+          "overrepresentation_ratio": 0.7318806810194917
+        },
+        {
+          "sic_major_group": "21",
+          "label": "Cigarettes",
+          "pct_of_portfolio": 0.002206541358103347,
+          "pct_of_base_universe": 0.001162340178225494,
+          "overrepresentation_ratio": 1.8983610817549128
+        },
+        {
+          "sic_major_group": "64",
+          "label": "Insurance Agents, Brokers & Service",
+          "pct_of_portfolio": 0.0019249366446119564,
+          "pct_of_base_universe": 0.0027121270825261525,
+          "overrepresentation_ratio": 0.7097516399633513
+        },
+        {
+          "sic_major_group": "22",
+          "label": "Broadwoven Fabric Mills, Cotton",
+          "pct_of_portfolio": 0.0014867994561882857,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 3.8374293964219652
+        },
+        {
+          "sic_major_group": "41",
+          "label": "Local & Suburban Transit & Interurban Hwy Passenger Trans",
+          "pct_of_portfolio": 0.0010048163913889735,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 2.5934311061749407
+        },
+        {
+          "sic_major_group": "31",
+          "label": "Leather & Leather Products",
+          "pct_of_portfolio": 0.0008929596855341035,
+          "pct_of_base_universe": 0.0009686168151879117,
+          "overrepresentation_ratio": 0.9218915793454084
+        },
+        {
+          "sic_major_group": "75",
+          "label": "Services-Auto Rental & Leasing (No Drivers)",
+          "pct_of_portfolio": 0.0008867188885025485,
+          "pct_of_base_universe": 0.0015497869043006587,
+          "overrepresentation_ratio": 0.5721553628062694
+        },
+        {
+          "sic_major_group": "90",
+          "label": "?",
+          "pct_of_portfolio": 0.00047167156392850736,
+          "pct_of_base_universe": 0.0003874467260751647,
+          "overrepresentation_ratio": 1.2173843064994774
+        },
+        {
+          "sic_major_group": "83",
+          "label": "Services-Social Services",
+          "pct_of_portfolio": 0.00022138363168732684,
+          "pct_of_base_universe": 0.000581170089112747,
+          "overrepresentation_ratio": 0.3809274355899937
+        },
+        {
+          "sic_major_group": "89",
+          "label": "Services-Services, NEC",
+          "pct_of_portfolio": 0.00022138363168732679,
+          "pct_of_base_universe": 0.0009686168151879117,
+          "overrepresentation_ratio": 0.22855646135399615
+        }
+      ]
+    }
+  }
+]

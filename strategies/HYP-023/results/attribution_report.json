@@ -200,6 +200,13 @@
           "overrepresentation_ratio": 0.5375693285136874
         },
         {
+          "sic_major_group": "10",
+          "label": "Metal Mining",
+          "pct_of_portfolio": 0.009706146827542755,
+          "pct_of_base_universe": 0.029252227818674932,
+          "overrepresentation_ratio": 0.3318088074422232
+        },
+        {
           "sic_major_group": "21",
           "label": "Cigarettes",
           "pct_of_portfolio": 0.009637590609537887,
@@ -226,13 +233,6 @@
           "pct_of_portfolio": 0.009306631519857781,
           "pct_of_base_universe": 0.004261913986826811,
           "overrepresentation_ratio": 2.183674177522994
-        },
-        {
-          "sic_major_group": "01",
-          "label": "Agricultural Production-Crops",
-          "pct_of_portfolio": 0.008811582677038491,
-          "pct_of_base_universe": 0.006199147617202635,
-          "overrepresentation_ratio": 1.4214184305897717
         },
         {
           "sic_major_group": "46",
@@ -333,6 +333,13 @@
           "overrepresentation_ratio": 0.5541645986026743
         },
         {
+          "sic_major_group": "70",
+          "label": "Hotels & Motels",
+          "pct_of_portfolio": 0.0018322152983588419,
+          "pct_of_base_universe": 0.0048430840759395586,
+          "overrepresentation_ratio": 0.37831581480513365
+        },
+        {
           "sic_major_group": "41",
           "label": "Local & Suburban Transit & Interurban Hwy Passenger Trans",
           "pct_of_portfolio": 0.001779671600787093,
@@ -368,13 +375,6 @@
           "overrepresentation_ratio": 0.7639183606960216
         },
         {
-          "sic_major_group": "70",
-          "label": "Hotels & Motels",
-          "pct_of_portfolio": 0.0009357538008818977,
-          "pct_of_base_universe": 0.0032932971716389,
-          "overrepresentation_ratio": 0.2841388894207268
-        },
-        {
           "sic_major_group": "42",
           "label": "Trucking (No Local)",
           "pct_of_portfolio": 0.0009058149808851819,
@@ -387,20 +387,6 @@
           "pct_of_portfolio": 0.0009045433776480907,
           "pct_of_base_universe": 0.0019372336303758234,
           "overrepresentation_ratio": 0.4669252915419444
-        },
-        {
-          "sic_major_group": "07",
-          "label": "Agricultural Services",
-          "pct_of_portfolio": 0.0008964614974769441,
-          "pct_of_base_universe": 0.0015497869043006587,
-          "overrepresentation_ratio": 0.5784417812469982
-        },
-        {
-          "sic_major_group": "10",
-          "label": "Metal Mining",
-          "pct_of_portfolio": 0.0008945641505042645,
-          "pct_of_base_universe": 0.023053080201472297,
-          "overrepresentation_ratio": 0.03880453903279843
         },
         {
           "sic_major_group": "82",

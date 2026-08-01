@@ -109,6 +109,14 @@
   details.criterion summary { cursor: pointer; color: var(--accent); font-size: 12.5px; }
   details.criterion pre { white-space: pre-wrap; font-family: inherit; background: var(--surface-2); border-radius: 6px; padding: 10px 12px; margin: 6px 0 0; }
 
+  details.attribution { font-size: 12.5px; color: var(--ink-dim); }
+  details.attribution summary { cursor: pointer; color: var(--accent); font-size: 12.5px; }
+  .attr-level { background: var(--surface-2); border-radius: 6px; padding: 10px 12px; margin: 6px 0 0; }
+  .attr-level b { color: var(--ink); }
+  .attr-row { display: flex; justify-content: space-between; gap: 8px; font-family: "SF Mono", Consolas, monospace; font-size: 11.5px; padding: 2px 0; }
+  .attr-row.over { color: var(--bad); }
+  .attr-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
   .notes-list { display: flex; flex-direction: column; gap: 6px; }
   .note-item { font-size: 12.5px; background: var(--surface-2); border-radius: 6px; padding: 8px 10px; }
   .note-item .ts { color: var(--muted); font-family: "SF Mono", Consolas, monospace; font-size: 10.5px; display: block; margin-bottom: 2px; }
@@ -429,11 +437,52 @@ function renderHypotheses(state) {
         <pre>${esc(h.pass_fail_criterion)}</pre>
       </details>
       ${h.yaml_notes ? `<div class="kv"><b>Anteckning i YAML:</b> ${esc(h.yaml_notes)}</div>` : ''}
+      ${renderAttribution(h.attribution)}
       ${renderNotesList(notes)}
       ${renderNoteForm('hypothesis', h.id)}
     </div>
   `;
   }).join('');
+}
+
+// Visar scripts/attribution.py:s rapport (om den finns) för en hypotes -
+// faktorregression, sektorexponering mot basuniversumet, friktionsdrag.
+// Rent visande, ingen skrivbar yta - matchar samma "läs bara JSON från
+// disk"-princip som resten av dashboarden.
+function renderAttribution(attribution) {
+  if (!attribution || !attribution.length) return '';
+  const levels = attribution.filter(a => !a.error).map(levelReport => {
+    const level = levelReport.capital_level;
+    const fr = levelReport.factor_regression || {};
+    const fd = levelReport.friction_drag || {};
+    const se = levelReport.sector_exposure || {};
+
+    const frHtml = fr.error
+      ? `<div class="attr-sub">Faktorregression: ${esc(fr.error)}</div>`
+      : `<div class="attr-row"><span>Alfa (FF5+MOM)</span><span>${(fr.alpha_annual * 100).toFixed(1)}%/år (t=${fr.alpha_t_stat.toFixed(2)}${fr.alpha_significant ? ', signifikant' : ''}), R²=${fr.r_squared.toFixed(2)}</span></div>`;
+
+    const fdHtml = fd.error
+      ? `<div class="attr-sub">Friktionsdrag: ${esc(fd.error)}</div>`
+      : `<div class="attr-row"><span>Friktionsdrag</span><span>${fd.mean_drag_pp >= 0 ? '+' : ''}${fd.mean_drag_pp.toFixed(2)}pp/trade (${fd.n_trades} trades)</span></div>`;
+
+    const sectorRows = se.error
+      ? `<div class="attr-sub">Sektorexponering: ${esc(se.error)}</div>`
+      : (se.sectors || []).slice(0, 3).map(row => {
+          const over = row.overrepresentation_ratio && row.overrepresentation_ratio > 1.5;
+          const ratio = row.overrepresentation_ratio ? `${row.overrepresentation_ratio.toFixed(1)}x` : 'n/a';
+          return `<div class="attr-row ${over ? 'over' : ''}"><span>SIC ${esc(row.sic_major_group)} ${esc((row.label || '').slice(0, 28))}</span><span>${(row.pct_of_portfolio * 100).toFixed(0)}% (universum ${(row.pct_of_base_universe * 100).toFixed(0)}%, ${ratio})</span></div>`;
+        }).join('');
+
+    return `<div class="attr-level"><b>$${Number(level).toLocaleString('sv-SE')}</b>${frHtml}${fdHtml}${sectorRows}</div>`;
+  }).join('');
+
+  if (!levels) return '';
+  return `
+    <details class="attribution">
+      <summary>Visa attributionsrapport (alfa vs. sektor/friktion, scripts/attribution.py)</summary>
+      ${levels}
+    </details>
+  `;
 }
 
 function candidateTriageRow(c, hasNotes) {

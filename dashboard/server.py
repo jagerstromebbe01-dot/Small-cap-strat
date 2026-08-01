@@ -97,6 +97,7 @@ from flask import Flask, jsonify, request, send_from_directory
 DASHBOARD_DIR = Path(__file__).resolve().parent
 BASE_DIR = DASHBOARD_DIR.parent
 REGISTRY_DIR = BASE_DIR / "research" / "hypothesis_registry"
+STRATEGIES_DIR = BASE_DIR / "strategies"
 COUNTER_FILE = REGISTRY_DIR / "_counter.yaml"
 CANDIDATES_FILE = BASE_DIR / "research" / "candidate_ideas.md"
 NOTES_FILE = DASHBOARD_DIR / "notes.jsonl"
@@ -126,6 +127,26 @@ def read_counter() -> dict:
     with COUNTER_FILE.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     return {"k_total": data.get("k_total"), "note": data.get("note")}
+
+
+def read_attribution(hyp_id: str):
+    """
+    Läser strategies/<hyp_id>/results/attribution_report.json om den
+    finns (genererad av scripts/attribution.py, se det skriptets
+    docstring för vad den innehåller: faktorregression, sektor-
+    exponering, friktionsdrag). RENT LÄSANDE - samma "filerna på disk
+    är alltid sanningen"-princip som allt annat här, ingen ny skrivbar
+    yta. Returnerar None om rapporten inte finns (dashboarden ska
+    kunna visa hypoteser utan attribution utan att krascha).
+    """
+    path = STRATEGIES_DIR / hyp_id / "results" / "attribution_report.json"
+    if not path.exists():
+        return None
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
 
 
 def read_hypotheses() -> list:
@@ -158,6 +179,7 @@ def read_hypotheses() -> list:
             "pass_fail_criterion": data.get("pass_fail_criterion"),
             "yaml_notes": data.get("notes"),
             "source_file": path.name,
+            "attribution": read_attribution(data.get("id", path.stem)),
         })
     return hypotheses
 
