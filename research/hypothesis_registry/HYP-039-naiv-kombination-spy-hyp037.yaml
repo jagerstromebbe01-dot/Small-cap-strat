@@ -38,8 +38,11 @@ data_range: "SPY adjusted_close + HYP-037:s redan berknade portfoljvardesserier,
   + genuin OOS-2025 (aterananvander paper_trading/HYP-037/oos_2025_results/, ingen ny
   OOS-korning byggs for denna hypotes)"
 pass_fail_criterion: 'Ren PORTFOLJMATEMATIK pa tva redan kanda, redan individuellt testade
-  avkastningsserier - INGEN ny backtest-motor, INGEN ny signal, INGEN ny friktions-/
-  hedgemodell. Kombinerad portfoljvarde-serie = 50% notional i SPY (adjusted_close, dagliga
+  avkastningsserier - INGEN ny backtest-motor, INGEN ny signal, INGEN nytt kostnads-/
+  hedgepalagg utover vad de tva delserierna redan sjalva inkluderar (SPY:s eget kvoterade
+  pris, HYP-037:s redan kostnadsjusterade portfoljvarde enligt dess eget redan lasta,
+  redan testade regelverk). Kombinerad portfoljvarde-serie =
+  50% notional i SPY (adjusted_close, dagliga
   avkastningar) + 50% notional i HYP-037 (redan sparad strategies/HYP-037/results/
   portfolio_value_<niva>.csv, ANVAND OFORANDRAD), ombalanserad till EXAKT 50/50 VARJE
   KVARTAL pa HYP-037:s REDAN LASTA ombalanseringsdatum (ateranvander en befintlig frekvens,
