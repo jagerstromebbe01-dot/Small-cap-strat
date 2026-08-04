@@ -1,0 +1,76 @@
+# LÅST 2026-08-04 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Foljer spec §5b:s regler for LEGITIM
+# kombinationstestning (INTE en genvag runt tidigare misslyckanden -
+# HYP-037 ar redan en oberoende, individuellt godkand hypotes, INTE en
+# "raddning" av nagot som failat):
+#   1. Korrelationsmatris FORE nagon vikt valdes: SPY vs HYP-037 dagliga
+#      avkastningar 2011-2024, korrelation = -0.003 (praktiskt taget
+#      noll) - berknad INNAN detta kriterium las.
+#   2. NAIV, likaviktad kombination (50/50) - INTE in-sample-optimerade
+#      vikter (Markowitz/Kelly etc. explicit forbjudet av spec §5b).
+#   3. OOS-testning: aterananvander HYP-037:s egen redan byggda genuina
+#      OOS-2025-korning (paper_trading/HYP-037/oos_2025_results/).
+#   4. Denna kombinationsmetod raknas som ETT eget K-test, separat fran
+#      bade SPY och HYP-037:s egna K-bidrag.
+#
+# MOTIV: CEO:s grundmal for hela projektet ar konstant avkastning >10%/ar
+# OCH Sharpe >1 - ett hogt krav som varken SPY ensamt (Sharpe 0.72 over
+# 2011-2024, en OVANLIGT stark period, MaxDD -33.7%) eller HYP-037 ensamt
+# (Sharpe 0.72-0.75) nar pa egen hand. Eftersom de tva ar praktiskt taget
+# OKORRELERADE (-0.003) foreslar portfoljteorins standardformel
+# (kombinerad Sharpe = sqrt(S1^2 + S2^2) for oberoende strommar, vid
+# fritt skalbara vikter) en TEORETISK optimal kombinerad Sharpe ~1.02 -
+# over malet. Detta testar om en REALISTISK, ENKEL (ej hangivet
+# optimerad) 50/50-kombination faktiskt nar dit, inte bara den teoretiska
+# gransen.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-039
+date_registered: '2026-08-04'
+title: Naiv 50/50-kombination (kvartalsvis ombalanserad) - SPY + HYP-037
+universe: "N/A - portfoljniva-kombination av tva redan existerande, oberoende testade
+  avkastningsserier (SPY som tillgangsklass, HYP-037 som redan godkand small-cap-strategi).
+  Ingen ny small-cap-signal, inget nytt small-cap-universum - tested_capital_levels nedan
+  galler HYP-037-benets redan testade kapitalnivaer, inte en ny small-cap-hypotes i sig."
+small_cap_definition: "N/A for denna hypotes - se universe-faltet. HYP-037-benet anvander
+  redan HYP-037:s egen lasta $100M-$2B-definition, oforandrad."
+data_range: "SPY adjusted_close + HYP-037:s redan berknade portfoljvardesserier, 2011-2024
+  + genuin OOS-2025 (aterananvander paper_trading/HYP-037/oos_2025_results/, ingen ny
+  OOS-korning byggs for denna hypotes)"
+pass_fail_criterion: 'Ren PORTFOLJMATEMATIK pa tva redan kanda, redan individuellt testade
+  avkastningsserier - INGEN ny backtest-motor, INGEN ny signal, INGEN ny friktions-/
+  hedgemodell. Kombinerad portfoljvarde-serie = 50% notional i SPY (adjusted_close, dagliga
+  avkastningar) + 50% notional i HYP-037 (redan sparad strategies/HYP-037/results/
+  portfolio_value_<niva>.csv, ANVAND OFORANDRAD), ombalanserad till EXAKT 50/50 VARJE
+  KVARTAL pa HYP-037:s REDAN LASTA ombalanseringsdatum (ateranvander en befintlig frekvens,
+  valjer INGEN ny fri parameter). INGEN havstang. Testas separat vid alla tre av HYP-037:s
+  redan testade kapitalnivaer (100k/1M/10M) for HYP-037-benet - SPY-benet skalar trivialt
+  och paverkas inte av kapitalniva.
+
+  PASS kraver ALLA TRE, PA MINST kapitalnivan $100k (rapporteras for alla tre, men $100k ar
+  den avgorande nivan eftersom HYP-037:s egen edge redan ar kand att avta vid hogre
+  kapitalniva - se HYP-037:s registerpost):
+  1. Kombinerad Sharpe (2011-2024, portfoljserien efter ombalansering) >= 1.0 - det
+     uttryckliga malet, INTE projektets generella 0.55-golv for enskilda alfahypoteser.
+  2. Kombinerad MaxDD (samma period) BATTRE (mindre negativ) an SPY:s EGEN -33.7% pa samma
+     period - bekraftar genuin riskreduktion genom diversifiering, inte bara en utspadd
+     medelvardesberakning som rakar se battre ut.
+  3. OOS-2025 kombinerad Sharpe (aterananvander HYP-037:s redan byggda genuina blinda
+     OOS-2025-serie + SPY:s egna 2025-avkastningar, SAMMA 50/50-kvartalsombalansering) ar
+     POSITIV (> 0) - ett medvetet MJUKARE krav an villkor 1, given den redan flera ganger
+     dokumenterade reservationen att ett enda ars Sharpe-skattning har hog statistisk
+     osakerhet (samma reservation som HYP-023/034/037:s egna OOS-tester).
+  FAIL om nagot villkor faller vid $100k-nivan. Resultat vid $1M/$10M rapporteras alltid
+  fullstandigt (ingen cherry-picking), men $100k ar den kriterie-avgorande nivan given ovan.
+
+  Diagnostiskt syfte: testar om portfoljteorins teoretiska lofte (tva praktiskt taget
+  okorrelerade Sharpe-0.72-strommar, kombinerat optimalt ~1.02) haller aven for en enkel,
+  ICKE-optimerad 50/50-vikt - inte bara den teoretiska ovre gransen. Detta ar forsta gangen
+  i projektets historia en kombinationshypotes testas, per spec §5b:s explicita regler
+  (korrelationsmatris fore vikt, naiv vikt, OOS, eget K-bidrag).'
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 37
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
