@@ -240,3 +240,83 @@ deflated_sharpe_ratio:
 # de nya, korrekta varden) - denna kommentar ar den permanenta,
 # git-sparbara posten over VAD som andrades och VARFOR, i linje med
 # CLAUDE.md:s princip att git-historiken ar revisionssparet.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSVALIDERING 2026-08-05 (samma session, EFTER buggfix-
+# uppdateringen ovan) - INTE en ny hypotes/K-test, status/kriterium
+# ANDRADE INTE. Rör en SEPARAT, storre fraga: look-ahead-bias i sjalva
+# UNIVERSUM-KONSTRUKTIONEN (vilka bolag som rankas som "small-cap"
+# $100M-$2B en given manad), upptackt samma session.
+# ════════════════════════════════════════════════════════════
+# BUGGEN: data/build_smallcap_classification.py och data/sec_edgar_adapter.py
+# sparade periodSLUT-datum for varje aktieantal-datapunkt istallet for det
+# datum bolaget FAKTISKT offentliggjorde det (SEC-inlamningsdatum, "filed").
+# Marknaden vet inte ett kvartalsslut-aktieantal forran veckor-manader
+# senare (median ~26-41 dagar i stickprov, upp till ~90 for sena filers).
+# Detta ar en genuin look-ahead-bias i universum-konstruktionen som
+# ANVANDS AV VARJE HYPOTES I REGISTRET, inte bara diagnostikverktyg.
+#
+# FIXEN (byggd denna session, SEPARATA filer - rör INTE de ursprungliga
+# smallcap_classification.jsonl/smallcap_universe_by_month.json, som
+# forblir grundsanningen for redan rapporterade resultat):
+#   - data/sec_filed_dates.py: bygger en accn->filed_date-uppslagning fran
+#     SEC:s kvartalsvisa form.idx-bulkfiler (2009-2025, ~68 nedladdningar,
+#     ingen per-bolag-kostnad). 99.2% traffgrad efter en retry-fix
+#     (en enskild misslyckad nedladdning, 2013 QTR3, orsakade forst en
+#     overdriven skenbar forandring).
+#   - data/rebuild_smallcap_classification_filed_date.py +
+#     data/build_smallcap_universe_filed_date.py: bygger om hela
+#     2010-2024-universumet med korrekta datum.
+#   - data/build_universe_2025_filed_date.py: samma fix for 2025-OOS-
+#     grenen (enklare - companyfacts-endpointen hade redan ett 'filed'-
+#     falt, las bara aldrig).
+#
+# DIFF MOT URSPRUNGLIGT UNIVERSUM: ~20.8% av alla ticker-manads-
+# medlemskap 2010-2024 andras. Storsta delen av forandringen ar
+# koncentrerad till 2010-mitten av 2011 (troligen kopplat till att SEC:s
+# XBRL-krav for mindre bolag inte blev fullt obligatoriskt forran
+# perioder efter 2011-06-15, kombinerat med hur SEC:s frames-API
+# ibland forst surfacar ett kvartals aktieantal via en SENARE
+# inlamnings jamforelsetal - se kodgranskningens diskussion for
+# detaljer). Detta ar en verklig datakaraktäristik for den tidigaste
+# perioden, INTE en bugg i matchningsmetoden - att gissa ett tidigare
+# datum for att "aterstalla" fler ticker-manader skulle aterinfora
+# exakt den look-ahead-risk fixen eliminerar.
+#
+# SIDOTEST (scripts/test_hyp037_filed_date_universe.py +
+# scripts/test_hyp037_oos2025_filed_date.py, resultat i
+# strategies/HYP-037/results_filed_date_test/ och
+# paper_trading/HYP-037/oos_2025_results_filed_date_test/ - INTE de
+# riktiga resultatfilerna): korde HYP-037:s OFORANDRADE strategikod mot
+# det korrigerade universumet, bade huvudperiod och OOS-2025.
+#
+# RESULTAT:
+#   Villkor 1 (Sharpe >= 0.55): PASS oforandrat pa alla tre nivaer
+#     (0.728/0.741/0.744 - $10M till och med BATTRE an tidigare 0.698).
+#   Villkor 2 (MaxDD battre an HYP-023:s EGNA, ocksa omkord mot samma
+#     korrigerade universum for en rattvis jamforelse):
+#     $100k: -25.90% vs HYP-023:s -25.97% -> HYP-037 fortfarande battre, PASS.
+#     $1M:   -21.99% vs HYP-023:s -23.45% -> HYP-037 fortfarande battre, PASS.
+#     $10M:  -13.66% vs HYP-023:s -13.61% -> HYP-037 NU SAMRE, med en
+#            marginal pa 0.05 procentenheter - i praktiken ETT OAVGJORT
+#            RESULTAT, inte ett tydligt PASS eller FAIL. Detta ar den
+#            enda nyansen fixen avslojar.
+#   Villkor 3 (OOS-2025 Sharpe vid $10M >= HYP-023:s 0.08): PASS, och med
+#     BETYDLIGT BREDARE MARGINAL an tidigare - 0.378 mot det tidigare
+#     knivskarpa 0.083.
+#
+# SLUTSATS: HYP-037:s PASS-status forblir OFORANDRAD - status satts INTE
+# till failed. Motivering: bara EN av tre villkor, pa EN av tre nivaer,
+# flippar - och det till ett genuint oavgjort resultat (0.05pp skillnad),
+# inte ett tydligt misslyckande. De tva andra villkoren blir OFORANDRADE
+# eller BATTRE (sarskilt OOS-villkoret, som gar fran den mest oroande
+# knivskarpa marginalen i hela registret till en bekvam sadan). Detta
+# star i skarp kontrast mot HYP-039 (se dess egen registerpost) dar
+# SAMMA korrigering INTE bara haller utan FORSTARKER resultatet vid
+# den tidigare svagaste punkten ($10M-Sharpe gick fran 0.988, under
+# malet, till 1.012, over malet).
+#
+# Fullstandig sparbarhet: alla mellansteg (universum-diff, sidotest-
+# resultat, jamforelsetabeller) finns kvar i strategies/HYP-037/
+# results_filed_date_test/ och paper_trading/HYP-037/
+# oos_2025_results_filed_date_test/ for granskning.

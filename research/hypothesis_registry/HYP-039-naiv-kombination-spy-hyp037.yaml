@@ -145,3 +145,34 @@ deflated_sharpe_ratio:
   100000: 0.9515
   1000000: 0.9544
   10000000: 0.9365
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSVALIDERING 2026-08-05 (samma session) - INTE en ny hypotes/
+# K-test, status/kriterium ANDRADE INTE. Se HYP-037:s egen registerpost
+# for full detalj om den underliggande look-ahead-bias-fixen i universum-
+# konstruktionen (SEC-inlamningsdatum istallet for periodslut-datum).
+# ════════════════════════════════════════════════════════════
+# HYP-039 vilar direkt pa HYP-037:s portfoljvarde-serie. Kordes darfor
+# genom samma sidotest (scripts/test_hyp039_filed_date_universe.py +
+# scripts/test_hyp039_oos2025_filed_date.py) mot HYP-037:s FILED-DATUM-
+# KORRIGERADE serier - ren portfoljmatematik, samma metod, ingen ny
+# backtest-motor, resultat i strategies/HYP-039/results_filed_date_test/.
+#
+# RESULTAT: samtliga tre lasta villkor haller PA ALLA TRE kapitalnivaer,
+# och den tidigare svagaste punkten blir BATTRE, inte samre:
+#   Villkor 1 (Sharpe >= 1.0): 1.019/1.026/1.012 (tidigare 1.019/1.030/
+#     0.988 - $10M gick fran att MISSA malet till att KLARA det).
+#   Villkor 2 (MaxDD battre an SPY:s -33.7%): -21.5%/-21.5%/-19.4%
+#     (tidigare -22.0%/-22.2%/-20.0%) - fortfarande en tydlig, reell
+#     riskreduktion pa alla tre nivaer.
+#   Villkor 3 (OOS-2025 Sharpe > 0): 0.886/0.843/0.829 (tidigare 0.919/
+#     0.812/0.793) - fortfarande klart positivt pa alla tre nivaer.
+#
+# SLUTSATS: HYP-039:s PASS star pa fast grund aven under ett fullstandigt
+# look-ahead-bias-fritt universum - faktiskt starkare an det ursprungliga
+# resultatet vid den tidigare mest oroande punkten ($10M). Detta star i
+# kontrast mot HYP-037:s EGEN interna jamforelse mot HYP-023 (som blir
+# ett oavgjort resultat vid $10M under samma korrigering, se HYP-037:s
+# registerpost) - men den nyansen paverkar INTE HYP-039:s eget resultat,
+# eftersom HYP-039:s kriterium aldrig kravde att HYP-037 "vinner" mot
+# HYP-023, bara att KOMBINATIONEN nar sitt eget mal.
