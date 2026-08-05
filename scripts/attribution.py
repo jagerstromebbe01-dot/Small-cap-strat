@@ -157,7 +157,10 @@ def load_sic_lookup() -> tuple:
             if not sic:
                 continue
             all_tickers_with_sic.append(row["ticker"])
-            major = str(sic)[:2]
+            # Samma buggfix som strategies/common/sector.py::load_ticker_major_group
+            # (kodgranskning 2026-08-05) - nollutfyll fore trunkering, annars tappas
+            # inledande nollan for SIC-koder under 1000 (Division A).
+            major = f"{int(sic):04d}"[:2]
             major_desc_votes.setdefault(major, Counter())[row.get("sic_description", "")] += 1
 
     ticker_to_major = load_ticker_major_group(all_tickers_with_sic)
@@ -165,11 +168,31 @@ def load_sic_lookup() -> tuple:
     return ticker_to_major, major_to_label
 
 
-def load_base_universe_tickers() -> set:
+def load_universe_by_month() -> dict:
     universe_file = REPO_ROOT / "data" / "cache" / "smallcap_universe_by_month.json"
     with universe_file.open(encoding="utf-8") as f:
-        universe_by_month = json.load(f)
-    return {t for tickers in universe_by_month.values() for t in tickers}
+        return json.load(f)
+
+
+def base_universe_for_window(universe_by_month: dict, start, end) -> set:
+    """
+    BUGGFIX (kodgranskning 2026-08-05): tidigare (load_base_universe_tickers,
+    borttagen) slog denna funktion ihop VARJE manad 2010-2024 till en enda
+    statisk mangd, oavsett vilken period hypotesen faktiskt handlade i.
+    Om small-cap-universumets branschsammansattning forskjutits over de 14
+    aren (troligt) blir VARJE tidigare rapporterad "Nx overrepresenterad"-
+    siffra jamford mot fel periods bas-rate - sarskilt for hypoteser som
+    bara handlar en delmangd av hela perioden (t.ex. en genuin OOS-2025-
+    korning, eller en framtida kortare backtest). Fix: bas-universumet
+    begransas nu till exakt de kalendermanader som ligger inom hypotesens
+    egen handelsperiod (portfoljvarde-seriens forsta/sista datum),
+    identiskt fonster som det som faktiskt jamfors mot."""
+    tickers = set()
+    for month_key, month_tickers in universe_by_month.items():
+        month_date = pd.Timestamp(month_key)
+        if start <= month_date <= end:
+            tickers.update(month_tickers)
+    return tickers
 
 
 def sector_exposure(trade_log: pd.DataFrame, ticker_to_major: dict, major_to_label: dict,
@@ -182,9 +205,9 @@ def sector_exposure(trade_log: pd.DataFrame, ticker_to_major: dict, major_to_lab
     OVIKTAT antal trades om 'cost' saknas (t.ex. HYP-008:s
     par-handels-motor, som inte loggar dollarstorlek per ben).
 
-    Basuniversum-jamforelsen anvander HELA small-cap-universumets
-    tickers nagon gang (samma konvention som HYP-017/022/023:s egna
-    27.3%-mot-7.0%-jamforelse), INTE ett tidsfonster-matchat urval.
+    Basuniversum-jamforelsen anvander universumet UNDER hypotesens egen
+    handelsperiod (se base_universe_for_window - fixat 2026-08-05, tidigare
+    anvandes hela 2010-2024 slaget ihop oavsett handelsperiod).
     """
     has_cost = "cost" in trade_log.columns and trade_log["cost"].notna().any()
     weight_col = "cost" if has_cost else None
@@ -244,7 +267,7 @@ def friction_drag(trade_log: pd.DataFrame) -> dict:
 #  RAPPORT
 # ════════════════════════════════════════════════════════════
 def run_report(hyp_id: str, level: int, ff: pd.DataFrame, ticker_to_major: dict, major_to_label: dict,
-                base_universe: set) -> dict:
+                universe_by_month: dict) -> dict:
     results_dir = STRATEGIES_DIR / hyp_id / "results"
     pv_path = results_dir / f"portfolio_value_{level}.csv"
     tl_path = results_dir / f"trade_log_{level}.csv"
@@ -254,6 +277,10 @@ def run_report(hyp_id: str, level: int, ff: pd.DataFrame, ticker_to_major: dict,
 
     pv = pd.read_csv(pv_path, index_col=0, parse_dates=True)["portfolio_value"]
     tl = pd.read_csv(tl_path, parse_dates=["date"]) if tl_path.stat().st_size > 0 else pd.DataFrame()
+
+    # Bas-universum begransat till DENNA hypotes egen handelsperiod - se
+    # base_universe_for_window (buggfix 2026-08-05, tidigare hela 2010-2024).
+    base_universe = base_universe_for_window(universe_by_month, pv.index.min(), pv.index.max())
 
     report = {"capital_level": level}
     report["factor_regression"] = factor_regression(pv, ff)
@@ -308,12 +335,12 @@ def main():
     print("Laddar Fama-French-faktorer, SIC-klassificering, basuniversum...")
     ff = load_ff_factors()
     ticker_to_major, major_to_label = load_sic_lookup()
-    base_universe = load_base_universe_tickers()
+    universe_by_month = load_universe_by_month()
 
     levels = args.levels or DEFAULT_LEVELS
     all_reports = []
     for level in levels:
-        report = run_report(args.hyp_id, level, ff, ticker_to_major, major_to_label, base_universe)
+        report = run_report(args.hyp_id, level, ff, ticker_to_major, major_to_label, universe_by_month)
         all_reports.append(report)
         if "error" in report:
             print(f"\n{args.hyp_id} @ ${level:,.0f}: {report['error']}")

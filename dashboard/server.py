@@ -88,6 +88,7 @@ Filerna på disk är alltid sanningen - ingenting cachas mellan anrop.
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -96,6 +97,14 @@ from flask import Flask, jsonify, request, send_from_directory
 
 DASHBOARD_DIR = Path(__file__).resolve().parent
 BASE_DIR = DASHBOARD_DIR.parent
+SCRIPTS_DIR = BASE_DIR / "scripts"
+sys.path.insert(0, str(SCRIPTS_DIR))
+from hypothesis_gate import (  # noqa: E402
+    criterion_is_filled,
+    is_smallcap_hypothesis,
+    tested_capital_levels_check,
+)
+
 REGISTRY_DIR = BASE_DIR / "research" / "hypothesis_registry"
 STRATEGIES_DIR = BASE_DIR / "strategies"
 COUNTER_FILE = REGISTRY_DIR / "_counter.yaml"
@@ -566,25 +575,22 @@ def set_pre_registered(hyp_id: str) -> dict:
     raw_text = path.read_text(encoding="utf-8")
     data = yaml.safe_load(raw_text) or {}
 
-    if not data.get("pass_fail_criterion"):
+    if not criterion_is_filled(data):
         return {
             "ok": False,
             "message": (
-                "pass_fail_criterion är tomt - måste låsas manuellt i chatt "
-                "med CEO innan detta kan sättas. Ändrar ingenting."
+                "pass_fail_criterion är tomt (eller en platshållare) - måste låsas manuellt "
+                "i chatt med CEO innan detta kan sättas. Ändrar ingenting."
             ),
         }
 
-    universe = str(data.get("universe", "")).lower()
-    is_smallcap = "small-cap" in universe or "small cap" in universe
-    if is_smallcap and not data.get("tested_capital_levels"):
-        return {
-            "ok": False,
-            "message": (
-                "tested_capital_levels är tomt - obligatoriskt för "
-                "small-cap-hypoteser innan detta kan sättas. Ändrar ingenting."
-            ),
-        }
+    if is_smallcap_hypothesis(data):
+        ok, msg = tested_capital_levels_check(data)
+        if not ok:
+            return {
+                "ok": False,
+                "message": f"{msg} - obligatoriskt för small-cap-hypoteser innan detta kan sättas. Ändrar ingenting.",
+            }
 
     current_status = data.get("status")
     if current_status == "pre-registered":
@@ -604,7 +610,17 @@ def set_pre_registered(hyp_id: str) -> dict:
     path.write_text(new_text, encoding="utf-8")
 
     git_result = _git_commit_status_change(path, hyp_id)
-    chain_result = launch_chain_if_not_running(hyp_id)
+    if git_result.get("committed"):
+        chain_result = launch_chain_if_not_running(hyp_id)
+    else:
+        # BUGGFIX (kodgranskning 2026-08-05): kedjan startade tidigare OVILLKORLIGT,
+        # även om git-committen av statusändringen misslyckats - ett gap mot
+        # CLAUDE.md:s modell att git-historiken ÄR revisionsspåret. Filen är redan
+        # skriven till disk (kan inte ångras här utan att dölja vad som hände), men
+        # vi startar INTE Strategy Builder->Backtester-kedjan utan en motsvarande
+        # commit - annars kan en hel körning ske utan att statusändringen någonsin
+        # syns i git-loggen.
+        chain_result = {"launched": False, "reason": "git-commit misslyckades, kedjan startades inte - se git-fältet"}
     return {
         "ok": True,
         "message": "status satt till pre-registered",
@@ -759,8 +775,16 @@ def _assert_no_unauthorized_write_routes():
         )
 
 
+# BUGGFIX (kodgranskning 2026-08-05): körs nu på MODULNIVÅ (vid import), inte
+# bara under `if __name__ == "__main__":`. Tidigare skulle servern inte vägra
+# starta om den någonsin kördes på annat sätt än `python server.py` - t.ex.
+# `flask run`, en WSGI-server (gunicorn/waitress) som importerar `app`
+# direkt, eller ett testskript som gör detsamma. Modulnivå garanterar att
+# kontrollen körs oavsett startmetod, eftersom Python bara kör modulkroppen
+# en gång vid första import/körning.
+_assert_no_unauthorized_write_routes()
+
 if __name__ == "__main__":
-    _assert_no_unauthorized_write_routes()
     print(f"Small-Cap Edge Lab dashboard: http://127.0.0.1:{PORT}")
     print("Endast localhost - servern binder inte till nätverket.")
     app.run(host="127.0.0.1", port=PORT, debug=False)

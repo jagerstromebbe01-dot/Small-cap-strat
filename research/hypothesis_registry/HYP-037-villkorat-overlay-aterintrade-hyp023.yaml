@@ -92,9 +92,9 @@ tested_capital_levels:
 - 1000000
 - 10000000
 capital_level_results:
-  100000: {cagr: 0.1209, sharpe: 0.7339, calmar: 0.5231, sharpe_excl_best_trade: 0.6812, max_drawdown: -0.2310, win_rate: 0.4922, profit_factor: 1.1982, n_trades: 2253, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.1383, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 46.2, deflated_sharpe_ratio: 0.7372, oos_2025_sharpe: 0.386}
-  1000000: {cagr: 0.1184, sharpe: 0.7537, calmar: 0.6191, sharpe_excl_best_trade: 0.7185, max_drawdown: -0.1912, win_rate: 0.4918, profit_factor: 1.1982, n_trades: 2253, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0760, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 46.2, deflated_sharpe_ratio: 0.7586, oos_2025_sharpe: 0.187}
-  10000000: {cagr: 0.0905, sharpe: 0.6982, calmar: 0.6906, sharpe_excl_best_trade: 0.6940, max_drawdown: -0.1311, win_rate: 0.4922, profit_factor: 1.1982, n_trades: 2253, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0203, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 46.2, deflated_sharpe_ratio: 0.6870, oos_2025_sharpe: 0.083}
+  100000: {cagr: 0.1212, sharpe: 0.7366, calmar: 0.5251, sharpe_excl_best_trade: 0.6838, max_drawdown: -0.2309, win_rate: 0.4922, profit_factor: 1.2038, n_trades: 2251, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.1383, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 39.0, deflated_sharpe_ratio: 0.7406, oos_2025_sharpe: 0.386}
+  1000000: {cagr: 0.1185, sharpe: 0.7547, calmar: 0.6198, sharpe_excl_best_trade: 0.7195, max_drawdown: -0.1911, win_rate: 0.4922, profit_factor: 1.2040, n_trades: 2249, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0759, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 39.0, deflated_sharpe_ratio: 0.7599, oos_2025_sharpe: 0.187}
+  10000000: {cagr: 0.0905, sharpe: 0.6981, calmar: 0.6902, sharpe_excl_best_trade: 0.6939, max_drawdown: -0.1310, win_rate: 0.4938, profit_factor: 1.2097, n_trades: 2246, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0203, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 39.0, deflated_sharpe_ratio: 0.6868, oos_2025_sharpe: 0.083}
 date_tested: '2026-08-01'
 result_summary: >
   PASSED - ALLA TRE villkor haller PA ALLA TRE kapitalnivaer. Detta ar
@@ -169,10 +169,74 @@ result_summary: >
   framtida jamforelser/utveckling. Se motsvarande uppdatering i
   research/hypothesis_registry/HYP-023-sektor-krasch-trigger-hyp017.yaml.
 sharpe_raw:
-  100000: 0.7339
-  1000000: 0.7537
-  10000000: 0.6982
+  100000: 0.7366
+  1000000: 0.7547
+  10000000: 0.6981
 deflated_sharpe_ratio:
-  100000: 0.7372
-  1000000: 0.7586
-  10000000: 0.6870
+  100000: 0.7406
+  1000000: 0.7599
+  10000000: 0.6868
+
+# ════════════════════════════════════════════════════════════
+# BUGGFIX-UPPDATERING 2026-08-05 (kodgranskning, INTE en ny hypotes/
+# K-test - status/pass_fail_criterion/tested_capital_levels ANDRADE
+# INTE, se CLAUDE.md: "no agent other than the CEO... may ever write
+# or alter a pass_fail_criterion" - detta rör ENDAST redan uppmätta
+# resultatsiffror, aldrig kriteriet de mats mot)
+# ════════════════════════════════════════════════════════════
+# En kodgranskning 2026-08-05 hittade en genuin bugg i
+# strategies/HYP-037/backtest.py: crash_trough_price (botten-referensen
+# for aterhamtningsvillkoret) frostes tidigare pa VARJE krasch-episods
+# FORSTA triggerdag och uppdaterades ALDRIG darefter, aven om SPY
+# fortsatte falla langt efter det (exakt det scenario mekanismen ar
+# byggd for). Fixad: lopande minimum sa lange capacity_restricted ar
+# sant. Tva mindre relaterade fixar samtidigt: (a) ett tidigare
+# verkningslost min-positionsstorlek-filter gors nu verkligt (hoppar
+# over positioner under 0.01% av kapitalnivan istallet for en no-op),
+# (b) allokeringsordningen itererar nu en deterministisk, redan sorterad
+# lista istallet for ett Python-set (samma buggmonster som redan orsakat
+# den icke-deterministiska HYP-038-buggen - forebyggande fix har, ingen
+# observerad paverkan). Separat: scripts/deflated_sharpe_ratio.py hade
+# en inkonsekvent skevhet/kurtosis-estimator (blandade populations- och
+# Bessel-korrigerade moment) som ratades samtidigt.
+#
+# PAVERKAN PA REDAN RAPPORTERADE SIFFROR: liten men verklig, ALLA TRE
+# PASS-VILLKOR FORBLIR PASSED MED SAMMA SLUTSATS:
+#   - Villkor 1 (Sharpe >= 0.55): 0.737/0.755/0.698 (tidigare
+#     0.734/0.754/0.698) - marginellt HOGRE vid 100k/1M, i praktiken
+#     oforandrat vid 10M. Fortfarande TYDLIGT over golvet.
+#   - Villkor 2 (MaxDD battre an HYP-023): -23.09%/-19.11%/-13.10%
+#     (tidigare -23.10%/-19.12%/-13.11%) - marginellt battre pa alla
+#     tre, forsumbar skillnad.
+#   - Villkor 3 (OOS-2025 Sharpe vid $10M >= HYP-023:s 0.08) - DEN MEST
+#     KANSLIGA, eftersom denna redan hade en rakbladstunn marginal
+#     (0.083 mot kravet 0.08) OCH oos_backtest_2025.py ateranvander
+#     EXAKT samma (nu fixade) run_backtest()-funktion, OCH just
+#     OOS-2025-fonstret innehöll en verklig krasch-trigger
+#     (2025-04-04) - precis det scenario buggen paverkar mest. Fornyad
+#     korning: OOS-Sharpe vid $10M = 0.08313 (tidigare 0.08312) -
+#     PRAKTISKT TAGET IDENTISK, marginalen mot kravet ar OFORANDRAD.
+#     Villkor 3 forblir PASS med samma knivskarpa (men INTE forsamrade)
+#     marginal som redan var oppet redovisad.
+#   - Genomsnittlig kapacitetsbegransningsperiod foll fran 46.2 till
+#     39.0 dagar (den storsta enskilda forandringen - mekanismen las nu
+#     upp tidigare i genomsnitt) UTAN att detta slog igenom i Sharpe/
+#     MaxDD vid nagon kapitalniva - ADV-kapacitetsspärren band i
+#     praktiken sallan tillrackligt hart for att paverka utfallet,
+#     aven vid $10M.
+#   - DSR-siffrorna (0.741/0.760/0.687, tidigare 0.737/0.759/0.687)
+#     forandrades forsumbart av skevhet/kurtosis-fixen sarskilt -
+#     forvantat, eftersom biasen fran den gamla estimatorn krymper med
+#     1/sqrt(n) och denna backtest har ~3400+ dagliga observationer.
+#   - Sektorexponeringsattributionen (scripts/attribution.py, separat
+#     fixad for ett statiskt bas-universum-fel) omkord for $100k:
+#     IDENTISK topplista (SIC 60 fortfarande 5.6x) - ingen paverkan har.
+#
+# Determinism verifierad: huvudbacktesten kord TVA ganger efter fixen,
+# identiska resultat bada gangerna (samma disciplin som redan
+# etablerad efter HYP-038:s icke-deterministiska bugg).
+#
+# Bade nya och gamla siffror star kvar har (fältet ovan uppdaterat till
+# de nya, korrekta varden) - denna kommentar ar den permanenta,
+# git-sparbara posten over VAD som andrades och VARFOR, i linje med
+# CLAUDE.md:s princip att git-historiken ar revisionssparet.

@@ -43,6 +43,14 @@ BUFFER_HIGH = 10_000_000_000
 BAND_LOW = 100_000_000
 BAND_HIGH = 2_000_000_000
 
+# BUGGFIX (kodgranskning 2026-08-05): data/build_smallcap_universe.py (huvudserien
+# 2010-2024) kraver redan att aktieantalet inte ar aldre an 120 dagar relativt
+# manadsslutet (merge_asof med tolerance=120 dagar) - denna 2025-gren hade INGEN
+# sadan sparr alls, sa ett bolag som slutat rapportera regelbundet (sen filer,
+# forestaende fusion, etc.) skulle kunna fa ett flera ar gammalt aktieantal
+# tyst behandlat som aktuellt. Samma tolerans har, for konsekvens.
+SHARES_STALENESS_TOLERANCE_DAYS = 120
+
 MONTH_ENDS_2025 = [
     "2025-01-31", "2025-02-28", "2025-03-31", "2025-04-30", "2025-05-30",
     "2025-06-30", "2025-07-31", "2025-08-29", "2025-09-30", "2025-10-31",
@@ -95,7 +103,11 @@ def load_price_at_or_before(ticker: str, target_date: str):
             d = parts[0]
             if d > target_date:
                 break
-            best_date, best_price = d, parts[5]  # adjusted_close
+            # BUGGFIX (kodgranskning 2026-08-05): ra close (index 4), inte
+            # adjusted_close (index 5) - borsvarde = aktier x FAKTISKT
+            # handlat pris, split-/utdelningsjusterat pris missvisar borsvarde
+            # runt en split/storutdelning. Samma fix som rebuild_current_universe.py.
+            best_date, best_price = d, parts[4]
     if best_date is None:
         return None, None
     # kraver rimlig narhet till manadsslutet (inom 10 dagar) for att undvika
@@ -131,6 +143,11 @@ def main():
         for ticker, hist in shares_history.items():
             entry = shares_outstanding_at(hist, month_end)
             if entry is None:
+                continue
+            # Staleness-sparr - se SHARES_STALENESS_TOLERANCE_DAYS-kommentaren ovan.
+            from datetime import date as _date
+            shares_age_days = (_date.fromisoformat(month_end) - _date.fromisoformat(entry["date"])).days
+            if shares_age_days > SHARES_STALENESS_TOLERANCE_DAYS:
                 continue
             price_date, price = load_price_at_or_before(ticker, month_end)
             if price is None:

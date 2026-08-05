@@ -36,22 +36,37 @@ def sharpe_ratio(returns: np.ndarray, risk_free_per_period: float = 0.0) -> floa
 
 
 def skewness(returns: np.ndarray) -> float:
-    """Sample skewness (γ3)."""
+    """
+    Sample skewness (γ3), populations-moment-estimator (bias=True, samma
+    konvention som scipy.stats.skew()-defaulten) - täljare OCH nämnare
+    använder samma n-delare.
+
+    BUGGFIX (kodgranskning 2026-08-05): tidigare blandades en
+    populations-moment-täljare (dividerad med n) med en Bessel-korrigerad
+    nämnare (std(ddof=1), dividerad med n-1) - en inkonsekvent, matematiskt
+    fel blandad estimator. Den underskattar skevhetens absolutbelopp
+    systematiskt för korta serier, vilket i sin tur systematiskt
+    ÖVERSKATTAR DSR (ser mer signifikant ut än verkligheten) - fel håll
+    för ett verktyg vars hela syfte är att vara KONSERVATIVT mot
+    overfitting, inte optimistiskt.
+    """
     r = np.asarray(returns, dtype=float)
     n = len(r)
     m = r.mean()
-    s = r.std(ddof=1)
+    s = r.std(ddof=0)
     if s == 0 or n < 3:
         return 0.0
     return float(((r - m) ** 3).mean() / s**3)
 
 
 def kurtosis(returns: np.ndarray) -> float:
-    """Sample kurtosis (γ4, ICKE excess - normalfördelning ger 3.0, inte 0)."""
+    """Sample kurtosis (γ4, ICKE excess - normalfördelning ger 3.0, inte 0),
+    populations-moment-estimator - se skewness() ovan för samma buggfix
+    (täljare och nämnare använder nu konsekvent samma n-delare)."""
     r = np.asarray(returns, dtype=float)
     n = len(r)
     m = r.mean()
-    s = r.std(ddof=1)
+    s = r.std(ddof=0)
     if s == 0 or n < 4:
         return 3.0
     return float(((r - m) ** 4).mean() / s**4)

@@ -117,7 +117,12 @@ def get_current_price(ticker: str):
             writer.writeheader()
             writer.writerows(rows)
         last_row = rows[-1]
-        return last_row["date"], last_row["adjusted_close"]
+        # BUGGFIX (kodgranskning 2026-08-05): borsvarde = aktier x PRIS SOM DET
+        # FAKTISKT HANDLADES FOR, inte split-/utdelningsjusterat pris - adjusted_close
+        # kan missvisa historiskt/aktuellt borsvarde runt en split/storutdelning.
+        # build_smallcap_universe.py (huvudserien 2010-2024) anvander redan ra close
+        # korrekt av samma skal - denna gren gjorde det inte, nu konsekvent.
+        return last_row["date"], last_row["close"]
 
     start = (date.fromisoformat(last_date) + timedelta(days=1)).isoformat()
     if start <= TODAY:
@@ -130,7 +135,7 @@ def get_current_price(ticker: str):
                 writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
                 writer.writerows(rows)
             last_date = rows[-1]["date"]
-            last_price = rows[-1]["adjusted_close"]
+            last_price = rows[-1]["close"]  # buggfix - se ovan, ra close inte adjusted_close
             return last_date, last_price
 
     # ingen ny rad - las senaste befintliga raden ur filen
@@ -142,7 +147,7 @@ def get_current_price(ticker: str):
     if last_line is None:
         return None, None
     parts = last_line.strip().split(",")
-    return parts[0], parts[5]  # date, adjusted_close
+    return parts[0], parts[4]  # date, close (buggfix - se ovan, ra close inte adjusted_close)
 
 
 def main():

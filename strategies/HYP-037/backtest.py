@@ -354,7 +354,14 @@ def run_backtest(close, close_adj, hedge, vol_df, beta_df, spread_df, volume,
                     scores.append((v, t, cp))
             scores.sort()  # LAGST idiosynkratisk vol forst
             n_top = max(1, int(len(scores) * DECILE_FRACTION)) if scores else 0
-            target_tickers = {t for _, t, _ in scores[:n_top]}
+            # ordered_target_tickers halls i DETERMINISTISK (redan sorterad) ordning -
+            # target_tickers (set) anvands bara for O(1) medlemskapstest nedan, ALDRIG
+            # itererad direkt. BUGGFIX (kodgranskning 2026-08-05): new_names byggdes
+            # tidigare genom att iterera direkt over target_tickers-mangden, vars
+            # iterationsordning ar hash-randomiserad per Python-process (samma
+            # buggmonster som redan orsakade den icke-deterministiska HYP-038-buggen).
+            ordered_target_tickers = [t for _, t, _ in scores[:n_top]]
+            target_tickers = set(ordered_target_tickers)
 
             for t in list(holdings.keys()):
                 if t not in target_tickers:
@@ -373,7 +380,7 @@ def run_backtest(close, close_adj, hedge, vol_df, beta_df, spread_df, volume,
                                        "cost": holdings[t]["cost"]})
                     del holdings[t]
 
-            new_names = [t for t in target_tickers if t not in holdings]
+            new_names = [t for t in ordered_target_tickers if t not in holdings]
             if new_names:
                 target_dollar_per_name = cash / len(new_names) if len(new_names) > 0 else 0.0
                 for t in new_names:
@@ -385,8 +392,16 @@ def run_backtest(close, close_adj, hedge, vol_df, beta_df, spread_df, volume,
                     adv_pct = RESTRICTED_MAX_ADV_PCT if capacity_restricted else MAX_ADV_PCT
                     cap_dollar = adv * adv_pct if not np.isnan(adv) else target_dollar_per_name
                     sz = min(target_dollar_per_name, cap_dollar)
-                    if sz < capital_level * 0.0001 or sz > cash:
-                        sz = min(sz, cash)
+                    sz = min(sz, cash)  # skyddsklipp - sz overstiger i praktiken aldrig cash, se nedan
+                    # BUGGFIX (kodgranskning 2026-08-05): detta villkor var tidigare
+                    # `if sz < capital_level*0.0001 or sz > cash: sz = min(sz, cash)` -
+                    # ett verkningslost no-op, eftersom sz per konstruktion redan alltid
+                    # ar <= cash (target_dollar_per_name summerar exakt till cash), sa
+                    # "fixen" andrade aldrig nagot och for sma positioner oppnades andra
+                    # trots att villkoret sag ut att filtrera bort dem. Nu: hoppa
+                    # verkligen over positioner under minimitroskeln.
+                    if sz < capital_level * 0.0001:
+                        continue
                     if sz <= 0:
                         continue
                     entry_spread = spread_v[date_i, ti]
@@ -407,10 +422,17 @@ def run_backtest(close, close_adj, hedge, vol_df, beta_df, spread_df, volume,
             # aterhamtningsvillkoret - OBEROENDE av haircut_active, som
             # bara styr NAR en NY 40%-nedskarning far triggas.
             if not capacity_restricted:
+                # NY episod (kapacitetsbegransning inte redan aktiv sedan tidigare) -
+                # satt start-/bottenpris har. Om capacity_restricted redan ar SANT
+                # (en oloest tidigare episod), ror INTE dessa - se buggfix nedan:
+                # de aterspeglar redan den pagaende episodens sanna start, och
+                # crash_trough_price uppdateras lopande varje dag nedan sa lange
+                # capacity_restricted ar sant, oavsett om just DENNA dag ocksa
+                # rakar trigga en ny 40%-nedskarning.
                 capacity_restriction_log.append({"start_date": date, "end_date": None})
+                crash_trough_price = float(hedge_price_v[date_i])
+                crash_start_price = float(hedge_price_v[date_i - CRASH_LOOKBACK_DAYS])
             capacity_restricted = True
-            crash_trough_price = float(hedge_price_v[date_i])
-            crash_start_price = float(hedge_price_v[date_i - CRASH_LOOKBACK_DAYS])
             for t in list(holdings.keys()):
                 ti = tidx[t]
                 cp = prices_v[date_i, ti]
@@ -442,6 +464,16 @@ def run_backtest(close, close_adj, hedge, vol_df, beta_df, spread_df, volume,
         # SAMTIDIGT samma dag.
         if capacity_restricted and crash_trough_price is not None:
             current_price = float(hedge_price_v[date_i])
+            # BUGGFIX (kodgranskning 2026-08-05): crash_trough_price satts tidigare
+            # ENDAST pa triggerdagen och uppdaterades aldrig darefter. Under en
+            # utdragen krasch (SPY fortsatter falla langt efter den initiala
+            # 10-dagars-triggern, t.ex. covid-2020) gav det ett FALSKT GRUNT
+            # botten-varde - aterhamtningsvillkoret kunde da uppfyllas efter att
+            # priset atervunnit RECOVERY_FRACTION av en for liten nedgang, och
+            # kapacitetsbegransningen las upp for tidigt, mitt i en pagaende
+            # krasch - exakt motsatsen till mekanismens syfte. Fix: lopande
+            # minimum sa lange capacity_restricted ar sant, oavsett triggerdagar.
+            crash_trough_price = min(crash_trough_price, current_price)
             recovered_enough = current_price >= crash_trough_price + RECOVERY_FRACTION * (
                 crash_start_price - crash_trough_price)
             spread_med = spread_median_v[date_i]

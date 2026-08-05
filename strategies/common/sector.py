@@ -85,5 +85,9 @@ def load_ticker_major_group(tickers) -> dict:
     result = {}
     for t in tickers:
         sic = sic_map.get(t)
-        result[t] = str(sic)[:2] if sic else "XX"
+        # BUGGFIX (kodgranskning 2026-08-05): str(sic)[:2] tappade tidigare
+        # inledande nollan for SIC-koder under 1000 (Division A: Jordbruk/
+        # Skogsbruk/Fiske, t.ex. 0100) - str(100)[:2] gav "10" (metallgruvor)
+        # istallet for korrekt "01". Fix: nollutfyll till 4 siffror forst.
+        result[t] = f"{sic:04d}"[:2] if sic else "XX"
     return result
