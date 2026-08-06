@@ -1,7 +1,7 @@
-# LÅST 2026-08-05 av CEO i chatt, innan denna hypotes sätts pre-registered
+# LÅST 2026-08-06 av CEO i chatt, innan denna hypotes sätts pre-registered
 # eller någon backtest körs.
 #
-# EJAY ÅTEROPPNAD 2026-08-05 AV CEO, EXPLICIT, FÖR DETTA SPECIFIKA TEST -
+# EJAY ÅTEROPPNAD 2026-08-06 AV CEO, EXPLICIT, FÖR DETTA SPECIFIKA TEST -
 # se CLAUDE.md: "Ejay is closed - do not build on it without an explicit
 # new decision from the user." Detta ÄR den nya, explicita decisionen.
 # INTE en generell återöppning av Ejay/Kelly-linjen (8 tidigare dödade
@@ -11,14 +11,14 @@
 #
 # Ursprung: CEO:s egen idé ("Technical analysis is not dead in small cap,
 # only rearranged") - byggd, diskuterad och kriterietext framtagen med
-# Claudes hjälp i chatt 2026-08-05, samma session som den bredare
+# Claudes hjälp i chatt 2026-08-06, samma session som den bredare
 # kodgranskningen/valideringen av HYP-037/039. Explicit godkänd av CEO
 # i chatt innan skrivning till detta register.
 #
 # status: pre-registered -> tested -> passed/failed
 
 id: HYP-040
-date_registered: '2026-08-05'
+date_registered: '2026-08-06'
 title: TA-mönsterbibliotek med Ejay-baserad träffsäkerhetsfiltrering och positionsviktning
 universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
 small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
@@ -80,7 +80,7 @@ pass_fail_criterion: >
   bara kvartalsvisa ombalanseringar), flag_implausible_liquidity().
 
   8. EXPONERING: LONG-ONLY, INGEN SPY-beta-hedge (till skillnad fran
-  HYP-023/037-linjen) - explicit CEO-val 2026-08-05, öppen fraga
+  HYP-023/037-linjen) - explicit CEO-val 2026-08-06, öppen fraga
   ställd och lämnad obesvarad/accepterad som default i chatt. Detta
   innebär att strategin har verklig marknadsexponering (beta > 0),
   till skillnad fran resten av det aktiva registret. Betaexponeringen
@@ -135,7 +135,7 @@ capital_level_results:
               equal_weighted: {sharpe: -0.8744, cagr: -0.0878, max_drawdown: -0.7818, calmar: -0.1123, win_rate: 0.4214, profit_factor: 0.8459, n_trades: 54128, beta_vs_spy: 0.3145}}
   10000000: {ejay_weighted: {sharpe: -0.9086, cagr: -0.0889, max_drawdown: -0.7707, calmar: -0.1154, win_rate: 0.4215, profit_factor: 0.7948, n_trades: 54433, beta_vs_spy: 0.3255, deflated_sharpe_ratio: 0.0000},
                equal_weighted: {sharpe: -0.9088, cagr: -0.0893, max_drawdown: -0.7722, calmar: -0.1157, win_rate: 0.4205, profit_factor: 0.7965, n_trades: 54921, beta_vs_spy: 0.3262}}
-date_tested: '2026-08-05'
+date_tested: '2026-08-06'
 result_summary: >
   FAILED RENT PA VILLKOR 1 OCH 2, PA ALLA TRE KAPITALNIVAER - inget
   gransfall, katastrofalt tydligt.
