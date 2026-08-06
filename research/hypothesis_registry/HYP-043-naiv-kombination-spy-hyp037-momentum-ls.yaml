@@ -1,0 +1,101 @@
+# LÅST 2026-08-06 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors.
+#
+# Foljer spec §5b:s regler for LEGITIM kombinationstestning, samma
+# disciplin som HYP-039/041:
+#   1. Korrelationsmatris FORE nagon vikt valdes - se reservation nedan,
+#      med bade en forsta (kvartalsvis, 57 punkter) och en KORRIGERAD,
+#      mer tillforlitlig (daglig, 3460 punkter) berkning, upptackt
+#      behovas efter att den kvartalsvisa metoden visade sig ge en
+#      MISSVISANDE bild aven for den redan kanda SPY/HYP-037-relationen
+#      (0.67 kvartalsvis mot 0.003 dagligen, oberoende verifierat).
+#   2. NAIV, likaviktad kombination (lika tredjedelar) - INTE in-sample-
+#      optimerade vikter.
+#   3. Egen K-kostnad, separat fran HYP-039/HYP-041.
+#
+# TREDJE BENET: en momentum long/short-svit (12-1-manaders momentum,
+# klassisk akademisk konvention - Jegadeesh/Titman - long topp-decil,
+# kort botten-decil, dollar-neutralt, kvartalsvis) byggd fran grunden
+# over small-cap-universumet (INTE en ETF-proxy - de tillgangliga
+# alternativen som foreslogs, DBMF/KMLM/AVUV/QVAL/VFMO, hade alla for
+# kort historik for 2010-2024-fonstret, endast BTAL godkand pa den
+# punkten men aldrig testad har).
+#
+# KORRELATION (DAGLIG, den tillforlitliga siffran - FORE lasning):
+# Momentum L/S mot SPY: -0.086. Momentum L/S mot HYP-037: -0.110.
+# Svagare an den forsta (missvisande) kvartalsvisa skattningen (-0.36/
+# -0.23), men fortfarande i ratt riktning. Sviten egen dagliga Sharpe:
+# 0.27 (svagare an HYP-037:s 0.73, men battre an HYP-041:s TLT-ben,
+# vars egen Sharpe bara var 0.038).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-043
+date_registered: '2026-08-06'
+title: Naiv tredelad kombination (kvartalsvis ombalanserad) - SPY + HYP-037 + Momentum L/S
+universe: "N/A for SPY/HYP-037-benen (redan testade). Momentum L/S-benet byggs over
+  SAMMA small-cap-universum ($100M-$2B) som HYP-037, ingen ny universumdefinition."
+small_cap_definition: "small-cap, $100M - $2B börsvärde, EODHD All-World (galler
+  momentum L/S-benets universum, ateranvander HYP-037:s redan lasta definition)"
+data_range: "SPY/TLT-monster: adjusted_close 2010-2024 + genuin OOS-2025. Momentum
+  L/S: byggd fran close_adj over samma small-cap-universum och period, samma
+  motorkrav (adjusted_close genomgaende, ny sarhet mot konstant orimlig
+  adjusted_close/close-kvot - se nedan)."
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja):
+
+  1. MOMENTUM L/S-SVITEN (det tredje benet, byggs fran grunden har - INTE
+  en redan existerande serie): kvartalsvis (HYP-037:s egna snappade
+  datum), rangordna eligible small-cap-universumet efter 12-1-manaders
+  momentum (avkastning fran 252 till 21 handelsdagar sedan - UTESLUTER
+  senaste manaden, klassisk akademisk konvention). LONG topp-decilen,
+  KORT botten-decilen, likaviktat inom vardera benet, DOLLAR-NEUTRALT
+  (50% notional long, 50% kort av sviten-benets EGEN allokering).
+  Daglig vardering mellan ombalanseringarna (samma princip som HYP-037:s
+  egen dagliga vardering). Lanekostnad pa kortbenet (samma
+  BORROW_ANNUAL_RATE=3% som resten av registret). Motorkrav: adjusted_close
+  genomgaende, SAMMA nya sarhet mot konstant orimlig adjusted_close/close-
+  kvot (>100x eller <0.01x, maskas) som upptacktes och fixades under
+  HYP-042:s bygge samma dag - INBYGGD FRAN START har, inte upptackt i
+  efterhand.
+
+  2. KOMBINATION: 1/3 notional SPY + 1/3 notional HYP-037 (redan sparad
+  strategies/HYP-037/results/portfolio_value_<niva>.csv, ANVAND
+  OFORANDRAD) + 1/3 notional momentum L/S-sviten (punkt 1, redan
+  DOLLAR-NEUTRAL internt - en tredjedel kapital "bakom" den behandlas
+  som EN redan kand avkastningsserie, samma princip som HYP-037:s eget
+  ben i HYP-039/041). Ombalanserad till exakt tredjedelar VARJE KVARTAL
+  pa HYP-037:s REDAN LASTA datum. INGEN havstang utover sviten-benets
+  egen interna 50/50 long/kort-struktur.
+
+  PASS KRÄVER ALLA TRE, PA DEN AVGORANDE $100k-NIVAN (rapporteras for
+  alla tre nivåer, samma konvention som HYP-039/041):
+  1. Kombinerad Sharpe (2010-2024) >= 1.0.
+  2. Kombinerad Sharpe > HYP-039:s EGNA redan registrerade Sharpe vid
+     samma niva (1.019/1.030/0.988 vid 100k/1M/10M).
+  3. Kombinerad MaxDD BATTRE an HYP-039:s EGNA redan registrerade MaxDD
+     vid samma niva (-22.0%/-22.2%/-20.0%).
+
+  OOS-2025: kombinerad OOS-2025 Sharpe (momentum L/S-sviten byggd om
+  for 2025 med SAMMA metod, sammanslaget universum huvudserie+2025-
+  utokning, samma merged-universum-princip som HYP-037:s egen genuina
+  OOS-korning) MASTE vara > HYP-039:s EGEN OOS-2025 Sharpe vid samma
+  niva (0.919/0.812/0.793).
+
+  FAIL om nagot villkor faller vid $100k-nivan.
+
+  Diagnostiskt syfte: testar om en EGENBYGGD (inte ETF-proxy) beta-
+  neutral momentum long/short-svit kan hoja den kombinerade Sharpen
+  bortom vad HYP-039 (SPY+HYP-037) redan uppnar - en annan typ av
+  tredje ben an HYP-041:s TLT (tillgangsklass-diversifiering) - har
+  ar det en oberoende AKTIEFAKTOR-svit, motiverad delvis av HYP-042:s
+  eget fynd (small-cap-"forlorare" tenderar att fortsatta kollapsa,
+  vilket indirekt stodjer att KORTSIDAN av momentum kan ha edge har,
+  aven om LANGSIDAN (ren momentum long-only) redan misslyckats tre
+  ganger tidigare i registret).
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 41
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
