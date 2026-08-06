@@ -1,0 +1,75 @@
+# LÅST 2026-08-06 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors.
+#
+# Ursprung: forslag fran en andra AI (CEO fragade om ytterligare "tredje
+# ben"-kandidater for portfoljdiversifiering, men fick istallet forslag
+# pa NYA AKTIESIGNALER - denna hypotes ar av den andra typen: en ny,
+# fristaende small-cap-alfasignal, INTE ett diversifierande tredje ben).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-042
+date_registered: '2026-08-06'
+title: Kortsiktig reversal (10-dagars trailing avkastning, veckovis)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, 2011-2024 (samma period/källa som registret i övrigt)
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja efter att detta
+  kriterium lästs):
+
+  1. SIGNAL: 10 handelsdagars trailing avkastning (adjusted_close), en
+  specifik, forhandsvald siffra inom det spann (5-20 dagar) som
+  ursprungligen foreslogs - INGEN parametersokning over spannet.
+
+  2. URVAL: VECKOVIS (varje fredag, eller narmaste foregaende
+  handelsdag om fredag ar helgdag), rangordnas hela det eligible
+  small-cap-universumet efter signalen. LONG botten-decilen (de 10%
+  med SAMST trailing 10-dagars-avkastning - reversal-tesen: dessa
+  studsar tillbaka). Detta ar en AVSIKTLIGT ANNAN ombalanseringstakt
+  an registrets vanliga kvartalsvisa - motiverat av att en 10-dagars-
+  signal blir betydelselos om innehaven halls i tre manader; samma
+  princip som Ejay-fonstrets interna konsekvens (HYP-040).
+
+  3. HALLPERIOD: exakt 10 handelsdagar per position (matchar signalens
+  egen utvarderingshorisont - internt konsekvent, ingen ytterligare
+  fri parameter).
+
+  4. HEDGE: SPY-beta-hedge, aterananvander HYP-037:s egen beta-
+  berakningsmetod (rullande regression, samma fonster/sakerhetssparrar).
+  Samma konvention som ALLA tidigare "ra signal, ingen overlay an"-test
+  i registret (HYP-015, HYP-020, HYP-035) - en ny signal testas alltid
+  forst marknadsneutralt innan nagon overlay eventuellt laggs till i en
+  separat, framtida hypotes.
+
+  5. MOTORKRAV (samma som resten av registret): adjusted_close
+  genomgaende for signal/position/P&L, Corwin-Schultz-spread pa in-
+  och utgang, ADV-kapacitetsspärr (10% av 20-dagars dollarvolym per
+  ny position, samma tak som HYP-037), snappade handelsdagar for
+  ombalanseringsdatumen, flag_implausible_liquidity().
+
+  PASS KRÄVER BÅDA, PA SAMTLIGA TRE kapitalnivåer (100k/1M/10M):
+  1. Sharpe (efter friktion) >= 0.55 - standardgolvet for en ny,
+     fristaende alfasignal (samma golv/konvention som HYP-035, INTE en
+     jamforelse mot en annan hypotes egna siffror, eftersom detta INTE
+     bygger pa en redan godkand mekanism).
+  2. Friktion (Corwin-Schultz bid-ask-spread) verifierat kodmassigt
+     inbyggd fran start (validate_friction_usage.py).
+
+  INGEN OOS-2025-sparr i detta forsta pass (samma "diagnostik forst"-
+  logik som HYP-034 anvande innan HYP-037 gjorde OOS gating for just
+  den mekanismfamiljen) - kan skarpas i en eventuell uppfoljande
+  hypotes om detta godkanns.
+
+  FAIL om nagot villkor faller pa nagon niva.
+
+  Diagnostiskt syfte: testar en HELT ANNAN ekonomisk mekanism an
+  registrets befintliga edge (kortsiktig overreaktion/likviditets-
+  formodling, INTE idiosynkratisk lagvolatilitet) - en genuint ny
+  signal, inte en variant av nagot redan testat.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 40
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
