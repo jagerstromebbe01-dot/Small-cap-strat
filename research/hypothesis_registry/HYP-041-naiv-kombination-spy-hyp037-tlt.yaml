@@ -1,0 +1,81 @@
+# LÅST 2026-08-06 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# Foljer spec §5b:s regler for LEGITIM kombinationstestning, samma
+# disciplin som HYP-039:
+#   1. Korrelationsmatris FORE nagon vikt valdes: SPY/TLT/HYP-037
+#      dagliga avkastningar, overlappande period 2010-10-01 till
+#      2024-12-31 (3586 dagar) - berknad INNAN detta kriterium las.
+#      SPY-TLT: -0.3019, TLT-HYP037: -0.0214, SPY-HYP037: -0.0045.
+#   2. NAIV, likaviktad kombination (lika tredjedelar) - INTE in-sample-
+#      optimerade vikter.
+#   3. Egen K-kostnad, separat fran SPY/HYP-037/TLT:s egna bidrag OCH
+#      fran HYP-039 (denna ar INTE en modifiering av HYP-039, det ar en
+#      helt egen, ny kombinationsmetod - tredelad, inte tvadelad).
+#
+# VIKTIG, OPPET REDOVISAD RESERVATION INNAN LASNING: TLT:s EGEN Sharpe
+# over samma period ar bara 0.038 (i praktiken noll), CAGR 1.46%/ar,
+# MaxDD -48.3% (samre an SPY:s egna -33.7%) - 2010-2024 var en tuff
+# period for langa obligationer (flerarig bull-marknad som slutade,
+# sedan 2022 rantechocken). Korrelationsegenskaperna ar goda, men TLT:s
+# egen riskjusterade profil ar svag under just detta fonster - CEO och
+# Claude diskuterade detta explicit innan lasning; kriteriet lases anda
+# eftersom den KOMBINERADE matematiken ar en empirisk fraga, inte nagot
+# som kan avgoras fran korrelationen ensam.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-041
+date_registered: '2026-08-06'
+title: Naiv tredelad kombination (kvartalsvis ombalanserad) - SPY + HYP-037 + TLT
+universe: "N/A - portfoljniva-kombination av tre redan existerande, oberoende testade
+  avkastningsserier (SPY och TLT som tillgangsklasser, HYP-037 som redan godkand
+  small-cap-strategi). tested_capital_levels nedan galler HYP-037-benets redan
+  testade kapitalnivaer."
+small_cap_definition: "N/A for denna hypotes - se universe-faltet."
+data_range: "SPY/TLT adjusted_close + HYP-037:s redan berknade portfoljvardesserier,
+  2010-2024 + genuin OOS-2025 (aterananvander paper_trading/HYP-037/oos_2025_results/,
+  ingen ny OOS-korning byggs for denna hypotes)"
+pass_fail_criterion: >
+  Ren PORTFOLJMATEMATIK pa tre redan kanda, redan individuellt testade
+  avkastningsserier - INGEN ny backtest-motor, INGEN ny signal, INGEN nytt
+  kostnads-/hedgepalagg utover vad de tre delserierna redan sjalva
+  inkluderar. Kombinerad portfoljvarde-serie = 33.33% notional i SPY
+  (adjusted_close) + 33.33% i TLT (adjusted_close) + 33.33% i HYP-037
+  (redan sparad strategies/HYP-037/results/portfolio_value_<niva>.csv,
+  ANVAND OFORANDRAD), ombalanserad till EXAKT tredjedelar VARJE KVARTAL
+  pa HYP-037:s REDAN LASTA ombalanseringsdatum (ateranvander en befintlig
+  frekvens, valjer INGEN ny fri parameter). INGEN havstang. Testas separat
+  vid alla tre av HYP-037:s redan testade kapitalnivaer (100k/1M/10M) for
+  HYP-037-benet - SPY/TLT-benen skalar trivialt.
+
+  PASS kraver ALLA TRE, PA MINST kapitalnivan $100k (rapporteras for alla
+  tre, men $100k ar den avgorande nivan, samma konvention som HYP-039):
+  1. Kombinerad Sharpe (2010-2024) >= 1.0 - samma mal som HYP-039.
+  2. Kombinerad Sharpe > HYP-039:s EGNA redan registrerade Sharpe vid
+     samma niva (1.019/1.030/0.988 vid 100k/1M/10M) - bevisar att
+     TLT-benet FAKTISKT tillfor nagot utover den redan godkanda
+     tvadelade kombinationen, inte bara spar ut den med brus.
+  3. Kombinerad MaxDD BATTRE (mindre negativ) an HYP-039:s EGNA redan
+     registrerade MaxDD vid samma niva (-22.0%/-22.2%/-20.0%) - bevisar
+     genuin riskreduktion utover det HYP-039 redan uppnar.
+
+  OOS-2025: kombinerad OOS-2025 Sharpe (aterananvander HYP-037:s redan
+  byggda OOS-2025-serie + SPY/TLT:s egna 2025-avkastningar, SAMMA
+  tredjedelskombination) MASTE vara > HYP-039:s EGEN OOS-2025 Sharpe
+  vid samma niva (0.919/0.812/0.793) - samma "bevisa additivt varde"-
+  princip som huvudvillkoren.
+
+  FAIL om nagot villkor faller vid $100k-nivan.
+
+  Diagnostiskt syfte: testar CEO:s egen hypotes att en TREDJE, genuint
+  okorrelerad tillgang (har: langa statsobligationer) kan hoja den
+  kombinerade Sharpen bortom vad tva-dels-kombinationen (HYP-039) redan
+  uppnar - portfoljteorins diversifieringslogik tillampad pa en ny
+  tillgangsklass, INTE en ny small-cap-signal.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 39
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
