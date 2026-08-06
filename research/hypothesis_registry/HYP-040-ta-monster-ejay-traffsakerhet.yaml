@@ -122,9 +122,94 @@ pass_fail_criterion: >
   men med en mekaniskt annorlunda tillämpning) kan identifiera vilka
   aktier TA-signaler faktiskt fungerar pa, i motsats till att anta
   enhetlig TA-prediktionsformaga over hela universumet.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 38
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {ejay_weighted: {sharpe: -0.5048, cagr: -0.0838, max_drawdown: -0.7806, calmar: -0.1074, win_rate: 0.4196, profit_factor: 0.8310, n_trades: 58405, beta_vs_spy: 0.3397, deflated_sharpe_ratio: 0.0013},
+             equal_weighted: {sharpe: -0.4908, cagr: -0.0816, max_drawdown: -0.7726, calmar: -0.1056, win_rate: 0.4202, profit_factor: 0.8377, n_trades: 58793, beta_vs_spy: 0.3366}}
+  1000000: {ejay_weighted: {sharpe: -0.8834, cagr: -0.0879, max_drawdown: -0.7824, calmar: -0.1124, win_rate: 0.4223, profit_factor: 0.8432, n_trades: 53838, beta_vs_spy: 0.3130, deflated_sharpe_ratio: 0.0000},
+              equal_weighted: {sharpe: -0.8744, cagr: -0.0878, max_drawdown: -0.7818, calmar: -0.1123, win_rate: 0.4214, profit_factor: 0.8459, n_trades: 54128, beta_vs_spy: 0.3145}}
+  10000000: {ejay_weighted: {sharpe: -0.9086, cagr: -0.0889, max_drawdown: -0.7707, calmar: -0.1154, win_rate: 0.4215, profit_factor: 0.7948, n_trades: 54433, beta_vs_spy: 0.3255, deflated_sharpe_ratio: 0.0000},
+               equal_weighted: {sharpe: -0.9088, cagr: -0.0893, max_drawdown: -0.7722, calmar: -0.1157, win_rate: 0.4205, profit_factor: 0.7965, n_trades: 54921, beta_vs_spy: 0.3262}}
+date_tested: '2026-08-05'
+result_summary: >
+  FAILED RENT PA VILLKOR 1 OCH 2, PA ALLA TRE KAPITALNIVAER - inget
+  gransfall, katastrofalt tydligt.
+
+  Villkor 1 (Sharpe >= 0.55): Sharpe -0.50/-0.88/-0.91 (ejay-viktad) -
+  djupt NEGATIV, inte bara under golvet. MaxDD -78.1%/-78.2%/-77.1% -
+  bland de sämsta enskilda resultaten i hela registrets historia
+  (jamforbart med HYP-019:s -78%/-69%/-45% och HYP-030:s
+  -86%/-83%/-74%, de tva tidigare varsta misslyckandena). DSR vid K=39:
+  0.001/0.000/0.000 - i praktiken noll sannolikhet att detta ar en
+  dold, genuin edge maskerad av brus; tvärtom, en entydig avsaknad av
+  edge.
+
+  Villkor 2 (Ejay-viktad Sharpe >= likaviktad Sharpe for SAMMA pool):
+  TEKNISKT PASS pa $100k (-0.505 mot -0.491 - Ejay-viktad AR marginellt
+  SAMRE, inte battre, men skillnaden ar forsumbar), FAIL pa $1M/$10M
+  (-0.883 mot -0.874 vid $1M, -0.9086 mot -0.9088 vid $10M - i praktiken
+  identiska, ingen meningsfull skillnad at nagot hall). DETTA AR DEN
+  VIKTIGASTE ENSKILDA SLUTSATSEN: Ejay-viktningen tillfor INGENTING,
+  varken positivt eller negativt, jamfort med att bara handla alla
+  monster som passerar kvartilfiltret lika viktat. Exakt samma
+  dodsmonster som redan observerats i de 8 tidigare Ejay/Kelly-varianterna
+  ("ingen forbattring efter att ha kontrollerat for signalstyrka; hog
+  korrelation mellan viktad/oviktad variant") - AVEN i denna mekaniskt
+  annorlunda tillampning (TA-traffsakerhet snarare an signalstyrka pa
+  en redan vald decil). Ejay/Kelly-linjen ar SALEDES INTE unikt kopplad
+  till just idio-vol-decil-viktning - monstret verkar generalisera till
+  "att vikta positioner efter ett historiskt traffsakerhets-/
+  konfidensmatt tillfor inte matbart varde i det har universumet",
+  oavsett vad matten sjalva mater.
+
+  Villkor 3 (friktion): uppfyllt kodmassigt (Corwin-Schultz-spread
+  anvand pa in-/utgang, se validate_friction_usage.py).
+
+  OOS-2025: EJ KORD - CEO-BESLUT, sparat pa samma grund som HYP-035/
+  HYP-019/HYP-030 (villkor 1 var redan ett sa entydigt, extremt fail
+  pa ALLA TRE nivaer att en dyr fullstandig 2010-2025-OOS-korning inte
+  skulle andra slutsatsen). Redovisat oppet, ingen tyst avvikelse fran
+  tested_capital_levels-atagandet (som galler kapitalnivaer, inte
+  OOS-steget specifikt).
+
+  DIAGNOS (kort, ingen vidare felsokning gjord - kriteriet var redan
+  entydigt uppfyllt for FAIL, ingen anledning att "raddan" resultatet):
+  - Winrate 42.0-42.2% pa alla nivaer/varianter - SAMRE an myntkast.
+    Breakout-/momentum-monster i small-cap markerar sannolikt ofta
+    lokala toppar (utbrott som atergar) snarare an fortsattningar,
+    ett kant fenomen i illikvida aktier.
+  - I snitt 594 "eldade" ticker-dagar/dag av ett universum pa ~700-900
+    eligible namn - extremt lag selektivitet (15 monster som triggar
+    dagligen pa de flesta aktier over tid). Ett sa vanligt forekommande
+    "monster" narmar sig per definition brus, inte en sallsynt,
+    informativ handelse.
+  - Profit Factor 0.79-0.85 (under 1.0 pa alla varianter/nivaer) -
+    forlusterna oversteg vinsterna i dollartermer, inte bara i antal.
+  - Beta mot SPY 0.31-0.34 (positiv, ej gated av kriteriet men
+    rapporterad enligt punkt 8) - som vantat for en long-only strategi
+    utan hedge, men bidrar INTE till forklaringen av det negativa
+    resultatet (SPY sjalv hade positiv avkastning under merparten av
+    perioden - en positiv beta borde ha HJALPT, inte stjalpt,
+    resultatet, vilket forstarker att den negativa avkastningen kommer
+    fran signalen/urvalet sjalvt, inte fran marknadsriktningen).
+
+  SLUTSATS: CEO:s hypotes ("teknisk analys ar inte dod i small-cap, bara
+  omorganiserad") fick INGET stod i denna specifika, forhandsspecificerade
+  implementation. Ejay ateroppnades EXPLICIT for detta enda test (se
+  registerpostens egen motivering ovan) och ar nu ATER STANGD - 9
+  misslyckade varianter totalt, kraver ett nytt, separat explicit
+  CEO-beslut for att aterppnas igen. HYP-037 forblir den aktiva
+  referensimplementationen, oforandrad av detta test.
+sharpe_raw:
+  100000: -0.5048
+  1000000: -0.8834
+  10000000: -0.9086
+deflated_sharpe_ratio:
+  100000: 0.0013
+  1000000: 0.0000
+  10000000: 0.0000

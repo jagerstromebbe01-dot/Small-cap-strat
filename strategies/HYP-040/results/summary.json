@@ -1,0 +1,80 @@
+[
+  {
+    "ejay_weighted": {
+      "capital_level": 100000,
+      "sharpe": -0.5047877050631396,
+      "cagr": -0.08383870387251446,
+      "max_drawdown": -0.7806064060074646,
+      "calmar": -0.10740201877322636,
+      "beta_vs_spy": 0.3397416857940861,
+      "correlation_vs_spy": 0.31580318989990314,
+      "n_trades": 58405,
+      "win_rate": 0.41958736409553976,
+      "profit_factor": 0.8310481287977173
+    },
+    "equal_weighted": {
+      "capital_level": 100000,
+      "sharpe": -0.4907864902007406,
+      "cagr": -0.08161544503956797,
+      "max_drawdown": -0.7725614914683704,
+      "calmar": -0.10564265232071744,
+      "beta_vs_spy": 0.3366218756281757,
+      "correlation_vs_spy": 0.31241478705312203,
+      "n_trades": 58793,
+      "win_rate": 0.4202371030564863,
+      "profit_factor": 0.8377463319477959
+    }
+  },
+  {
+    "ejay_weighted": {
+      "capital_level": 1000000,
+      "sharpe": -0.8834446681907648,
+      "cagr": -0.0879350468021568,
+      "max_drawdown": -0.7824096992146162,
+      "calmar": -0.11239002646621854,
+      "beta_vs_spy": 0.31302772202019724,
+      "correlation_vs_spy": 0.44947183077629765,
+      "n_trades": 53838,
+      "win_rate": 0.42228537464244587,
+      "profit_factor": 0.8432464901292488
+    },
+    "equal_weighted": {
+      "capital_level": 1000000,
+      "sharpe": -0.8743870059370019,
+      "cagr": -0.08775861389909168,
+      "max_drawdown": -0.7817884296002814,
+      "calmar": -0.11225366170226074,
+      "beta_vs_spy": 0.3145429444026922,
+      "correlation_vs_spy": 0.448287304999227,
+      "n_trades": 54128,
+      "win_rate": 0.42144546260715343,
+      "profit_factor": 0.8458506266510294
+    }
+  },
+  {
+    "ejay_weighted": {
+      "capital_level": 10000000,
+      "sharpe": -0.9085670062231056,
+      "cagr": -0.08893856002749556,
+      "max_drawdown": -0.7706882160139651,
+      "calmar": -0.11540147906696938,
+      "beta_vs_spy": 0.3254877729058495,
+      "correlation_vs_spy": 0.47434539987840224,
+      "n_trades": 54433,
+      "win_rate": 0.42154575349512247,
+      "profit_factor": 0.7948151409245662
+    },
+    "equal_weighted": {
+      "capital_level": 10000000,
+      "sharpe": -0.9087719851716554,
+      "cagr": -0.08934710105895938,
+      "max_drawdown": -0.7721905669263988,
+      "calmar": -0.11570602502254536,
+      "beta_vs_spy": 0.3262040470403544,
+      "correlation_vs_spy": 0.4737045450049577,
+      "n_trades": 54921,
+      "win_rate": 0.4204766846925584,
+      "profit_factor": 0.7964692874141954
+    }
+  }
+]
