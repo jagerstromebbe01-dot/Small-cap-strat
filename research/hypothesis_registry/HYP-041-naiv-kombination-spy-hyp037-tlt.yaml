@@ -73,9 +73,62 @@ pass_fail_criterion: >
   kombinerade Sharpen bortom vad tva-dels-kombinationen (HYP-039) redan
   uppnar - portfoljteorins diversifieringslogik tillampad pa en ny
   tillgangsklass, INTE en ny small-cap-signal.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 39
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: 0.9981, cagr: 0.0994, max_drawdown: -0.2273, calmar: 0.4374, oos_2025_sharpe: 0.8794, oos_2025_total_return: 0.0955, oos_2025_max_drawdown: -0.0963, deflated_sharpe_ratio: 0.9407}
+  1000000: {sharpe: 1.0056, cagr: 0.0982, max_drawdown: -0.2304, calmar: 0.4262, oos_2025_sharpe: 0.7837, oos_2025_total_return: 0.0841, oos_2025_max_drawdown: -0.0925, deflated_sharpe_ratio: 0.9429}
+  10000000: {sharpe: 0.9498, cagr: 0.0884, max_drawdown: -0.2157, calmar: 0.4097, oos_2025_sharpe: 0.7578, oos_2025_total_return: 0.0780, oos_2025_max_drawdown: -0.0733, deflated_sharpe_ratio: 0.9147}
+date_tested: '2026-08-06'
+result_summary: >
+  FAILED PA DEN AVGORANDE $100k-NIVAN, PA SAMTLIGA VILLKOR - ett tydligt,
+  om an inte extremt, misslyckande. Till skillnad fran HYP-040 ar detta
+  INTE en katastrof - Sharpe 0.998 ligger bara 0.002 fran 1.0-malet -
+  men VARJE enskilt mått ar konsekvent SAMRE an den redan godkanda
+  tvadelade kombinationen (HYP-039), inte bara en enstaka gransfall-siffra.
+
+  Villkor 1 (Sharpe >= 1.0 vid $100k): 0.9981 - FAIL, marginellt under
+  malet (0.9981 vs 1.0000). $1M klarade tekniskt (1.0056) men $100k ar
+  den avgorande nivan per kriteriet.
+
+  Villkor 2 (Sharpe > HYP-039:s egna vid samma niva): FAIL PA ALLA TRE
+  nivaer (0.9981 vs 1.0191, 1.0056 vs 1.0300, 0.9498 vs 0.9879) -
+  konsekvent SAMRE, inte battre, an den redan godkanda kombinationen.
+
+  Villkor 3 (MaxDD battre an HYP-039:s egna): FAIL PA ALLA TRE nivaer
+  (-22.73% vs -22.03%, -23.04% vs -22.16%, -21.57% vs -20.03%) - TLT-
+  benet FORSAMRADE riskbilden istallet for att forbattra den, trots den
+  goda korrelationen mot SPY.
+
+  OOS-2025 (villkor 4): FAIL PA ALLA TRE nivaer (0.8794 vs 0.9185, 0.7837
+  vs 0.8116, 0.7578 vs 0.7932) - samma monster haller aven i den genuina
+  blinda perioden.
+
+  DSR vid K=40: 0.94/0.94/0.91 - HOGT, vilket bara bekraftar att
+  HYP-041 SJALV troligen ar en genuin (inte slumpmassig) positiv-Sharpe-
+  portfolj i absoluta tal - men det ar INTE fragan kriteriet stallde.
+  Kriteriet kravde att den ska vara BATTRE an HYP-039, inte bara "en
+  okej portfolj pa egen hand" - och pa den fragan ar svaret entydigt nej.
+
+  DIAGNOS: bekraftar exakt den reservation som redovisades INNAN
+  lasning (se kommentaren hogst upp i denna fil). TLT:s goda
+  korrelationsegenskaper (-0.30 mot SPY, -0.02 mot HYP-037) rackte INTE
+  for att kompensera dess svaga egna riskjusterade profil under just
+  2010-2024 (egen Sharpe 0.038, egen MaxDD -48.3% - varre an SPY:s
+  egna -33.7%). Diversifiering hjalper mest nar ALLA komponenter har
+  egen edge - en tredje, i praktiken avkastningslos men hogriskfylld
+  komponent kan spa ut mer an den hjalper, aven med gynnsam korrelation.
+  Detta ar en genuint informativ, forvantad-i-efterhand men INTE
+  forutsagbar-i-forvag (darfor vart att testa) slutsats.
+
+  SLUTSATS: HYP-039 (SPY+HYP-037, tvadelad) forblir den ENDA
+  kombinationshypotesen som passerat sitt eget kriterium. Ett tredje ben
+  ar INTE automatiskt battre bara for att korrelationen ser bra ut -
+  komponentens EGEN riskjusterade kvalitet spelar minst lika stor roll.
+  En annan tillgang (t.ex. trend-following/managed futures, redan
+  diskuterad som CEO:s alternativ #1) kraver en egen, separat lasning -
+  ingen automatisk fortsattning fran detta resultat.
