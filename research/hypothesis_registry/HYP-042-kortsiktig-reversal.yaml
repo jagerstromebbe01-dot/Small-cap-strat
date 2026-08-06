@@ -67,9 +67,70 @@ pass_fail_criterion: >
   registrets befintliga edge (kortsiktig overreaktion/likviditets-
   formodling, INTE idiosynkratisk lagvolatilitet) - en genuint ny
   signal, inte en variant av nagot redan testat.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 40
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: -0.7688, cagr: -0.2765, max_drawdown: -0.9941, calmar: -0.2782, win_rate: 0.4134, profit_factor: 0.7780, n_trades: 34100, deflated_sharpe_ratio: 0.0001}
+  1000000: {sharpe: -0.8045, cagr: -0.2710, max_drawdown: -0.9925, calmar: -0.2730, win_rate: 0.4135, profit_factor: 0.7761, n_trades: 34155, deflated_sharpe_ratio: 0.0001}
+  10000000: {sharpe: -0.6514, cagr: -0.2277, max_drawdown: -0.9822, calmar: -0.2318, win_rate: 0.4147, profit_factor: 0.7782, n_trades: 33552, deflated_sharpe_ratio: 0.0001}
+date_tested: '2026-08-06'
+result_summary: >
+  FAILED RENT PA ALLA TRE NIVAER - katastrofalt, det VARSTA resultatet i
+  hela registrets historia (MaxDD -98% till -99%, jamfort med tidigare
+  varsta HYP-030 pa -86%). Sharpe -0.65 till -0.80, DSR ~0.0001 vid
+  K=41 - entydigt ingen dold edge.
+
+  TVA GENUINA DATAKVALITETSBUGGAR HITTADES OCH FIXADES INNAN detta
+  slutresultat (bada dokumenterade i strategies/HYP-042/backtest.py):
+  1. En KONSTANT (inte enskild-dagshopp) orimlig adjusted_close/close-
+     kvot (t.ex. tickern ABWND, ~30 000x genom hela historiken - ett
+     trasigt datakallefel, INTE en riktig split). clean_price_matrix:s
+     befintliga filter fangar bara enskilda-dagars-avkastningsutliggare,
+     INTE en konstant fel skalning - ny sarhet: en reversal-strategi
+     som specifikt letar "storsta forlorare" ar sarskilt exponerad for
+     denna buggklass, eftersom ett skadat pris kan se ut som en
+     dramatisk forlorare. Fix: mask on adjusted_close/close-kvoten
+     >100x eller <0.01x (490 av 5162 tickers paverkade i den fulla
+     korningen - en BETYDANDE andel, vart att notera for framtida
+     hypoteser som anvander close_adj som signal).
+  2. Entry anvande RATT oppningspris istallet for split-justerat
+     oppningspris (tickern ACRX, sannolikt en AKTA omvand split ~20x,
+     INTE ett datafel) - samma "motorfix 2"-buggklass som redan
+     dokumenterad och fixad i HYP-037 (COL/ESSA/ARDMQ) och HYP-040.
+     Fix: ny adjusted_open()-funktion, samma princip som HYP-040:s
+     adjusted_ohlc().
+
+  EFTER BADA FIXARNA ar resultatet fortfarande katastrofalt - INTE
+  langre nagon kvarvarande buggmisstanke, verifierat genom att
+  granska hela handelsfordelningen (34 100+ affarer): MEDIANEN av
+  ALLA affarer ar -2.3% (INTE ett fatal extremvarden som drar ett
+  annars normalt snitt), 25:e percentilen -10.8%, winrate 41.3%,
+  Profit Factor 0.78 (forluster > vinster i dollartermer). De varsta
+  enskilda affarerna (-93% till -99%) ar obskyra mikro-cap-namn,
+  sannolikt genuina konkurser/avnoteringar snarare an datafel.
+
+  DIAGNOS: reversal-tesen ("storsta forlorare studsar tillbaka")
+  HALLER INTE i denna small-cap/micro-cap-universum pa denna 10-dagars-
+  horisont. Manga "forlorare" i detta universum ar INTE tillfalligt
+  overreagerade - de ar pa vag mot genuin kollaps (konkurs, bedrageri,
+  misslyckade lakemedelsprovningar for biotech-mikrobolag,
+  avnotering). Att systematiskt kopa dem gar rakt in i verkliga,
+  permanenta kapitalforluster istallet for att fanga en studs. Kombinerat
+  med hog omsattning (34 000+ affarer over 14 ar via veckovis
+  ombalansering) fick en persistent, aven om liten, negativ edge per
+  affar att sammansatta katastrofalt over tid - matematiskt konsekvent
+  (implicerad CAGR fran -27%/ar sammansatt over ~14 ar ger nastan
+  exakt den observerade ~99% kumulativa forlusten).
+
+  SLUTSATS: kortsiktig reversal, sasom testad har (naiv, ohedgad mot
+  kreditrisk/konkursrisk, ingen kvalitetsfilter mot genuint kollapsande
+  bolag), ar INTE en anvandbar signal i det har small-cap-universumet.
+  En eventuell uppfoljare (t.ex. med ett filter mot genuint distressade
+  bolag, eller pa en likvidare/storre universum-band dar reversal ofta
+  fungerar battre i litteraturen) skulle krava en egen, separat lasning
+  - ingen automatisk fortsattning. HYP-037 forblir den enda aktiva
+  small-cap-referensen.
