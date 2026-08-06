@@ -1,0 +1,130 @@
+# LÅST 2026-08-05 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# EJAY ÅTEROPPNAD 2026-08-05 AV CEO, EXPLICIT, FÖR DETTA SPECIFIKA TEST -
+# se CLAUDE.md: "Ejay is closed - do not build on it without an explicit
+# new decision from the user." Detta ÄR den nya, explicita decisionen.
+# INTE en generell återöppning av Ejay/Kelly-linjen (8 tidigare dödade
+# varianter kvarstår stängda för allt annat) - gäller ENDAST denna
+# hypotes, med en mekaniskt annorlunda användning (TA-mönster-
+# träffsäkerhet, inte signalstyrke-viktning av en redan vald decil).
+#
+# Ursprung: CEO:s egen idé ("Technical analysis is not dead in small cap,
+# only rearranged") - byggd, diskuterad och kriterietext framtagen med
+# Claudes hjälp i chatt 2026-08-05, samma session som den bredare
+# kodgranskningen/valideringen av HYP-037/039. Explicit godkänd av CEO
+# i chatt innan skrivning till detta register.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-040
+date_registered: '2026-08-05'
+title: TA-mönsterbibliotek med Ejay-baserad träffsäkerhetsfiltrering och positionsviktning
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, 2011-2024 (samma period/källa som registret i övrigt)
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja efter att detta kriterium
+  lästs - se motivering nedan för varje val):
+
+  1. TA-BIBLIOTEK - 15 mönster, EN SLUTEN LISTA, samtliga med etablerade
+  branschstandard-defaultparametrar (INGA optimerade eller fritt valda
+  parametrar - detta är avgörande för att undvika att listan blir en dold
+  multipel-testning där mönster kan väljas bort i efterhand):
+    Trend: Golden cross (SMA20 korsar över SMA50), 200-dagars SMA-trendfilter
+    (pris korsar över SMA200).
+    Momentum: MACD(12,26,9)-korsning (MACD-linje korsar över signallinje),
+    Stokastisk(14,3)-korsning (%K korsar över %D från översåld niva),
+    ROC(12)-nollkorsning underifrån.
+    Mean-reversion: RSI(14)-återhämtning (korsar tillbaka över 30 underifrån),
+    Bollinger(20,2)-studs (pris rör undre bandet, stänger sedan över),
+    Williams %R-vändning (korsar upp fran översåld niva).
+    Breakout: Donchian(20)-breakout (pris stänger över eget 20-dagars
+    högsta), volymbekräftad breakout (breakout + volym > 1.5x 20-dagars
+    snittvolym).
+    Candlestick: bullish engulfing, hammer vid stöd (efter nedgång),
+    morning star (3-candle-vändning).
+    Volatilitet: Bollinger-squeeze-breakout (lag-volatilitetsperiod följt
+    av breakout), ATR(14)-expansion (plötslig ökning i true range efter
+    lugn period).
+
+  2. EJAY-BERÄKNING: per aktie, rullande 63-handelsdagars fönster. Inom
+  fönstret räknas ALLA triggade signaler fran samtliga 15 mönster
+  sammanslaget. En signal räknas som "träff" om aktiens pris är högre
+  10 handelsdagar efter triggerdagen (samma horisont som exit-regeln,
+  se punkt 5 - internt konsekvent). Ejay_aktie = (antal träffar) /
+  (totalt antal signaler i fönstret). Kräver minst 5 signaler i fönstret
+  för att räknas som giltig - annars exkluderas aktien den perioden
+  (för litet underlag för en meningsfull kvot).
+
+  3. FILTER: en signal far bara handlas om den triggande aktien, DEN
+  DAGEN, ligger i TOPP-KVARTILEN (25%) av Ejay-rankning bland alla
+  aktier med giltig Ejay-poäng i det eligible small-cap-universumet.
+
+  4. POSITIONSSTORLEK: viktas proportionellt mot Ejay-poäng inom den
+  filtrerade (topp-kvartils-)gruppen den dagen (normaliserat sa vikterna
+  summerar till tillgängligt kapital, inom samma ADV-kapacitetsspärrar
+  som redan används i registret, MAX_ADV_PCT=10%).
+
+  5. KÖP: nästa handelsdags öppningskurs efter att ett mönster triggat
+  (INTE samma dags stängning - undviker framåtblick).
+
+  6. SÄLJ: 10 handelsdagar efter köp (matchar Ejay:s egen
+  utvärderingshorisont, punkt 2) ELLER en stop-loss pa -10% fran
+  entry-pris, VILKET SOM INTRÄFFAR FÖRST.
+
+  7. MOTORKRAV (samma som resten av registret): adjusted_close
+  genomgående för signal/position/P&L, Corwin-Schultz-spread pa
+  in- och utgång, snappade handelsdagar (snap_rebalance_dates-
+  principen, tillämpad har pa varje enskild trigger-/exit-dag, inte
+  bara kvartalsvisa ombalanseringar), flag_implausible_liquidity().
+
+  8. EXPONERING: LONG-ONLY, INGEN SPY-beta-hedge (till skillnad fran
+  HYP-023/037-linjen) - explicit CEO-val 2026-08-05, öppen fraga
+  ställd och lämnad obesvarad/accepterad som default i chatt. Detta
+  innebär att strategin har verklig marknadsexponering (beta > 0),
+  till skillnad fran resten av det aktiva registret. Betaexponeringen
+  ska RAPPORTERAS (via samma beta/korrelations-mätning som redan
+  används for HYP-037/039) men gates INTE i sig.
+
+  PASS KRÄVER ALLA TRE, PA SAMTLIGA TRE kapitalnivåer (100k/1M/10M):
+  1. Sharpe (efter friktion) >= 0.55 - standardgolvet for en ny, fristaende
+     alfasignal (samma golv som t.ex. HYP-035, INTE en jämförelse mot en
+     annan hypotes egna siffror, eftersom detta INTE bygger pa en redan
+     godkänd mekanism).
+  2. Ejay-viktad Sharpe >= likaviktad Sharpe for EXAKT SAMMA filtrerade
+     pool (samma 15 mönster, samma topp-kvartils-filter, ENDA skillnaden
+     ar att positionsstorlek är lika istället för Ejay-proportionell).
+     Bada varianterna körs och rapporteras pa alla tre nivåer, ingen
+     efterhandsjämforelse eller cherry-picking. DETTA AR DEN SPECIFIKA
+     SPÄRREN mot att upprepa den ursprungliga Ejay-linjens etablerade
+     dödsorsak ("ingen förbättring efter att ha kontrollerat för
+     signalstyrka; hög korrelation mellan viktad/oviktad variant" - se
+     Ejay-postmortem i CLAUDE.md). Om Ejay-viktningen inte ens matchar
+     en enkel likaviktning av samma pool, tillför viktningsmekaniken
+     inget - FAIL oavsett absolut Sharpe-niva.
+  3. Friktion (Corwin-Schultz bid-ask-spread) verifierat kodmässigt
+     inbyggd fran start (validate_friction_usage.py).
+
+  OOS-2025: rapporteras enligt samma metod som övriga registret
+  (genuin blind 2025-körning), och ÄR GATING (inte bara diagnostik,
+  motiverat av att detta ar en helt ny mekanismtyp som förtjänar samma
+  skärpa som HYP-037:s egna villkor 3): kombinerad OOS-2025 Sharpe vid
+  $10M far INTE vara sämre än 0 (positiv krävs, inget jämförelsetal
+  fran en annan hypotes eftersom detta ar en fristaende ny signal).
+
+  FAIL om nagot av de fyra villkoren (tre huvudvillkor + OOS) faller
+  pa nagon niva.
+
+  Diagnostiskt syfte: testar CEO:s egen hypotes att "teknisk analys inte
+  ar död i small-cap, bara omorganiserad" - att TA-mönsters historiska
+  träffsäkerhet PER AKTIE (Ejay, ateranvänd fran den stängda Kelly-linjen
+  men med en mekaniskt annorlunda tillämpning) kan identifiera vilka
+  aktier TA-signaler faktiskt fungerar pa, i motsats till att anta
+  enhetlig TA-prediktionsformaga over hela universumet.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 38
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
