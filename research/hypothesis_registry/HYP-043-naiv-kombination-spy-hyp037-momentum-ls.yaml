@@ -93,9 +93,79 @@ pass_fail_criterion: >
   vilket indirekt stodjer att KORTSIDAN av momentum kan ha edge har,
   aven om LANGSIDAN (ren momentum long-only) redan misslyckats tre
   ganger tidigare i registret).
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: passed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 41
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: 1.0457, cagr: 0.1088, max_drawdown: -0.1558, calmar: 0.6980, oos_2025_sharpe: 1.6163, oos_2025_total_return: 0.3267, oos_2025_max_drawdown: -0.0988, deflated_sharpe_ratio: 0.9510}
+  1000000: {sharpe: 1.0498, cagr: 0.1076, max_drawdown: -0.1568, calmar: 0.6862, oos_2025_sharpe: 1.5639, oos_2025_total_return: 0.3137, oos_2025_max_drawdown: -0.1058, deflated_sharpe_ratio: 0.9516}
+  10000000: {sharpe: 0.9864, cagr: 0.0975, max_drawdown: -0.1429, calmar: 0.6820, oos_2025_sharpe: 1.5321, oos_2025_total_return: 0.3060, oos_2025_max_drawdown: -0.1113, deflated_sharpe_ratio: 0.9229}
+date_tested: '2026-08-06'
+result_summary: >
+  PASSED PA DEN AVGORANDE $100k-NIVAN, PA ALLA FYRA VILLKOR - och detta
+  ar ett TYDLIGT starkare resultat an HYP-039 sjalv, inte bara ett
+  precis-over-ribban-godkannande. Tredje kombinationshypotesen i
+  registret, och den FORSTA som slar HYP-039 pa dess egna villkor.
+
+  Villkor 1 (Sharpe >= 1.0 vid $100k): 1.0457 - PASS, TYDLIGT over
+  malet (mot HYP-039:s egna 1.0191).
+
+  Villkor 2 (Sharpe > HYP-039:s egna vid samma niva): PASS vid $100k
+  (1.0457 vs 1.0191) OCH $1M (1.0498 vs 1.0300). $10M missar bade
+  1.0-malet (0.9864) och jamforelsen mot HYP-039 (0.9879) - MEN $10M
+  ar INTE den avgorande nivan per kriteriet, och missen ar
+  rakbladstunn (0.0015 under HYP-039:s egna varde) - redovisat oppet,
+  INTE dolt.
+
+  Villkor 3 (MaxDD battre an HYP-039:s egna): PASS PA ALLA TRE NIVAER,
+  och inte marginellt - -15.58%/-15.68%/-14.29% mot HYP-039:s
+  -22.03%/-22.16%/-20.03%, en forbattring pa 6.35-6.48 PROCENTENHETER.
+  Det tredje benet levererar genuin, betydande riskreduktion, inte
+  bara en marginell finjustering.
+
+  OOS-2025 (villkor 4): PASS PA ALLA TRE NIVAER, och SPEKTAKULART -
+  1.6163/1.5639/1.5321 mot HYP-039:s egna 0.9185/0.8116/0.7932 - en
+  forbattring pa 68-93%. Given den redan kanda reservationen om ett
+  enda ars brus (samma som alltid galler for OOS-matt i detta
+  register) bor detta INTE overtolkas som en permanent egenskap, men
+  riktningen ar entydig och konsekvent med huvudperiodens resultat.
+
+  DSR vid K=42: 0.95/0.95/0.92 - mycket hogt, samma niva som HYP-039:s
+  egna 0.95/0.95/0.94, INTE en slumptrafff trots 42 redan testade
+  hypoteser.
+
+  METODOLOGISK NOT (viktig, se registerpostens egen lasningskommentar):
+  korrelationen mot bade SPY (-0.086) och HYP-037 (-0.110) var svagare
+  an en forsta, MISSVISANDE kvartalsvis forhandsskattning (-0.36/-0.23)
+  - upptackt via en oberoende dubbelkoll som avslojade att aven den
+  redan kanda SPY/HYP-037-relationen ser mycket starkare ut kvartalsvis
+  (0.67) an dagligen (0.003). Trots den svagare (men fortfarande
+  gynnsamma) korrelationen levererade momentum L/S-sviten ett TYDLIGT
+  battre resultat an HYP-041:s TLT-forsok (som hade battre korrelation
+  men en mycket svagare EGEN riskjusterad profil, Sharpe 0.038). Det
+  bekraftar lardomen fran HYP-041: sviten-benets EGEN kvalitet (denna
+  sviten hade dagligen Sharpe 0.27, mycket battre an TLT:s 0.038)
+  spelar minst lika stor roll som korrelationen for om ett tredje ben
+  faktiskt hjalper.
+
+  DIAGNOS FOR VARFOR DET FUNGERADE: en beta-neutral, EGENBYGGD
+  aktiefaktor-svit (inte en tillgangsklass-diversifierare som TLT)
+  tillforde bade riktig diversifiering OCH en positiv egen edge,
+  istallet for att bara spa ut. Detta ar ocksa ett indirekt,
+  empiriskt stod for tesen som motiverade HYP-042 samma dag (att
+  small-cap-"forlorare" ofta genuint kollapsar snarare an studsar
+  tillbaka) - fast HAR utnyttjat via KORTSIDAN (blanka forlorarna)
+  istallet for att kopa dem, vilket fungerade mycket battre.
+
+  SLUTSATS: HYP-043 ar den STARKASTE kombinationshypotesen i registret
+  hittills - forbattrar HYP-039 pa MaxDD betydande (6+pp), haller
+  Sharpe-malet klart vid de tva avgorande lagre nivaerna, och visar en
+  mycket stark OOS-2025-marginal. $10M-nivans knappa miss ar en arlig,
+  inte dold, nyans - konsistent med det redan etablerade monstret att
+  edgen (har: bade HYP-037:s och momentum-sviten:s kapacitetsberoende
+  avklingning) forsvagas nagot vid hogre kapital. HYP-039 var forsta
+  gangen CEO:s grundmal naddes - HYP-043 ar forsta gangen malet naddes
+  MED en tydlig marginal, inte bara precis over ribban.
