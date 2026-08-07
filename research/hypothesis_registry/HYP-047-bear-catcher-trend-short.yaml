@@ -1,0 +1,152 @@
+# LÅST 2026-08-07 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# Foljer spec §5b. Sjunde kombinationshypotesen i registret. Kandidaten
+# togs fram fran en 4-AI-brainstorm 2026-08-07 (se session samma datum,
+# starkast samstammiga rekommendation av fyra oberoende AI-svar -
+# trendfoljande index-short, "crisis alpha" i Hurst/Ooi/Pedersen-stil).
+#
+# METODOLOGISK DISCIPLIN INNAN LASNING: en diagnostik samma dag
+# (scripts/diagnostic_bear_catcher_trend_short.py) matte INTE bara
+# prestanda i de 5 redan kanda krisfonstren (for att undvika exakt den
+# hindsight-attributionsrisk en av de fyra AI:erna varnade for), utan
+# ALLA 36 episoder mekanismen genererat over hela 2010-2024: 34 traffar,
+# 2 falsklarm, och bara 33.6% av total P&L fran de 5 kanda fonstren
+# (66.4% fran ovriga episoder - edgen ar INTE bara koncentrerad till de
+# handplockade kriserna). Korrelation mot HYP-043-kombon: -0.4526,
+# klart starkast negativ korrelation av alla kandidater testade denna
+# dag.
+#
+# KAND, OPPET REDOVISAD RESERVATION INNAN LASNING: mekanismens
+# VERKLIGA sammanhangande handelsepisod under covid (2020-03-05 till
+# 2020-05-22) gav -3.50% TROTS att samma period matt inom ett snavare
+# krisfonster (19 feb - 23 mar 2020) visade +43.17% - ett konkret,
+# redan observerat exempel pa whipsaw-risk vid en snabb V-formad
+# atehamtning. 94.4% traffprocent (34/36) har bara testats mot en
+# period med EN genuint utdragen bjornmarknad (2022) - okant hur
+# mekanismen beter sig i en djupare/langre bjornmarknad.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-047
+date_registered: '2026-08-07'
+title: Bear catcher (trendfoljande SPY-short under 200-dagars MA) som 4:e ben i HYP-043-basen
+universe: "N/A for SPY/HYP-037-benen (redan testade, HYP-037 orort). Bear catcher-
+  benet handlar bara SPY (redan kant instrument, ingen ny universumdefinition).
+  Momentum L/S-benet byggs over SAMMA small-cap-universum som HYP-037/043/044/045/046."
+small_cap_definition: "small-cap, $100M - $2B börsvärde, EODHD All-World (galler
+  momentum L/S-benets universum, ateranvander HYP-037:s redan lasta definition).
+  Bear catcher-benet ar N/A - handlar bara SPY."
+data_range: "SPY: adjusted_close + high/low 2010-2024 + genuin OOS-2025. Momentum
+  L/S: byggd MED borrow_cost + corwin_schultz_spread fran start, samma motorkrav
+  som HYP-044/045/046."
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja):
+
+  1. BEAR CATCHER-BENET: SPY under sitt eget 200-dagars glidande medel
+  (SMA_WINDOW=200) -> KORT SPY (100% av benets egen notional). SPY
+  över 200-dagars MA -> kontant (riskfri ränta). Lånekostnad via
+  borrow_cost() (BORROW_ANNUAL_RATE=3%, samma konvention som resten
+  av registret). Transaktionskostnad: halva Corwin-Schultz-spreaden
+  (på SPY:s egen high/low) vid varje övergång in i/ut ur en kort
+  position.
+
+  2. KOMBINATION: 1/4 SPY (rått, oförändrat) + 1/4 HYP-037
+  (oförändrat) + 1/4 momentum L/S (byggd MED borrow_cost +
+  corwin_schultz_spread, HYP-044/045/046:s konstruktion, INGEN
+  krasch-overlay - testar bear catcherns EGEN marginella effekt på
+  den obehandlade HYP-043-basen, inte staplat på HYP-045:s overlay)
+  + 1/4 Bear catcher-benet (punkt 1). Kvartalsvis ombalansering, samma
+  snappade datum som HYP-037/039/043/044/045/046.
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN:
+  1. Kombinerad Sharpe (2010-2024, friktionskorrekt) >= 1.0.
+  2. Kombinerad Sharpe > FRIKTIONSKORRIGERAD HYP-043-baslinje vid samma
+  nivå (0.8926/0.8940/0.8217).
+  3. Kombinerad MaxDD BÄTTRE än samma friktionskorrigerade baslinje
+  (-15.58%/-15.68%/-14.29%).
+
+  OOS-2025: kombinerad OOS-Sharpe > HYP-039:s EGEN OOS-Sharpe
+  (0.9185/0.8116/0.7932).
+
+  FAIL om något villkor faller vid $100k-nivån.
+
+  Diagnostiskt syfte: testar om bear catcherns starka negativa
+  korrelation mot HYP-043-kombon (-0.4526) räcker för att kompensera
+  dess måttliga egna Sharpe (0.34) och lyfta den friktionskorrekta
+  kombinationen mot/över 1.0-tröskeln - ett direkt test av om stark
+  negativ korrelation kan bära mer än korrelation nära noll (PEAD/SUE,
+  HYP-044) eller positiv timing-överlagring (HYP-045) kunde.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 45
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 1.1559, cagr: 0.0872, max_drawdown: -0.0744, calmar: 1.1719, oos_2025_sharpe: 1.5461, oos_2025_total_return: 0.2373, oos_2025_max_drawdown: -0.0758, deflated_sharpe_ratio: 0.9796}
+  1000000: {sharpe: 1.1636, cagr: 0.0862, max_drawdown: -0.0730, calmar: 1.1801, oos_2025_sharpe: 1.4944, oos_2025_total_return: 0.2281, oos_2025_max_drawdown: -0.0812, deflated_sharpe_ratio: 0.9802}
+  10000000: {sharpe: 1.0993, cagr: 0.0783, max_drawdown: -0.0723, calmar: 1.0834, oos_2025_sharpe: 1.4679, oos_2025_total_return: 0.2225, oos_2025_max_drawdown: -0.0851, deflated_sharpe_ratio: 0.9649}
+date_tested: '2026-08-07'
+result_summary: >
+  PASSED PA ALLA FYRA VILLKOR, PA ALLA TRE NIVAER - forsta rena PASSET
+  sedan HYP-043 (efter tre raka FAIL: HYP-044/045/046), och tydligt
+  starkast av alla kombinationshypoteser i registrets historia, inklusive
+  HYP-043:s EGNA URSPRUNGLIGA (ej friktionskorrigerade) siffror.
+
+  Villkor 1 (Sharpe >= 1.0): PASS PA ALLA TRE - 1.1559/1.1636/1.0993,
+  klart over malet aven vid $10M (till skillnad fran HYP-039/043 som
+  bada missade knappt just dar).
+
+  Villkor 2 (Sharpe > friktionskorrigerad HYP-043-baslinje 0.8926/
+  0.8940/0.8217): PASS PA ALLA TRE, med stor marginal (0.26-0.28
+  Sharpe-enheter over baslinjen).
+
+  Villkor 3 (MaxDD battre an samma baslinje -15.58%/-15.68%/-14.29%):
+  PASS PA ALLA TRE, DRAMATISKT - -7.44%/-7.30%/-7.23%, en forbattring
+  pa 7.06-8.14 PROCENTENHETER, i praktiken en HALVERING av baslinjens
+  MaxDD. Calmar 1.17/1.18/1.08 - battre an HYP-046:s tidigare bastanoterade
+  0.82-0.89.
+
+  OOS-2025 (villkor 4): PASS PA ALLA TRE, tydligt - 1.546/1.494/1.468
+  mot HYP-039:s 0.919/0.812/0.793.
+
+  DSR vid K=46: 0.98/0.98/0.96 - HOGRE an HYP-043:s egna ursprungliga
+  DSR (0.95/0.95/0.92) trots 46 redan testade hypoteser - starkt tecken
+  pa att detta INTE ar en slumptrafff.
+
+  JAMFORT MOT HYP-043:s URSPRUNGLIGA (ej friktionskorrigerade,
+  fortfarande officiellt registrerade) siffror (Sharpe 1.0457/1.0498/
+  0.9864, MaxDD -15.58%/-15.68%/-14.29%): HYP-047 slar dem ocksa
+  TYDLIGT, pa bade Sharpe och MaxDD, pa alla tre nivaer - detta ar
+  alltsa inte bara en seger mot en "handikappad" friktionskorrigerad
+  jamforelsepunkt, utan mot den befintliga referensimplementationens
+  egna, redan publicerade tal.
+
+  DIAGNOS: bear catcher-benets starka negativa korrelation mot
+  HYP-043-kombon (-0.4526, uppmatt INNAN lasning) visade sig bara mer
+  an tillrackligt for att kompensera dess mattliga egna Sharpe (0.34
+  isolerat) - till skillnad fran PEAD/SUE (naromvarande-noll
+  korrelation, for svag egen kvalitet) och HYP-045:s overlay (positiv
+  men inte tillrackligt stor forbattring). Detta bekraftar tesen som
+  motiverade hela sokningen: en GENUINT OFFENSIV mekanism (tar en
+  verklig kort position, tjanar UNDER nedgangen) ger en helt annan
+  havstang an en DEFENSIV overlay (bara gar till kontanter) - MaxDD-
+  forbattringen (7-8pp) ar mer an dubbelt sa stor som HYP-045:s egen
+  (1-2pp mot samma baslinje).
+
+  KAND RESERVATION (redan redovisad INNAN lasning, kvarstar oforandrad):
+  mekanismens verkliga sammanhangande handelsepisod under covid gav
+  -3.50% trots att ett snavare handplockat krisfonster visade +43.17%
+  (whipsaw-risk vid V-formad atehamtning, se registerpostens header).
+  94.4% traffprocent (34/36 episoder over 2010-2024) har bara testats
+  mot en period med EN genuint utdragen bjornmarknad (2022) - detta
+  PASS bevisar inte att mekanismen presterar lika bra i en djupare/
+  langre bjornmarknad an de som redan finns i backtestperioden.
+
+  SLUTSATS: HYP-047 ar den starkaste kandidaten for ny
+  referensimplementation i registrets historia - slar bade HYP-043:s
+  ursprungliga OCH friktionskorrigerade siffror pa alla matt. Kraver
+  dock CEO-BESLUT for att formellt bli ny referens (samma monster som
+  HYP-017->023->037-overgangarna) - inte automatiskt av detta resultat
+  ensamt.

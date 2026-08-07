@@ -1,0 +1,146 @@
+# LÅST 2026-08-07 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# Foljer spec §5b. VIKTIGT: detta ar INTE en "kombinera tva misslyckade
+# hypoteser for att radda dem"-genvag (uttryckligen forbjudet i CLAUDE.md)
+# - motivering, diskuterad med CEO INNAN lasning:
+#   1. Bade HYP-044 och HYP-045 hade HOG DSR (0.90-0.94 respektive
+#      0.89-0.93 vid K=43/44) - dvs sannolikt GENUINA, inte
+#      slumpmassiga resultat, trots att de inte klarade sina egna
+#      specifika jamforelsekriterier.
+#   2. De ar MEKANISKT OLIKA fran varandra: HYP-044 ar en ny
+#      diversifierande alfakalla (PEAD/SUE), HYP-045 ar en risk-timing-
+#      overlay pa REDAN BEFINTLIGA ben - ingen overlappning i mekanism.
+#   3. Detta ar EN enda, i forvag motiverad kombination (inte en sokning
+#      over manga kombinationer tills nagon rakar fungera) - egen
+#      K-kostnad, last INNAN resultatet setts.
+#
+# DESIGNBESLUT: overlayn (HYP-045:s redan lasta triggerparametrar)
+# TILLAMPAS PA SPY- och momentum L/S-benen (som i HYP-045), men INTE pa
+# PEAD/SUE-benet - PEAD/SUE visade sig REDAN vara positiv (+3.25%,
+# se HYP-044:s registerpost) under HYP-043-kombons egen varsta
+# krasch-period, sa att skara ner dess exponering under kriser skulle
+# motverka en redan gynnsam egenskap.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-046
+date_registered: '2026-08-07'
+title: Krasch-overlay (HYP-045) + PEAD/SUE-ben (HYP-044) - fyrdelad likaviktad kombination
+universe: "N/A for SPY/HYP-037-benen (redan testade, HYP-037 orort). Momentum L/S-
+  och PEAD/SUE-benen byggs over SAMMA small-cap-universum ($100M-$2B) som HYP-037/
+  043/044/045."
+small_cap_definition: "small-cap, $100M - $2B börsvärde, EODHD All-World (galler
+  momentum L/S- och PEAD/SUE-benens universum, ateranvander HYP-037:s redan lasta
+  definition)"
+data_range: "SPY: adjusted_close 2010-2024 + genuin OOS-2025. Momentum L/S och
+  PEAD/SUE: byggda MED bade borrow_cost och corwin_schultz_spread fran start,
+  samma motorkrav som HYP-044/045."
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja - ateranvander
+  BADE HYP-044:s och HYP-045:s redan lasta byggstenar OFORANDRADE):
+
+  1. SPY-benet: HYP-045:s krasch-overlay (SPY 10-dagars avkastning
+  <-10% -> haircut till 40%, aterintrade vid 50% aterhamtning).
+  2. HYP-037-benet: OFORANDRAT, egen separat overlay.
+  3. Momentum L/S-benet (byggd MED borrow_cost + corwin_schultz_spread,
+  HYP-045:s konstruktion): SAMMA krasch-overlay som SPY-benet.
+  4. PEAD/SUE-benet (byggd MED borrow_cost + corwin_schultz_spread,
+  HYP-044:s konstruktion): OFORANDRAT, INGEN overlay (se motivering i
+  registerpostens header - visade sig redan vara defensiv under kris).
+
+  KOMBINATION: likaviktade fjardedelar (25% vardera av de fyra benen
+  ovan), kvartalsvis ombalansering, samma snappade datum som
+  HYP-037/039/043/044/045.
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN:
+  1. Kombinerad Sharpe (2010-2024, friktionskorrekt) >= 1.0.
+  2. Kombinerad Sharpe > FRIKTIONSKORRIGERAD HYP-043-baslinje vid samma
+  nivå (0.8926/0.8940/0.8217).
+  3. Kombinerad MaxDD BÄTTRE än samma friktionskorrigerade baslinje
+  (-15.58%/-15.68%/-14.29%).
+
+  OOS-2025: kombinerad OOS-Sharpe > HYP-039:s EGEN OOS-Sharpe
+  (0.9185/0.8116/0.7932).
+
+  FAIL om något villkor faller vid $100k-nivån.
+
+  Rapporteras dessutom (INFORMATIVT, INTE gating): jamforelse mot
+  BADE HYP-044:s (1.0117/1.0135/0.9439 Sharpe) och HYP-045:s
+  (0.9941/0.9989/0.9287 Sharpe) egna resultat, for att se om
+  kombinationen ar battre an bada delarna var for sig.
+
+  Diagnostiskt syfte: testar om tva separat genuina (hog DSR), mekaniskt
+  icke-overlappande forbattringar (ny alfakalla + risk-timing) stapl
+  additivt nog for att tillsammans klara den friktionskorrekta
+  1.0-troskeln som ingendera klarade ensam.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 44
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 0.9475, cagr: 0.0795, max_drawdown: -0.0973, calmar: 0.8177, oos_2025_sharpe: 1.3524, oos_2025_total_return: 0.2170, oos_2025_max_drawdown: -0.0587, deflated_sharpe_ratio: 0.8996}
+  1000000: {sharpe: 0.9492, cagr: 0.0785, max_drawdown: -0.0919, calmar: 0.8546, oos_2025_sharpe: 1.2990, oos_2025_total_return: 0.2082, oos_2025_max_drawdown: -0.0581, deflated_sharpe_ratio: 0.8996}
+  10000000: {sharpe: 0.8726, cagr: 0.0707, max_drawdown: -0.0796, calmar: 0.8886, oos_2025_sharpe: 1.2759, oos_2025_total_return: 0.2030, oos_2025_max_drawdown: -0.0604, deflated_sharpe_ratio: 0.8396}
+date_tested: '2026-08-07'
+result_summary: >
+  FAILED PA DEN AVGORANDE $100k-NIVAN, PA VILLKOR 1 (Sharpe >= 1.0) -
+  och OVANTAT, det STORSTA missat mot 1.0-troskeln av de tre senaste
+  forsoken (HYP-044/045/046), TROTS att bada byggstenarna var for sig
+  var genuina forbattringar. En genuint informativ, icke-additiv
+  overraskning.
+
+  Villkor 1 (Sharpe >= 1.0): 0.9475/0.9492/0.8726 - FAIL pa alla tre,
+  och med STORRE marginal an bade HYP-044 (1.0117/1.0135/0.9439, PASS
+  vid 100k/1M) och HYP-045 (0.9941/0.9989/0.9287, rakblunt FAIL).
+  Kombinationen av tva genuina forbattringar gav alltsa en LAGRE
+  Sharpe an ENDERA komponenten var for sig - INTE additivt, tvartom.
+
+  Villkor 2 (Sharpe > friktionskorrigerad HYP-043-baslinje 0.8926/
+  0.8940/0.8217): PASS PA ALLA TRE NIVAER (0.9475/0.9492/0.8726).
+
+  Villkor 3 (MaxDD battre an samma baslinje -15.58%/-15.68%/-14.29%):
+  PASS PA ALLA TRE, och DRAMATISKT - -9.73%/-9.19%/-7.96%, en
+  forbattring pa 5.85-6.49 PROCENTENHETER. Detta ar den BASTA MaxDD-
+  siffran i HELA registrets historia for en kombinationshypotes, och
+  battre an bade HYP-044 (-10.9%/-11.0%/-10.0%) och HYP-045 (-14.56%/
+  -13.83%/-12.17%) var for sig. Calmar (0.818/0.855/0.889) ar OCKSA
+  battre an bade HYP-044:s och HYP-045:s egna Calmar-tal, och battre
+  an den friktionskorrigerade HYP-043-baslinjens (0.610/0.599/0.587).
+
+  OOS-2025 (villkor 4): PASS PA ALLA TRE NIVAER (1.352/1.299/1.276
+  mot HYP-039:s 0.919/0.812/0.793), men LAGRE an bade HYP-044:s
+  (1.373/1.320/1.300) och HYP-045:s (1.596/1.543/1.508) egna OOS-Sharpe
+  - samma monster som huvudperioden.
+
+  DSR vid K=45: 0.90/0.90/0.84 - fortsatt hogt, genuint resultat.
+
+  DIAGNOS (viktig, oforvantad lardom): CAGR foll till 7.95%/7.85%/
+  7.07% - LAGRE an bade HYP-044:s (8.75%/8.65%/7.87%) och HYP-045:s
+  (9.83%/9.71%/8.69%) egna CAGR. De tva mekanismerna (krasch-overlay
+  pa SPY/momentum + ett nytt, likaviktat 4:e PEAD/SUE-ben) drar BADA
+  ner den totala avkastningen samtidigt som de sanker risken - overlayn
+  genom att skara ner exponering under kriser (missar avkastning under
+  ateraterhamtningsfaser), det nya benet genom att spa ut de tre
+  starkare benens vikt fran 1/3 till 1/4 vardera. Nar bada tillampas
+  SAMTIDIGT blir den sammanlagda avkastningsutspadningen storre an
+  den sammanlagda riskreduktionens fordel i just SHARPE-termer (aven
+  om den ar en tydlig fordel i MaxDD/Calmar-termer) - tva riskreducerande
+  mekanismer som var och en fungerar bra separat overkorrigerar
+  tillsammans mot risk pa bekostnad av avkastning. INTE en varning-
+  signal om att nagondera mekanism ar falsk (DSR forblir hog) - ett
+  genuint, forst nu synligt portfoljkonstruktionsfenomen.
+
+  SLUTSATS: HYP-043 forblir referensimplementationen for Sharpe-malet.
+  MEN om malet istallet vore lagst mojlig MaxDD/hogst Calmar snarare
+  an hogst Sharpe, ar HYP-046 den klart starkaste kandidaten i HELA
+  registret (Calmar 0.82-0.89, MaxDD under -10% pa alla nivaer) - ett
+  konkret, empiriskt exempel pa Sharpe/MaxDD-avvagningen som
+  diskuterades explicit med CEO tidigare samma dag (HYP-043 vs
+  HYP-044-kombinationen). Ingen ytterligare stapling av redan kanda
+  mekanismer rekommenderas utan en ny, separat motiverad idé - tre
+  raka FAIL (044/045/046) efter en genuin PASS (043) tyder pa att
+  denna specifika portfolj narmar sig en praktisk grans for vad naiv
+  likaviktad kombination av de hittills kanda byggstenarna kan uppna.
