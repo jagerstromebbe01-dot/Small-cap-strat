@@ -196,3 +196,35 @@ deflated_sharpe_ratio:
 # Mycket liten forandring (K=39->46 ar en relativt liten relativ okning,
 # och HYP-039:s hoga rasa Sharpe gor DSR mindre kanslig for K-okningar
 # i detta intervall). Ingen forandring av tidigare PASS-slutsats.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08, DEL 2 (samma dag, SEPARAT fran DSR-omrakningen
+# ovan - INTE en ny hypotes/K-test, status/kriterium ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: HYP-037-benet ar nu dess FULLSTANDIGT
+# korrigerade resultat (filed-datum-universum + maskad adjusted_close-
+# kvot, se HYP-037:s egen tilläggsnot DEL 2 - VIKTIGT: HYP-037:s EGET
+# villkor 2 flippar dar till FAIL, men det paverkar INTE HYP-039:s eget
+# kriterium, som aldrig kravde att HYP-037 slar HYP-023). Dessutom
+# tillagd en tidigare saknad portfoljniva-ombalanseringskostnad (10bps
+# pa omallokerat belopp per kvartalsvis ombalansering, se
+# strategies/HYP-039/backtest.py::REBALANCE_COST_BPS). OOS-2025-benet
+# ANVANDS OKORRIGERAT (paper_trading/HYP-037/oos_2025_results/, samma
+# scope-avgransning som noterad i HYP-037:s tilläggsnot).
+#
+# NYA SIFFROR (huvudperiod 2011-2024):
+#   Sharpe: 1.017 / 1.022 / 1.019  (tidigare 1.0191 / 1.0300 / 0.9879)
+#   MaxDD: -21.4% / -21.3% / -19.2% (tidigare -22.03% / -22.16% / -20.03%)
+#   DSR (K=46, RF=2%/ar): 0.9413 / 0.9434 / 0.9410
+#
+# Villkor 1 (Sharpe >= 1.0): PASS pa ALLA TRE nivaer - $10M gar fran att
+# missa (0.988) till att klara (1.019) trots den nya kostnaden, samma
+# monster som redan sett i den tidigare (universum-bara) sidotestet.
+# Villkor 2 (MaxDD battre an SPY:s -33.7%): PASS tydligt pa alla tre,
+# oforandrat. Villkor 3 (OOS-2025 Sharpe > 0): oforandrat PASS (0.917/
+# 0.810/0.792, samma okorrigerade OOS-serie som tidigare).
+#
+# SLUTSATS: HYP-039:s PASS star KVAR, oforandrad slutsats, under den
+# fullstandigt korrigerade pipelinen - faktiskt nagot starkare vid $10M
+# an tidigare, trots att bade universumfixen OCH den nya ombalanserings-
+# kostnaden nu bada verkar samtidigt.
