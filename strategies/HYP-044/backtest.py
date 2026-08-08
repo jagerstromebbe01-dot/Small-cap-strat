@@ -41,14 +41,30 @@ STRATEGIES_ROOT = STRATEGY_DIR.parent
 REPO_ROOT = STRATEGIES_ROOT.parent
 DATA_DIR = REPO_ROOT / "data"
 CACHE_DIR = DATA_DIR / "cache"
-RESULTS_DIR = STRATEGY_DIR / "results"
+RESULTS_DIR = STRATEGY_DIR / "results_corrected_2026-08-08"
 
 HYP037_DIR = STRATEGIES_ROOT / "HYP-037"
-HYP037_RESULTS = HYP037_DIR / "results"
+HYP037_RESULTS = HYP037_DIR / "results_corrected_2026-08-08"
 HYP037_OOS_RESULTS = REPO_ROOT / "paper_trading" / "HYP-037" / "oos_2025_results"
 
-ORIGINAL_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month.json"
-EXTENSION_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_2025_extension.json"
+# GRANSKNINGSFYND 2026-08-08 (blockerande bugg hittad under detta uppdrag,
+# INTE nagot CEO bad om att leta efter): HYP043_RESULTS anvands pa rad
+# ~312 (mom_ls_full = pd.read_csv(HYP043_RESULTS / ...)) men var ALDRIG
+# definierad i denna fil - en genuin NameError som skulle krascha main()
+# fran en ren processstart. Dolt tidigare troligen for att modulen
+# importerades i en kontext dar en annan fil redan hade satt attributet,
+# eller for att filen aldrig kordes fran en helt fresh process efter
+# borttagningen av det tidigare (dokumenterat ovan) dubbelimport-
+# HYP-043-namnet. Fixad har genom att peka pa HYP-043:s (nu korrigerade)
+# resultatmapp, dar momentum_ls_sleeve_pv.csv redan sparas som en
+# biprodukt av dess egen main().
+HYP043_DIR = STRATEGIES_ROOT / "HYP-043"
+HYP043_RESULTS = HYP043_DIR / "results_corrected_2026-08-08"
+
+# GRANSKNINGSFYND 2026-08-08: filed-datum-korrigerade universumfiler, se
+# HYP-037/HYP-043:s identiska kommentarer.
+ORIGINAL_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month_filed_date.json"
+EXTENSION_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_2025_extension_filed_date.json"
 EPS_FILE = CACHE_DIR / "eps_by_ticker.jsonl"
 
 sys.path.insert(0, str(HYP037_DIR))
@@ -64,9 +80,14 @@ from friction import borrow_cost, corwin_schultz_spread  # noqa: E402
 # komplicera med importlib for nagot som inte behovs.
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
 from rebalancing import snap_rebalance_dates  # noqa: E402
+from data_hygiene import mask_implausible_adjusted_close_ratio  # noqa: E402
 
 REBAL_FREQ = "QE"
 WEIGHT_EACH = 0.25
+
+# GRANSKNINGSFYND 2026-08-08: se HYP-039:s identiska kommentar om
+# portfoljniva-ombalanseringskostnad (10bps pa omallokerat belopp).
+REBALANCE_COST_BPS = 0.0010
 
 DECILE_FRACTION = 0.10
 BORROW_ANNUAL_RATE = 0.03
@@ -175,9 +196,7 @@ def compute_pead_sue_sleeve(universe_by_month: dict) -> pd.Series:
     implausible = hyp037.flag_implausible_liquidity(close, volume, max_market_cap=hyp037.MAX_MARKET_CAP,
                                                       window=hyp037.ADV_WINDOW, multiplier=1.0)
     close_adj = close_adj.mask(implausible)
-    ratio = (close_adj / close).replace([np.inf, -np.inf], np.nan)
-    implausible_ratio = (ratio > 100) | (ratio < 0.01)
-    close_adj = close_adj.mask(implausible_ratio)
+    close_adj = mask_implausible_adjusted_close_ratio(close, close_adj)
     daily_ret = close_adj.pct_change()
 
     print("  Berknar Corwin-Schultz-spread-matris (for entry-kostnad vid ombalansering)...")
@@ -269,6 +288,9 @@ def combine_quarters(series_dict: dict, start_capital=1.0):
                 legs[k] *= (1 + r)
         total = sum(legs.values())
         if date in rebal_set:
+            targets = {k: total * WEIGHT_EACH for k in legs}
+            turnover = sum(abs(targets[k] - legs[k]) for k in legs)
+            total -= turnover * REBALANCE_COST_BPS
             for k in legs:
                 legs[k] = total * WEIGHT_EACH
         values.append(total)

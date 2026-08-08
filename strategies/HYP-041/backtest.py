@@ -34,9 +34,12 @@ REPO_ROOT = STRATEGIES_ROOT.parent
 DATA_DIR = REPO_ROOT / "data"
 CACHE_DIR = DATA_DIR / "cache"
 OHLCV_DIR = CACHE_DIR / "ohlcv"
-RESULTS_DIR = STRATEGY_DIR / "results"
+RESULTS_DIR = STRATEGY_DIR / "results_corrected_2026-08-08"
 
-HYP037_RESULTS = STRATEGIES_ROOT / "HYP-037" / "results"
+# GRANSKNINGSFYND 2026-08-08: HYP-037-benet ar nu det KORRIGERADE
+# resultatet (filed-datum-universum + maskad adjusted_close-kvot). OOS-
+# benet lamnas medvetet okorrigerat, se HYP-039:s motsvarande kommentar.
+HYP037_RESULTS = STRATEGIES_ROOT / "HYP-037" / "results_corrected_2026-08-08"
 HYP037_OOS_RESULTS = REPO_ROOT / "paper_trading" / "HYP-037" / "oos_2025_results"
 
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
@@ -46,6 +49,10 @@ REBAL_FREQ = "QE"  # samma frekvens som HYP-037/HYP-039 sjalva - ateranvand, ing
 WEIGHT_SPY = 1.0 / 3.0
 WEIGHT_HYP037 = 1.0 / 3.0
 WEIGHT_TLT = 1.0 / 3.0
+
+# GRANSKNINGSFYND 2026-08-08: se HYP-039:s identiska kommentar - samma
+# 10bps-schablon pa omallokerat belopp, ateranvand konsekvent.
+REBALANCE_COST_BPS = 0.0010
 
 # HYP-039:s EGNA redan registrerade varden - jamforelsepunkten for villkor 2/3
 # (se research/hypothesis_registry/HYP-039-naiv-kombination-spy-hyp037.yaml)
@@ -99,6 +106,11 @@ def combine_thirds(spy_price: pd.Series, hyp037_pv: pd.Series, tlt_price: pd.Ser
             tlt_leg *= (1 + r_tlt)
         total = spy_leg + hyp_leg + tlt_leg
         if date in rebal_set:
+            target_spy = total * WEIGHT_SPY
+            target_hyp = total * WEIGHT_HYP037
+            target_tlt = total * WEIGHT_TLT
+            turnover = abs(target_spy - spy_leg) + abs(target_hyp - hyp_leg) + abs(target_tlt - tlt_leg)
+            total -= turnover * REBALANCE_COST_BPS
             spy_leg = total * WEIGHT_SPY
             hyp_leg = total * WEIGHT_HYP037
             tlt_leg = total * WEIGHT_TLT

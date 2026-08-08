@@ -30,9 +30,15 @@ REPO_ROOT = STRATEGIES_ROOT.parent
 DATA_DIR = REPO_ROOT / "data"
 CACHE_DIR = DATA_DIR / "cache"
 OHLCV_DIR = CACHE_DIR / "ohlcv"
-RESULTS_DIR = STRATEGY_DIR / "results"
+RESULTS_DIR = STRATEGY_DIR / "results_corrected_2026-08-08"
 
-HYP037_RESULTS = STRATEGIES_ROOT / "HYP-037" / "results"
+# GRANSKNINGSFYND 2026-08-08: pekar nu pa HYP-037:s KORRIGERADE resultat
+# (filed-datum-universum + maskad adjusted_close-kvot, se
+# strategies/HYP-037/backtest.py). OOS-benet (HYP037_OOS_RESULTS) lamnas
+# medvetet OKORRIGERAT i denna omkorning - se slutrapporten/tilläggsnoten
+# for motivering (paper_trading/HYP-037/oos_backtest_2025.py rors inte
+# har, huvudkriteriet avgors pa 2010-2024-perioden).
+HYP037_RESULTS = STRATEGIES_ROOT / "HYP-037" / "results_corrected_2026-08-08"
 HYP037_OOS_RESULTS = REPO_ROOT / "paper_trading" / "HYP-037" / "oos_2025_results"
 
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
@@ -42,6 +48,18 @@ REBAL_FREQ = "QE"          # samma frekvens som HYP-037 sjalv - ateranvand, inge
 WEIGHT_SPY = 0.5
 WEIGHT_HYP037 = 0.5
 SPY_MAXDD_REF = -0.337     # SPY:s egen MaxDD 2011-2024, villkor 2:s jamforelsepunkt
+
+# GRANSKNINGSFYND 2026-08-08: portfoljniva-ombalansering mellan benen
+# (kvartalsvis, se combine_50_50 nedan) hade tidigare NOLL
+# transaktionskostnad - bryter mot spec §2 princip 3 ("friktion fran dag
+# ett"). Konservativ, enkel schablon (INTE per-ben-spread - benen ar
+# redan diversifierade portfoljvarde-serier, inte enskilda tickers, sa
+# en genuin blandad spread per ben ar inte meningsfullt definierad pa
+# denna niva): 10 baspunkter av det OMALLOKERADE beloppet (|mal - nuvarande|
+# per ben, summerat) vid varje kvartalsvis ombalansering. Samma konstant
+# ateranvands identiskt i alla sju kombinationshypoteser (HYP-039/041/
+# 043/044/045/046/047) for konsekvens.
+REBALANCE_COST_BPS = 0.0010
 
 
 def load_spy_prices(start=None, end=None):
@@ -83,6 +101,10 @@ def combine_50_50(spy_price: pd.Series, hyp037_pv: pd.Series, start_capital: flo
             hyp_leg *= (1 + r_hyp)
         total = spy_leg + hyp_leg
         if date in rebal_set:
+            target_spy = total * WEIGHT_SPY
+            target_hyp = total * WEIGHT_HYP037
+            turnover = abs(target_spy - spy_leg) + abs(target_hyp - hyp_leg)
+            total -= turnover * REBALANCE_COST_BPS
             spy_leg = total * WEIGHT_SPY
             hyp_leg = total * WEIGHT_HYP037
         values.append(total)

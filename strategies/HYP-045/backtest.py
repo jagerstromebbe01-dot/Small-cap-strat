@@ -49,14 +49,16 @@ STRATEGIES_ROOT = STRATEGY_DIR.parent
 REPO_ROOT = STRATEGIES_ROOT.parent
 DATA_DIR = REPO_ROOT / "data"
 CACHE_DIR = DATA_DIR / "cache"
-RESULTS_DIR = STRATEGY_DIR / "results"
+RESULTS_DIR = STRATEGY_DIR / "results_corrected_2026-08-08"
 
 HYP037_DIR = STRATEGIES_ROOT / "HYP-037"
-HYP037_RESULTS = HYP037_DIR / "results"
+HYP037_RESULTS = HYP037_DIR / "results_corrected_2026-08-08"
 HYP037_OOS_RESULTS = REPO_ROOT / "paper_trading" / "HYP-037" / "oos_2025_results"
 
-ORIGINAL_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month.json"
-EXTENSION_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_2025_extension.json"
+# GRANSKNINGSFYND 2026-08-08: filed-datum-korrigerade universumfiler, se
+# HYP-037/HYP-043:s identiska kommentarer.
+ORIGINAL_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month_filed_date.json"
+EXTENSION_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_2025_extension_filed_date.json"
 
 sys.path.insert(0, str(HYP037_DIR))
 import backtest as hyp037  # noqa: E402
@@ -64,9 +66,14 @@ from friction import borrow_cost, corwin_schultz_spread  # noqa: E402
 
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
 from rebalancing import snap_rebalance_dates  # noqa: E402
+from data_hygiene import mask_implausible_adjusted_close_ratio  # noqa: E402
 
 REBAL_FREQ = "QE"
 WEIGHT_EACH = 1.0 / 3.0
+
+# GRANSKNINGSFYND 2026-08-08: se HYP-039:s identiska kommentar om
+# portfoljniva-ombalanseringskostnad (10bps pa omallokerat belopp).
+REBALANCE_COST_BPS = 0.0010
 
 MOM_LOOKBACK_DAYS = 252
 MOM_SKIP_DAYS = 21
@@ -103,9 +110,7 @@ def compute_momentum_ls_sleeve_with_spread(universe_by_month: dict) -> pd.Series
     implausible = hyp037.flag_implausible_liquidity(close, volume, max_market_cap=hyp037.MAX_MARKET_CAP,
                                                       window=hyp037.ADV_WINDOW, multiplier=1.0)
     close_adj = close_adj.mask(implausible)
-    ratio = (close_adj / close).replace([np.inf, -np.inf], np.nan)
-    implausible_ratio = (ratio > 100) | (ratio < 0.01)
-    close_adj = close_adj.mask(implausible_ratio)
+    close_adj = mask_implausible_adjusted_close_ratio(close, close_adj)
 
     print("  Berknar Corwin-Schultz-spread-matris...")
     spread_df = compute_spread_matrix(high, low)
@@ -246,6 +251,11 @@ def combine_thirds(spy_pv, hyp037_pv, mom_ls_pv, start_capital=1.0):
             mom_leg *= (1 + r_mom)
         total = spy_leg + hyp_leg + mom_leg
         if date in rebal_set:
+            target_spy = total * WEIGHT_EACH
+            target_hyp = total * WEIGHT_EACH
+            target_mom = total * WEIGHT_EACH
+            turnover = abs(target_spy - spy_leg) + abs(target_hyp - hyp_leg) + abs(target_mom - mom_leg)
+            total -= turnover * REBALANCE_COST_BPS
             spy_leg = total * WEIGHT_EACH
             hyp_leg = total * WEIGHT_EACH
             mom_leg = total * WEIGHT_EACH

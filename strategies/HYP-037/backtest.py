@@ -22,6 +22,18 @@ villkorat pa BADA: (a) SPY aterhamtat >=50% av det utlosande fallet,
 universumet <= sitt eget rullande 252-dagars-median. Sa lange villkoret
 INTE ar uppfyllt: halverad ADV-kapacitetsspärr (5% i stallet for 10%)
 for NYA positioners storlek vid ombalansering.
+
+UPPDATERAD 2026-08-08 (granskningsfynd, tre oberoende adversariella
+granskare): UNIVERSE_FILE pekar nu pa den SEC-filed-datum-korrigerade
+universumfilen (tidigare periodslut-daterad, look-ahead-biasad - se
+data/build_smallcap_universe_filed_date.py), och main() maskar nu ocksa
+close_adj mot en konstant orimlig adjusted_close/close-kvot via den
+delade strategies/common/data_hygiene.py::mask_implausible_adjusted_close_ratio
+(tidigare bara inline-kopierad i HYP-042 och senare, aldrig i denna,
+mest ateranvanda, basen). Resultat skrivs till results_corrected_2026-08-08/
+- de ursprungliga results/-filerna rörs INTE. Se
+research/hypothesis_registry/HYP-037-villkorat-overlay-aterintrade-hyp023.yaml
+for den daterade tilläggsnoten med gamla vs nya siffror.
 """
 
 import argparse
@@ -40,12 +52,20 @@ STRATEGIES_ROOT = STRATEGY_DIR.parent
 DATA_DIR = STRATEGIES_ROOT.parent / "data"
 CACHE_DIR = DATA_DIR / "cache"
 OHLCV_DIR = CACHE_DIR / "ohlcv"
-UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month.json"
-RESULTS_DIR = STRATEGY_DIR / "results"
+# GRANSKNINGSFYND 2026-08-08 (tre oberoende adversariella granskare):
+# pekade tidigare pa den periodslut-daterade (look-ahead-biasade) filen -
+# se data/build_smallcap_universe_filed_date.py for SEC-filed-datum-fixen,
+# redan validerad separat i scripts/test_hyp037_filed_date_universe.py
+# sedan 2026-08-05 men aldrig gjord till produktionsdefault förrän nu.
+# Resultat skrivs till en NY mapp (results_corrected_2026-08-08/) - de
+# ursprungliga results/-filerna (byggda mot den gamla universumfilen)
+# rörs INTE, de förblir låst historik.
+UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month_filed_date.json"
+RESULTS_DIR = STRATEGY_DIR / "results_corrected_2026-08-08"
 
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
 from friction import borrow_cost, corwin_schultz_spread  # noqa: E402
-from data_hygiene import clean_price_matrix, flag_implausible_liquidity  # noqa: E402
+from data_hygiene import clean_price_matrix, flag_implausible_liquidity, mask_implausible_adjusted_close_ratio  # noqa: E402
 from rebalancing import snap_rebalance_dates  # noqa: E402
 from sector import load_bank_financial_flags  # noqa: E402
 
@@ -660,6 +680,12 @@ def main():
     high = high.mask(implausible)
     low = low.mask(implausible)
     print(f"  {int(implausible.values.sum())} ticker-dagar maskade.\n")
+
+    print("Maskar orimlig (konstant) adjusted_close/close-kvot (>100x eller <0.01x)...")
+    n_before = int(close_adj.notna().values.sum())
+    close_adj = mask_implausible_adjusted_close_ratio(close, close_adj)
+    n_after = int(close_adj.notna().values.sum())
+    print(f"  {n_before - n_after} ytterligare ticker-dagar maskade i close_adj.\n")
 
     print("Estimerar beta (pa adjusted_close, görs en gång)...")
     beta_df = compute_beta(close_adj, hedge, BETA_WINDOW)

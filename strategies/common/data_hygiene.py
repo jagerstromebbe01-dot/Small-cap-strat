@@ -148,6 +148,25 @@ def clean_price_matrix(close: pd.DataFrame, high: pd.DataFrame = None, low: pd.D
     return tuple(results) if len(results) > 1 else results[0]
 
 
+def mask_implausible_adjusted_close_ratio(close: pd.DataFrame, close_adj: pd.DataFrame) -> pd.DataFrame:
+    """
+    Upptackt 2026-08-06 (HYP-042, tickern ABWND): en KONSTANT (inte
+    enskild-dags) orimlig close_adj/close-kvot (~30 000x genom hela
+    historiken) - ett trasigt justeringstal fran datakallan, inte en
+    riktig split. clean_price_matrix() ovan fangar bara enskilda dagars
+    orimliga AVKASTNINGAR; en konstant felskalning ger normal avkastning
+    varje dag (kvoten ar ju konstant) och slinker darfor igenom
+    obemarkt. Maskar close_adj till NaN dar kvoten > 100x eller < 0.01x
+    (samma trosklar som redan anvands, hittills bara som kopierad
+    inline-kod, i HYP-042 t.o.m. HYP-047) - centraliserad har 2026-08-08
+    sa hela HYP-017/021/023/037-kedjan ocksa far fixen. Paverkar aldrig
+    close, bara close_adj.
+    """
+    ratio = (close_adj / close).replace([np.inf, -np.inf], np.nan)
+    implausible = (ratio > 100) | (ratio < 0.01)
+    return close_adj.mask(implausible)
+
+
 def flag_implausible_liquidity(close: pd.DataFrame, volume: pd.DataFrame,
                                 max_market_cap: float, window: int = 20,
                                 multiplier: float = 1.0) -> pd.DataFrame:
