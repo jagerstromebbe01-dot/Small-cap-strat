@@ -150,3 +150,9 @@ result_summary: >
   dock CEO-BESLUT for att formellt bli ny referens (samma monster som
   HYP-017->023->037-overgangarna) - inte automatiskt av detta resultat
   ensamt.
+
+  CEO-BESLUT 2026-08-08: HYP-047 AR DEN NYA REFERENSIMPLEMENTATIONEN.
+  HYP-043 kvarstar PASSED i registret (bade dess ursprungliga siffror
+  och den friktionskorrigerade robusthetsnoten fran 2026-08-07 star
+  oforandrade) men ar inte langre aktiv referens - samma monster som
+  HYP-017->023 och HYP-023->037-overgangarna.
