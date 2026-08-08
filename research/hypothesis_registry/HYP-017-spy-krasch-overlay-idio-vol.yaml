@@ -208,3 +208,28 @@ deflated_sharpe_ratio:
   100000: 0.7993
   1000000: 0.8345
   10000000: 0.8042
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare, samma fynd oberoende av varandra - INTE en ny hypotes/
+# K-test, status/pass_fail_criterion/tested_capital_levels/redan
+# rapporterade Sharpe/MaxDD/CAGR-siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# agents/overfitting_detector/ROLE.md kraver att DSR raknas om for ALLA
+# hypoteser under overvagande varje gang k_total okar, inte bara for
+# senaste testet. Detta hade aldrig gjorts har - DSR-faltet ovan star
+# kvar fran ursprungstestet vid K=19 (k_total_hypotheses_before_this).
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade portfolio_value-serier, RF=2%/ar avdraget
+# per registrets egen sharpe()-konvention):
+#   $100k:   DSR 0.7993 -> 0.6794
+#   $1M:     DSR 0.8345 -> 0.7250
+#   $10M:    DSR 0.8042 -> 0.6876
+#
+# SLUTSATS: forvantad, korrekt riktning (DSR SJUNKER med hogre K, se
+# scripts/deflated_sharpe_ratio.py:s egen sanity-check) - HYP-017 ar
+# inte langre aktiv referens (avlost av HYP-023->037->047) men citeras
+# fortfarande som ancestor i senare hypotesers motivering, darav
+# vardet av att halla DSR-faltet a jour. Fortfarande klart over 0.5,
+# ingen forandring av tidigare PASS-slutsats.

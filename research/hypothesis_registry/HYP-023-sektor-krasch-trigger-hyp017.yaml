@@ -268,3 +268,22 @@ deflated_sharpe_ratio:
   100000: 0.7824
   1000000: 0.8221
   10000000: 0.7843
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/redan
+# rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR ovan star kvar fran ursprungstestet vid K=22 - aldrig omraknad,
+# trots agents/overfitting_detector/ROLE.md:s krav. HYP-023 ar
+# fortfarande direkt ancestor till hela HYP-037->039->043->047-kedjan
+# via portfolio_value-serien som HYP-037:s overlay bygger vidare pa.
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade serier, RF=2%/ar avdraget):
+#   $100k:   DSR 0.7824 -> 0.6815
+#   $1M:     DSR 0.8221 -> 0.7303
+#   $10M:    DSR 0.7843 -> 0.6857
+#
+# Forvantad riktning (sjunker med hogre K). Fortfarande klart over 0.5,
+# ingen forandring av tidigare PASS-slutsats.

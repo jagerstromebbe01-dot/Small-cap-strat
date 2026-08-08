@@ -84,3 +84,22 @@ deflated_sharpe_ratio:
   100000: 0.7922
   1000000: 0.8226
   10000000: 0.8028
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/redan
+# rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR ovan star kvar fran ursprungstestet vid K=20 - aldrig omraknad,
+# trots agents/overfitting_detector/ROLE.md:s krav att gora det for
+# alla aktiva hypoteser varje gang k_total okar.
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade serier, RF=2%/ar avdraget):
+#   $100k:   DSR 0.7922 -> 0.6783
+#   $1M:     DSR 0.8226 -> 0.7168
+#   $10M:    DSR 0.8028 -> 0.6940
+#
+# Forvantad riktning (sjunker med hogre K). HYP-021 var redan
+# "statistiskt oskiljbar fran HYP-017" vid lasningstillfallet - ingen
+# forandring av den slutsatsen.

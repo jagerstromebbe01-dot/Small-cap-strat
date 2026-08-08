@@ -320,3 +320,28 @@ deflated_sharpe_ratio:
 # resultat, jamforelsetabeller) finns kvar i strategies/HYP-037/
 # results_filed_date_test/ och paper_trading/HYP-037/
 # oos_2025_results_filed_date_test/ for granskning.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare, samma fynd oberoende av varandra - INTE en ny hypotes/
+# K-test, status/kriterium/redan rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR ovan (0.7406/0.7599/0.6868, redan uppdaterad av buggfix-
+# uppdateringen 2026-08-05) star kvar fran den korningen vid K=37 -
+# aldrig omraknad mot senare K, trots agents/overfitting_detector/
+# ROLE.md:s krav att gora det for alla aktiva hypoteser varje gang
+# k_total okar. HYP-037 ar den mest ateranvanda byggstenen i registret
+# (varje kombinationshypotes HYP-039 t.o.m. HYP-047 bygger pa dess
+# portfolio_value-serie oforandrad).
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade serier, RF=2%/ar avdraget):
+#   $100k:   DSR 0.7406 -> 0.7076
+#   $1M:     DSR 0.7599 -> 0.7285
+#   $10M:    DSR 0.6868 -> 0.6517
+#
+# Forvantad riktning, mattlig forandring (K=37->46 ar en relativt liten
+# relativ okning jamfort med t.ex. HYP-017/021/023 dar K mer an
+# fordubblades). Fortfarande klart over 0.5, ingen forandring av
+# tidigare PASS-slutsats eller av HYP-037:s roll som referens for hela
+# den efterfoljande kombinationskedjan.

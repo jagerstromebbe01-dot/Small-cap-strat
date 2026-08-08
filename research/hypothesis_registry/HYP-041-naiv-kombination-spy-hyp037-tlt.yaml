@@ -132,3 +132,22 @@ result_summary: >
   En annan tillgang (t.ex. trend-following/managed futures, redan
   diskuterad som CEO:s alternativ #1) kraver en egen, separat lasning -
   ingen automatisk fortsattning fran detta resultat.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/redan
+# rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR i capital_level_results ovan star kvar fran ursprungstestet vid
+# K=41 - aldrig omraknad, trots agents/overfitting_detector/ROLE.md:s
+# krav. HYP-041 ar redan FAILED, sa detta paverkar ingen aktiv
+# jamforelsepunkt, men dokumenteras for fullstandighet.
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade kombinerade serie, RF=2%/ar avdraget):
+#   $100k:   DSR 0.9407 -> 0.9341
+#   $1M:     DSR 0.9429 -> 0.9365
+#   $10M:    DSR 0.9147 -> 0.9060
+#
+# Liten forandring, ingen paverkan pa FAILED-slutsatsen (som redan
+# vilade pa villkor 1/2, inte pa DSR).

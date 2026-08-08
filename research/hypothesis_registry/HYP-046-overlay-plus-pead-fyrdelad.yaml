@@ -144,3 +144,40 @@ result_summary: >
   raka FAIL (044/045/046) efter en genuin PASS (043) tyder pa att
   denna specifika portfolj narmar sig en praktisk grans for vad naiv
   likaviktad kombination av de hittills kanda byggstenarna kan uppna.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/resultat
+# ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Registerpostens header (rad 11-13 ovan) hävdade kvalitativt att
+# HYP-044 (PEAD/SUE) och HYP-045 (krasch-overlay) är "mekaniskt olika...
+# ingen overlappning i mekanism" - men till skillnad från HYP-039/041/
+# 043/044 saknade denna fil den kvantitativa dagliga korrelationssiffra
+# spec §5b kraver INNAN kombinationstestning. Beräknad i efterhand
+# (ANDRAR INTE last status - samma disciplin som HYP-037/HYP-043s
+# egna tilläggsnoter):
+#
+# En naiv full-portfölj-korrelation (HYP-044:s hela kombinerade serie
+# mot HYP-045:s hela kombinerade serie) ger 0.91 - men det talet är
+# missvisande har, eftersom bada fullstandiga portfoljerna redan delar
+# 2/3 av sin notional (SPY + HYP-037-benen ar identiska i bada). Den
+# metodologiskt korrekta jamforelsen (samma konvention som HYP-043s
+# egen registerpost, som korrelerar det NYA benet mot de REDAN
+# BEFINTLIGA benen, inte hela portfoljer mot varandra) ar PEAD/SUE-
+# sviten (det faktiskt NYA, oberoende benet i HYP-046) mot de tre
+# ovriga benen:
+#   PEAD/SUE vs SPY (krasch-skyddad):          -0.093
+#   PEAD/SUE vs Momentum L/S (krasch-skyddad): -0.004
+#   PEAD/SUE vs HYP-037:                       -0.015
+# (dagliga avkastningar, 3459-3710 overlappande observationer per par,
+# se scripts/recompute_dsr_k46.py-sessionen 2026-08-08 for metod)
+#
+# SLUTSATS: den kvalitativa "mekaniskt icke-overlappande"-motiveringen
+# hall vid kvantitativ efterhandskontroll - PEAD/SUE-sviten ar i
+# praktiken okorrelerad (nara noll, svagt negativ) mot samtliga tre
+# ovriga ben, konsistent med att den byggs pa en helt annan signal
+# (kvartalsvis EPS-overraskning) an de ovriga benens pris-/trend-
+# baserade mekanismer. Detta bekraftar - men ersatter INTE behovet av
+# att fran borjan RAKNA UT talet innan lasning, vilket ar vad spec §5b
+# faktiskt kraver.

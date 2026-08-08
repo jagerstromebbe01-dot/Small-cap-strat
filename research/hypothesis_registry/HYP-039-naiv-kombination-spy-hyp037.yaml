@@ -176,3 +176,23 @@ deflated_sharpe_ratio:
 # registerpost) - men den nyansen paverkar INTE HYP-039:s eget resultat,
 # eftersom HYP-039:s kriterium aldrig kravde att HYP-037 "vinner" mot
 # HYP-023, bara att KOMBINATIONEN nar sitt eget mal.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/redan
+# rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR ovan star kvar fran ursprungstestet vid K=39 - aldrig omraknad,
+# trots agents/overfitting_detector/ROLE.md:s krav att gora det for
+# alla aktiva hypoteser varje gang k_total okar. HYP-039 ar fortfarande
+# citerad som jamforelsepunkt i flera senare hypotesers OOS-kriterium.
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade kombinerade serie, RF=2%/ar avdraget):
+#   $100k:   DSR 0.9515 -> 0.9436
+#   $1M:     DSR 0.9544 -> 0.9469
+#   $10M:    DSR 0.9365 -> 0.9268
+#
+# Mycket liten forandring (K=39->46 ar en relativt liten relativ okning,
+# och HYP-039:s hoga rasa Sharpe gor DSR mindre kanslig for K-okningar
+# i detta intervall). Ingen forandring av tidigare PASS-slutsats.

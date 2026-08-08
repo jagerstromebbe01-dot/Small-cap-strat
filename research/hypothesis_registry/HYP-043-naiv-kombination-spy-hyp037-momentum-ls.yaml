@@ -169,3 +169,72 @@ result_summary: >
   avklingning) forsvagas nagot vid hogre kapital. HYP-039 var forsta
   gangen CEO:s grundmal naddes - HYP-043 ar forsta gangen malet naddes
   MED en tydlig marginal, inte bara precis over ribban.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test. status/pass_fail_criterion/
+# tested_capital_levels/capital_level_results ovan ANDRADE INTE - last
+# historia andras inte i efterhand, samma disciplin som HYP-037/039)
+# ════════════════════════════════════════════════════════════
+# DEL A - FRIKTIONSKORRIGERAD ROBUSTHET (fyndet sjalvt gjordes redan
+# 2026-08-07 av scripts/diagnostic_hyp043_friction_robustness.py, under
+# byggandet av HYP-044 - men skrevs ALDRIG in i DENNA fil, bara i
+# HYP-044/045/046/047:s prosa och i _counter.yaml:s not, som sjalv
+# flaggade detta som en "oppen fraga" som kravde en formell
+# tillaggsnot. Detta ar den notens formella infriande.
+#
+# FYND: momentum L/S-sviten ovan (rad 47-60) anropar ALDRIG
+# corwin_schultz_spread - bara borrow_cost. Detta skulle INTE klara
+# scripts/validate_friction_usage.py om det kordes idag, och bryter
+# principen "friktion fran dag ett" (spec §2, princip 3) trots att
+# registerpostens egen las-kommentar (rad 56-58) uttryckligen namner
+# adjusted_close-kvotfixen som inbyggd fran start - spreadkostnaden
+# missades trots det.
+#
+# MED corwin_schultz_spread tillagd (allt annat OFORANDRAT):
+#   $100k:   Sharpe 1.0457 -> 0.8926 (MaxDD oforandrad -15.58%)
+#   $1M:     Sharpe 1.0498 -> 0.8940 (MaxDD oforandrad -15.68%)
+#   $10M:    Sharpe 0.9864 -> 0.8217 (MaxDD oforandrad -14.29%)
+#
+# PAVERKAN PA DET LASTA KRITERIET (rad 71-77), rakt igenom:
+#   Villkor 1 (Sharpe >= 1.0 vid $100k, DEN AVGORANDE nivan): 0.8926 -
+#     KLARAR INTE LANGRE, och inte marginellt (0.107 under malet).
+#   Villkor 2 (Sharpe > HYP-039:s egna 1.0191 vid $100k): 0.8926 -
+#     KLARAR INTE LANGRE (0.1265 under HYP-039:s eget resultat).
+#   Villkor 3 (MaxDD battre an HYP-039:s egna -22.03%): -15.58% -
+#     PASSERAR FORTFARANDE TYDLIGT, MaxDD paverkas i praktiken inte av
+#     spreadkostnaden pa denna sviten.
+#
+# DEL B - DSR FOR DE FRIKTIONSKORRIGERADE SIFFRORNA (NY, 2026-08-08,
+# scripts/recompute_hyp043_friction_dsr.py, mot dagens k_total=46,
+# RF=2%/ar avdraget):
+#   $100k:   DSR(K=46) = 0.8548
+#   $1M:     DSR(K=46) = 0.8549
+#   $10M:    DSR(K=46) = 0.7855
+# (fortfarande sannolikt en genuin, icke-slumpmassig portfolj - men DSR
+# mater ENDAST om Sharpen genuint skiljer sig fran noll givet K forsok,
+# INTE om den klarar ett specifikt lasted trosklvarde som 1.0. Bagge
+# fragorna ar relevanta men skilda.)
+#
+# DEL C - DSR FOR DE URSPRUNGLIGA (ICKE FRIKTIONSKORRIGERADE) SIFFRORNA
+# MOT DAGENS K=46 (samma granskningsfynd som for HYP-017/021/023/037/
+# 039/041 - DSR-faltet i capital_level_results ovan star kvar fran
+# ursprungstestet vid K=42, aldrig omraknad. scripts/recompute_dsr_k46.py,
+# 2026-08-08):
+#   $100k:   DSR 0.9510 -> 0.9473
+#   $1M:     DSR 0.9516 -> 0.9480
+#   $10M:    DSR 0.9229 -> 0.9177
+#
+# SLUTSATS: `status: passed` (rad 96) star medvetet KVAR OFORANDRAD har
+# - denna tillaggsnot andrar INGA lasta falt, bara dokumenterar redan
+# kanda och nu kompletta fakta, i linje med registrets egen disciplin.
+# MEN sakligt sett klarar HYP-043 INTE sitt eget lasta kriterium (rad
+# 71-77) nar friktionsmodellen ar komplett - villkor 1 OCH 2 faller pa
+# den avgorande nivan, inte marginellt. Detta ar redan implicit erkant
+# av att HYP-044/045/046/047 samtliga jamfor sig mot "den
+# friktionskorrigerade HYP-043-baslinjen" (0.8926/0.8940/0.8217) snarare
+# an mot de ursprungliga registrerade talen - men ingen av dessa filer
+# gjorde det explicit HAR, i den fil dar det faktiskt hor hemma. Om
+# `status` ska formellt andras till `failed` (eller en ny mellanstatus)
+# ar ett beslut for CEO att fatta manuellt, inte nagot denna tillaggsnot
+# eller nagon agent avgor pa egen hand.
