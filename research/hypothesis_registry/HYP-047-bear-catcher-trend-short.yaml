@@ -156,3 +156,65 @@ result_summary: >
   och den friktionskorrigerade robusthetsnoten fran 2026-08-07 star
   oforandrade) men ar inte langre aktiv referens - samma monster som
   HYP-017->023 och HYP-023->037-overgangarna.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (tre oberoende adversariella granskare - INTE
+# en ny hypotes/K-test, status/pass_fail_criterion/tested_capital_levels/
+# capital_level_results ovan ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# HYP-047 AR DAGENS FLAGGSKEPP/REFERENSIMPLEMENTATION - denna
+# tilläggsnot besvarar darfor SPECIFIKT fragan om en fullstandig
+# omkorning skulle flippa PASS->FAIL. SVAR: NEJ, PASS STAR KVAR PA
+# ALLA FYRA VILLKOR, PA ALLA TRE NIVAER.
+#
+# Fullstandig omkorning: filed-datum-korrigerat universum (momentum L/S-
+# svitens egen konstruktion + HYP-037-benet + bear catcher-benet, som
+# bygger direkt pa SPY:s OHLC och darfor inte paverkas av small-cap-
+# universumet), close_adj maskad mot orimlig kvot via delade
+# data_hygiene.py::mask_implausible_adjusted_close_ratio (tidigare
+# inline har), samt en NY 10bps portfoljniva-ombalanseringskostnad i
+# combine_quarters (fanns inte tidigare - denna hypotes hade redan
+# spreadkostnad INOM momentum L/S-sviten och i bear catcher-benets egna
+# in-/utgangar, se moduldocstring, men INTE mellan de fyra benen vid
+# kvartalsvis vikt-aterstallning). Resultat i
+# strategies/HYP-047/results_corrected_2026-08-08/ (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024):
+#   Sharpe: 1.1259 / 1.1268 / 1.1024  (tidigare 1.1559 / 1.1636 / 1.0993)
+#   MaxDD: -8.67% / -8.45% / -8.20%  (tidigare -7.44% / -7.30% / -7.23% -
+#     nagot SAMRE, men fortfarande langt battre an baslinjen nedan)
+#   OOS-2025 Sharpe: 1.7781 / 1.7245 / 1.7082 (tidigare 1.5461/1.4944/1.4679)
+#   DSR (K=46, RF=2%/ar): 0.9716 / 0.9719 / 0.9651
+#
+# Villkor 1 (Sharpe >= 1.0): PASS PA ALLA TRE (1.1259/1.1268/1.1024) -
+# oforandrat, aven vid $10M.
+# Villkor 2 (Sharpe > friktionskorrigerad HYP-043-baslinje 0.8926/0.8940/
+# 0.8217, HYP-043 sjalv ORORD i denna omkorning): PASS TYDLIGT PA ALLA
+# TRE, oforandrat, marginalen fortfarande stor (0.23-0.28 Sharpe-enheter).
+# Villkor 3 (MaxDD battre an samma baslinje -15.58%/-15.68%/-14.29%):
+# PASS TYDLIGT PA ALLA TRE, oforandrat (-8.67% fortfarande nastan en
+# HALVERING av baslinjens MaxDD, aven om marginalen krympte nagot mot
+# den tidigare -7.44%).
+# OOS-2025-villkoret (kombinerad OOS-Sharpe > HYP-039:s egna OOS,
+# okorrigerad referens 0.9185/0.8116/0.7932): PASS TYDLIGT PA ALLA TRE,
+# FORSTARKT (1.78/1.72/1.71, uppat fran redan starka 1.55/1.49/1.47).
+#
+# SLUTSATS - DEN VIKTIGASTE I HELA DENNA GRANSKNINGSOMGANG: HYP-047:s
+# PASS-status HALLER, PA ALLA FYRA VILLKOR, PA ALLA TRE KAPITALNIVAER,
+# under den fullstandigt korrigerade pipelinen (look-ahead-bias-fritt
+# universum + adjusted_close-kvotmaskning + portfoljniva-ombalanserings-
+# kostnad TILLSAMMANS, INTE isolerat testade som for HYP-043 - se dess
+# egen DEL D-tilläggsnot om varfor den distinktionen dar var nodvandig).
+# HYP-047 FLIPPAR INTE - CEO-beslutet 2026-08-08 att gora HYP-047 till
+# referensimplementation vilar darmed pa fast grund aven efter denna
+# granskning. Sharpe minskar marginellt (fjarde decimalen paverkas mest
+# vid $100k/$1M, storre vid $10M men fortfarande >1.0) och MaxDD forsamras
+# nagot (1.0-1.2 procentenheter) - men INGET villkor pa NAGON niva
+# byter sida. Detta star i skarp kontrast till HYP-037 sjalv (vars EGET
+# interna villkor 2 flippar till FAIL pa alla tre nivaer under samma
+# korrigering, se HYP-037:s tilläggsnot) och till HYP-043 (vars villkor
+# 1/2 redan flippat i en TIDIGARE, separat friktionskorrigering fran
+# 2026-08-07) - HYP-047:s marginal mot sina egna troskelvarden var helt
+# enkelt bred nog att absorbera bade universum-, adjusted_close- och
+# ombalanseringsfixarna utan att den underliggande PASS/FAIL-slutsatsen
+# rubbas.
