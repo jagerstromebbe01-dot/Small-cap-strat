@@ -238,3 +238,46 @@ result_summary: >
 # `status` ska formellt andras till `failed` (eller en ny mellanstatus)
 # ar ett beslut for CEO att fatta manuellt, inte nagot denna tillaggsnot
 # eller nagon agent avgor pa egen hand.
+#
+# DEL D - YTTERLIGARE, SEPARAT KORRIGERING SAMMA DAG (universum-
+# look-ahead-bias + adjusted_close-kvot + portfoljniva-ombalanserings-
+# kostnad - INTE samma fix som DEL A ovan, se forklaring): denna gang
+# implementerad DIREKT i strategies/HYP-043/backtest.py (produktions-
+# koden, inte ett sidoskript) - ORIGINAL_UNIVERSE_FILE/
+# EXTENSION_UNIVERSE_FILE pekar nu pa de filed-datum-korrigerade
+# filerna, close_adj maskas nu via den delade
+# data_hygiene.py::mask_implausible_adjusted_close_ratio (tidigare
+# redan inline har, oforandrad tröskel - bara centraliserad), OCH
+# combine_thirds har nu en 10bps-ombalanseringskostnad
+# (REBALANCE_COST_BPS) som INTE fanns tidigare. VIKTIGT: denna
+# korrigering lagger INTE till DEL A:s corwin_schultz_spread-kostnad i
+# sjalva momentum L/S-sviten - de tva fixarna ar ADDITIVA MEN INTE
+# KOMBINERADE i denna omkorning (utanfor detta uppdrags avgransade
+# omfattning, se slutrapporten). Resultat i
+# strategies/HYP-043/results_corrected_2026-08-08/ (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024, DEL D:s korrigering ENSAM, INTE
+# kombinerad med DEL A:s spreadfix):
+#   Sharpe: 1.0318 / 1.0319 / 1.0053  (ursprungligen 1.0457 / 1.0498 / 0.9864)
+#   MaxDD: -15.12% / -15.06% / -13.64% (ursprungligen -15.58% / -15.68% / -14.29%)
+#   DSR (K=46, RF=2%/ar): 0.9402 / 0.9403 / 0.9276
+#
+# Villkor 1 (Sharpe >= 1.0 vid $100k): PASS (1.0318), OCH $10M klarar nu
+# ocksa 1.0 (1.0053, tidigare 0.9864 - inte den avgorande nivan men en
+# konsekvent forbattring). Villkor 2 (Sharpe > HYP-039:s ursprungliga
+# 1.0191): PASS. Villkor 3 (MaxDD battre an HYP-039:s ursprungliga
+# -22.03%): PASS tydligt, MaxDD till och med nagot BATTRE an det
+# ursprungliga HYP-043-resultatet trots den nya ombalanseringskostnaden.
+#
+# SLUTSATS (DEL D): denna SPECIFIKA korrigering (look-ahead-bias +
+# adjusted_close-kvot + portfoljniva-ombalanseringskostnad, ISOLERAT
+# fran DEL A:s spreadfix) andrar INTE PASS-slutsatsen - om nagot star
+# HYP-043 nagot starkare. MEN detta star i skarp kontrast till DEL A,
+# som ENSAM redan visade FAIL (Sharpe 0.8926/0.8940/0.8217). De tva
+# fixarna ar INTE testade TILLSAMMANS i denna omkorning - en fullstandigt
+# kombinerad pipeline (DEL A:s spreadkostnad + DEL D:s tre fynd
+# samtidigt) har INTE korts och skulle sannolikt ge ett Sharpe-tal
+# NARA DEL A:s (spreadkostnaden i sviten ar den dominerande, storre
+# effekten av de tva) - men detta ar en slutsats INFERERAD fran de tva
+# separata korningarna, inte ett faktiskt uppmatt resultat, och
+# rapporteras darfor explicit som en oppen fraga, inte ett facit.
