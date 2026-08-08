@@ -178,3 +178,34 @@ result_summary: >
   framtida kombination av BADE denna overlay OCH ett genuint nytt,
   starkt 4:e ben (ingen av de hittills testade kandidaterna har
   rackt) skulle kravas for att na dit, inte endera separat.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (tre oberoende adversariella granskare - INTE
+# en ny hypotes/K-test, status/pass_fail_criterion/tested_capital_levels/
+# capital_level_results ovan ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: filed-datum-korrigerat universum (momentum L/S-
+# svitens egen konstruktion + HYP-037-benet), close_adj maskad mot
+# orimlig kvot via delade data_hygiene.py::mask_implausible_adjusted_close_ratio
+# (tidigare inline har), samt en NY 10bps portfoljniva-ombalanserings-
+# kostnad i combine_thirds (fanns inte tidigare - denna hypotes hade
+# redan spreadkostnad INOM momentum L/S-sviten, se moduldocstring, men
+# INTE mellan de tre benen vid kvartalsvis vikt-aterstallning). Resultat
+# i strategies/HYP-045/results_corrected_2026-08-08/ (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024):
+#   Sharpe: 0.9845 / 0.9846 / 0.9546  (tidigare 0.9941 / 0.9989 / 0.9287)
+#   MaxDD: -14.08% / -13.76% / -11.83% (tidigare -14.56% / -13.83% / -12.17%)
+#   DSR (K=46, RF=2%/ar): 0.9184 / 0.9186 / 0.9000
+#
+# Villkor 1 (Sharpe >= 1.0 vid $100k): FAIL, oforandrat - fortfarande ett
+# rakbladstunt nara-miss (0.9845, 0.0155 under malet, tidigare 0.9941,
+# 0.0059 under - marginalen VIDGADES nagot av den nya kostnaden men
+# slutsatsen ar densamma: naraliggande men INTE PASS). Villkor 2 (sla
+# friktionskorrigerad HYP-043-baslinje 0.8926/0.8940/0.8217): PASS
+# TYDLIGT pa alla tre, oforandrat. Villkor 3 (MaxDD battre an samma
+# baslinje): PASS PA ALLA TRE, oforandrat, nagot battre an tidigare.
+#
+# SLUTSATS: HYP-045:s FAILED-slutsats (rakbladstunt nara-miss pa villkor
+# 1) star OFORANDRAD under den fullstandigt korrigerade pipelinen -
+# samma kvalitativa bild som tidigare, ingen flip i nagon riktning.
