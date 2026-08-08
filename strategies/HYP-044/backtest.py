@@ -46,8 +46,6 @@ RESULTS_DIR = STRATEGY_DIR / "results"
 HYP037_DIR = STRATEGIES_ROOT / "HYP-037"
 HYP037_RESULTS = HYP037_DIR / "results"
 HYP037_OOS_RESULTS = REPO_ROOT / "paper_trading" / "HYP-037" / "oos_2025_results"
-HYP043_DIR = STRATEGIES_ROOT / "HYP-043"
-HYP043_RESULTS = HYP043_DIR / "results"
 
 ORIGINAL_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month.json"
 EXTENSION_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_2025_extension.json"
@@ -57,9 +55,13 @@ sys.path.insert(0, str(HYP037_DIR))
 import backtest as hyp037  # noqa: E402
 from friction import borrow_cost, corwin_schultz_spread  # noqa: E402
 
-sys.path.insert(0, str(HYP043_DIR))
-import backtest as hyp043  # noqa: E402
-
+# Granskningsfynd 2026-08-08: filen importerade tidigare aven HYP-043s
+# backtest.py under samma modulnamn "backtest" (bada filerna heter sa),
+# vilket later Python cacha om HYP-037s redan importerade modul i
+# sys.modules - exakt samma kollisionsklass som fixades i HYP-046 med
+# importlib. Ofarligt har eftersom importet aldrig anvandes (ingen
+# hyp043.*-referens i filen) - dead import borttaget istallet for att
+# komplicera med importlib for nagot som inte behovs.
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
 from rebalancing import snap_rebalance_dates  # noqa: E402
 
