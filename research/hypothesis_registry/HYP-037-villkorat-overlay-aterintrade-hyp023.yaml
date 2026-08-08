@@ -345,3 +345,69 @@ deflated_sharpe_ratio:
 # fordubblades). Fortfarande klart over 0.5, ingen forandring av
 # tidigare PASS-slutsats eller av HYP-037:s roll som referens for hela
 # den efterfoljande kombinationskedjan.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08, DEL 2 (samma granskningsdag, SEPARAT fran
+# DSR-omrakningen ovan - detta ror en FULLSTANDIGARE omkorning, inte
+# bara K. INTE en ny hypotes/K-test, status/kriterium ANDRADE INTE, se
+# CLAUDE.md-principen citerad i BUGGFIX-UPPDATERING 2026-08-05 ovan)
+# ════════════════════════════════════════════════════════════
+# Tre oberoende adversariella granskningsagenter hittade oberoende av
+# varandra att TVA kanda luckor aldrig portades hit fran sidoskript:
+#   (a) UNIVERSE_FILE pekade fortfarande pa den periodslut-daterade
+#       (look-ahead-biasade) universumfilen i produktionskoden - bara
+#       validerad i sidotestet ovan (TILLAGGSVALIDERING 2026-08-05),
+#       aldrig gjord till produktionsdefault.
+#   (b) Den konstanta orimlig-adjusted_close/close-kvot-buggen (kand
+#       sedan HYP-042, 2026-08-06) fanns ALDRIG i HYP-037 alls - bara
+#       kopierad inline i HYP-042 och senare hypoteser.
+# BADA fixade nu SAMTIDIGT direkt i strategies/HYP-037/backtest.py (inte
+# ett sidoskript denna gang - se modulens egen UPPDATERAD 2026-08-08-
+# kommentar). Resultat i strategies/HYP-037/results_corrected_2026-08-08/
+# (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024, alla tre kapitalnivaer):
+#   Sharpe:  0.7258 / 0.7370 / 0.7591  (tidigare 0.7366 / 0.7547 / 0.6981)
+#   MaxDD:  -26.20% / -22.10% / -14.17% (tidigare -23.09% / -19.11% / -13.10%)
+#   DSR (K=46, RF=2%/ar): 0.6903 / 0.7052 / 0.7321
+#
+# VILLKOR 1 (Sharpe >= 0.55, alla tre nivaer): PASS, oforandrat och
+# tydligt - 0.726/0.737/0.759 ar klart over golvet.
+#
+# VILLKOR 2 (MaxDD INTE samre an HYP-023:s EGNA -25.46%/-19.29%/-13.16%,
+# ORORDA - HYP-023 sjalv ligger UTANFOR detta uppdrags omfattning och
+# har INTE korrigerats): FLIPPAR TILL FAIL PA ALLA TRE NIVAER under den
+# fullstandigt korrigerade pipelinen (-26.20% samre an -25.46%, -22.10%
+# samre an -19.29%, -14.17% samre an -13.16%). Detta AR en forsamring
+# mot bade det ursprungliga resultatet (PASS pa alla tre) OCH mot den
+# tidigare DELVIS korrigerade sidotestversionen (TILLAGGSVALIDERING
+# 2026-08-05 ovan, dar bara $10M blev ett oavgjort resultat pa 0.05
+# procentenheters marginal) - den extra adjusted_close-kvot-fixen (som
+# INTE var med i den korningen) drar MaxDD ytterligare i FEL riktning
+# pa alla tre nivaer, inte bara $10M.
+#
+# VILLKOR 3 (OOS-2025 Sharpe vid $10M >= HYP-023:s 0.08): INTE omkord
+# under den fullstandiga korrigeringen i detta uppdrag - se den
+# separata slutrapportens motivering (paper_trading/HYP-037/
+# oos_backtest_2025.py rors inte har, en medveten avgransning av
+# omfattningen, INTE en tyst utelamnad korning). Den TIDIGARE, delvis
+# korrigerade (bara filed-datum, INTE adjusted_close-kvoten) sidotest-
+# korningen visade OOS-Sharpe 0.378 vid $10M, klart over 0.08 - men
+# detta tal ar INTE en giltig ersattning for en fullstandigt korrigerad
+# OOS-korning, bara en indikation.
+#
+# SLUTSATS - VIKTIGT FYND: under den FULLSTANDIGT korrigerade pipelinen
+# (filed-datum-universum + maskad adjusted_close-kvot TILLSAMMANS) skulle
+# HYP-037:s ursprungliga PASS-slutsats INTE langre halla som den star -
+# villkor 2 flippar till ett entydigt FAIL pa ALLA TRE kapitalnivaer,
+# inte bara ett gransfall vid en enda niva. Eftersom PASS kravde ALLA
+# TRE villkor skulle en fullstandig omkorning under dagens standard
+# formellt ge FAIL for HYP-037 som fristaende hypotes. STATUS-faltet
+# ANDRAS INTE har (se CLAUDE.md: bara CEO andrar status/pass_fail_criterion
+# manuellt) - detta ar en oppet redovisad, INTE en tyst, upptackt som
+# kraver ett explicit CEO-beslut. Notera SEPARAT: detta paverkar INTE
+# automatiskt PASS/FAIL for HYP-039 t.o.m. HYP-047, vars EGNA kriterier
+# aldrig kravde att HYP-037 sjalvt slar HYP-023 - de anvander bara
+# HYP-037:s (nu korrigerade) portfoljvarde-serie som en indata-ben och
+# ar omtestade separat, var och en mot sitt EGET redan lasta kriterium
+# (se respektive registerpost).
