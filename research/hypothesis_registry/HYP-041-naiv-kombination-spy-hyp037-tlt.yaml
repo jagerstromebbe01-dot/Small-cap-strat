@@ -151,3 +151,32 @@ result_summary: >
 #
 # Liten forandring, ingen paverkan pa FAILED-slutsatsen (som redan
 # vilade pa villkor 1/2, inte pa DSR).
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08, DEL 2 (samma dag, SEPARAT fran DSR-omrakningen
+# ovan - INTE en ny hypotes/K-test, status/kriterium ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: HYP-037-benet korrigerat (filed-datum-universum
+# + maskad adjusted_close-kvot) + 10bps portfoljniva-ombalanserings-
+# kostnad tillagd (strategies/HYP-041/backtest.py::REBALANCE_COST_BPS).
+# Jamforelsepunkten (HYP-039) star KVAR pa dess ursprungliga, redan
+# lasta varden (1.0191/1.0300/0.9879, -22.03%/-22.16%/-20.03%) - det ar
+# de siffrorna det ursprungliga kriteriet faktiskt lastes mot, INTE
+# HYP-039:s egen senare omraknade version.
+#
+# NYA SIFFROR (huvudperiod 2010-2024):
+#   Sharpe: 0.9877 / 0.9912 / 0.9742  (tidigare 0.9981 / 1.0056 / 0.9498)
+#   MaxDD: -23.46% / -23.45% / -21.21% (tidigare -22.73% / -23.04% / -21.57%)
+#   DSR (K=46, RF=2%/ar): 0.9280 / 0.9297 / 0.9202
+#
+# Villkor 1 (Sharpe >= 1.0): FAIL PA ALLA TRE nivaer, oforandrat ($1M
+# gick fran ett tekniskt PASS 1.0056 till FAIL 0.9912 under den nya
+# kostnaden - men $100k var alltid den avgorande nivan och var redan
+# FAIL). Villkor 2 (slå HYP-039): FAIL PA ALLA TRE, oforandrat. Villkor
+# 3 (MaxDD battre an HYP-039): FAIL PA ALLA TRE, oforandrat (blev
+# faktiskt nagot samre pa tva av tre nivaer).
+#
+# SLUTSATS: HYP-041:s FAILED-slutsats star OFORANDRAD under den
+# fullstandigt korrigerade pipelinen - inget villkor flippar i nagon
+# riktning. HYP-039 forblir den enda kombinationshypotesen som klarar
+# just denna jamforelsepunkt.
