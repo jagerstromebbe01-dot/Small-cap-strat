@@ -181,3 +181,41 @@ result_summary: >
 # baserade mekanismer. Detta bekraftar - men ersatter INTE behovet av
 # att fran borjan RAKNA UT talet innan lasning, vilket ar vad spec §5b
 # faktiskt kraver.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (tre oberoende adversariella granskare - INTE
+# en ny hypotes/K-test, status/pass_fail_criterion/tested_capital_levels/
+# capital_level_results ovan ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: filed-datum-korrigerat universum (bade
+# momentum L/S- och PEAD/SUE-svitens egen konstruktion + HYP-037-benet),
+# close_adj maskad mot orimlig kvot via delade data_hygiene.py::
+# mask_implausible_adjusted_close_ratio (tidigare inline har), samt en
+# NY 10bps portfoljniva-ombalanseringskostnad i combine_quarters (fanns
+# inte tidigare). Resultat i strategies/HYP-046/results_corrected_2026-08-08/
+# (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024):
+#   Sharpe: 0.8936 / 0.8921 / 0.8508  (tidigare 0.9475 / 0.9492 / 0.8726)
+#   MaxDD: -8.09% / -7.85% / -6.67%  (tidigare -9.73% / -9.19% / -7.96%,
+#     dvs MaxDD FORBATTRAD ytterligare, redan registrets basta)
+#   DSR (K=46, RF=2%/ar): 0.8548 / 0.8536 / 0.8155
+#
+# Villkor 1 (Sharpe >= 1.0): FAIL PA ALLA TRE, oforandrat. Villkor 2
+# (sla friktionskorrigerad HYP-043-baslinje 0.8926/0.8940/0.8217): NU
+# BLANDAT - PASS vid $100k (0.8936 > 0.8926, en marginal pa 0.001) och
+# $10M (0.8508 > 0.8217), men FAIL vid $1M (0.8921 < 0.8940, en marginal
+# pa 0.0019) - tidigare PASS PA ALLA TRE (0.9475/0.9492/0.8726, samtliga
+# tydligt over baslinjen). Detta AR en forsvagning av villkor 2:s
+# marginal, men INTE avgorande for det redan lasta helhetsresultatet
+# eftersom villkor 1 redan var FAIL vid $100k (den avgorande nivan)
+# bade fore och efter korrigeringen. Villkor 3 (MaxDD battre an samma
+# baslinje): PASS TYDLIGT pa alla tre, oforandrat och FORSTARKT.
+#
+# SLUTSATS: HYP-046:s FAILED-slutsats star OFORANDRAD under den
+# fullstandigt korrigerade pipelinen (villkor 1 var alltid den
+# avgorande FAIL-orsaken vid $100k, och forblir FAIL). MaxDD/Calmar-
+# forbattringen (redan registrets basta) staller sig konsekvent
+# ANNU basta under korrigeringen, medan Sharpe-avstandet till 1.0-malet
+# vidgas nagot - samma kvalitativa slutsats som tidigare (overkorrigering
+# mot risk pa Sharpens bekostnad), inte en ny.
