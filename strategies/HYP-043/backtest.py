@@ -49,7 +49,7 @@ EXTENSION_UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_2025_extension_filed_da
 
 sys.path.insert(0, str(HYP037_DIR))
 import backtest as hyp037  # noqa: E402
-from friction import borrow_cost  # noqa: E402
+from friction import borrow_cost, corwin_schultz_spread  # noqa: E402
 
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
 from rebalancing import snap_rebalance_dates  # noqa: E402
@@ -63,6 +63,14 @@ WEIGHT_EACH = 1.0 / 3.0
 # for full motivering. Samma 10bps-schablon ateranvand konsekvent i alla
 # sju kombinationshypoteser.
 REBALANCE_COST_BPS = 0.0010
+
+# HYP-043 DEL A-fynd 2026-08-07 (scripts/diagnostic_hyp043_friction_robustness.py):
+# momentum L/S-sviten anropade ALDRIG corwin_schultz_spread, bara
+# borrow_cost - saknades i den ursprungliga DEL D-korrigeringen ovan
+# (som bara fixade universum/adjusted_close/ombalansering). Kombinerad
+# har 2026-08-08 for att fa den FAKTISKA "allt inraknat"-siffran, se
+# registerpostens TILLAGGSNOT DEL E.
+USE_SPREAD_COST = True
 
 MOM_LOOKBACK_DAYS = 252
 MOM_SKIP_DAYS = 21
@@ -102,6 +110,8 @@ def compute_momentum_ls_sleeve(universe_by_month: dict) -> pd.Series:
     close_adj = close_adj.mask(implausible)
     close_adj = mask_implausible_adjusted_close_ratio(close, close_adj)
 
+    spread_df = hyp037.compute_spread_matrix(high, low) if USE_SPREAD_COST else None
+
     momentum = close_adj.shift(MOM_SKIP_DAYS) / close_adj.shift(MOM_LOOKBACK_DAYS) - 1
     daily_ret = close_adj.pct_change()
 
@@ -121,6 +131,7 @@ def compute_momentum_ls_sleeve(universe_by_month: dict) -> pd.Series:
 
     for date_i in range(start_idx, len(close.index)):
         date = close.index[date_i]
+        rebalance_cost = 0.0
 
         if date in rebal_set:
             month_key = rebal_map[date].strftime("%Y-%m-%d")
@@ -132,13 +143,20 @@ def compute_momentum_ls_sleeve(universe_by_month: dict) -> pd.Series:
                 short_names = list(ranked.index[:n_decile])
                 long_names = list(ranked.index[-n_decile:])
 
+                if USE_SPREAD_COST:
+                    long_spreads = spread_df.loc[date, long_names].dropna() if long_names else pd.Series(dtype=float)
+                    short_spreads = spread_df.loc[date, short_names].dropna() if short_names else pd.Series(dtype=float)
+                    avg_long_spread = float(long_spreads.mean()) if len(long_spreads) else 0.0
+                    avg_short_spread = float(short_spreads.mean()) if len(short_spreads) else 0.0
+                    rebalance_cost = 0.5 * (avg_long_spread / 2) + 0.5 * (avg_short_spread / 2)
+
         if date_i > start_idx and (long_names or short_names):
             long_r = daily_ret.loc[date, long_names].mean() if long_names else 0.0
             short_r = daily_ret.loc[date, short_names].mean() if short_names else 0.0
             long_r = 0.0 if np.isnan(long_r) else long_r
             short_r = 0.0 if np.isnan(short_r) else short_r
             daily_borrow = borrow_cost(position_value=0.5, holding_days=1, annual_rate=BORROW_ANNUAL_RATE)
-            period_ret = 0.5 * long_r - 0.5 * short_r - daily_borrow + (RF_ANNUAL / 252)
+            period_ret = 0.5 * long_r - 0.5 * short_r - daily_borrow + (RF_ANNUAL / 252) - rebalance_cost
             pv_list.append(pv_list[-1] * (1 + period_ret))
         else:
             pv_list.append(pv_list[-1])

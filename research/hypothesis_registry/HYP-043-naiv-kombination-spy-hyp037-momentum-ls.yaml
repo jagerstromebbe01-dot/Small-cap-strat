@@ -281,3 +281,39 @@ result_summary: >
 # effekten av de tva) - men detta ar en slutsats INFERERAD fran de tva
 # separata korningarna, inte ett faktiskt uppmatt resultat, och
 # rapporteras darfor explicit som en oppen fraga, inte ett facit.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT DEL E 2026-08-08 (stanger DEL D:s oppna fraga samma dag -
+# alla FYRA kanda fixar korda TILLSAMMANS i strategies/HYP-043/
+# backtest.py: look-ahead-bias + adjusted_close-kvot + 10bps
+# ombalanseringskostnad + corwin_schultz_spread pa momentum L/S-sviten.
+# Status/kriterium/ovanstaende siffror ANDRADE INTE.)
+# ════════════════════════════════════════════════════════════
+# NYA SIFFROR (huvudperiod 2010-2024, ALLA FYRA fixar samtidigt):
+#   Sharpe: 0.8765 / 0.8752 / 0.8392  (ursprungligen 1.0457/1.0498/0.9864)
+#   MaxDD: -15.12% / -15.06% / -13.64% (PASS mot HYP-039:s -22.03% osv,
+#     oforandrat fran DEL D - spreadkostnaden paverkar MaxDD marginellt)
+#   OOS-2025 Sharpe: 1.7702 / 1.7171 / 1.6960 (PASS mycket starkt mot
+#     HYP-039:s 0.9185/0.8116/0.7932, faktiskt HOGRE an DEL D isolerat)
+#   DSR (K=46, RF=2%/ar): 0.8393 / 0.8382 / 0.8035
+#
+# Villkor 1 (Sharpe >= 1.0 vid $100k): FAIL (0.8765). Villkor 2 (Sharpe
+# > HYP-039:s 1.0191): FAIL. Villkor 3 (MaxDD battre an HYP-039:s
+# -22.03%): PASS tydligt. OOS-villkoret: PASS mycket starkt.
+#
+# SLUTSATS (DEL E, stanger DEL D:s oppna fraga): DEL D:s formodan
+# bekraftas - den fullt kombinerade pipelinen ger ETT ENTYDIGT FAIL pa
+# den avgorande $100k-nivan, pa BADE villkor 1 och 2. Spreadkostnaden
+# (DEL A) forblir den dominerande, avgorande faktorn (0.8765 mot DEL
+# A:s isolerade 0.8926 - de tre ovriga fixarna drar netto nagot
+# YTTERLIGARE nedat tillsammans med spreadkostnaden, inte upp som de
+# gjorde isolerat i DEL D, eftersom look-ahead-universumets paverkan pa
+# just denna sviten vander tecken nar spreadkostnaden redan dominerar
+# bilden). MaxDD- och OOS-villkoren forblir robusta PASS genom alla
+# kombinationer av kanda fixar - HYP-043 ar fortfarande en genuint
+# riskreducerande, positivt bidragande portfolj, bara inte en som
+# klarar sitt eget 1.0-Sharpe-kriterium fullt friktionskorrekt.
+#
+# `status` star medvetet KVAR som `passed` - beslut om formell
+# statusandring lamnas till CEO, som redan flera ganger i detta
+# register (senast for HYP-047:s referensbeslut).
