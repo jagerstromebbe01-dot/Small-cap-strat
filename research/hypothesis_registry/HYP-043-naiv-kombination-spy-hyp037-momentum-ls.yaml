@@ -93,7 +93,17 @@ pass_fail_criterion: >
   vilket indirekt stodjer att KORTSIDAN av momentum kan ha edge har,
   aven om LANGSIDAN (ren momentum long-only) redan misslyckats tre
   ganger tidigare i registret).
-status: passed   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
+# CEO-BESLUT 2026-08-09: status andrad fran passed till failed. Grund:
+# tilläggsnot DEL E (2026-08-08) visar Sharpe 0,8765/0,8752/0,8392 med
+# alla fyra kanda fixar (look-ahead-bias, adjusted_close-kvot, ombalanse-
+# ringskostnad, corwin_schultz_spread) kombinerade - klarar inte langre
+# vare sig villkor 1 (Sharpe>=1.0) eller villkor 2 (sla HYP-039) pa den
+# avgorande $100k-nivan. Villkor 3 (MaxDD) och OOS-2025 forblir starka
+# PASS, men kravet var ALLA TRE huvudvillkor. De ursprungliga siffrorna
+# ovan (capital_level_results) ANDRAS INTE - historik skrivs inte om.
+# HYP-039 forblir den senaste hypotesen i kedjan som fortfarande PASSAR
+# pa egna meriter fore HYP-047.
 k_total_hypotheses_before_this: 41
 tested_capital_levels:
 - 100000

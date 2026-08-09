@@ -85,7 +85,17 @@ pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, kvar
   (exponeringstiming - de enda tva PASSED-hypoteserna i registret ar bada av denna typ)
   loser den specifika, redan diagnostiserade kapitalnivaberoende OOS-svagheten, till
   skillnad fran de sju oberoende urvals-/viktningsforsok som redan misslyckats.'
-status: passed   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
+# CEO-BESLUT 2026-08-09: status andrad fran passed till failed. Grund:
+# tilläggsnoten 2026-08-08 ovan visar att villkor 2 (MaxDD ej samre an
+# HYP-023) flippar till FAIL pa alla tre nivaer under den fullt
+# korrigerade pipelinen (look-ahead-bias + adjusted_close-kvot). Kravet
+# var ALLA TRE villkor - ett flippat FAIL racker for att hypotesen som
+# helhet inte langre klarar sitt eget lasta kriterium. De ursprungliga
+# siffrorna ovan (capital_level_results) ANDRAS INTE - historik skrivs
+# inte om. HYP-023 forblir den grund senare kedjan (HYP-039 osv) faktiskt
+# vilar pa, eftersom deras egna kriterier aldrig kravde att HYP-037
+# slar HYP-023.
 k_total_hypotheses_before_this: 35
 tested_capital_levels:
 - 100000
