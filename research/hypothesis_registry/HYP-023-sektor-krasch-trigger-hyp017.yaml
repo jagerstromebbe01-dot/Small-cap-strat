@@ -287,3 +287,36 @@ deflated_sharpe_ratio:
 #
 # Forvantad riktning (sjunker med hogre K). Fortfarande klart over 0.5,
 # ingen forandring av tidigare PASS-slutsats.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-09 (stanger den sista kanda luckan fran
+# 2026-08-08s granskning - HYP-023 var enda hypotesen i referenskedjan
+# som bara fick DSR-omraknad, aldrig den fulla korrigeringen. Status/
+# kriterium/ovanstaende siffror ANDRADE INTE.)
+# ════════════════════════════════════════════════════════════
+# MED look-ahead-bias-fix (filed-datum-universum) + adjusted_close-
+# kvot-maskning SAMTIDIGT (strategies/HYP-023/backtest.py, ingen
+# ombalanseringskostnad tillamplig - detta ar inte en kombinations-
+# hypotes):
+#   $100k:   Sharpe 0.7174 -> 0.7281   MaxDD -25.46% -> -26.07%
+#   $1M:     Sharpe 0.7536 -> 0.7283   MaxDD -19.29% -> -23.59%
+#   $10M:    Sharpe 0.7227 -> 0.7745   MaxDD -13.16% -> -14.12%
+#   DSR(K=46): 0.6935 / 0.6937 / 0.7513
+#
+# Villkor 1 (Sharpe >= 0.55): PASS pa alla tre, oforandrat.
+#
+# KONSEKVENS FOR HYP-037:s VILLKOR 2 (MaxDD ej samre an HYP-023:s
+# EGNA): HYP-037:s egen korrigerade MaxDD (2026-08-08, samma tva fixar)
+# ar -26.20%/-22.10%/-14.17%. Jamfort mot HYP-023:s NU KORRIGERADE
+# MaxDD ovan:
+#   $100k: HYP-037 -26.20% vs HYP-023 -26.07% -> HYP-037 SAMRE (0.13pp) -> FAIL
+#   $1M:   HYP-037 -22.10% vs HYP-023 -23.59% -> HYP-037 BATTRE (1.50pp) -> PASS
+#   $10M:  HYP-037 -14.17% vs HYP-023 -14.12% -> HYP-037 SAMRE (0.05pp) -> FAIL (rakbladstunt)
+#
+# Detta ANDRAR INTE HYP-037:s overgripande status (fortfarande failed -
+# dess eget kriterium kraver att villkor 2 haller PA ALLA TRE nivaer,
+# och det gor det inte har heller) - men bilden ar mer nyanserad an
+# gardagens "FAIL pa alla tre nivaer mot en okorrigerad baslinje": mot
+# en KONSEKVENT korrigerad baslinje blir det FAIL/PASS/FAIL, med tva av
+# tre marginaler rakbladstunna (0.13pp och 0.05pp), inte ett brett FAIL.
+# HYP-037:s egen registerpost uppdaterad med denna precisering.

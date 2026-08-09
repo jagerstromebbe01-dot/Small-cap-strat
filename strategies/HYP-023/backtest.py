@@ -42,12 +42,20 @@ STRATEGIES_ROOT = STRATEGY_DIR.parent
 DATA_DIR = STRATEGIES_ROOT.parent / "data"
 CACHE_DIR = DATA_DIR / "cache"
 OHLCV_DIR = CACHE_DIR / "ohlcv"
-UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month.json"
-RESULTS_DIR = STRATEGY_DIR / "results"
+# GRANSKNINGSFYND 2026-08-09 (uppföljning av 2026-08-08s granskning -
+# HYP-023 var den enda hypotesen i referenskedjan som aldrig fick den
+# fulla korrigeringen, bara en DSR-omräkning. Stänger den luckan här):
+# UNIVERSE_FILE pekar nu på den SEC-filed-datum-korrigerade varianten
+# (look-ahead-bias-fixen), och mask_implausible_adjusted_close_ratio
+# tillämpas (adjusted_close-kvot-fixen) - samma två fixar som redan
+# portades till HYP-037/039/041/043/044/045/046/047. Ingen ombalanse-
+# ringskostnad tillämplig här (HYP-023 är inte en kombinationshypotes).
+UNIVERSE_FILE = CACHE_DIR / "smallcap_universe_by_month_filed_date.json"
+RESULTS_DIR = STRATEGY_DIR / "results_corrected_2026-08-09"
 
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
 from friction import borrow_cost, corwin_schultz_spread  # noqa: E402
-from data_hygiene import clean_price_matrix, flag_implausible_liquidity  # noqa: E402
+from data_hygiene import clean_price_matrix, flag_implausible_liquidity, mask_implausible_adjusted_close_ratio  # noqa: E402
 from rebalancing import snap_rebalance_dates  # noqa: E402
 from sector import load_bank_financial_flags  # noqa: E402
 
@@ -546,6 +554,9 @@ def main():
     high = high.mask(implausible)
     low = low.mask(implausible)
     print(f"  {int(implausible.values.sum())} ticker-dagar maskade.\n")
+
+    print("Maskar konstant orimlig adjusted_close/close-kvot...")
+    close_adj = mask_implausible_adjusted_close_ratio(close, close_adj)
 
     print("Estimerar beta (pa adjusted_close, görs en gång)...")
     beta_df = compute_beta(close_adj, hedge, BETA_WINDOW)

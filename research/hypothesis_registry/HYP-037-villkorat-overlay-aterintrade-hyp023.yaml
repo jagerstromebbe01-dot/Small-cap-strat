@@ -421,3 +421,32 @@ deflated_sharpe_ratio:
 # HYP-037:s (nu korrigerade) portfoljvarde-serie som en indata-ben och
 # ar omtestade separat, var och en mot sitt EGET redan lasta kriterium
 # (se respektive registerpost).
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-09, DEL 3 (stanger den lucka DEL 2 ovan explicit
+# flaggade - "HYP-023 sjalv ligger UTANFOR detta uppdrags omfattning
+# och har INTE korrigerats". Status/kriterium ANDRAS INTE.)
+# ════════════════════════════════════════════════════════════
+# HYP-023 fick nu SAMMA tva fixar (look-ahead-bias + adjusted_close-
+# kvot) - se dess egen registerpost, TILLAGGSNOT 2026-08-09. Korrigerad
+# HYP-023 MaxDD: -26.07% / -23.59% / -14.12% (tidigare -25.46% / -19.29%
+# / -13.16% - AVEN HYP-023 forsamras av korrigeringen, inte bara
+# HYP-037).
+#
+# JAMFOR MOT KONSEKVENT KORRIGERAD BASLINJE (DEL 2:s HYP-037-siffror
+# -26.20% / -22.10% / -14.17% mot HYP-023:s nya -26.07% / -23.59% /
+# -14.12%):
+#   $100k: HYP-037 SAMRE med 0.13pp -> FAIL (rakbladstunt, tidigare 0.74pp)
+#   $1M:   HYP-037 BATTRE med 1.50pp -> PASS (flippar FRAN FAIL i DEL 2!)
+#   $10M:  HYP-037 SAMRE med 0.05pp -> FAIL (rakbladstunt, tidigare 1.01pp)
+#
+# SLUTSATS: DEL 2:s "FAIL pa ALLA TRE nivaer" galler INTE langre mot en
+# konsekvent korrigerad baslinje - bilden ar FAIL/PASS/FAIL, med tva
+# rakbladstunna marginaler (0.13pp, 0.05pp) istallet for de tidigare
+# breda missarna (0.74pp, 1.01pp). Detta ANDRAR INTE HYP-037:s
+# overgripande FAIL-slutsats (kriteriet kraver villkor 2 PA ALLA TRE
+# nivaer, och det haller fortfarande inte vid $100k/$10M) - men det ar
+# en betydligt jamnare kamp an DEL 2 gav sken av. `status: failed`
+# (satt av CEO 2026-08-09) star darfor kvar KORREKT, men motiveringen
+# i praktiken vilar nu pa tva rakbladstunna marginaler snarare an ett
+# brett, entydigt misslyckande.
