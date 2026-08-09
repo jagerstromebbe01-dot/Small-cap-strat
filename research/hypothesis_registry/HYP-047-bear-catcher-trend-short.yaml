@@ -218,3 +218,21 @@ result_summary: >
 # enkelt bred nog att absorbera bade universum-, adjusted_close- och
 # ombalanseringsfixarna utan att den underliggande PASS/FAIL-slutsatsen
 # rubbas.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-09 (granskning av forskningsrapporten, INTE en ny
+# hypotes/K-test - status/kriterium/resultat ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# scripts/diagnostic_bear_catcher_extended_history.py (bear catcher-
+# benet ISOLERAT, 100% egen notional, mot akta SPY-data 1999-2009 -
+# INTE HYP-047:s fulla fyrbenskombination, som saknar pre-2010-data for
+# HYP-037-benet och momentum L/S-sviten) fanns sedan tidigare men var
+# aldrig committad eller dokumenterad har - flaggat av rapportgransk-
+# ningen 2026-08-09 som ett avsteg fran registrets egen "git ar
+# revisionssparet"-disciplin. Committas har tillsammans med denna not.
+#
+# RESULTAT (endast bear catcher-benet): +63.78% under 2000-2002 mot
+# SPY:s -33.85%; +40.25% under 2008 mot SPY:s -43.41%. Starkt stod for
+# att MEKANISMEN generaliserar utanfor 2010-2024, men detta ar INTE en
+# tredje fullstandig validering av hela HYP-047 - bara av ett av dess
+# fyra ben.
