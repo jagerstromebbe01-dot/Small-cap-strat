@@ -324,3 +324,67 @@ tidigare förlorare (t.ex. avkastningen för BOTTENdecilen av samma
 momentum-rankning, inte SPY-index), inte en generell marknadsnedgångs-
 trigger. Inte byggt eller testat - bara en riktad idé grundad i en
 konkret, redan observerad negativ diagnostik.
+
+---
+
+## [Datum, 2026-08-09] — bredare sökrunda, sex kandidater
+
+CEO-beslut 2026-08-09: nästa hypotesrunda får bredare scope (nya
+alfasignaler/mekanismtyper, inte bara parametervarianter inom redan
+bevisade mekanismer - se AskUserQuestion-svaret samma dag). Nedan är
+Claudes EGNA, oberoende genererade kandidater (skrivna INNAN några
+externa AI-svar setts, för att undvika adaptiv snedvridning - samma
+disciplin som redan etablerad för multi-AI-brainstormar). Ingen K-
+kostnad - dessa är förslag, inte pre-registrerade hypoteser.
+
+Undviker medvetet: låg-vol L/S, kvalitet L/S, 52-veckors-högsta L/S,
+generiska trendföljningsvarianter, bred CTA-korg, merger-arb - alla
+redan diagnostiskt avfärdade under HYP-044:s kandidatsökning
+2026-08-07 (se project-minnesanteckningen "HYP-044 candidate search").
+Undviker även allt Kelly-viktat (Ejay är stängt, nio döda varianter).
+
+**Källa:** Egen idé (Claude, 2026-08-09)
+
+**Kort beskrivning (kandidat 1 — makroregim-timing utan prisbaserad trigger):** Använd VIX-terminskurvans lutning (spot-VIX minus 3-månaders VIX-futures, eller enklare: VIX-nivå relativt sitt eget 1-års rullande percentil) som en ANNAN typ av kraschtrigger än de redan använda SPY-pris-baserade (10-dagars-avkastning). Samma haircut-mekanik som redan validerad (HYP-017/023/037/047), men triggad av ett marknadsstämnings-/riskaversionsmått istället för realiserad prisrörelse.
+
+**Varför relevant:** De fyra lyckade timing-mekanismerna använder alla SAMMA underliggande signal (SPY:s egen realiserade avkastning). VIX-terminsstrukturen är känd för att invertera (backwardation) INNAN och UNDER stress, vilket kan ge en tidigare eller kompletterande signal än ett rent lagg-baserat pris-mått. Kräver extern datakälla (CBOE VIX-data, inte i EODHD-cachen idag) - datafeasibility måste kollas innan lasning.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09)
+
+**Kort beskrivning (kandidat 2 — blankningsintresse som ALFA-signal, inte bara friktion):** D'Avolio (2002, redan citerad ovan) dokumenterar att "specials" (dyra/svåra att låna aktier) koncentreras till mindre, mer illikvida bolag. Testa om HÖGT och STIGANDE short interest / days-to-cover i sig är en signal (kort de mest blankade namnen, eller tvärtom undvik dem i en long-portfölj) - inte bara en kostnadsjustering av en redan vald position.
+
+**Varför relevant:** Detta skiljer sig strukturellt från alla redan testade urvalssignaler (som alla varit pris-/redovisningsbaserade) genom att direkt mäta ANDRA sofistikerade aktörers positionering - en mer direkt koppling till kapacitetsbegränsningstesen än något redan testat. Kräver short-interest-data (tvåveckorsfrekvens från FINRA/börser) - måste verifieras om EODHD tillhandahåller detta för small-cap-universumet.
+
+---
+
+**Källa:** Sloan, R. G. (1996). "Do Stock Prices Fully Reflect Information in Accruals and Cash Flows about Future Earnings?" The Accounting Review, 71(3), 289-315.
+
+**Kort beskrivning (kandidat 3 — accrual-anomalin):** Bolag med höga periodiseringar (accruals - vinst som inte stöds av kassaflöde) tenderar att ha sämre framtida avkastning än bolag vars vinst är kassaflödesgrundad. En etablerad, väldokumenterad anomali - strukturellt annorlunda från PEAD/SUE (som redan testats och misslyckats två gånger, HYP-020/044) eftersom den mäter VINSTKVALITET, inte vinstöverraskning.
+
+**Varför relevant:** Redovisningsdata (kassaflöde vs. resultaträkning) finns sannolikt redan tillgänglig via samma SEC EDGAR-pipeline som byggdes för HYP-020:s PEAD-signal - låg extra datakostnad. En genuint annan mekanism än de två redan misslyckade redovisningssignalerna (book-to-market, PEAD), inte en variant av dem.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09), inspirerad av det redan etablerade registermönstret
+
+**Kort beskrivning (kandidat 4 — kvalitet som GATE för timing-aggressivitet, inte som urvalssignal):** Istället för att använda en kvalitetskomposit (lönsamhet/skuldsättning/stabilitet) för att VÄLJA aktier (redan avfärdat, se HYP-044-sökningen) - använd den för att MODULERA hur aggressivt en redan validerad timing-mekanism (t.ex. bear catcher-triggern) agerar. Exempel: djupare haircut vid trigger för portföljens lågkvalitetssegment, mildare för högkvalitetssegmentet.
+
+**Varför relevant:** Direkt konsekvens av registrets eget starkaste mönster (timing fungerar, urval inte) - testar INTE kvalitet som en ny selektionsfaktor (redan dött spår) utan som en modifierare av en REDAN bevisad mekanismtyp. Strukturellt en ny sorts kombination, inte bara ännu en likaviktad portfölj av kända delar.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09), löst inspirerad av volatilitetsmålsättning i managed futures/crypto-kvantstrategier
+
+**Kort beskrivning (kandidat 5 — portföljbred volatilitetsmålsättning som EGEN timing-mekanism):** Barroso & Santa-Clara (2015, redan citerad ovan) skalar EN signals (momentums) positionsstorlek mot dess egen realiserade volatilitet. Generalisera detta till att skala HELA HYP-047-portföljens exponering mot dess EGEN rullande realiserade volatilitet (inte någon enskild signals) - minska exponering när portföljen redan blivit ovanligt volatil, oavsett vad som orsakar det.
+
+**Varför relevant:** Vol-targeting är en väletablerad teknik i managed futures och crypto-kvantstrategier (varifrån HYP-047:s bear catcher-mekanism ursprungligen hämtades, Hurst/Ooi/Pedersen-traditionen) men har inte testats på PORTFÖLJNIVÅ i detta register - bara indirekt via prisbaserade kraschtriggers. En strukturellt annan typ av riskhantering (kontinuerlig skalning, inte binär haircut/no-haircut).
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09)
+
+**Kort beskrivning (kandidat 6 — analytikeruppskattningars spridning som osäkerhetsproxy):** Hög spridning bland analytikers vinstprognoser (forecast dispersion) för ett bolag har i akademisk litteratur kopplats till lägre framtida avkastning (Diether, Malloy & Scherbina 2002) - tolkat som att hög oenighet/osäkerhet i sig är en riskfaktor institutioner undviker, vilket kan koppla direkt till kapacitetsbegränsningstesen (färre bevakande analytiker + högre oenighet = mer institutionellt undvikande = mer kapacitetsutrymme).
+
+**Varför relevant:** En helt annan datakälla (analytikerkonsensus/-spridning, inte pris eller redovisning) än allt tidigare testat. HÖG DATAOSÄKERHET: small-cap-bolag i detta börsvärdesband har ofta MYCKET gles eller obefintlig analytikerbevakning - måste verifieras separat om EODHD har tillräcklig täckning innan detta är ens genomförbart. Flaggas explicit som den mest osäkra kandidaten datamässigt.
