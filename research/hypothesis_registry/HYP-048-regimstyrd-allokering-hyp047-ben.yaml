@@ -76,9 +76,58 @@ pass_fail_criterion: >
   mer mot bear catcher-benet när marknadsstress redan är förhöjd -
   konsistent med iakttagelsen att exponeringstiming-mekanismer historiskt
   presterat bäst i detta register.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 46
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: 0.9808, cagr: 0.0786, max_drawdown: -0.0936, calmar: 0.8398, oos_2025_sharpe: 1.6066, oos_2025_total_return: 0.3091, oos_2025_max_drawdown: -0.1074, deflated_sharpe_ratio: 0.9141}
+  1000000: {sharpe: 0.9808, cagr: 0.0780, max_drawdown: -0.0906, calmar: 0.8608, oos_2025_sharpe: 1.5629, oos_2025_total_return: 0.3003, oos_2025_max_drawdown: -0.1131, deflated_sharpe_ratio: 0.9143}
+  10000000: {sharpe: 0.9456, cagr: 0.0725, max_drawdown: -0.0855, calmar: 0.8477, oos_2025_sharpe: 1.5433, oos_2025_total_return: 0.2953, oos_2025_max_drawdown: -0.1176, deflated_sharpe_ratio: 0.8917}
+date_tested: '2026-08-09'
+result_summary: >
+  FAILED PA DEN AVGORANDE $100k-NIVAN, PA SAMTLIGA TRE VILLKOR (inte
+  bara ett) - regimomviktningen gjorde resultatet SAMRE an HYP-047:s
+  egen statiska 25/25/25/25-vikt pa alla matt, inte bara otillrackligt
+  battre. Sharpe 0.9808/0.9808/0.9456 (mot HYP-047:s 1.126/1.127/1.102
+  - alla tre klart under, aven under 1.0 rakt av, till skillnad fran
+  HYP-047 sjalv). MaxDD -9.36%/-9.06%/-8.55% (SAMRE, inte battre, an
+  HYP-047:s -8.67%/-8.45%/-8.20% pa alla tre nivaer). OOS-2025-Sharpe
+  1.6066/1.5629/1.5433 mot de i kriteriet lasta jamforelsetalen
+  1.710/1.720/1.780 - FAIL pa alla tre, aven om alla tre OOS-Sharpe-tal
+  fortfarande ar starkt positiva i absoluta tal.
+
+  DIAGNOS: regimindikatorn (SPY 20-dagars vol > rullande 2-ars-median)
+  var STRESS 47.2% av alla dagar (1653/3501) och 25 av 55 kvartalsvisa
+  ombalanseringar (45%) - inte ett sallsynt tillstand utan en nastan
+  myntkast-liknande switch som i praktiken lutade portfoljen mot
+  bear catcher-benet ungefar varannan ombalansering. Bear catcher ar
+  ETT ENDA (SPY-only) instrument med hog negativ korrelation mot SPY
+  (-0.7397, berknat separat fran mom_ls/spy/bear-parvis-matrisen ovan)
+  - att systematiskt oka dess vikt till 35% under "stress" (ett tillstand
+  som triggar nastan halva tiden, langt oftare an de sallsynta genuina
+  kraschtriggren HYP-023/037/045/047 redan anvander) minskar
+  diversifieringen mot momentum L/S-benet (nastan okorrelerat mot bade
+  spy och bear, 0.0748/-0.0780) i manga perioder dar den hoga bear-
+  vikten INTE lonar sig (SPY varken kraschar eller stiger kraftigt -
+  bear catcher da bara kostar borrow+spread utan att ge nagon
+  kompenserande avkastning). Regimindikatorns troskel (median, dvs per
+  konstruktion ~50% av tiden) var i sig for los for att fanga genuint
+  extrema perioder - en strangare percentil (t.ex. 80:e/90:e, som
+  HYP-051:s dispersionsregim redan anvander) hade kunnat ge ett annat
+  resultat, men det ar INTE vad det redan lasta kriteriet specificerar,
+  och testas darfor inte i efterhand har (skulle krava en ny, separat
+  lasning).
+
+  METODOLOGISK NOT: detta ar registrets FORSTA rena regimomviktning
+  MELLAN redan validerade byggstenar (till skillnad fran HYP-037/045/047
+  vars regimer styr EXPONERING mot ett enda ben at gangen) - och den
+  visar samma monster som redan etablerat for urvals-/viktningsforsok
+  pa enskild-signal-niva (HYP-018/022/025-029/031/032/034/036/038, 0/8
+  innan detta test): att OMFORDELA vikt mellan redan bra byggstenar
+  baserat pa en regimsignal har nu FAILAT annu en gang, medan
+  EXPONERINGSTIMING (av/pa ett enskilt ben) star kvar pa 3/3 PASSED
+  (HYP-017/023/037) + HYP-047:s eget PASS. HYP-047 forblir
+  referensimplementationen, oforandrad.
