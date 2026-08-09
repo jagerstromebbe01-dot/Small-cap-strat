@@ -111,7 +111,7 @@ Innan denna rapport skrevs kördes en adversariell audit av hela registret — i
 
 | Hypotes | Sharpe vid $100k (original → korrigerad) | Verdict korrigerad pipeline |
 |---|---|---|
-| HYP-037 (bas) | 0,737 → 0,726 (håller, håller även vid $1M/$10M: 0,741→0,759) | Villkor 1 PASS, **villkor 2 (MaxDD vs HYP-023) FLIPPAR TILL FAIL** på alla tre nivåer |
+| HYP-037 (bas) | 0,737 → 0,726 (håller, håller även vid $1M/$10M: 0,741→0,759) | Villkor 1 PASS. Villkor 2 (MaxDD vs HYP-023): **FAIL/PASS/FAIL** vid $100k/$1M/$10M mot en konsekvent korrigerad HYP-023-baslinje (se not) — inte "FAIL på alla tre" som en tidigare version av denna tabell sa |
 | HYP-039 | 1,019 → 1,017 | **PASS oförändrat** |
 | HYP-041 | 0,998 → 0,988 | FAIL oförändrat |
 | HYP-043 | 1,046 → **0,876** (alla fyra fixar kombinerade) | **FAIL, entydigt** (var PASS) |
@@ -124,7 +124,7 @@ Innan denna rapport skrevs kördes en adversariell audit av hela registret — i
 
 ### 3.2 Kvarstående kända luckor (öppna, inte dolda)
 
-- **HYP-023 korrigerades aldrig självt** — HYP-037:s nu FAIL:ande MaxDD-villkor jämförs mot en okorrigerad baslinje. En fullt konsekvent korrigering av HYP-023 har inte körts.
+- **HYP-023 korrigerades 2026-08-09** (var den sista kända luckan, stängd samma dag som denna sammanfattning skrevs). Även HYP-023 försämras av korrigeringen (MaxDD -25,46/-19,29/-13,16 % → -26,07/-23,59/-14,12 %). Jämfört mot en nu konsekvent korrigerad baslinje blir HYP-037:s villkor 2 **FAIL/PASS/FAIL** (vid $100k/$1M/$10M) istället för det tidigare "FAIL på alla tre nivåer" — marginalerna är rakbladstunna (0,13pp och 0,05pp) snarare än breda. HYP-037:s status förblir korrekt `failed` (villkoret måste hålla på alla tre nivåer), men skillnaden mellan PASS och FAIL är nu synligt liten, inte ett tydligt underkännande.
 - **HYP-037:s OOS-2025 kördes inte om** under den korrigerade pipelinen (avgränsning i gårdagens uppdrag, disclosed explicit).
 - **`status`-fälten för HYP-037 och HYP-043 ändrades formellt till "failed" 2026-08-09** (CEO-beslut, se respektive registerpost) — de klarar inte längre sina egna låsta kriterier under den fullt korrigerade pipelinen. De ursprungliga siffrorna i `capital_level_results` är oförändrade (historik skrivs inte om); bara statusbedömningen är uppdaterad. HYP-039 är därmed den senaste hypotesen i kedjan som fortfarande passerar på egna meriter före HYP-047, och HYP-023 är grunden HYP-039 med flera faktiskt vilar på.
 - **Forward paper trading är fortfarande datablockerad**, inte strategiblockerad — EODHD:s täckning för small/micro-cap-tickers ligger veckor till månader efter i realtid. All validering ovan (huvudperiod, OOS-2025, historiska kriser) är historisk data. OOS-2025 är den bästa tillgängliga approximationen av genuin framåtvalidering, men är det inte i egentlig mening.
