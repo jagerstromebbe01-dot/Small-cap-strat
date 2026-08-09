@@ -1,0 +1,92 @@
+{
+  "per_capital_level": {
+    "100000": {
+      "main": {
+        "sharpe": -0.10127526522951899,
+        "cagr": -0.005393801301972978,
+        "max_drawdown": -0.7300224331505439,
+        "calmar": -0.007388541854385286,
+        "n_days": 3461
+      },
+      "main_ref_no_overlay": {
+        "sharpe": 0.01842307687710831,
+        "cagr": 0.01089406369490642,
+        "max_drawdown": -0.7234851242373552,
+        "calmar": 0.015057757692516677,
+        "n_days": 3461
+      },
+      "oos_2025": {
+        "sharpe": 1.7320121401818906,
+        "max_drawdown": -0.20661564144831507,
+        "total_return": 0.8380754651469353
+      },
+      "oos_2025_ref_no_overlay": {
+        "sharpe": 1.5622860014527662,
+        "max_drawdown": -0.29737011817439657,
+        "total_return": 0.8433220711921185
+      },
+      "condition_1_pass": false,
+      "condition_2_pass": false
+    },
+    "1000000": {
+      "main": {
+        "sharpe": -0.10127526522951899,
+        "cagr": -0.005393801301972978,
+        "max_drawdown": -0.7300224331505439,
+        "calmar": -0.007388541854385286,
+        "n_days": 3461
+      },
+      "main_ref_no_overlay": {
+        "sharpe": 0.01842307687710831,
+        "cagr": 0.01089406369490642,
+        "max_drawdown": -0.7234851242373552,
+        "calmar": 0.015057757692516677,
+        "n_days": 3461
+      },
+      "oos_2025": {
+        "sharpe": 1.7320121401818906,
+        "max_drawdown": -0.20661564144831507,
+        "total_return": 0.8380754651469353
+      },
+      "oos_2025_ref_no_overlay": {
+        "sharpe": 1.5622860014527662,
+        "max_drawdown": -0.29737011817439657,
+        "total_return": 0.8433220711921185
+      },
+      "condition_1_pass": false,
+      "condition_2_pass": false
+    },
+    "10000000": {
+      "main": {
+        "sharpe": -0.10127526522951899,
+        "cagr": -0.005393801301972978,
+        "max_drawdown": -0.7300224331505439,
+        "calmar": -0.007388541854385286,
+        "n_days": 3461
+      },
+      "main_ref_no_overlay": {
+        "sharpe": 0.01842307687710831,
+        "cagr": 0.01089406369490642,
+        "max_drawdown": -0.7234851242373552,
+        "calmar": 0.015057757692516677,
+        "n_days": 3461
+      },
+      "oos_2025": {
+        "sharpe": 1.7320121401818906,
+        "max_drawdown": -0.20661564144831507,
+        "total_return": 0.8380754651469353
+      },
+      "oos_2025_ref_no_overlay": {
+        "sharpe": 1.5622860014527662,
+        "max_drawdown": -0.29737011817439657,
+        "total_return": 0.8433220711921185
+      },
+      "condition_1_pass": false,
+      "condition_2_pass": false
+    }
+  },
+  "no_overlay_recomputed_determinism_check": {
+    "sharpe": 0.018423076877108938,
+    "max_drawdown": -0.7234851242373552
+  }
+}
