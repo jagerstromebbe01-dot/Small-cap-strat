@@ -1,0 +1,64 @@
+# LÅST 2026-08-09 av CEO i chatt. Del av BATCH-002 (7 kandidater,
+# HYP-048 till HYP-054) - se HYP-048:s registerpost för fullständig
+# batch-motivering och procedurregler.
+#
+# UNIK KANDIDAT (ingen konvergens mellan källor, men ovanligt ren
+# koppling till projektets kapacitetsbegränsningstes - indexfonder
+# TVINGAS sälja/köpa oavsett fundamenta, det mekaniska tvånget ÄR
+# kapacitetsbegränsningen i sin renaste form). Källa: en separat
+# Claude-session, kandidat 4.
+#
+# ⚠️ DATABEROENDE, EJ VERIFIERAT: kräver indexmedlemskaps-/effektiv-
+# datum för relevant småbolagsindex (t.ex. Russell 2000/2500). Ingen
+# befintlig pipeline för detta finns i repot (verifierat 2026-08-09,
+# grep mot data/ och scripts/ gav inga träffar). MÅSTE datakontrolleras
+# INNAN Coder-rollen börjar implementera - se scripts/validate_hypothesis.py,
+# som ändå hårdblockerar körning tills detta är löst.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-052
+date_registered: '2026-08-09'
+title: Russell-rekonstitutionens tvångsflödessignal
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla, plus
+  extern indexmedlemskapsdata (se databeroende-varning ovan)
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World för priser, 2010-2024 + genuin blind OOS-2025. Extern
+  indexmedlemskapsdata krävs för hela perioden - feasibility EJ bekräftad.
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar, VILLKORAT av datafeasibility):
+
+  Vid det årliga Russell-indexrekonstitutionsfönstret (slutet av juni,
+  exakt effektivdatum enligt FTSE Russells offentliga annonsering varje
+  år): identifiera small-cap-namn i det eligible-universumet ($100M-$2B)
+  som UTESLUTS ur relevant Russell-index vid detta tillfälle (tvångssålda
+  av indexfonder/ETF:er oavsett fundamenta). Köp dessa namn systematiskt
+  5 handelsdagar EFTER effektivdatumet (undviker att själv delta i det
+  mest akuta säljtrycket), likaviktat, håll 4-8 veckor (låst till 6
+  veckor, mittpunkten - INTE fritt valt efter resultat).
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, flag_implausible_liquidity()), ingen kort sida
+  (ingen friktion från blankning att modellera).
+
+  PASS KRÄVER, RAPPORTERAT ÖVER DE AKTIVA HANDELSFÖNSTREN (inte helåret
+  - annualiserat Sharpe-mått från en kort aktiv period per år, redovisas
+  explicit som sådant, inte jämförbart rakt av med helårsstrategier):
+  Sharpe >= 0.55 på samtliga tre kapitalnivåer.
+
+  FAIL om golvet inte nås, ELLER om datafeasibility-kontrollen (se
+  ⚠️-notering ovan) visar att tillförlitlig indexmedlemskapsdata inte
+  går att få tag på för hela 2010-2024-perioden till rimlig kostnad -
+  i så fall avbryts hypotesen INNAN backtest körs, redovisas öppet som
+  ett feasibility-FAIL, inte ett tyst bortfall.
+
+  Diagnostiskt syfte: testar kapacitetsbegränsningstesen i sin renaste,
+  mest mekaniska form - en tvångsdriven, icke-informationsdriven
+  prispress som en kapacitetsobegränsad aktör (till skillnad från
+  indexfonderna som orsakar den) kan vänta ut.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 50
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000

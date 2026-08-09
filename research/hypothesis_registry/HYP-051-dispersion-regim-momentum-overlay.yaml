@@ -1,0 +1,58 @@
+# LÅST 2026-08-09 av CEO i chatt. Del av BATCH-002 (7 kandidater,
+# HYP-048 till HYP-054) - se HYP-048:s registerpost för fullständig
+# batch-motivering och procedurregler.
+#
+# KONVERGENSURVAL: föreslogs OBEROENDE av två av fyra externa AI-källor
+# (ChatGPT #6, en separat Claude-session #1), besläktat med Groks
+# vol-of-vol-förslag (#6).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-051
+date_registered: '2026-08-09'
+title: Tvärsnittsdispersion som exponeringsregim på momentum L/S-sviten
+universe: "N/A för själva regimsignalen (mäts över hela eligible-universumet,
+  ingen ny urvalslogik). Appliceras som overlay PÅ HYP-043:s redan byggda
+  momentum L/S-svit (ORÖRD i övrigt), samma small-cap-universum ($100M-$2B)."
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World (återanvänder
+  HYP-037/043:s redan låsta definition)
+data_range: EODHD All-World, samma huvudperiod (2010-2024) + genuin blind OOS-2025
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar):
+
+  REGIMINDIKATOR: daglig tvärsnitts-standardavvikelse av samtliga eligible-
+  namns dagliga avkastningar (INTE tidsserie-volatilitet för ett enskilt
+  index - genuint tvärsnittsmått, beräknat separat varje handelsdag över
+  hela det aktuella månadens eligible-universum). Rullande 2-års (504
+  handelsdagars) percentil av detta mått.
+
+  TRIGGER: när dagens tvärsnittsdispersion faller under sin egen 20:e
+  percentil (extremt LÅG dispersion - tecken på att korrelationen mellan
+  namn stigit och den idiosynkratiska drivkraften momentum L/S-sviten
+  bygger på är svagare än normalt), HALVERAS nettoexponeringen (både
+  long- och kortbenet) i momentum L/S-sviten tills dispersionen åter
+  överstiger 20:e percentilen. Kontrolleras VARJE handelsdag, appliceras
+  vid nästa handelsdag efter trigger.
+
+  Momentum L/S-sviten i övrigt HELT OFÖRÄNDRAD (samma 12-1-månaders
+  signal, decilstorlek, kvartalsvis ombalansering, friktion som HYP-043:s
+  redan korrigerade, spreadinklusive variant).
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  1. Sharpe för sviten MED overlay > sviten UTAN overlay (HYP-043:s egen
+     isolerade, fullt korrigerade momentum L/S-serie, se dess DEL A/E-
+     tilläggsnoter för referensvärdet).
+  2. MaxDD för sviten MED overlay INTE sämre än UTAN.
+
+  FAIL om något villkor faller vid $100k.
+
+  Diagnostiskt syfte: testar om en tvärsnittsstruktur-baserad regimsignal
+  (skiljer sig från alla redan använda pris-nivå-kraschtriggrar) kan
+  skydda momentum L/S-sviten specifikt under perioder då dess grundtes
+  (idiosynkratisk, aktiespecifik prisbildning) är som svagast.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 49
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000

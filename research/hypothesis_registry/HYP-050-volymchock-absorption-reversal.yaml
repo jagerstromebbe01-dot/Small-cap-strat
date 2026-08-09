@@ -1,0 +1,70 @@
+# LÅST 2026-08-09 av CEO i chatt. Del av BATCH-002 (7 kandidater,
+# HYP-048 till HYP-054) - se HYP-048:s registerpost för fullständig
+# batch-motivering och procedurregler.
+#
+# KONVERGENSURVAL: "volymchock/institutionell absorption" var det mest
+# konvergenta temat av alla ~35 förslag (varianter hos ChatGPT #1,
+# Grok #1+#5, en separat Claude-session #7, Gemini #4) - men källorna
+# var OENIGA om riktning (reversal-efter-chock vs. följ-flödet). Claude
+# valde REVERSAL-riktningen medvetet: den adresserar HYP-042:s
+# specifika dödsorsak (kortsiktig reversal FAILADE katastrofalt,
+# MaxDD -98/-99%, för att många "förlorare" var genuint kollapsande
+# bolag) mest direkt genom att KRÄVA hög volym utan stort prisutslag
+# som ett filter mot genuin distress, inte bara låg trailing-avkastning.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-050
+date_registered: '2026-08-09'
+title: Volymchock utan prisabsorption - kortsiktig reversal med distress-filter
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma huvudperiod (2010-2024) + genuin blind OOS-2025,
+  samma motorkrav som resten av registret
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar):
+
+  TRIGGER (kontrolleras VARJE handelsdag, inte bara vid ombalansering):
+  en akties dagliga volym > 3x sin egen rullande 60-dagars median-volym,
+  OCH samma dags absoluta avkastning (adjusted_close) ligger under
+  20:e percentilen av dess egen rullande 60-dagars absolut-avkastnings-
+  fördelning (dvs "mycket volym, litet prisutslag" - potentiell
+  absorption snarare än ett verkligt informationsdrivet hopp).
+
+  POSITION: gå LONG nästa handelsdag efter trigger, likaviktat över
+  samtliga namn triggade samma vecka (undviker överkoncentration i en
+  enskild trigger-dag). Håll 5-10 handelsdagar (låst till 7 handelsdagar,
+  mittpunkten i intervallet - INTE fritt valt efter att ha sett resultat).
+  Ingen kort sida i denna variant.
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, flag_implausible_liquidity()) samt Corwin-Schultz-
+  spread på entry/exit - friktion inbyggd från start.
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  1. Sharpe (efter friktion) >= 0.55.
+  2. MaxDD INTE sämre än -50% (ett explicit, i förväg satt tak - motiverat
+     av att HYP-042:s okontrollerade reversal-katastrof (-98/-99%) är den
+     tydligaste varningen i hela registret om vad som händer när en
+     reversal-liknande signal exponeras mot genuint kollapsande bolag;
+     detta villkor är EXTRA utöver standardgolvet, specifikt för denna
+     signaltyp).
+
+  FAIL om något villkor faller vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating, men måste rapporteras): andel av
+  triggade positioner som tillhörde bolag i finansiell distress vid
+  triggertillfället (samma typ av postmortem-kontroll som HYP-042 fick
+  i efterhand) - för att verifiera att distress-filtret (låg prisrörelse
+  trots hög volym) faktiskt fungerade som avsett.
+
+  Diagnostiskt syfte: testar om "mycket volym utan proportionerligt
+  prisutslag" kan isolera genuin, temporär likviditetsabsorption från
+  genuin, varaktig distress - den specifika skillnad som gjorde att
+  HYP-042:s enklare reversal-signal inte kunde göra.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 48
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000

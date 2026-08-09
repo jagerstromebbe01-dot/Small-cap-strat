@@ -1,0 +1,71 @@
+# LÅST 2026-08-09 av CEO i chatt. Del av BATCH-002 (7 kandidater,
+# HYP-048 till HYP-054) - se HYP-048:s registerpost för fullständig
+# batch-motivering och procedurregler.
+#
+# KONVERGENSURVAL: föreslogs OBEROENDE av Claude (egen kandidat 2,
+# 2026-08-09, se candidate_ideas.md) och en separat Claude-session
+# (kandidat 6) - "lånekostnad/tillgänglighet som carry-signal, inte
+# bara friktion" var samma idé, oberoende föreslagen.
+#
+# ⚠️ DATABEROENDE, EJ VERIFIERAT: kräver FINRA bimånatlig short-interest-
+# data. Ingen befintlig pipeline för detta finns i repot (verifierat
+# 2026-08-09). MÅSTE datakontrolleras INNAN Coder-rollen börjar
+# implementera.
+# ⚠️ KÄND MOTORBEGRÄNSNING (redan flaggad i forskningsrapporten
+# 2026-08-09): kort TILLGÄNGLIGHET (short availability/recall risk) är
+# fortfarande INTE modellerad i backtest-motorn - bara lånekostnad
+# (borrow_cost). Detta är en projektbred, långvarig lucka, inte
+# specifik för denna hypotes, men särskilt relevant HÄR eftersom
+# hypotesen direkt handlar om blankningsmarknadens struktur.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-054
+title: Short interest / days-to-cover som carry-signal
+date_registered: '2026-08-09'
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla, plus
+  extern FINRA short-interest-data (se databeroende-varning ovan)
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World för priser, 2010-2024 + genuin blind OOS-2025. FINRA
+  short-interest-data krävs för hela perioden (bimånatlig frekvens) - feasibility
+  EJ bekräftad.
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar, VILLKORAT av datafeasibility):
+
+  Vid varje FINRA-rapporteringsdatum (bimånatlig frekvens, ~2 gånger/
+  månad): beräkna days-to-cover (short interest / genomsnittlig daglig
+  volym senaste 20 dagarna) per eligible-namn, samt förändringen i
+  short interest sedan föregående rapport.
+
+  LONG-BEN ("carry-positiva shorts", men LONG i denna variant för att
+  undvika att blanda in blankningsfriktion på fel ben): namn med LÅGT
+  och FALLANDE short interest kombinerat med stabilt fallande pris
+  senaste 60 dagarna (nedre tredjedelen på båda måtten samtidigt).
+  KORT-BEN ("squeeze-risk", undviks/blankas ner): namn med HÖGT och
+  STIGANDE days-to-cover (övre tredjedelen på båda måtten samtidigt).
+  Likaviktat inom vardera benet, dollarneutralt, ombalansering vid
+  varje FINRA-rapporteringsdatum.
+
+  MOTORKRAV: samma tre grundfixar, Corwin-Schultz-spread + borrow_cost
+  (3%/år) på kortbenet - men INTE en tillgänglighetsspärr (se
+  ⚠️-notering ovan, känd begränsning, inte tyst utelämnad).
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  Sharpe (efter friktion, EXKLUSIVE ej modellerad tillgänglighets-
+  begränsning) >= 0.55.
+
+  FAIL om golvet inte nås, ELLER om datafeasibility-kontrollen visar att
+  FINRA-data inte är åtkomlig/tillräckligt komplett för perioden - i så
+  fall avbryts hypotesen INNAN backtest körs, redovisas öppet.
+
+  Diagnostiskt syfte: testar om blankningsmarknadens egen struktur
+  (D'Avolio 2002, redan citerad i candidate_ideas.md) är en direkt
+  ALFA-signal, inte bara en kostnad att dra av - en genuint annan
+  datakälla och mekanism än allt tidigare testat (insiderköp, redan
+  avfärdat, är en annan signaltyp helt).
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 52
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
