@@ -44,9 +44,63 @@ pass_fail_criterion: >
   HYP-042:s misslyckade kortsiktiga reversal genom att signalen är
   tidsstyrd av en extern, känd händelse snarare än av prisrörelsen
   själv.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: passed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 51
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: 1.5738, cagr: 0.0455, max_drawdown: -0.1940, calmar: 0.2346, deflated_sharpe_ratio: 0.3023}
+  1000000: {sharpe: 1.3971, cagr: 0.0364, max_drawdown: -0.1908, calmar: 0.1908, deflated_sharpe_ratio: 0.2357}
+  10000000: {sharpe: 1.0042, cagr: 0.0211, max_drawdown: -0.1485, calmar: 0.1421, deflated_sharpe_ratio: 0.1205}
+date_tested: '2026-08-09'
+result_summary: >
+  PASSED PA BADA VILLKOREN, PA ALLA TRE KAPITALNIVAER. Aktiv-fonster-
+  Sharpe (annualiserad fran enbart de ~322 aktiva handelsdagarna over
+  15 arliga fonster, INTE fran hela kalenderaret - per kriteriets egen
+  instruktion) = 1.5738/1.3971/1.0042 vid 100k/1M/10M, klart over
+  0.55-golvet pa alla tre. Varsta enskilda arsfonstrets MaxDD (peak-to-
+  trough INOM det fonstret, inte lopande over hela 15-arsserien) =
+  -19.40%/-19.08%/-14.85%, klart innanfor det explicita -40%-taket pa
+  alla tre. Sharpen faller monotont med kapitalniva (ADV-kapacitetsspärren
+  binder alltmer vid $1M/$10M, samma monster som registrets ovriga
+  fristaende signaltest) men aldrig under golvet.
+
+  cagr/calmar ovan ar en KOMPLETTERANDE, INTE gating, helhetsberkning
+  (start- till slutkapital over hela 15.99-arsperioden, portfoljen
+  sitter kontant ~11 av 12 manader/ar) - INTE samma matt som den
+  aktiva-fonster-Sharpen kriteriet faktiskt kraver, blandas inte ihop.
+
+  OBLIGATORISK DISCLOSURE (avkastning per enskilt ars fonster, $100k-
+  nivan): 2010 +11.3%, 2011 +2.9%, 2012 +11.3%, 2013 +12.9%, 2014 -0.1%,
+  2015 -16.3%, 2016 +3.4%, 2017 +9.9%, 2018 +12.6%, 2019 +7.4%,
+  2020 +23.0%, 2021 -18.4%, 2022 +11.7%, 2023 -0.7%, 2024 +10.5%. Elva
+  av femton ar positiva, ingen enskild ar dominerar resultatet i den
+  utstrackning HYP-035 (insiderkop) eller HYP-042 (reversal) gjorde -
+  storsta enskilda forlustaret (2021, -18.4%) ar val innanfor -40%-
+  taket och ar INTE tillrackligt for att ensamt forklara helheten.
+
+  DSR (K=52, RF=2%/ar) = 0.3023/0.2357/0.1205 - LAGT, trots att bade
+  Sharpe- och MaxDD-villkoren PASSERAR TYDLIGT. Detta ar INGEN
+  motsagelse: DSR straffar hart har av tva skal SAMTIDIGT (i) bara
+  ~322 aktiva observationer totalt (mycket kortare serie an registrets
+  ovriga signaltest, som ofta har tusentals handelsdagar), och (ii) ett
+  redan hogt K=52 vid lasningstillfallet. Ett kriterium med ett
+  numeriskt Sharpe-golv (0.55) ar INTE samma fraga som "ar detta
+  sannolikt genuint givet K forsok" - bagge svaren rapporteras har
+  öppet, utan att nagondera stryker over den andra. Den lasta PASS-
+  slutsatsen star pa kriteriets EGNA, redan definierade villkor (som
+  inte innehaller nagot DSR-troskelvarde) - men den laga DSR:n ar en
+  viktig, explicit varningsflagga for hur mycket tillit man bor satta
+  till just DENNA hypotes fore genuin forward-validering (paper trading
+  ar for narvarande deprioriterad, se CLAUDE.md).
+
+  Diagnostiskt: konsistent med en klassisk, mekaniskt motiverad
+  kalenderanomali (skatteregeldriven sasongsforsaljning i december,
+  ateropphamtning i januari) snarare an en overreaktionsbaserad tes som
+  HYP-042:s (kortsiktig reversal, som FAILADE katastrofalt) - mojligt
+  att den tidsstyrda (INTE prisstyrda) triggern undviker HYP-042:s
+  dodsorsak (att fanga genuint kollapsande bolag) genom att bara handla
+  EN GANG per ar i ett smalt, forutbestamt fonster, snarare an att
+  jaga varje veckas nya "forlorare".
