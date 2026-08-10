@@ -88,9 +88,106 @@ pass_fail_criterion: >
   NEGATIV/substituerande spridningseffekt - CEO:s egen idé, skild från
   både Ejay (inget signalviktningsmått inblandat) och klassisk parhandel
   (ingen statisk spread, riktad och tidsfördröjd relation istället).
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 53
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: -2.9690, cagr: -0.5092, max_drawdown: -0.9999, calmar: -0.5093, deflated_sharpe_ratio: 0.000000}
+  1000000: {sharpe: -2.9980, cagr: -0.5112, max_drawdown: -0.9999, calmar: -0.5113, deflated_sharpe_ratio: 0.000000}
+  10000000: {sharpe: -2.7388, cagr: -0.4987, max_drawdown: -0.9998, calmar: -0.4988, deflated_sharpe_ratio: 0.000000}
+date_tested: '2026-08-10'
+result_summary: >
+  FAILED KATASTROFALT PA DEN AVGORANDE $100k-NIVAN, PA BADA VILLKOREN
+  (rapporterat for alla tre nivaer per kriteriet). Sharpe -2.9690/-2.9980/
+  -2.7388 vid 100k/1M/10M (langt under 0.55-golvet, negativt pa alla tre -
+  inte ett gransfall), MaxDD -99.99%/-99.99%/-99.98% (langt utanfor det
+  explicita -50%-taket - praktiskt taget total utplaning av kapitalet
+  over 15 ar). CAGR -50.9%/-51.1%/-49.9%. DSR ~0.000000 vid K=54 pa alla
+  tre - i praktiken noll, helt konsistent med kraftigt negativ ra Sharpe
+  (ingen motsagelse mot den laga DSR:n, till skillnad fran HYP-053s fall
+  dar Sharpen PASSADE men DSR anda var lag).
+
+  MEKANISMEN EXERCERADES GENUINT OCH REGELBUNDET - inte ett no-op-
+  resultat: 822 veckor utvarderade, 97.8% hade minst en kvalificerande
+  bransch (>=6 eligible namn), snitt 21.0 kvalificerande branscher/vecka,
+  81.3% av veckorna hade minst EN faktisk trigger (kop eller salj) i
+  nagon bransch, 5664 triggers totalt (2886 long, 2778 short) over 47
+  distinkta SIC-huvudgrupper, 3926-4652 avslutade positioner beroende pa
+  kapitalniva, snitt 5.83-6.91 samtidigt oppna branschpositioner/dag
+  (max 26). Forsta trigger ~2012 (efter branschspecifik 504-dagars
+  varmkorning, som vantat).
+
+  OBLIGATORISK UTREDNING INNAN FINALISERING (per CEO-instruktion,
+  eftersom -99.99% MaxDD ar sa extremt att det kraver samma disciplin
+  som redan etablerad for HYP-042/049/050 - se scripts/ eller
+  strategies/HYP-055/results/trade_log_diagnostic_100000.csv for fullstandig
+  loggning av samtliga 3926 avslutade $100k-positioner):
+
+  1. INTE en enskild exploderad blankning (short squeeze) som dominerar:
+     bara 0.13% av alla positioner (5 av 3926) forlorade mer an 50% av
+     sin egen notional pa den enskilda 5-dagars-hallperioden - varsta
+     enskilda trade var -77.8%. Forlusten ar BRED och JAMN over hela
+     provperioden och BADA riktningar: 64.1% av alla positioner var
+     forlorare, med praktiskt taget IDENTISK genomsnittlig nettoavkastning
+     pa long- (-1.71%) och kortbenet (-1.94%) - ingen asymmetri som skulle
+     peka pa ett riktningsspecifikt fel eller en obegransad-forlust-bugg
+     pa kortsidan. Snittavkastning per position -1.82% (std 7.2%), som
+     sedan sammansatts over ~3900 upprepade positioner over 15 ar till en
+     nastan total utplaning - matematiskt tillrackligt for att forklara
+     hela resultatet, ingen ytterligare bugg kravs.
+
+  2. INGET stop-loss eller forlust-tak per enskild position finns i
+     implementationen (bara ADV-kapacitetstaket vid ENTRY, som begransar
+     positionsSTORLEK men inte den lopande forlusten under hallperioden) -
+     detta ar en MEDVETEN konsekvens av att kriteriet, sa som last, inte
+     specificerar nagon sadan riskkontroll (till skillnad fran t.ex.
+     BATCH-001:s explicita stop-loss-varianter pa HYP-023), INTE ett
+     implementationsfel. Punkt 1 ovan visar att detta INTE var den
+     faktiska orsaken till utplaningen (ingen enskild position exploderade
+     okontrollerat) - men det ar ett viktigt oppet redovisat gap om denna
+     mekanism nagonsin skulle byggas vidare pa.
+
+  3. SIGNALRIKTNINGEN AR VERIFIERAD KORREKT mot kriterietexten: ledarkorg
+     i OVERSTA kvintilen (>=80:e percentilen) -> KORTA foljarkorgen
+     (n_short_triggers=2778), ledarkorg i NEDERSTA kvintilen (<=20:e
+     percentilen) -> KOP foljarkorgen (n_long_triggers=2886) - granskad
+     rad for rad i build_weekly_group_signals(), ingen omvand signal.
+
+  DIAGNOS: mekanismen ar INTE ett no-op eller en implementationsbugg -
+  den ar ett genuint, brett, konsekvent FEL-RIKTAT vad. Kriteriets egen
+  ursprungsmotivering namner explicit att den etablerade lead-lag-
+  litteraturen (Lo & MacKinlay 1990, Cohen & Frazzini 2008) oftast
+  beskriver POSITIV spridning (information sprids fran valbevakade till
+  svagt bevakade bolag - foljare TENDERAR att gora SAMMA sak som ledarna,
+  bara fordrojt), medan CEO:s egen hypotes explicit satsade pa en
+  NEGATIV/substituerande spridning. Detta resultat ar starkt konsistent
+  med att den KLASSISKA POSITIVA spridningen dominerar i detta small-cap-
+  universum: att konsekvent blanka foljare efter att ledarna redan gatt
+  UPP kraftigt (och kopa efter att ledarna gatt NER kraftigt) forlorar
+  systematiskt om foljarna i praktiken TENDERAR ATT FOLJA EFTER i SAMMA
+  riktning inom de foljande 5 dagarna, snarare an att rotera at motsatt
+  hall. Ocksa konsistent med registrets redan tre ganger bekraftade
+  monster att reversal-liknande mekanismer (som satsar pa kortsiktig
+  atervandning/substitution snarare an fortsatt riktning) misslyckas
+  katastrofalt i detta universum (HYP-013, HYP-042, HYP-050) - HYP-055
+  ar en FJARDE, oberoende bekraftelse av samma monster, nu i en helt ny
+  mekanisk form (branschbaserad likviditets-ledare/foljare snarare an
+  ett enskilt namns egen historik).
+
+  Kapitalnivaskillnaden ar liten (MaxDD -99.99%/-99.99%/-99.98%) trots
+  att ADV-kapacitetstaket GENUINT verkar (skilda "for sma/ADV-tak"-
+  avvisningar per niva: 1417/1378/647, skilda antal nya positioner:
+  3926/3966/4652) - detta ar FORVANTAT, inte ett tecken pa att
+  kapacitetstaket ar trasigt: nar nastan varje position har negativ
+  forvantad avkastning och kapitalet ateranvands (cash/n_nya_branscher)
+  position efter position over 15 ar, blir den kumulativa
+  multiplikativa utplaningen i praktiken skalinvariant - marginellt
+  utspatt vid $10M (nagot mindre andel av portfoljen exponerad per
+  trade tack vare ADV-taket) rakcker inte for att undvika samma
+  nastan-total-utplaning inom en 15-ars-period.
+
+  Ejay/Kelly ej inblandat. HYP-047 forblir referensimplementationen,
+  oforandrad.
