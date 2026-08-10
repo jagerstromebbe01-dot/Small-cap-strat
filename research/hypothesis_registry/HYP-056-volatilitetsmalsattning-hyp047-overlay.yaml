@@ -1,0 +1,91 @@
+# LÅST 2026-08-10 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# URSPRUNG: Fas B av CEO:s marknadskaraktäristik-idé (2026-08-09/10) -
+# Fas A (scripts/diagnostic_hyp055_market_similarity_fas_a.py, ingen
+# K-kostnad) jämförde small-cap mot guld, crypto och high-yield-
+# obligationer på fyra oberoende mått (volatilitet, spread,
+# autokorrelation, volymoregelbundenhet). Crypto vann tydligast på
+# SAMTLIGA fyra mått (total avvikelse 252% mot guld 394%, high-yield
+# 521%). Volatilitetsmålsättning (vol-targeting) valdes som Fas B-
+# mekanism enligt principen "minst redan testat i registret" (inte
+# "vad som känns lovande") - en väletablerad managed-futures/crypto-
+# teknik (Barroso & Santa-Clara 2015, redan citerad i
+# candidate_ideas.md för en annan tillämpning) som aldrig testats som
+# egen, fristående hypotes här.
+#
+# EXPLICIT AVGRÄNSNING: klassisk vol-targeting tillåter HÄVSTÅNG
+# (skala upp exponering över 100% i lugna perioder) - det ligger
+# UTANFÖR denna konversations scope (hävstång/kapitalstruktur
+# hanteras separat på annat håll, se tidigare instruktion). Denna
+# variant är därför MEDVETET ASYMMETRISK: skalaren kan ALDRIG
+# överstiga 1.0 (ingen hävstång), bara skala NER mot kontanter vid
+# förhöjd volatilitet. Testar alltså bara den defensiva halvan av
+# vol-targeting-tekniken.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-056
+date_registered: '2026-08-10'
+title: Volatilitetsmålsättning (defensiv, ingen hävstång) som overlay på HYP-047
+universe: "N/A - portföljnivå-overlay på HYP-047:s redan existerande fyra ben.
+  Ingen ny small-cap-signal, inget nytt universum."
+small_cap_definition: "N/A - se HYP-047:s egen redan låsta definition, oförändrad."
+data_range: "Samma period som HYP-047 (2010-2024 huvudperiod + genuin OOS-2025),
+  återanvänder HYP-047:s redan beräknade (korrigerade, 2026-08-08) avkastningsserier
+  för samtliga fyra ben oförändrade."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Vid VARJE veckoslut: beräkna HYP-047-portföljens (redan kombinerad,
+  25/25/25/25-vikt, oförändrad från dess egen registerpost) rullande
+  60-dagars realiserade volatilitet (annualiserad std av dagliga
+  avkastningar). Jämför mot samma portföljs egen rullande 2-års
+  (504 handelsdagars) MEDIAN-volatilitet (självrefererande mål -
+  inget godtyckligt fast volatilitetstal väljs).
+
+  EXPONERINGSSKALA (asymmetrisk, ingen hävstång):
+  skala = MIN(1.0, mål-volatilitet / dagens 60-dagars-volatilitet)
+  skala = MAX(0.3, skala)  [golv - undviker att exponeringen går mot
+  noll under extremt lugna-i-efterhand perioder]
+
+  Portföljens totala exponering multipliceras med denna skala varje
+  vecka (samtliga fyra ben skalas proportionellt, deras INBÖRDES
+  25/25/25/25-vikt är OFÖRÄNDRAD). Overigt kapital (1 - skala) hålls
+  i kontanter, förräntat till RF_ANNUAL (2%/år, samma konvention som
+  resten av registret). Skalan kan ALDRIG överstiga 1.0 - se avgränsning
+  ovan.
+
+  MOTORKRAV: ingen ny friktion utöver vad HYP-047:s egna fyra ben redan
+  har - detta är en ren exponeringsskalning ovanpå redan beräknade
+  avkastningsserier, ingen ny handel i enskilda aktier.
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre nivåer, samma jämförelsekonvention som HYP-048):
+  1. Sharpe (2010-2024, friktionskorrekt) > HYP-047:s egen korrigerade
+     Sharpe (1.126/1.127/1.102 vid 100k/1M/10M).
+  2. MaxDD BÄTTRE (mindre negativ) än HYP-047:s egen korrigerade MaxDD
+     (-8.67%/-8.45%/-8.20%).
+  3. OOS-2025 Sharpe > HYP-047:s egen korrigerade OOS-2025 Sharpe
+     (1.710/1.720/1.780).
+
+  FAIL om något villkor faller vid $100k-nivån.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): genomsnittlig och lägsta
+  exponeringsskala över perioden, samt andel veckor där skalan var
+  under 1.0 (för att verifiera att mekanismen faktiskt exercerades
+  regelbundet, inte bara vid enstaka extremtillfällen).
+
+  Diagnostiskt syfte: testar om en KONTINUERLIG, självrefererande
+  volatilitetsskalning (crypto/managed-futures-teknik, defensiv
+  variant utan hävstång) förbättrar på HYP-047:s statiska full-
+  exponering - strukturellt skild från HYP-048:s BINÄRA omviktning
+  MELLAN ben (som redan FAILADE): denna mekanism skalar TOTAL
+  exponering mot KONTANTER kontinuerligt, ändrar aldrig benens
+  inbördes sammansättning.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 54
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
