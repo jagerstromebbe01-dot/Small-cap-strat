@@ -1,0 +1,104 @@
+{
+  "100000": {
+    "main": {
+      "sharpe": -1.4171859687221857,
+      "cagr": -0.3407093600459308,
+      "max_drawdown": -0.994937318332735,
+      "calmar": -0.3424430401473673,
+      "n_days": 3116
+    },
+    "oos_2025": {
+      "sharpe": 0.884435018895036,
+      "max_drawdown": -0.25058520233109094,
+      "total_return": 0.3756430724172424,
+      "n_days": 250
+    },
+    "condition_1_sharpe_pass": false,
+    "condition_2_maxdd_pass": false,
+    "deflated_sharpe_ratio": 1.0859063803934449e-12,
+    "dsr_skewness": 0.3469931805140825,
+    "dsr_kurtosis": 26.005580349460313,
+    "dsr_n_obs": 3115,
+    "dsr_n_trials": 56,
+    "stats": {
+      "n_new_entries": 4868,
+      "n_weeks_with_entry_batch": 662,
+      "n_signals_skipped_already_open": 388,
+      "n_signals_skipped_too_small": 408,
+      "avg_open_positions_per_day": 7.230540701128937,
+      "max_open_positions": 26
+    }
+  },
+  "1000000": {
+    "main": {
+      "sharpe": -1.3641141209224812,
+      "cagr": -0.32558188723966996,
+      "max_drawdown": -0.9932659845819076,
+      "calmar": -0.3277892249342618,
+      "n_days": 3116
+    },
+    "oos_2025": {
+      "sharpe": 0.8844350188950333,
+      "max_drawdown": -0.25058520233109083,
+      "total_return": 0.37564307241724104,
+      "n_days": 250
+    },
+    "condition_1_sharpe_pass": false,
+    "condition_2_maxdd_pass": false,
+    "deflated_sharpe_ratio": 4.997857737450085e-12,
+    "dsr_skewness": 0.522263784773572,
+    "dsr_kurtosis": 26.835392060423715,
+    "dsr_n_obs": 3115,
+    "dsr_n_trials": 56,
+    "stats": {
+      "n_new_entries": 5013,
+      "n_weeks_with_entry_batch": 662,
+      "n_signals_skipped_already_open": 390,
+      "n_signals_skipped_too_small": 261,
+      "avg_open_positions_per_day": 7.445929887106358,
+      "max_open_positions": 26
+    }
+  },
+  "10000000": {
+    "main": {
+      "sharpe": -1.2368787855460537,
+      "cagr": -0.23042887210348728,
+      "max_drawdown": -0.9632368150307783,
+      "calmar": -0.23922348949684236,
+      "n_days": 3116
+    },
+    "oos_2025": {
+      "sharpe": 0.897261434075753,
+      "max_drawdown": -0.25058520233109094,
+      "total_return": 0.37273576063068425,
+      "n_days": 250
+    },
+    "condition_1_sharpe_pass": false,
+    "condition_2_maxdd_pass": false,
+    "deflated_sharpe_ratio": 1.0256558774960696e-10,
+    "dsr_skewness": 0.3891611674010773,
+    "dsr_kurtosis": 46.82779648242629,
+    "dsr_n_obs": 3115,
+    "dsr_n_trials": 56,
+    "stats": {
+      "n_new_entries": 5259,
+      "n_weeks_with_entry_batch": 662,
+      "n_signals_skipped_already_open": 401,
+      "n_signals_skipped_too_small": 4,
+      "avg_open_positions_per_day": 7.811348781937017,
+      "max_open_positions": 26
+    }
+  },
+  "mechanism_diagnostics": {
+    "n_weeks_evaluated": 822,
+    "n_weeks_any_qualifying_group": 804,
+    "frac_weeks_any_qualifying_group": 0.9781021897810219,
+    "avg_qualifying_groups_per_week": 21.036496350364963,
+    "n_weeks_any_trigger": 668,
+    "frac_weeks_any_trigger": 0.8126520681265207,
+    "n_distinct_groups_seen": 47,
+    "n_long_triggers": 2778,
+    "n_short_triggers": 2886,
+    "n_triggers_total": 5664
+  }
+}
