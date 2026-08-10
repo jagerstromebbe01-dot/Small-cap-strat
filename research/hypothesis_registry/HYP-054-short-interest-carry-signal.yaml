@@ -63,8 +63,32 @@ pass_fail_criterion: >
   ALFA-signal, inte bara en kostnad att dra av - en genuint annan
   datakälla och mekanism än allt tidigare testat (insiderköp, redan
   avfärdat, är en annan signaltyp helt).
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 52
+date_tested: '2026-08-10'
+result_summary: >
+  FEASIBILITY-FAIL, INGEN BACKTEST KORD (per kriteriets egen villkorade
+  klausul: "avbryts hypotesen INNAN backtest körs, redovisas öppet" -
+  se ovan).
+
+  KONTROLLERAT 2026-08-10 (webbsökning mot finra.org, kalla nedan):
+  FINRAs officiella nedladdningsbara arkiv for equity short interest
+  gar BARA tillbaka till 2014 ("Archive files going back to 2014 are
+  available") - INTE till 2010, vilket kriteriet krever for hela
+  huvudperioden. Det ar en definitiv, verifierad lucka pa cirka fyra
+  ars data (2010-2013), inte en osaker eller partiell begransning.
+  Filerna ar dessutom pipe-/CSV-formaterade och publiceras varannan
+  vecka (matchar FINRA Rule 4560:s tvavecka-rapporteringskrav) - format
+  ar OK, det ar bara den historiska djupen som brister.
+
+  SLUTSATS: samma typ av avslag som HYP-052 - mekanismen (blanknings-
+  marknadens struktur som direkt alfa-signal, inte bara friktion) ar
+  fortfarande en av de mest lovande, minst redan-testade riktningarna
+  i BATCH-002, men den lasta 2010-2024-perioden gar inte att tacka med
+  den kostnadsfria kallan som forutsattes. En omlast variant som bara
+  kraver 2014-2024 (kortare period, mindre statistisk kraft men
+  fortfarande genomforbar) skulle kunna testas - men det ar en ny,
+  separat hypotes/las, inte en tyst omtolkning av denna.
 tested_capital_levels:
 - 100000
 - 1000000
