@@ -148,6 +148,116 @@ def clean_price_matrix(close: pd.DataFrame, high: pd.DataFrame = None, low: pd.D
     return tuple(results) if len(results) > 1 else results[0]
 
 
+def mask_unrecovered_price_breaks(close: pd.DataFrame) -> pd.DataFrame:
+    """
+    Upptäckt 2026-08-09/10 (HYP-049, tickern SSN): clean_price_matrix()s
+    iterativa dag-till-dag-filter ovan är konstruerat för KORTLIVADE
+    trasiga svitar - varje pass fångar exakt EN ytterligare dag (den dag
+    vars närmast föregående dag just maskades i FÖRRA passet, se
+    "prior_valid = close.shift(1).ffill()" ovan), så det kan som mest
+    maska 5 på varandra följande trasiga dagar (dess hårdkodade
+    passantal, `for _pass in range(5)`) innan det ger upp och släpper
+    igenom resten av en LÄNGRE trasig svit som "giltig" data.
+
+    SSN:s rådata hoppade ~54600x den 2017-11-17 (open/high/low/close/
+    adjusted_close SAMTIDIGT, med verkligt-utseende volym på 100-300k/
+    dag) och ÅTERHÄMTADE SIG ALDRIG under resten av dess registrerade
+    historik (till 2020-10-08, filens sista dag) - ett leverantörs-
+    datafel/tickerkollision, samma kategori som ESSA (se
+    flag_implausible_liquidity ovan), men UTAN att varje enskild dags
+    dollarvolym tillförlitligt överstiger den funktionens
+    marknadsvärde-tröskel (SSN:s dagliga dollarvolym pendlar kring 1-2x
+    max_market_cap i den nya regimen, inte konsekvent långt över), OCH
+    med en egen "kallstart"-fördröjning (den funktionens rullande
+    fönster kräver `window` SAMMANHÄNGANDE giltiga dagar innan den
+    någonsin kan flagga - se dess docstring) som tillsammans med
+    clean_price_matrix()s 5-dagars-gräns släppte igenom de första ~24
+    handelsdagarna av den trasiga regimen som "giltiga" - inklusive
+    exakt den dag en HYP-049-kvartalsombalansering råkade hålla namnet,
+    vilket gav en ensam +$16 miljoner (från ett $45k-konto) fiktiv
+    daglig värdering rätt in i backtestens resultat.
+
+    Detta är en MEDVETET SEPARAT, ADDITIV kontroll - ändrar INTE
+    clean_price_matrix()s eller flag_implausible_liquidity()s befintliga
+    beteende eller default-anrop (så ingen redan låst hypotes påverkas
+    retroaktivt om dess kod skulle köras om) - anropande kod måste
+    explicit välja in den. Använder EXAKT samma ekonomiska-orimlighets-
+    trösklar som redan etablerade i MIN_DAILY_RETURN/MAX_DAILY_RETURN
+    ovan (ingen ny, godtyckligt vald gräns) - frågan är inte "är detta
+    steg för stort" (det svarar clean_price_matrix redan på), utan
+    "löste sig detta steg NÅGONSIN inom seriens återstående historik,
+    eller är det permanent".
+
+    Går igenom varje tickers giltiga (icke-NaN) prisvärden i
+    tidsordning. När ett steg från den senast ACCEPTERADE referensen
+    implicerar en avkastning utanför [MIN_DAILY_RETURN, MAX_DAILY_RETURN]
+    (samma tröskel som clean_price_matrix), sök FRAMÅT i seriens
+    återstående värden efter första punkten som ÅTER ligger innanför
+    den bandbredden relativt SAMMA referens. Om en sådan punkt hittas:
+    maska allt DÄREMELLAN (den trasiga svitens hela längd, oavsett hur
+    lång den är - ingen 5-pass-gräns), och fortsätt från
+    återhämtningspunkten som ny referens. Om ingen sådan punkt någonsin
+    hittas: maska allt från brottpunkten till seriens slut (permanent -
+    ingen verklig small-/micro-cap-aktie gör ett MAX_DAILY_RETURN-
+    brytande hopp och stannar där för gott utan att det är ett datafel,
+    se SSN ovan).
+
+    En ÄKTA, VARAKTIG prisnivå-förändring (som IDTYD, se ovan) sker per
+    definition INTE som ETT enda steg utanför [MIN_DAILY_RETURN,
+    MAX_DAILY_RETURN] (annars hade clean_price_matrix redan maskat
+    ÖVERGÅNGSDAGEN som en trasig engångsspik, med samma motivering som
+    redan gäller där) - så denna funktion påverkar inte det fallet,
+    verifierat mot samma "E"-testfall som redan finns i __main__ nedan.
+    """
+    close = close.copy()
+    lo, hi = 1.0 + MIN_DAILY_RETURN, 1.0 + MAX_DAILY_RETURN
+
+    for col in close.columns:
+        s = close[col]
+        valid_mask = s.notna()
+        if valid_mask.sum() < 2:
+            continue
+        idxs = s.index[valid_mask]
+        vals = s.loc[idxs].to_numpy(dtype=float)
+
+        to_mask_positions = []
+        ref = vals[0]
+        i = 1
+        n = len(vals)
+        while i < n:
+            if ref == 0 or np.isnan(ref):
+                ref = vals[i]
+                i += 1
+                continue
+            ratio = vals[i] / ref
+            if lo <= ratio <= hi:
+                ref = vals[i]
+                i += 1
+                continue
+
+            # Brott: sök framåt efter första återhämtning mot SAMMA referens.
+            recovered_at = None
+            for j in range(i, n):
+                r2 = vals[j] / ref
+                if lo <= r2 <= hi:
+                    recovered_at = j
+                    break
+
+            end = recovered_at if recovered_at is not None else n
+            to_mask_positions.extend(range(i, end))
+            if recovered_at is not None:
+                ref = vals[recovered_at]
+                i = recovered_at + 1
+            else:
+                break  # aldrig återhämtad - resten redan maskad via range(i, n)
+
+        if to_mask_positions:
+            mask_dates = idxs[to_mask_positions]
+            close.loc[mask_dates, col] = np.nan
+
+    return close
+
+
 def mask_implausible_adjusted_close_ratio(close: pd.DataFrame, close_adj: pd.DataFrame) -> pd.DataFrame:
     """
     Upptackt 2026-08-06 (HYP-042, tickern ABWND): en KONSTANT (inte
@@ -293,3 +403,33 @@ if __name__ == "__main__":
           "6 av 227 dagar i overgangsfonstret, medan flag_implausible_liquidity fangar 171 av 227 "
           "dagar - hela den felaktiga regimen fran ~6 veckor efter overgangen och framat, sa fort "
           "det rullande 20-dagarsfonstret fyllts med rena observationer fran den nya nivan.)")
+
+    print("\n--- mask_unrecovered_price_breaks: SSN-monstret (permanent, aldrig aterhamtad regimforandring) ---")
+    # G: SSN-monstret - ett brott >MAX_DAILY_RETURN som ALDRIG aterhamtar
+    # sig till narheten av foregangsnivan under seriens aterstaende
+    # historik (till skillnad fran D/HEC ovan, som aterhamtar sig efter
+    # 5 dagar). Egen 60-dagars serie for tillrackligt "aterstaende
+    # historik" efter brottet att bevisa att det verkligen aldrig
+    # aterhamtar sig.
+    n3 = 60
+    dates3 = pd.date_range("2020-01-01", periods=n3)
+    g = np.full(n3, 0.35)
+    g[15:] = 19500.0 - np.arange(n3 - 15) * 10.0   # sjunker sakta men ALDRIG i narheten av 0.35 igen
+    d3 = np.full(n3, 9.0); d3[20:25] = [60000, 67800, 60000, 68400, 61000]  # samma HEC-monster, i denna langre serie
+    e3 = np.full(n3, 9.0); e3[15:] = np.linspace(9, 300, n3 - 15)           # akta varaktig forandring, ska INTE rensas
+
+    df3 = pd.DataFrame({"G": g, "D": d3, "E": e3}, index=dates3)
+    fixed3 = mask_unrecovered_price_breaks(df3)
+
+    print(f"G (SSN-monstret): antal NaN fran brottpunkten (index 15) och framat: "
+          f"{int(fixed3['G'].iloc[15:].isna().sum())} av {n3 - 15} (vantat: {n3 - 15} - HELA resten ska maskas, "
+          f"ingen aterhamtning sker nagonsin)")
+    print(f"G: vardena FORE brottet fortfarande giltiga: {int(fixed3['G'].iloc[:15].notna().sum())} av 15 (vantat: 15)")
+    print(f"D (HEC-monstret, aterhamtar sig): antal NaN i den trasiga femdagarssviten (index 20-24): "
+          f"{int(fixed3['D'].iloc[20:25].isna().sum())} av 5 (vantat: 5 - maskas AVEN utan clean_price_matrix forst, "
+          f"denna funktion loser samma fall pa egen hand)")
+    print(f"D: vardena EFTER aterhamtningen (index 25+) fortfarande giltiga: "
+          f"{int(fixed3['D'].iloc[25:].notna().sum())} av {n3 - 25} (vantat: {n3 - 25})")
+    print(f"E (AKTA varaktig prisnivaforandring, INTE ett enda steg over MAX_DAILY_RETURN): "
+          f"antal NaN totalt = {int(fixed3['E'].isna().sum())} (vantat: 0 - far INTE rensas bort, "
+          f"samma princip som E-testet ovan)")
