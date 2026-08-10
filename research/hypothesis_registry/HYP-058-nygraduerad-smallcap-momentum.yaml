@@ -71,9 +71,75 @@ pass_fail_criterion: >
   köptryck, och en billigare, databeroende-fri variant av HYP-052:s
   blockerade Russell-tvångsflödestes) ger mätbar momentum i small-cap -
   en genuin ny alfakälla, inte en riskhanteringsoverlay som HYP-056.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 56
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-10'
+result_summary: >
+  FAILED 2026-08-10 PA DEN AVGORANDE $100k-NIVAN (enda gating-villkoret,
+  Sharpe efter friktion >= 0.55) - och pa samtliga tre kapitalnivaer.
+
+  Sharpe (2010-2024, efter friktion) = 0.3049 / 0.3049 / 0.3067 vid
+  100k/1M/10M - klart under 0.55-golvet, inte ett gransfall (missar med
+  cirka 0.24-0.25 Sharpe-enheter, ~45% relativt gap). MaxDD -52.69% pa
+  alla tre nivaer (informativt, ej gating enligt det lasta kriteriet).
+  CAGR +6.53%/+6.53%/+6.56%, Calmar ~0.12. DSR 0.1157/0.1157/0.1171 vid
+  K=57 - lag, konsistent med en genuint svag (inte extremt negativ, bara
+  otillrackligt stark) Sharpe snarare an en katastrof. OOS-2025 blandat:
+  Sharpe -0.15 vid $100k (avkastning -42.2%, en enskild darlig kohort
+  dominerar det korta aret), men +0.19/+0.89 vid $1M/$10M (kapacitets-
+  spärren begransar den sämsta kohortens negativa paverkan vid hogre
+  kapitalniva) - ingen entydig OOS-signal, inte relevant for gating
+  (huvudperioden redan ett tydligt FAIL).
+
+  OBLIGATORISK DISCLOSURE (icke-gating, per kriteriets krav):
+  gradueringsdetektionen exercerade genuint - 8638 handelsbara
+  gradueringshandelser (EFTER 250-dagars historikfiltret) over 189
+  utvarderade manader, samtliga 60 mojliga kvartalsvisa exekverings-
+  datum fick minst en kohort. Snitt graduerande tickers/kvartal: 137.1
+  (std 94.2) EFTER filtret, 214.2 (std 123.9) FORE filtret (dvs. 250-
+  dagarsfiltret uteslot i snitt ~36% av rå-handelserna som troliga
+  farska IPO:er). Genomsnittlig andel av det totala eligible-
+  universumet (snitt ~721 tickers/manad) som graduerar en given manad:
+  6.35% EFTER filtret (11.02% FORE) - hog churn men INTE nastan-noll
+  eller orimligt hog (skulle krävt >50%/manad for att vara implausibelt).
+  Verifierat separat (scripts/diagnostic_hyp058_sanity_check.py) att
+  denna hoga churn INTE i huvudsak drivs av ticker-namnbytesartefakter
+  (bara 5.0% av alla 4829 universumtickers har "_old"/suffix-monster) -
+  sannolikt genuin volatilitet vid $100M/$2B-bandgranserna for detta
+  universum.
+
+  SANITY-CHECK (samma disciplin som HYP-049/050/055/057): $100k-nivan
+  hade 45 avslutade kohorter (46:e kohorten fortfarande oppen vid
+  periodslut, exkluderad fran denna rakning), 40.0% forlorande, snitt
+  nettoavkastning/kohort +3.10% (std 20.69%) - BRETT spritt, INGEN
+  enskild kohort dominerar resultatet (varsta -55.72% pa en 11-namns-
+  kohort, basta +74.46% pa en 19-namns-kohort, bada inom normal
+  spridningsbredd for en likaviktad small-cap-korg over ett kvartal).
+  Bara 1 av 45 kohorter (2.2%) forlorade >50% av egen notional. 14 av
+  60 mojliga kohorter (identiskt pa alla tre kapitalnivaer, INTE
+  kapitalniva-beroende) hoppades over av ADV-kapacitetsspärren -
+  bekraftat vara ett datalucks-fenomen (namn vars rullande 20-dagars
+  ADV rakade vara NaN/noll pa just entry-dagen, sannolikt maskat av
+  flag_implausible_liquidity/mask_unrecovered_price_breaks strax runt
+  entry trots att de klarade 250-dagarskravet tidigare), INTE en
+  kapitalniva-bindande spärr och INTE en bugg som paverkar P&L-
+  berakningen for de kohorter som faktiskt handlades.
+
+  DIAGNOS: mekanismen exercerar genuint pa en meningsfull delmängd av
+  universumet, men den genomsnittliga positiva kohortavkastningen
+  (+3.10%/kvartal, motsvarar en rimlig ~12.5%/ar om den vore konstant)
+  har for hog varians (std 20.69%/kohort) relativt sitt medelvarde for
+  att ge en Sharpe over 0.55-golvet nar den aggregeras till en daglig
+  portfoljvardesserie dar bara EN kohort ar oppen at gangen (snitt
+  0.76 oppna positioner/dag, max 1 samtidig - konstruktionen later inte
+  kohorter overlappa i praktiken eftersom hallperioden ~63 handelsdagar
+  nastan exakt matchar kvartalsintervallet) - portfoljen star alltsa
+  ofta HELT I KONTANTER mellan kohorter, vilket sanker Sharpen ytterligare
+  via utspädning utan att sanka volatiliteten proportionerligt nar en
+  kohort val ar oppen. En genuin, men for svag och for koncentrerad,
+  signal for att klara det lasta golvet. HYP-047 forblir referens-
+  implementationen, oforandrad.

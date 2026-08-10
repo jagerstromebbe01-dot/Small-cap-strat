@@ -1,0 +1,44 @@
+Laddar universum (huvudserie + 2025-utokning, sammanslaget)...
+  4829 unika tickers, 190 manader.
+
+Laddar prismatriser (open/close/adjusted_close/high/low/volume)...
+  (4024, 4829)
+
+Sanerar prisdata (clean_price_matrix)...
+Maskar oaterhamtade prisbrott (mask_unrecovered_price_breaks)...
+Flaggar leverantors-datafel (flag_implausible_liquidity)...
+Maskar orimlig (konstant) adjusted_close/close-kvot...
+Beraknar Corwin-Schultz-spread-matris...
+Beraknar 20-dagars ADV-kapacitetstak (close x volume x 10%, samma konvention som HYP-037/050/057)...
+Identifierar gradueringshandelser (manad for manad, 250-dagars historikfilter) och mappar till kvartalsvisa exekveringsdatum...
+  Manader utvarderade (med foregaende manad tillganglig): 189
+  Gradueringshandelser totalt (FORE 250-dagarsfilter): 13495
+  Gradueringshandelser totalt (EFTER 250-dagarsfilter, farska IPO:er uteslutna): 8638
+  Snitt graduerande/kvartal (FORE filter): 214.21 (std 123.86)
+  Snitt graduerande/kvartal (EFTER filter, handelsbara): 137.11 (std 94.21)
+  Snitt andel av eligible-universum/manad (FORE filter): 11.02%
+  Snitt andel av eligible-universum/manad (EFTER filter): 6.35%
+  Hoppade (ingen framtida kvartalsslut kvar i data): 2
+  Hoppade (ingen prisdatafil for tickern): 0
+  Distinkta exekveringsdatum (kvartal med >=1 kohort): 60
+  Totalt ticker-entries over hela perioden: 8512
+
+--- Kapitalniva: $100,000 ---
+  Sharpe (2010-2024) = 0.3049 (FAIL mot >= 0.55, enda gating-villkoret)  MaxDD=-52.69% (informativt, ej gating)  CAGR=+6.53%  Calmar=0.124
+  DSR (K=57) = 0.1157  (skew=+0.05, kurt=10.10, n_obs=3460)
+  OOS-2025 (informativt): Sharpe=-0.1522  MaxDD=-77.31%  Avkastning=-42.20%
+  Kohorter: 46  Tickers totalt: 7155  Snitt oppna positioner/dag: 0.76  Max samtidiga: 1  Kohorter hoppade (for sma/ADV-tak): 14
+
+--- Kapitalniva: $1,000,000 ---
+  Sharpe (2010-2024) = 0.3049 (FAIL mot >= 0.55, enda gating-villkoret)  MaxDD=-52.69% (informativt, ej gating)  CAGR=+6.53%  Calmar=0.124
+  DSR (K=57) = 0.1157  (skew=+0.05, kurt=10.10, n_obs=3460)
+  OOS-2025 (informativt): Sharpe=0.1944  MaxDD=-47.26%  Avkastning=-1.13%
+  Kohorter: 46  Tickers totalt: 7155  Snitt oppna positioner/dag: 0.76  Max samtidiga: 1  Kohorter hoppade (for sma/ADV-tak): 14
+
+--- Kapitalniva: $10,000,000 ---
+  Sharpe (2010-2024) = 0.3067 (FAIL mot >= 0.55, enda gating-villkoret)  MaxDD=-52.69% (informativt, ej gating)  CAGR=+6.56%  Calmar=0.125
+  DSR (K=57) = 0.1171  (skew=+0.03, kurt=10.02, n_obs=3460)
+  OOS-2025 (informativt): Sharpe=0.8902  MaxDD=-27.58%  Avkastning=+23.21%
+  Kohorter: 46  Tickers totalt: 7155  Snitt oppna positioner/dag: 0.76  Max samtidiga: 1  Kohorter hoppade (for sma/ADV-tak): 14
+
+KLART. Sammanfattning sparad till C:\Users\ebbej\Downloads\strategi_smallcap\strategies\HYP-058\results\summary.json
