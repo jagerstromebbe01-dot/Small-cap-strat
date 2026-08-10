@@ -83,9 +83,73 @@ pass_fail_criterion: >
   MELLAN ben (som redan FAILADE): denna mekanism skalar TOTAL
   exponering mot KONTANTER kontinuerligt, ändrar aldrig benens
   inbördes sammansättning.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: passed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 54
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: 1.2228, cagr: 0.0831, max_drawdown: -0.0592, calmar: 1.4040, oos_2025_sharpe: 1.7585, oos_2025_total_return: 0.1513, oos_2025_max_drawdown: -0.0347, deflated_sharpe_ratio: 0.9863}
+  1000000: {sharpe: 1.2177, cagr: 0.0826, max_drawdown: -0.0602, calmar: 1.3714, oos_2025_sharpe: 1.7379, oos_2025_total_return: 0.1477, oos_2025_max_drawdown: -0.0368, deflated_sharpe_ratio: 0.9857}
+  10000000: {sharpe: 1.1923, cagr: 0.0780, max_drawdown: -0.0564, calmar: 1.3841, oos_2025_sharpe: 1.7579, oos_2025_total_return: 0.1452, oos_2025_max_drawdown: -0.0360, deflated_sharpe_ratio: 0.9816}
+date_tested: '2026-08-10'
+result_summary: >
+  PASSED PA DEN AVGORANDE $100k-NIVAN, PA ALLA TRE VILLKOR. Sharpe
+  1.2228/1.2177/1.1923 (mot HYP-047:s egna lasta 1.126/1.127/1.102 -
+  klart over pa alla tre nivaer, aven vid $10M). MaxDD -5.92%/-6.02%/
+  -5.64% (BATTRE, inte bara marginellt, an HYP-047:s -8.67%/-8.45%/
+  -8.20% pa alla tre nivaer - en forbattring pa 2.16-2.75pp, i praktiken
+  en tredjedels reduktion). OOS-2025-Sharpe 1.7585/1.7379/1.7579 mot de
+  i kriteriet lasta jamforelsetalen 1.710/1.720/1.780 - PASS vid $100k
+  (avgorande) och $1M, FAIL vid $10M (1.7579 mot 1.780, en marginal pa
+  0.022 - INTE gating enligt kriteriet, som bara kraver $100k-nivan,
+  men redovisas oppet har). DSR 0.9863/0.9857/0.9816 vid K=55 - mycket
+  hogt, konsistent med en genuin forbattring snarare an en slumptraff
+  trots det redan hoga K-talet.
+
+  OBLIGATORISK DISCLOSURE (exponeringsskala, main-perioden 2013-06-28
+  till 2024-12-31 - forst da fyller den rullande 2-ars/504-dagars
+  medianen, 718 veckobeslut totalt; alla veckor fore dess saknar ett
+  berkningsbart mal och kors darfor med skala=1.0 per konstruktion,
+  se backtest.py): snitt-skala 0.922/0.923/0.926, lagsta-skala
+  0.336/0.355/0.384 (golvet 0.3 triggades ALDRIG - narmast vid $100k),
+  andel veckor med skala <1.0: 46.0%/46.5%/46.2%. Mekanismen
+  EXERCERADES ALLTSA GENUINT och regelbundet (nastan varannan vecka en
+  gang 2-arshistoriken fyllts), inte bara vid enstaka extremtillfallen -
+  bekraftar att forbattringen INTE ar ett no-op-resultat. Fullperioden
+  (main+OOS, 770 beslut) visar snitt-skala 0.902-0.906 och andel <1.0
+  pa ~50% - OOS-2025 innehaller ett sent, genuint volatilitetsuppsving
+  (skalan foll till 0.34-0.38 mot slutet av december 2025, se
+  weekly_scale_log.csv), vilket forklarar varfor $10M-OOS-Sharpe
+  hamnade nara men under HYP-047:s egna 1.78.
+
+  KONTINUITET OVER MAIN/OOS-GRANSEN (metodologisk not, se backtest.py
+  docstring for full motivering): den kontinuerliga 60-dagars/504-
+  dagars volatilitetssignalen byggdes genom att KEDJA (concat) HYP-047:s
+  redan separat normaliserade main- och OOS-avkastningsserier - detta ar
+  NODVANDIGT for att 2-arsmedianen ska ha verklig historik vid ingangen
+  av OOS-2025 (annars skulle overlayn vara ett permanent no-op genom
+  hela OOS-aret, eftersom ETT enda ars data aldrig hinner fylla ett
+  504-dagars/2-ars fonster pa egen hand) - INTE en godtycklig utvidgning
+  av scope. Kostnaden ar EN dags odokumenterad avkastning exakt vid
+  granspunkten (2024-12-31 -> 2025-01-03), forsumbar i ett 60-756-dagars
+  rullande fonster, paverkar INTE main-periodens egna resultat alls.
+
+  MEKANISM: ren exponeringsskalning ovanpa HYP-047:s redan berknade,
+  oforandrade fyrbensportfolj (25/25/25/25-vikten mellan benen ORORD) -
+  INGEN ny small-cap-signal, inget nytt handelsuniversum, ingen ny
+  prismatris laddad, ingen havstang (skalan begransad till max 1.0,
+  golv 0.3, per registerpostens egen EXPLICIT AVGRANSNING). TIONDE
+  kombinationshypotesen i registret och FORSTA GENUINT KONTINUERLIGA
+  (icke-binara) exponeringsskalningsmekanismen - till skillnad fran
+  HYP-037/045/047:s BINARA (av/pa) triggers och HYP-048:s BINARA
+  regimomviktning MELLAN ben (som FAILADE), skalar denna mekanism
+  TOTAL exponering GRADVIS mot kontanter varje vecka baserat pa var
+  portfoljens egen realiserade volatilitet star relativt sin egen
+  historik - och ar den FORSTA overlayen sedan HYP-047 sjalv som slar
+  referensen PA ALLA TRE HUVUDVILLKOR SAMTIDIGT (Sharpe, MaxDD OCH
+  OOS-Sharpe vid den avgorande nivan), inte bara ett delvillkor.
+  Kraver CEO-BESLUT for att formellt bli ny referensimplementation -
+  inte automatiskt (samma disciplin som HYP-047 sjalv fick 2026-08-08).
+  HYP-047 forblir referensimplementationen tills vidare, oforandrad.
