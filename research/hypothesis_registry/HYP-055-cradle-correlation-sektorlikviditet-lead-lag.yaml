@@ -1,0 +1,96 @@
+# LÅST 2026-08-10 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# URSPRUNG: CEO:s egen idé, framförd i chatt 2026-08-10 - ett substitutions-
+# /rotationsmönster ("aktie X:s uppgång leder till aktie Y:s nedgång"),
+# uttryckligen SKILT från Ejay (som var ett signalviktningsmått, ingen
+# relation mellan olika aktier) och från klassisk parhandel (som handlar
+# en STATISK spread mellan samvarierande aktier, ingen riktning/
+# tidsfördröjning). Närmaste etablerade litteratur är "lead-lag-effekten"
+# (Lo & MacKinlay 1990; Cohen & Frazzini 2008 om ekonomiskt länkade
+# företag) - men den litteraturen beskriver oftast POSITIV spridning
+# (information sprids långsamt från välbevakade till svagt bevakade
+# bolag). CEO:s idé om NEGATIV/substituerande spridning är mindre
+# beforskad och mer originell.
+#
+# KRITISKT DESIGNVAL (motiverat innan låsning): att söka igenom alla
+# möjliga aktiepar efter "bästa historiska lead-lag-korrelation" och
+# sedan handla just de paren vore ett allvarligt dolt overfitting-
+# problem - exakt den typ av multipeltestning K-disciplinen finns för
+# att förhindra, även om det räknas som EN hypotes. Ledare/följare
+# definieras därför HELT UTAN att titta på avkastningsdata - bara på
+# likviditet inom samma bransch, en ex-ante, teoretiskt motiverad
+# uppdelning (mer likvida/mer bevakade namn antas reagera snabbare på
+# ny information än mindre likvida namn i samma bransch).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-055
+date_registered: '2026-08-10'
+title: "Cradle correlation - sektorlikviditets-lead-lag (branschledare/-följare,\
+  \ negativ riktning)"
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma huvudperiod (2010-2024) + genuin blind OOS-2025,
+  samma motorkrav som resten av registret (filed-datum-universum, maskad
+  adjusted_close-kvot, mask_unrecovered_price_breaks())
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar):
+
+  LEDARE/FÖLJARE-UPPDELNING (per SIC-branschgrupp, samma klassificering
+  som redan används i strategies/common/sector.py, omräknad VARJE vecka):
+  rangordna eligible-namn inom varje bransch efter 60-dagars genomsnittlig
+  dollarvolym (adjusted_close × volume). ÖVERSTA tredjedelen = "ledare",
+  NEDERSTA tredjedelen = "följare" (mellersta tredjedelen används inte).
+  Endast branscher med minst 6 eligible namn (så att både ledar- och
+  följarkorgen har minst 2 namn vardera) deltar en given vecka.
+
+  SIGNAL: ledarkorgens (likaviktade, på adjusted_close) 5-handelsdagars
+  trailing-avkastning beräknas varje vecka. Jämförs mot sin egen rullande
+  2-års (504 handelsdagars) fördelning:
+  - Ledarkorgens 5-dagarsavkastning i ÖVERSTA KVINTILEN (>= 80:e
+    percentilen) → KORTA följarkorgen (likaviktat inom korgen) kommande
+    5 handelsdagar.
+  - Ledarkorgens 5-dagarsavkastning i NEDERSTA KVINTILEN (<= 20:e
+    percentilen) → KÖP följarkorgen kommande 5 handelsdagar.
+  - Annars (mellersta tre kvintilerna): ingen position i den branschen
+    den veckan.
+
+  Positioner över samtliga kvalificerande branscher kombineras
+  likaviktat (branschexponeringar normaliseras så att ingen enskild
+  bransch dominerar totalportföljen). Ny signalkontroll varje vecka -
+  positioner som redan är öppna och vars 5-dagarsperiod inte löpt ut
+  hålls oförändrade.
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, mask_unrecovered_price_breaks(),
+  flag_implausible_liquidity()) samt Corwin-Schultz-spread OCH
+  borrow_cost (3%/år) på kortbenet - friktion inbyggd från start.
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  1. Sharpe (efter friktion) >= 0.55.
+  2. MaxDD INTE sämre än -50% (explicit tak i förväg, samma motivering
+     som HYP-050: mekanismen liknar reversal-familjen i sin exponering
+     mot enskilda namns kortsiktiga rörelser, och reversal-liknande
+     mekanismer har redan misslyckats katastrofalt tre gånger i detta
+     register - HYP-013, HYP-042, HYP-050).
+
+  FAIL om något villkor faller vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): andel av veckor där MINST en
+  bransch kvalificerade för en position (för att verifiera att
+  mekanismen faktiskt exercerades regelbundet, inte bara vid enstaka
+  tillfällen), samt genomsnittligt antal branscher med öppen position
+  per vecka.
+
+  Diagnostiskt syfte: testar om en EX-ANTE (icke-cirkulär) likviditets-
+  baserad ledare/följare-uppdelning inom bransch avslöjar en genuin,
+  NEGATIV/substituerande spridningseffekt - CEO:s egen idé, skild från
+  både Ejay (inget signalviktningsmått inblandat) och klassisk parhandel
+  (ingen statisk spread, riktad och tidsfördröjd relation istället).
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 53
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
