@@ -1,0 +1,79 @@
+# LÅST 2026-08-10 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# URSPRUNG: Fas B, andra försöket, av CEO:s marknadskaraktäristik-idé.
+# Det första försöket (HYP-056, volatilitetsmålsättning) visade sig
+# vara en RISKHANTERINGSTEKNIK, inte en ny ALFAKÄLLA - CEO påpekade
+# detta explicit 2026-08-10 ("jag ville ju att de nya teorierna skulle
+# testas som nya strategier/alpha"). Detta är rättelsen: en genuin ny
+# alfasignal, fortfarande crypto-inspirerad (crypto: nya exchange-
+# listningar ger ofta en initial köptrycks-pop pga nyupplåst tillgång
+# för viss typ av kapital) men byggd HELT med redan tillgänglig OHLCV/
+# klassificeringsdata - ingen ny datapipeline krävs.
+#
+# MEKANISMANALOGI: när en aktie växer FRÅN micro-cap ($<100M) IN i
+# small-cap-bandet ($100M-$2B) blir den nyligen behörig för visst
+# institutionellt mandat/screener-synlighet - en svagare, kontinuerlig
+# variant av samma "tvångsflöde vid nyupplåst tillgänglighet"-mekanism
+# som HYP-052 (Russell-inklusion/-exklusion) ville testa men blockerades
+# av databeroende. Denna variant kräver INGEN extern data - "graduering"
+# härleds direkt ur den redan byggda månatliga universum-klassificeringen
+# (research/data/build_smallcap_universe_filed_date.py m.fl.).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-058
+date_registered: '2026-08-10'
+title: Nygraduerad small-cap-momentum (micro-cap till small-cap-bandet)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma huvudperiod (2010-2024) + genuin blind OOS-2025,
+  samma motorkrav som resten av registret
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar):
+
+  GRADUERINGSHÄNDELSE: en ticker "graduerar" i månad M om den (a) finns
+  i det eligible small-cap-universumet ($100M-$2B) i månad M, (b) INTE
+  fanns i universumet i månad M-1 (varken small-cap- eller större-
+  klassad), OCH (c) hade minst 250 handelsdagars prishistorik FÖRE
+  månad M (utesluter färska IPO:er som debuterar direkt i bandet -
+  detta är specifikt en TILLVÄXT-in-i-bandet-effekt, inte en IPO-effekt).
+  Använder samma filed-datum-korrigerade universumklassificering som
+  redan är produktionsstandard (ingen ny look-ahead-risk).
+
+  POSITION: LONG samtliga graduerande tickers en given månad, likaviktat,
+  ingången VID NÄSTA SNAPPADE KVARTALSVISA OMBALANSERINGSDATUM efter
+  graduering (samma snappningskonvention som resten av registret).
+  HÅLLPERIOD: ETT KVARTAL (63 handelsdagar, matchar registrets redan
+  etablerade ombalanseringscykel - INTE fritt valt efter att ha sett
+  resultat). Ingen kort sida - detta är en ren long-only momentum-tes.
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, mask_unrecovered_price_breaks(),
+  flag_implausible_liquidity()), Corwin-Schultz-spread på entry/exit.
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  Sharpe (efter friktion) >= 0.55 - standardgolvet för nya fristående
+  signaltest (ingen extra MaxDD-spärr utöver standardgolvet, till
+  skillnad från HYP-050/055/057 - detta är long-only, ingen obegränsad
+  blankningsrisk att skydda mot).
+
+  FAIL om golvet inte nås vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal graduerande tickers per
+  kvartal (genomsnitt och spridning), samt hur stor andel av det totala
+  eligible-universumet som graduerande tickers utgör en given period
+  (för att verifiera att mekanismen exercerar på en meningsfull, inte
+  försumbar, delmängd).
+
+  Diagnostiskt syfte: testar om nyligen uppnådd institutionell/
+  screener-behörighet (analogt med crypto-exchangelistningars initiala
+  köptryck, och en billigare, databeroende-fri variant av HYP-052:s
+  blockerade Russell-tvångsflödestes) ger mätbar momentum i small-cap -
+  en genuin ny alfakälla, inte en riskhanteringsoverlay som HYP-056.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 56
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
