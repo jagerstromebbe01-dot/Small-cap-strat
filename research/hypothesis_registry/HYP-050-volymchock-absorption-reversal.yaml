@@ -62,9 +62,52 @@ pass_fail_criterion: >
   prisutslag" kan isolera genuin, temporär likviditetsabsorption från
   genuin, varaktig distress - den specifika skillnad som gjorde att
   HYP-042:s enklare reversal-signal inte kunde göra.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 48
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+capital_level_results:
+  100000: {sharpe: -1.2447, cagr: -0.2347, max_drawdown: -0.9804, calmar: -0.2394, oos_2025_sharpe: 0.5250, oos_2025_max_drawdown: -0.3970, oos_2025_total_return: 0.1511, deflated_sharpe_ratio: 0.0000000}
+  1000000: {sharpe: -1.2192, cagr: -0.2362, max_drawdown: -0.9812, calmar: -0.2407, oos_2025_sharpe: 0.5919, oos_2025_max_drawdown: -0.3908, oos_2025_total_return: 0.1767, deflated_sharpe_ratio: 0.0000000}
+  10000000: {sharpe: -0.8581, cagr: -0.1360, max_drawdown: -0.9081, calmar: -0.1498, oos_2025_sharpe: -0.2138, oos_2025_max_drawdown: -0.2025, oos_2025_total_return: -0.0462, deflated_sharpe_ratio: 0.0000000}
+date_tested: '2026-08-09'
+result_summary: >
+  FAILED PA DEN AVGORANDE $100k-NIVAN, PA BADA VILLKOREN, KATASTROFALT -
+  inte ett gransfall. Sharpe -1.2447/-1.2192/-0.8581 (negativ pa alla tre
+  nivaer, mot golvet 0.55). MaxDD -98.04%/-98.12%/-90.81% - langt utanfor
+  det explicita -50%-taket som lades in just for att fanga denna typ av
+  katastrof (motiverat av HYP-042:s -98/-99%).
+
+  SANITY-CHECK INNAN FINALISERING (per CEO-instruktion, samma disciplin
+  som HYP-049): backtest.py verifierat att den redan anvander SAMTLIGA
+  senaste datasaneringsfixar, inklusive mask_unrecovered_price_breaks()
+  (byggd samma dag under HYP-049s utredning) - resultatet ar allts INTE
+  en aterkomst av samma buggklass (SSN-typ permanent trasig prisserie).
+
+  OBLIGATORISK DISCLOSURE (distress-filtrets faktiska trafsakerhet):
+  bara 4.62-4.65% av triggade positioner var i finansiell distress VID
+  TRIGGERTILLFALLET (646-650 av ~13970 positioner per niva). Filtret
+  (hog volym + litet prisutslag) fungerade alltsa som avsett pa
+  ENTRY-tidpunkten - men det hindrade INTE att manga positioner
+  utvecklades till katastrofala forluster EFTER entry, under
+  hallperioden (7 handelsdagar). DIAGNOS: samma grundmonster som
+  HYP-042 (small-cap-"forlorare" tenderar att genuint kollapsa snarare
+  an studsa), men har med en annu SNABBARE forlusttakt eftersom
+  strategin aktivt SOKER UPP namn med redan onormal volym-aktivitet
+  (ofta en tidig varningssignal for en pagaende kollaps, inte en
+  neutral indikator) - "absorption utan prisutslag samma dag" visar sig
+  INTE vara ett tillforlitligt tecken pa att en akties problem redan ar
+  prisade in, bara att de annu inte hunnit synas i just den dagens
+  stangningskurs.
+
+  DSR (K=49, RF=2%/ar) = 0.0000000 pa alla tre nivaer - i praktiken
+  noll, helt konsistent med kraftigt negativ Sharpe.
+
+  SLUTSATS: aterna en tredje oberoende bekraftelse (efter HYP-013 och
+  HYP-042) att kortsiktig reversal-liknande mekanismer inte fungerar i
+  detta small/micro-cap-universum, oavsett filterkonstruktion - "hog
+  volym utan proportionerligt prisutslag" var INTE den distress-
+  markor det var tankt att vara. HYP-047 forblir referensimplementationen,
+  oforandrad.
