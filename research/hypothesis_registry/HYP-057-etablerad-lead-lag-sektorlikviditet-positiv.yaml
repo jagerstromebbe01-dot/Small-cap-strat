@@ -1,0 +1,79 @@
+# LÅST 2026-08-10 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# URSPRUNG: CEO förtydligade 2026-08-10 att grundidén ("aktie X leder
+# aktie Y") var bredare än HYP-055:s specifika NEGATIVA/substituerande
+# riktning - "korrelation finns i fler sätt än endast att de rör sig
+# jämnt... om det finns etablerade tankar kring detta så testar vi
+# dem". Detta är den etablerade, mer beforskade varianten: POSITIV
+# lead-lag-spridning (Lo & MacKinlay 1990; Cohen & Frazzini 2008 -
+# ekonomiskt länkade/välbevakade bolag sprider information långsamt
+# till svagare bevakade bolag i SAMMA riktning, inte motsatt).
+#
+# EXAKT SAMMA MEKANISK INFRASTRUKTUR SOM HYP-055 (ledare/följare-
+# uppdelning, branschgruppering, likviditetsrangordning, 5-dagars
+# fönster, 2-års regimkvintiler) - ENDA SKILLNADEN är signalens
+# RIKTNING, spegelvänd mot HYP-055. Detta är INTE en otillåten
+# efterhandsjustering av en redan testad hypotes (HYP-055:s kriterium
+# och resultat ANDRAS INTE) - det är en NY, oberoende K-kostande
+# hypotes som testar en genuint annan (motsatt) ekonomisk mekanism,
+# medvetet jämförbar med HYP-055 för att isolera om det är
+# RIKTNINGEN som avgör, inte branschuppdelningsmetoden.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-057
+date_registered: '2026-08-10'
+title: "Etablerad lead-lag-effekt - sektorlikviditet, positiv riktning (spegelvänd\
+  \ HYP-055)"
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma huvudperiod (2010-2024) + genuin blind OOS-2025,
+  samma motorkrav som resten av registret
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar - IDENTISK med HYP-055:s
+  ledare/följare-konstruktion, ENDAST signalriktningen omvänd):
+
+  LEDARE/FÖLJARE-UPPDELNING: exakt som HYP-055 - per SIC-branschgrupp,
+  varje vecka, rangordna eligible-namn efter 60-dagars genomsnittlig
+  dollarvolym. Översta tredjedelen = "ledare", nedersta tredjedelen =
+  "följare". Endast branscher med minst 6 eligible namn deltar.
+
+  SIGNAL (OMVÄND mot HYP-055): ledarkorgens 5-dagars trailing-avkastning
+  jämförs mot sin egen rullande 2-års fördelning:
+  - Ledarkorgens 5-dagarsavkastning i ÖVERSTA KVINTILEN (>= 80:e
+    percentilen) → KÖP följarkorgen (POSITIV spridning - HYP-055
+    KORTADE här) kommande 5 handelsdagar.
+  - Ledarkorgens 5-dagarsavkastning i NEDERSTA KVINTILEN (<= 20:e
+    percentilen) → KORTA följarkorgen (HYP-055 KÖPTE här) kommande
+    5 handelsdagar.
+  - Annars: ingen position.
+
+  Allt annat (branschkombination, ombalansering, motorkrav, friktion)
+  IDENTISKT med HYP-055 - se dess registerpost för fullständiga detaljer
+  om SIC-klassificering, likaviktning och normalisering.
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  1. Sharpe (efter friktion) >= 0.55.
+  2. MaxDD INTE sämre än -50% (samma explicita tak som HYP-055 - även
+     om detta är den etablerade, mer sannolikt genuina riktningen,
+     behålls samma säkerhetsmarginal tills motsatsen är bevisad).
+
+  FAIL om något villkor faller vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): samma statistik som HYP-055
+  (andel veckor med kvalificerande bransch, andel med trigger) för
+  direkt jämförbarhet mellan de två riktningarna.
+
+  Diagnostiskt syfte: isolerar om det är signalRIKTNINGEN (positiv vs
+  negativ spridning) som avgör utfallet, inte branschuppdelnings-
+  metoden i sig - HYP-055:s postmortem antydde att positiv spridning
+  kan dominera i detta universum (bred, jämn förlust snarare än en
+  enskild bugg), detta testar den hypotesen direkt istället för att
+  bara spekulera om den i efterhand.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 55
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
