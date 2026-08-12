@@ -1,0 +1,77 @@
+# LÅST 2026-08-12 av CEO i chatt. Del av samma 5-kandidat-batch som
+# HYP-082/084/085/086 (k_total 78 -> 83).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-083
+date_registered: '2026-08-12'
+title: "Naiv 50/50-kombination (kvartalsvis ombalanserad) - HYP-079 + Leg 3 (HYP-043:s momentum L/S-sviten, isolerad)"
+universe: "N/A - portföljnivå-kombination av två REDAN KÄNDA, REDAN
+  INDIVIDUELLT TESTADE avkastningsserier. Ingen ny small-cap-signal,
+  ingen ny backtest-motor - samma princip som HYP-039/082."
+small_cap_definition: "N/A - se ovan."
+data_range: "Gemensamt överlappande datumintervall för HYP-079:s och
+  HYP-043:s momentum-L/S-sveitens (momentum_ls_sleeve_pv.csv, ISOLERAD
+  fran resten av HYP-043:s egen kombination) redan beräknade serier."
+pass_fail_criterion: >
+  MEKANISM (låst): Portfölj = 50% notional i HYP-043:s momentum-L/S-
+  sviten (ISOLERAD serie, INTE HYP-043:s redan kombinerade
+  portfölj som redan innehåller SPY+HYP-037 - ren tredje-bens-signal,
+  oförändrad) + 50% notional i HYP-079:s portföljvärdesserie
+  (oförändrad, samma kapitalnivå). Ombalanserat till EXAKT 50/50 VARJE
+  KVARTAL (samma metod/konstanter som HYP-082).
+
+  Momentum-L/S-sviten har ingen egen kapitalnivå-uppdelning (en enda
+  serie) - samma serie används mot alla tre av HYP-079:s kapitalnivåer.
+
+  PASS KRÄVER, PÅ ALLA TRE KAPITALNIVÅER:
+  1. Sharpe (kombinationen) >= BÄSTA av momentum-L/S-svitens egen Sharpe
+     (0,4317, samma på alla nivåer) och HYP-079:s egen Sharpe vid samma
+     nivå (0,8433/0,7498/0,6936).
+  2. MaxDD (kombinationen) BÄTTRE än BÄSTA av momentum-L/S-svitens egen
+     MaxDD (-58,32%, samma på alla nivåer) och HYP-079:s egen MaxDD
+     (-5,82%/-5,85%/-6,90%).
+
+  FAIL om något villkor faller på någon nivå.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): korrelation mellan momentum-
+  L/S-sviten och HYP-079 (redan uppmätt +0,0111 innan denna hypotes
+  las).
+
+  Diagnostiskt syfte: momentum-L/S-sviten har en katastrofal egen MaxDD
+  (-58%) i isolering - den fungerar bara i sin ursprungliga kombination
+  med SPY+HYP-037. Testar om HYP-079:s låga korrelation räcker för att
+  själv "rädda" momentum-svitens riskprofil i en enkel 50/50-kombination,
+  eller om det krävs fler byggstenar (som i HYP-043:s ursprungliga
+  konstruktion) för att göra momentum-benet hanterbart.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 78
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.5656, cagr: 0.0745, max_drawdown: -0.2542}
+  1000000: {sharpe: 0.5542, cagr: 0.0733, max_drawdown: -0.2691}
+  10000000: {sharpe: 0.5527, cagr: 0.0730, max_drawdown: -0.2791}
+result_summary: >
+  FAILED PA BADA VILLKOREN PA ALLA TRE NIVAER, TYDLIGT. Villkor 1 kraver
+  Sharpe >= basta byggstenen (HYP-079:s 0,8433/0,7498/0,6936, hogre an
+  momentum-svitens egna 0,4317) - kombinationen nadde bara 0,57/0,55/
+  0,55, under HYP-079:s egen Sharpe. Villkor 2 kraver MaxDD battre an
+  basta byggstenen (HYP-079:s -5,82%/-5,85%/-6,90%) - kombinationen gav
+  -25,42%/-26,91%/-27,91%, klart samre (om an battre an momentum-
+  svitens egen isolerade -58,32%, vilket inte racker for att uppfylla
+  det lasta kriteriet).
+
+  SLUTSATS (som forvantat): HYP-079:s laga korrelation (+0,01) mot
+  momentum-sviten racker INTE ensamt for att tamja momentum-svitens
+  egen katastrofala risk i en simpel 50/50-kombination. Momentum-
+  sviten behover sina ANDRA stabiliserande komponenter (SPY, HYP-037)
+  fran sin ursprungliga HYP-043-konstruktion for att bli hanterbar -
+  en isolerad tvavags-kombination racker inte, oavsett hur lag
+  korrelationen ar mot just den nya partnern. Bekraftar samma
+  diagnostiska monster som HYP-082: HYP-079 fungerar bra i BREDA
+  kombinationer (HYP-081, mot en redan diversifierad fyrabensportfolj)
+  men inte som ensam "raddare" av en redan-instabil enskild komponent.

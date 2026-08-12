@@ -1,0 +1,30 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "sharpe": 0.9860776865935128,
+      "cagr": 0.09444320421052277,
+      "max_drawdown": -0.08964556099506538,
+      "n_days": 3586
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": 0.9802656825261846,
+      "cagr": 0.09029718543480536,
+      "max_drawdown": -0.0803118057187307,
+      "n_days": 3586
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": 0.940076667497425,
+      "cagr": 0.07362436718426024,
+      "max_drawdown": -0.0777157605136494,
+      "n_days": 3586
+    }
+  ],
+  "pass_fail": {
+    "cond1_sharpe": true,
+    "cond2_maxdd": false
+  },
+  "overall": "FAILED"
+}

@@ -1,0 +1,75 @@
+# LÅST 2026-08-12 av CEO i chatt (efter förtydligande via AskUserQuestion:
+# "kombinera HYP-079 med de BEFINTLIGA leg 2 och leg 3 var för sig" +
+# "fortsätt förbättra HYP-079 som fristående strategi" - båda valda).
+# Del av en 5-kandidat-batch (HYP-082 till HYP-086, k_total 78 -> 83).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-082
+date_registered: '2026-08-12'
+title: "Naiv 50/50-kombination (kvartalsvis ombalanserad) - HYP-079 + Leg 2 (HYP-037, idio-vol+krasch)"
+universe: "N/A - portföljnivå-kombination av två REDAN KÄNDA, REDAN
+  INDIVIDUELLT TESTADE avkastningsserier. Ingen ny small-cap-signal,
+  ingen ny backtest-motor - samma princip som HYP-039."
+small_cap_definition: "N/A - se ovan."
+data_range: "Gemensamt överlappande datumintervall för HYP-079:s och
+  HYP-037:s redan beräknade serier."
+pass_fail_criterion: >
+  MEKANISM (låst): Portfölj = 50% notional i HYP-037:s redan färdiga
+  portföljvärdesserie (oförändrad) + 50% notional i HYP-079:s
+  portföljvärdesserie (oförändrad, samma kapitalnivå). Ombalanserat till
+  EXAKT 50/50 VARJE KVARTAL (REBAL_FREQ="QE", 10 baspunkters
+  omallokeringskostnad - identisk metod och konstanter som
+  HYP-039/041/043/044/045/046/047/078/081).
+
+  PASS KRÄVER, PÅ ALLA TRE KAPITALNIVÅER:
+  1. Sharpe (kombinationen) >= BÄSTA av HYP-037:s och HYP-079:s egna
+     Sharpe vid samma kapitalnivå (HYP-037: 0,7366/0,7547/0,6981;
+     HYP-079: 0,8433/0,7498/0,6936).
+  2. MaxDD (kombinationen) BÄTTRE än BÄSTA av HYP-037:s och HYP-079:s
+     egna MaxDD vid samma kapitalnivå (HYP-037: -23,09%/-19,11%/-13,10%;
+     HYP-079: -5,82%/-5,85%/-6,90%).
+
+  FAIL om något villkor faller på någon nivå - detta är en strikt,
+  "måste slå BÅDA byggstenarna"-tröskel, inte bara "bättre än den sämre".
+
+  OBLIGATORISK DISCLOSURE (icke-gating): korrelation mellan HYP-037 och
+  HYP-079 (redan uppmätt -0,0523 innan denna hypotes las, se
+  candidate-analysen 2026-08-12).
+
+  Diagnostiskt syfte: testar om HYP-079 fungerar som en genuin,
+  additiv diversifierare specifikt mot leg 2, isolerat från resten av
+  referensportföljen (till skillnad från HYP-081 som testade mot HELA
+  HYP-056-bunten på en gång).
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 78
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.9861, cagr: 0.0944, max_drawdown: -0.0896}
+  1000000: {sharpe: 0.9803, cagr: 0.0903, max_drawdown: -0.0803}
+  10000000: {sharpe: 0.9401, cagr: 0.0736, max_drawdown: -0.0777}
+result_summary: >
+  FAILED PA VILLKOR 2 (MaxDD) PA ALLA TRE NIVAER, TROTS ATT VILLKOR 1
+  (Sharpe) PASSERADE TYDLIGT (0,99/0,98/0,94, over bada byggstenarnas
+  egna basta varden). MaxDD -8,96%/-8,03%/-7,77% - samre an HYP-079:s
+  egen -5,82%/-5,85%/-6,90% (fast mycket battre an HYP-037:s egen
+  -23,09%/-19,11%/-13,10%).
+
+  DIAGNOS: HYP-037:s standalone-MaxDD (-23%) ar for stor for att en
+  simpel 50/50-kombination med HYP-079 ska kunna bevara HYP-079:s egen,
+  redan mycket laga MaxDD - den strikta "sla BADA byggstenarna"-
+  tröskeln fangade detta korrekt. En naiv kombination racker inte har;
+  HYP-079:s MaxDD-fordel ater delvis upp av HYP-037:s egen risk redan
+  vid en likaviktad blandning.
+
+  Diagnostiskt: HYP-079 ar en genuin diversifierare mot leg 2 (Sharpen
+  forbattras genuint, korrelationen ar redan uppmatt nara noll), men
+  "diversifierare" och "MaxDD-forbattrare i EN ISOLERAD tvavags-
+  kombination" ar inte samma sak - HYP-081:s resultat (kombination mot
+  HELA den redan-diversifierade fyrabensportfoljen) visar att HYP-079
+  fungerar battre i en BREDARE kombination an i en snav tvavags-
+  kombination mot en enskild, redan volatil komponent.

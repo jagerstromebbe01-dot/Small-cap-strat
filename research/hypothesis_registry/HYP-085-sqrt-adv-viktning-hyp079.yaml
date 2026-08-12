@@ -1,0 +1,69 @@
+# LÅST 2026-08-12 av CEO i chatt. Del av samma 5-kandidat-batch
+# (HYP-082 till HYP-086, k_total 78 -> 83). Konvergent förslag från
+# ChatGPT i samma brainstormrunda som HYP-080 (som testade en HÅRD
+# asymmetrisk ADV-spärr och FAILADE - se HYP-080:s registerpost,
+# "stödjer indirekt ChatGPTs alternativa sqrt(ADV)-förslag"). Denna
+# hypotes testar just det alternativet.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-085
+date_registered: '2026-08-12'
+title: "Kontinuerlig sqrt(ADV)-kapacitetsviktning (ersätter hård ADV-spärr) på HYP-079"
+universe: "N/A - samma engine/signal som HYP-079 (inklusive branschtak),
+  oförändrad."
+small_cap_definition: "N/A - se HYP-072:s redan låsta definition, oförändrad."
+data_range: "Samma period som HYP-079. Ingen ny data - ren OHLCV-baserad regel."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Bygger direkt på HYP-079:s redan låsta signal, klassificering,
+  branschtak OCH positionstak - ALLA oförändrade UTOM EN SAK: HYP-075/
+  079:s befintliga HÅRDA ADV-spärr (10% av 20-dagars genomsnittlig
+  dollarvolym, en diskret "klippa" - antingen full storlek eller
+  hårt kapad) TAS BORT HELT och ersätts med kontinuerlig viktning:
+
+  1. Efter branschtaksviktningen (oförändrad), för varje NY entry-
+     kandidat på ett givet ben, beräkna dess 20-dagars genomsnittliga
+     dollarvolym (ADV$_i, samma fönster som redan används).
+  2. Multiplicera branschtaksvikten med sqrt(ADV$_i).
+  3. Normalisera om benets vikter (bland de nya entries) till att
+     summera till 1 innan kapitalpoolen fördelas. INGEN HÅRD
+     ÖVRE GRÄNS på någon enskild positions storlek utöver detta -
+     detta är en medveten, i förväg vald egenskap hos denna specifika
+     kandidat (testar om en mjuk, kontinuerlig kapacitetsviktning
+     presterar bättre än HYP-080:s hårda cutoff, som redan FAILADE).
+
+  Positionstaket (3x-trimning, dagligen) körs OFÖRÄNDRAT.
+
+  MOTORKRAV: identiska med HYP-079, förutom borttagningen av
+  MAX_ADV_PCT-spärren enligt ovan.
+
+  PASS KRÄVER ALLA FYRA STANDARDVILLKOR PLUS ETT FEMTE (kapacitetsfrågan,
+  samma som HYP-080), PÅ DEN AVGÖRANDE $100k-NIVÅN, DÖMT MOT HYP-079:S
+  EGNA REDAN UPPMÄTTA TAL:
+  1. Sharpe (huvudperiod) >= 0,8433.
+  2. MaxDD INTE sämre än -5,82%.
+  3. Sharpe med HELA kalenderåret 2020 exkluderat >= 0,8043.
+  4. Kurtosis (hela huvudperioden, $100k) < 10,56 (20% tolerans ovanför
+     HYP-079:s 8,8).
+  5. Kvoten Sharpe($10M) / Sharpe($100k) MÅSTE VARA STÖRRE än HYP-079:s
+     egen uppmätta kvot (0,6936 / 0,8433 = 0,8226).
+
+  FAIL om något av de fem villkoren faller.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): den enskilt största positionens
+  andel av respektive bens totala kapital, per kapitalnivå (för att
+  kontrollera att avsaknaden av hård gräns inte skapar orimlig
+  koncentration i de mest likvida namnen).
+
+  Diagnostiskt syfte: testar om HYP-080:s misslyckande berodde på den
+  HÅRDA cutoffens diskreta "klippa"-egenskap specifikt (som band redan
+  vid $100k, där problemet inte fanns) snarare än på idén att
+  likviditet bör påverka positionsstorlek över huvud taget.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 78
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
