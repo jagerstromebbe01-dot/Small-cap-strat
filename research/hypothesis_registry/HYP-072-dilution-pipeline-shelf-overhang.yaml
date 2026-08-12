@@ -243,6 +243,53 @@ result_summary: >
   (korrelationen mot ovriga ben under just den augusti 2020-veckan bor
   kollas separat innan naiv viktning antas vara representativ).
 
+  TILLAGG 2026-08-12 (ytterligare robusthetskontroller, samma dag, INGEN
+  K-kostnad):
+
+  1. ARSVIS AVKASTNING (deltest A, $100k): 15 av 16 ar POSITIVA (enda
+     undantaget 2019, -1,79%) - ett bra tecken, mekanismen ar INTE
+     beroende av att bara ett fatal ar racker ut hela resultatet. MEN
+     2020 ensamt gav +83,27%, langt over alla ovriga ar (som ligger
+     mellan -1,79% och +11,37%) - en tydlig, isolerad outlier-post.
+
+  2. SHARPE/DSR MED HELA 2020 BORTTAGET (inte bara de 5 varsta dagarna):
+     $100k: Sharpe 0,7704 -> 0,4894 (UNDER det lasta 0,55-golvet),
+     DSR 0,7174 -> 0,2932. $1M: Sharpe 0,7299 -> 0,5153, DSR 0,5799 ->
+     0,3260. $10M: Sharpe 0,5123 -> 0,5077, DSR 0,3398 -> 0,3132. Med
+     hela 2020 exkluderat hade HYP-072 INTE klarat sitt eget Sharpe-
+     villkor vid $100k. Detta ar EN blunt test (att ta bort sitt basta
+     ar sanker per definition alltid Sharpen for VILKEN strategi som
+     helst) - men skillnaden ar stor nog att vara ett tydligt, ohaerbart
+     observandum, inte en bagatell.
+
+  3. DELTEST B (avoid_long_only vs baseline_long_only) MED 2020
+     BORTTAGET: avoid_long_only Sharpe 0,6637 -> 0,4254, baseline_long_only
+     Sharpe 0,5052 -> 0,2932. DEN RELATIVA FORDELEN HALLER (0,4254 >
+     0,2932, samma ordning som med hela perioden) - sjalva MEKANISMEN
+     (undvika aktiva shelf-anvandare battre an att inte gora det) verkar
+     alltsa robust aven utan 2020, aven om den ABSOLUTA Sharpe-nivan
+     inte nar 0,55-golvet pa egen hand utan den ovanliga 2020-episoden.
+
+  4. KORRELATION MOT NUVARANDE REFERENSPORTFOLJ (HYP-056, $100k, 3458
+     overlappande dagar): -0,004 over hela perioden, -0,013 exklusive
+     2020, -0,062 aven UNDER sjalva augusti 2020-veckan. I PRAKTIKEN
+     NOLL KORRELATION, konsekvent aven under den episod som drev mycket
+     av HYP-072:s egen historiska edge - ett starkt, positivt fynd for
+     bade ett eventuellt femte-bens-beslut och en framtida naiv
+     kombinationshypotes (lag korrelation ar precis vad
+     diversifieringsargumentet i spec avsnitt 5b kraver testas forst).
+
+  SAMMANFATTAD TOLKNING EFTER ALLA KONTROLLER: mekanismen (undvika
+  aktiva shelf-anvandare) verkar genuin och AR nastan helt okorrelerad
+  mot befintlig portfolj (starkt positivt) - men den rapporterade
+  Sharpen/DSR:n vid $100k ar INTE robust mot att ta bort en enda ovanlig
+  historisk period (2020). Bada sakerna ar sanna samtidigt: en riktig,
+  oberoende signal OCH en absolutniva-siffra som sannolikt overskattar
+  vad som ar realistiskt att forvanta framover. Rekommenderas: behandla
+  som lovande men ovaliderad tills mer data (t.ex. genuin forward-
+  paper-trading, om/nar den blockaden loses - se CLAUDE.md) bekraftar
+  att mekanismen ger edge aven UTANFOR 2020-liknande episoder.
+
   Diagnostiskt: ANTICIPERAT, ej realiserat framtida aktieutbud (shelf-
   registreringsaktivitet) ar en genuin, per-aktie, orthogonal
   prissattningsmekanism i small-cap - till skillnad fran HYP-071:s
