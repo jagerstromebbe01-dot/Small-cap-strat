@@ -97,9 +97,55 @@ pass_fail_criterion: >
   regimexponering, och som skiljer sig från ett isolerat revisorsbyte genom
   att kräva SAMVERKAN mellan minst två oberoende administrativa
   varningssignaler.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 68
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.0820, max_drawdown: -2.0555, oos_2025_sharpe: 0.2650}
+  1000000: {sharpe: -0.3179, max_drawdown: -2.3016, oos_2025_sharpe: 0.6184}
+  10000000: {sharpe: 0.3261, max_drawdown: -1.7884, oos_2025_sharpe: 1.2381}
+  n_events: 931
+  score_distribution_at_trigger: {2: 6218, 3: 592, 4: 196}
+result_summary: >
+  FAILED PA BADA VILLKOREN PA DEN AVGORANDE $100k-NIVAN, KATASTROFALT.
+  Sharpe 0,0820 (mot golvet 0,55). MaxDD -205,55% - langt utanfor det
+  explicita -50%-taket (samma typ av tak som redan motiverats av HYP-050s
+  -98% MaxDD-katastrof).
+
+  KODBUGG UPPTACKT OCH FIXAD 2026-08-12 (fore denna siffra faststalldes):
+  forsta korningen visade MaxDD -752,77% pa grund av en storleks-
+  sattningsbugg i det korta benet - nya positioner storleksattes mot
+  `cash`, som obegransat vaxer av blankningslikvider fran REDAN OPPNA
+  positioner utan att motsvarande skuld dras av forst, vilket later
+  exponeringen snoboll okontrollerat over manader med manga overlappande
+  triggade kohorter. Fixad till att storleksatta nya positioner mot
+  AVSTAENDE kapacitet av capital_level (redan hallna positioners varde
+  subtraherat forst) - samma fix porterad till HYP-072 och HYP-074:s
+  korta ben. SIFFRORNA OVAN AR EFTER FIXEN.
+
+  Aven EFTER fixen ar MaxDD (-178% till -230% over de tre nivaerna)
+  fortfarande langt over taket - INTE langre nagon kvarvarande kodbugg
+  (spar-check: 15 av 575 trades i $100k-korningen hade en enskild
+  forlust over 100% av positionens notional, varst -448,6% (GOPHD,
+  2018-01-26) - storleksordningar konsistenta med genuina small-cap-
+  blankningssqueeze, INTE de 10 000x-100 000x-artefakter som tidigare
+  identifierade databuggar (SSN/ESSA/ABWND) gav). Detta ar alltsa ett
+  AKTA resultat: score>=2-triggern (931 handelser, fordelning 6218 vid
+  score=2/592 vid score=3/196 vid score=4) exponerar boken for genuin,
+  obegransad blankningsrisk i small-cap utan nagon stop-loss-mekanism -
+  exakt det monster registret redan dokumenterat sex ganger tidigare
+  (HYP-025-029 stop-loss-familjen, HYP-050) som skalet till varfor
+  small-cap-blankning kraver explicit svansriskkontroll.
+
+  DSR ej beraknad (Sharpe redan tydligt under golvet pa alla nivaer,
+  ingen ytterligare berakning paverkar den lasta PASS/FAIL-slutsatsen).
+
+  Diagnostiskt: den strukturerade filings-metadata-signalen (form+item-
+  koder, ingen NLP) visar INGEN matbar riskjusterad edge i denna form -
+  organisatorisk friktion som en fristaende kortsignal misslyckas av
+  samma grundlaggande skal som all annan oskyddad small-cap-blankning i
+  detta register, inte av ett problem specifikt for just denna signal.

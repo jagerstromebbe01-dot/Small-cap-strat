@@ -88,9 +88,46 @@ pass_fail_criterion: >
   fejka, vilket skiljer den från prisbaserad momentum/trend/vol och från de
   redan FAILADE redovisningsfaktorerna (book-to-market, rörelselönsamhet,
   PEAD/SUE).
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 68
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  initiation_long_n_events: 9
+  omission_short_n_events: 16
+  min_n_required: 30
+result_summary: >
+  FEASIBILITY-FAIL, INGEN PASS/FAIL-BEDOMNING GJORD (per kriteriets egen
+  minimum-N-sparr - se ovan). Bada benen föll under det lasta N-golvet pa
+  30 handelser over hela 2010-2024-perioden: LONG (initiering) gav bara 9
+  giltiga handelser (efter universums-/prisfilter, av 104 rakandelar
+  innan filter), SHORT (indragning) gav 16 (av 171 rakandelar innan
+  filter). Det stora bortfallet mellan "rakandelar" och "giltiga
+  handelser" beror pa 36-manaders-historik-kravet for LONG-benet
+  (eliminerar det mesta av universumet, som saknar sa lang sammanhangande
+  prishistorik i cachen) och universums-/prisfilter for BADA benen.
+
+  KODBUGG UPPTACKT OCH FIXAD 2026-08-12 (fore denna siffra faststalldes):
+  SHORT-benets positionsstorlekssattning anvande ursprungligen `cash`
+  (som obegransat vaxer av blankningslikvider utan att motsvarande
+  skuld dras av) som bas for nya positioners storlek - samma bugg som
+  gav HYP-073 en -752% MaxDD innan fix. Fixad till att storleksatta mot
+  AVSTAENDE kapacitet av capital_level (redan hallna positioners varde
+  subtraherat forst). SIFFRORNA NEDAN AR EFTER FIXEN.
+
+  Diagnostiskt (icke-gating, disclosure): rapporterade Sharpe/MaxDD-tal
+  ($100k: LONG Sharpe -0.089, MaxDD -98.6%; SHORT Sharpe +0.023, MaxDD
+  -69.2%) ar INTE tillforlitliga signaler i endera riktning givet
+  N<<30 - en enda position dominerar sannolikt resultatet vid dessa
+  urvalsstorlekar (SHORT-benets MaxDD naste -100% ar matematiskt mojligt
+  for en blankad position, se blankningens obegransade nedsida, men med
+  bara 16 handelser totalt kan INTE detta skiljas fran brus). Ingen
+  slutsats dras om mekanismens egentliga edge - detta ar ett datavolym-
+  problem (for fa small-cap-bolag i $100M-$2B-bandet med tillrackligt
+  lang, ren utdelningshistorik i universumet), inte ett testat-och-
+  underkant resultat. Skulle kunna aterupptas med en langre datahistorik
+  eller ett bredare bolagsvarde-band om en framtida hypotes vill
+  undersoka samma mekanism, men kraver da en ny, separat lasning.
