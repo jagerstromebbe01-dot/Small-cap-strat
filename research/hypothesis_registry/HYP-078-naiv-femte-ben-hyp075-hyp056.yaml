@@ -1,0 +1,103 @@
+# LÅST 2026-08-12 av CEO i chatt ("sen även som femte ben"). Kombinations-
+# hypotes per spec §5b: korrelationsmatris kontrollerad FÖRST (se
+# resultat nedan, alla < 0,12 mot befintliga ben), naiv (ej in-sample-
+# optimerad) viktning, egen K-kostnad.
+#
+# KORRELATION MOT BEFINTLIGA BEN (HYP-075, $100k, kontrollerad INNAN
+# denna hypotes las, 2026-08-12): Leg 2 (HYP-037, idio-vol+krasch)
+# -0,0435. Leg 3 (HYP-043, momentum L/S) +0,0134. Leg 4 (HYP-047, bear
+# catcher) +0,1129. Hela referensportföljen (HYP-056) -0,0168. Samtliga
+# nara noll - god diversifieringskandidat, motiverar denna kombinations-
+# hypotes.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-078
+date_registered: '2026-08-12'
+title: "Naiv 80/20-kombination (kvartalsvis ombalanserad) - HYP-056 (befintlig referensportfölj) + HYP-075 (femte ben)"
+universe: "N/A - portföljnivå-kombination av två REDAN KÄNDA, REDAN
+  INDIVIDUELLT TESTADE avkastningsserier (HYP-056:s färdiga, vol-målsatta
+  fyrabensportfölj + HYP-075:s färdiga positionstaks-variant av
+  dilution pipeline-signalen). Ingen ny small-cap-signal, ingen ny
+  backtest-motor - ren portföljmatematik, samma princip som
+  HYP-039/041/043/044/045/046/047."
+small_cap_definition: "N/A - se ovan, ingen ny small-cap-signal."
+data_range: "Samma period som HYP-056/HYP-075:s redan beräknade serier
+  (2010-01-01 till 2025-12-31, sammanslaget grund-/2025-utökningsuniversum),
+  slicat till det gemensamma överlappande datumintervallet."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Portfölj = 80% notional i HYP-056:s redan färdiga, redan vol-målsatta
+  portföljvärdesserie (oförändrad) + 20% notional i HYP-075:s
+  portföljvärdesserie (oförändrad, samma kapitalnivå). Ombalanserat till
+  EXAKT 80/20 VARJE KVARTAL (samma REBAL_FREQ="QE" och samma 10
+  baspunkters omallokeringskostnad på det omallokerade beloppet som
+  redan etablerat och identiskt återanvänt i HYP-039/041/043/044/045/
+  046/047, för konsekvens).
+
+  80/20-VIKTEN ÄR EN NAIV, EJ OPTIMERAD "EN-AV-FEM-BEN"-VIKT (per spec
+  §5b:s krav på naiv likaviktning, inte in-sample-optimerade vikter):
+  HYP-056 paketerar redan fyra befintliga ben (index, idio-vol+krasch,
+  momentum L/S, bear catcher) tillsammans som EN enhet; HYP-075 är det
+  femte, tilldelat samma vikt PER BEN (1/5 = 20%) som om alla fem
+  vägdes lika var för sig - INTE en vikt vald efter att ha sett hur
+  kombinationen presterar.
+
+  PASS KRÄVER, PÅ ALLA TRE KAPITALNIVÅER:
+  1. Sharpe (huvudperiod, med kombinationen) >= HYP-056:s EGEN redan
+     uppmätta Sharpe (1,2228/1,2177/1,1923).
+  2. MaxDD (huvudperiod, med kombinationen) BÄTTRE än HYP-056:s EGEN
+     redan uppmätta MaxDD (-5,92%/-6,02%/-5,64%).
+
+  FAIL om något villkor faller på någon nivå.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): OOS-2025 Sharpe/MaxDD för
+  kombinationen jämfört med HYP-056:s egna OOS-2025-tal
+  (1,7585/1,7379/1,7579), samt korrelationstalen mot leg 2/3/4 som redan
+  redovisas i denna fils huvudkommentar ovan.
+
+  Diagnostiskt syfte: testar om HYP-075 (validerad, låg-korrelerad,
+  koncentrationsriskfixad variant av HYP-072) FAKTISKT förbättrar den
+  redan starka referensportföljen när den läggs till naivt - inte bara
+  om den ser bra ut på egen hand isolerat.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 74
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 1.3756, cagr: 0.0785, max_drawdown: -0.0420, oos_2025_sharpe: 1.6875}
+  1000000: {sharpe: 1.3469, cagr: 0.0771, max_drawdown: -0.0426, oos_2025_sharpe: 1.7256}
+  10000000: {sharpe: 1.3056, cagr: 0.0726, max_drawdown: -0.0398, oos_2025_sharpe: 1.8418}
+result_summary: >
+  PASSED PA BADA VILLKOREN, PA ALLA TRE KAPITALNIVAER. Sharpe
+  1,3756/1,3469/1,3056 - klart over HYP-056:s egna 1,2228/1,2177/1,1923
+  pa alla nivaer. MaxDD -4,20%/-4,26%/-3,98% - klart battre an HYP-056:s
+  egna -5,92%/-6,02%/-5,64% pa alla nivaer. BADA matten forbattras
+  SAMTIDIGT - till skillnad fran HYP-046:s tidigare fynd (dar tva
+  riskreducerande ben kombinerade gav SAMRE Sharpe trots battre MaxDD),
+  ar detta en akta, additiv forbattring pa bade avkastning OCH risk, INTE
+  bara en riskreducering som rakar se bra ut pa ett matt.
+
+  OOS-2025: Sharpe 1,6875/1,7256/1,8418 mot HYP-056:s egna
+  1,7585/1,7379/1,7579 - jamforbart (nagot under vid 100k/1M, nagot over
+  vid 10M), inte en dramatisk overprestation som bara syns i urvalet -
+  stodjer att huvudperiodens forbattring inte ar en overanpassning.
+
+  KORRELATIONSKONTROLL (fore lasning, se huvudkommentaren): HYP-075 mot
+  leg 2 (HYP-037) -0,0435, leg 3 (HYP-043) +0,0134, leg 4 (HYP-047)
+  +0,1129, hela HYP-056 -0,0168 - alla nara noll, konsistent med att en
+  naiv tillagging faktiskt hjalper (lag korrelation ar precis den
+  mekanism som gor att bade Sharpe och MaxDD kan forbattras samtidigt av
+  en femte, oberoende avkastningskalla).
+
+  Diagnostiskt: HYP-075 (den koncentrationsriskfixade varianten av
+  HYP-072) FUNGERAR genuint som ett femte, additivt ben - inte bara pa
+  egen hand isolerat utan aven i kombination med den redan starka
+  referensportfoljen. Detta ar den STARKASTE kombinationshypotesen i
+  registret sedan HYP-047 (som blev fjarde benet) - kraver dock, som
+  alltid, ett explicit CEO-beslut for att faktiskt bli den nya
+  referensen, inte automatiskt har.
