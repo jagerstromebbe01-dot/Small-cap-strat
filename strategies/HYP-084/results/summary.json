@@ -1,0 +1,55 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "cagr": 0.06193301574412957,
+      "sharpe": 0.8592083628779658,
+      "max_drawdown": -0.05803309900074462,
+      "n_trims": 312,
+      "sharpe_ex2020": 0.8007903793869541,
+      "kurtosis": 7.75614501074628
+    },
+    {
+      "capital_level": 1000000,
+      "cagr": 0.056566266589291425,
+      "sharpe": 0.7551135136870399,
+      "max_drawdown": -0.060186335272228136,
+      "n_trims": 311,
+      "sharpe_ex2020": 0.7403637670088745,
+      "kurtosis": 10.432229101583996
+    },
+    {
+      "capital_level": 10000000,
+      "cagr": 0.05304549046822027,
+      "sharpe": 0.6899085146870887,
+      "max_drawdown": -0.07171538354399487,
+      "n_trims": 313,
+      "sharpe_ex2020": 0.7079903951868525,
+      "kurtosis": 7.948861813103711
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": -0.2648656842410587,
+      "oos_2025_max_drawdown": -0.12178296165888952
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": -0.010586254725281265,
+      "oos_2025_max_drawdown": -0.08406085065722535
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 0.7154782440479058,
+      "oos_2025_max_drawdown": -0.028510051323027173
+    }
+  ],
+  "pass_fail": {
+    "cond1_sharpe": true,
+    "cond2_maxdd": true,
+    "cond3_sharpe_ex2020": false,
+    "cond4_kurtosis": true
+  },
+  "overall": "FAILED"
+}

@@ -60,9 +60,39 @@ pass_fail_criterion: >
   kvarvarande koncentrationsrisk som branschtaket (en exogen
   klassificering) missar - en empirisk, inte kategori-baserad,
   diversifieringsregel.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 78
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.8592, cagr: 0.0619, max_drawdown: -0.0580, sharpe_ex2020: 0.8008, kurtosis: 7.8}
+  1000000: {sharpe: 0.7551, cagr: 0.0566, max_drawdown: -0.0602, sharpe_ex2020: 0.7404, kurtosis: 10.4}
+  10000000: {sharpe: 0.6899, cagr: 0.0530, max_drawdown: -0.0717, sharpe_ex2020: 0.7080, kurtosis: 7.9}
+  avg_crowding_long: 0.0812
+  avg_crowding_short: 0.1375
+result_summary: >
+  FAILED PA ENDAST VILLKOR 3, RAKBLADSTUNT (0,8008 mot kravet 0,8043 -
+  en missmarginal pa 0,0035). Villkor 1 (Sharpe 0,8592, TYDLIGT over
+  HYP-079:s 0,8433), villkor 2 (MaxDD -5,80%, marginellt battre an
+  -5,82%) och villkor 4 (kurtosis 7,8, val inom toleransen) PASSERADE
+  ALLA. Den strikta "sla HYP-079 pa alla fyra samtidigt"-tröskeln fangade
+  denna enda svaghet - motsvarande disciplin som redan tillampats
+  konsekvent i hela HYP-072-familjen (samma typ av rakblunt-fall som
+  HYP-045 tidigare i registret).
+
+  DISCLOSURE: genomsnittlig crowding-score 0,081 (long) / 0,138 (short) -
+  lag i absoluta tal, vilket antyder att regeln paverkade viktningen
+  forsiktigt (inte aggressivt) - konsistent med att Sharpe/MaxDD
+  fortfarande forbattrades mot HYP-079 pa tva av fyra villkor, bara den
+  smala ex-2020-marginalen brast.
+
+  Diagnostiskt: dold samvariation (bortom SIC-klassificering) verkar
+  vara en genuin, om an mindre, ytterligare koncentrationsdimension -
+  regeln forbattrade Sharpe och MaxDD men kunde inte riktigt matcha
+  HYP-079:s redan starka ex-2020-resultat. Nara nog for att vara vard
+  att notera som ett mojligt framtida omprovningsmal (t.ex. med en
+  annan korrelationsfonsterlangd), men INTE PASS enligt kriteriets egna,
+  redan lasta villkor - ingen efterhandsjustering gors har.

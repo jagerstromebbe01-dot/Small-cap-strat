@@ -66,9 +66,42 @@ pass_fail_criterion: >
   på att hända just nu - en övergång från en ren strukturell obalans-
   signal till en delvis händelsedriven timing-komponent, men UTAN att
   ändra den ekonomiska grundtesen (anticiperat utbud).
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 78
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.4793, cagr: 0.0519, max_drawdown: -0.2004, sharpe_ex2020: 0.6037, kurtosis: 7.0, avg_short_names: 43.1}
+  1000000: {sharpe: 0.3778, cagr: 0.0443, max_drawdown: -0.2392, sharpe_ex2020: 0.5395, kurtosis: 7.5, avg_short_names: 43.1}
+  10000000: {sharpe: 0.2224, cagr: 0.0322, max_drawdown: -0.2256, sharpe_ex2020: 0.3681, kurtosis: 9.4, avg_short_names: 43.1}
+result_summary: >
+  FAILED PA VILLKOR 1-3 PA DEN AVGORANDE $100k-NIVAN (villkor 4,
+  kurtosis, PASSERADE med god marginal: 7,0). Sharpe 0,4793 (mot kravet
+  0,8433), MaxDD -20,04% (mot -5,82%, en KRAFTIG forsamring), Sharpe
+  ex-2020 0,6037 (mot 0,8043).
+
+  DISCLOSURE: genomsnittligt antal short-namn/manad foll fran HYP-079:s
+  ~115 (se HYP-072:s ursprungliga disclosure) till 43,1 - fortfarande
+  over feasibility-golvet (10) sa inget feasibility-FAIL, men en
+  betydande krympning (~63%) av short-benets bredd.
+
+  DIAGNOS: att krava en FARSK 8-K-katalysator utover det redan
+  etablerade shelf-kriteriet minskade diversifieringen tillrackligt for
+  att aterinfora betydande MaxDD-risk (-20% till -24%), trots att den
+  faktiska koncentrationen PA ENSKILD-TICKER-NIVA (kurtosis) forbattrades
+  nagot. Namnen som blir kvar efter filtret ar sannolikt systematiskt
+  mer volatila/handelseladdade (per konstruktion - de har just haft en
+  vasentlig handelse) an den bredare, lugnare shelf-populationen, vilket
+  gor DEM till en risikablare, inte tryggare, delmangd trots den
+  teoretiskt battre "timing"-logiken.
+
+  Diagnostiskt: en overgang fran ren strukturell obalans-signal till
+  handelsedriven timing hjalpte INTE har - motsatsen till hypotesen.
+  Bredd (fler, lugnare namn) verkar viktigare an precision (farre,
+  "hetare" namn) for just denna mekanism, konsistent med registrets
+  ovriga monster (branschtaket, HYP-079, fungerade genom att BEHALLA
+  bredd samtidigt som koncentrationen minskades - inte genom att
+  krympa urvalet).

@@ -61,9 +61,46 @@ pass_fail_criterion: >
   HÅRDA cutoffens diskreta "klippa"-egenskap specifikt (som band redan
   vid $100k, där problemet inte fanns) snarare än på idén att
   likviditet bör påverka positionsstorlek över huvud taget.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 78
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.4962, cagr: 0.0515, max_drawdown: -0.1194, sharpe_ex2020: 0.5098, kurtosis: 12.4, max_single_position_share: 1.0000}
+  1000000: {sharpe: 0.4962, cagr: 0.0515, max_drawdown: -0.1194, sharpe_ex2020: 0.5098, kurtosis: 12.4, max_single_position_share: 1.0000}
+  10000000: {sharpe: 0.4962, cagr: 0.0515, max_drawdown: -0.1194, sharpe_ex2020: 0.5098, kurtosis: 12.4, max_single_position_share: 1.0000}
+  capacity_ratio: 1.0000
+result_summary: >
+  FAILED PA VILLKOR 1-4 PA ALLA TRE NIVAER (endast villkor 5,
+  kapacitetskvoten, PASSERADE - se diagnos nedan). Sharpe 0,4962 (mot
+  kravet 0,8433), MaxDD -11,94% (mot -5,82%), kurtosis 12,4 (mot
+  toleransen 10,56).
+
+  ALLVARLIG DISCLOSURE: DEN ENSKILT STORSTA POSITIONENS ANDEL AV SITT
+  BENS KAPITAL VAR 100,00% VID SAMTLIGA TRE NIVAER - dvs. minst en
+  manad lat sqrt(ADV)-viktningen (kombinerad med branschtaket) ge EN
+  enda position hela benets tillgangliga kapital. Detta bekraftar
+  exakt den risk kriteriet sjalvt flaggade i forvag ("kontrollera att
+  avsaknaden av hard grans inte skapar orimlig koncentration").
+
+  VARFOR VILLKOR 5 ANDA "PASSERADE" (kapacitetskvot 1,0000, PERFEKT):
+  eftersom denna konstruktion INTE HAR NAGON kapitalnivaberoende
+  begransning kvar (ingen hard ADV-sparr alls), ar Sharpe/MaxDD/CAGR
+  MATEMATISKT IDENTISKA pa alla tre kapitalnivaer (samma proportionella
+  viktning oavsett poolens storlek) - kapacitetskvoten blir per
+  konstruktion 1,0 (ingen forsamring alls). Detta ar INTE ett genuint
+  bevis pa att kapacitetsproblemet loststs - det ar en artefakt av att
+  regeln inte langre har NAGON kapacitetsmedvetenhet kvar. Ett
+  kapacitetsproblem som "forsvinner" for att modellen slutat modellera
+  kapacitet ar inte en losning.
+
+  Diagnostiskt: HYP-080:s hypotes (att en HARD cutoff var problemet, inte
+  idén om kapacitetsviktning i sig) var FEL i denna extrema form - att
+  ta bort ALL hard grans utan substitut ar VARRE, inte battre, an
+  HYP-080:s for strikta hårda cutoff. En mellanvag (t.ex. sqrt(ADV)-
+  viktning KOMBINERAD MED en generosare, men fortfarande existerande,
+  hard golv-/tak-grans) skulle kunna vara ett battre framtida
+  forsoksomrade, men det ar en ny, separat hypotes.
