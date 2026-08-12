@@ -202,6 +202,47 @@ result_summary: >
   DSR pa en vinsorerad/trimmad avkastningsserie, eller uteslutning av
   de mest extrema enskilda tradesen, for att se om slutsatsen haller).
 
+  TILLAGG 2026-08-12 (robusthetskontroll, samma dag, INGEN K-kostnad -
+  diagnostisk kontroll av redan lasta resultat, samma disciplin som
+  HYP-037/HYP-039:s tidigare robusthetsdiagnostik): DSR omraknad pa
+  vinsoriserad/trimmad version av deltest A:s dagliga avkastningsserie,
+  K=71, alla tre kapitalnivaer.
+
+    $100k:  bas DSR=0,7174 -> winsoriserad(1/99 pctl) DSR=0,6008 ->
+            winsoriserad(0,5/99,5 pctl) DSR=0,6341 -> EXKL. DE 5 MEST
+            EXTREMA DAGARNA HELT: DSR=0,5007 (fran SR 0,0455 till 0,0387
+            per period, kurtosis fran 366,2 till 37,0).
+    $1M:    bas DSR=0,5799 -> winsoriserad(1/99) DSR=0,6045 ->
+            EXKL. TOPP-5: DSR=0,4528 (UNDER myntkast-tröskeln 0,50).
+    $10M:   bas DSR=0,3398 -> EXKL. TOPP-5: DSR=0,2208.
+
+  TOPP-5 MEST EXTREMA ENSKILDA DAGAR VID $100k (alla positiva, ingen
+  negativ dag i topp-5): 2020-08-31 (+15,69%), 2020-08-24 (+14,91%),
+  2020-08-27 (+11,48%), 2020-08-28 (+9,21%), 2020-08-25 (+5,95%) - FYRA
+  AV FEM faller inom SAMMA enda vecka (24-31 augusti 2020), samma
+  fonster som BRTXD-spark-checkens dokumenterade rally. Aterstoden av
+  toppen (efter dessa fem) ar spridd over hela 2010-2025-perioden utan
+  liknande klustring.
+
+  SLUTSATS (viktig nyansering, INTE en status-andring - kriteriets egna
+  lasta PASS-villkor innehaller inget DSR-golv, se ovan): en
+  BETYDANDE del av $100k-nivans DSR (0,72 -> 0,50, ett fall pa 0,22)
+  ar koncentrerad till EN enda augusti 2020-vecka, sannolikt sammanfallande
+  med en kand period av extrem small-/micro-cap-spekulation (retail-
+  handelsvag mitt i pandemin) snarare an jamnt spridd genom hela
+  15-arsperioden. Vid $1M faller DSR UNDER 0,50 (myntkast-nivan) nar
+  samma fem dagar exkluderas - ett tydligt observandum. Detta gor INTE
+  HYP-072 till en databugg (BRTXD-radata redan verifierad akta, och
+  klustringen ar en genuin historisk marknadsepisod, inte ett
+  datafel) - men det flyttar den praktiska tolkningen fran "sannolikt
+  genuin, bred edge" till "en genuin men KONCENTRERAD edge, delvis
+  beroende av en ovanlig historisk episod" - relevant bade for
+  beslutet om femte ben (om den historiska episoden inte upprepas,
+  kan den framtida Sharpen/DSR:n likna den trimmade snarare an den
+  rapporterade) och for eventuell framtida kombinationshypotes
+  (korrelationen mot ovriga ben under just den augusti 2020-veckan bor
+  kollas separat innan naiv viktning antas vara representativ).
+
   Diagnostiskt: ANTICIPERAT, ej realiserat framtida aktieutbud (shelf-
   registreringsaktivitet) ar en genuin, per-aktie, orthogonal
   prissattningsmekanism i small-cap - till skillnad fran HYP-071:s
