@@ -1,0 +1,96 @@
+# LÅST 2026-08-12 av CEO i chatt ("gör det sen välje och skriv 2-3
+# kandidater", efter en cross-AI-konvergensanalys samma dag - se
+# research/candidate_ideas.md, posten daterad 2026-08-12). Del av samma
+# 3-kandidat-batch som HYP-072/HYP-073 (k_total 68 -> 71 vid
+# låsningstillfället, samtliga tre låsta samtidigt).
+#
+# KONVERGENSURVAL: en extern AI-källa föreslog denna direkt (kapital-
+# allokeringspolicy-chock, INTE som en yield-/värdesignal) + Claudes egen
+# avbrutna riktning, oberoende av varandra.
+#
+# FEASIBILITY: KRÄVER INGEN NY EXTERN DATAKÄLLA - byggs helt på den redan
+# existerande, redan verifierade adjusted_close/close-kvot-pipelinen (samma
+# fält som redan används för utdelnings-/split-sanering i data_hygiene.py).
+# Detta är den billigaste av de tre kandidaterna i denna batch.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-074
+date_registered: '2026-08-12'
+title: "Utdelningsinitiering/-indragning - kapitalallokeringspolicy-chock"
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla (HYP-008:s
+  redan låsta definition, filed-datum-korrigerat universum)
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, 2010-01-01 till 2024-12-31 (huvudperiod) + genuin
+  blind OOS-2025. Ingen ny extern datakälla - se feasibility-notering ovan.
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  UTDELNINGSHÄNDELSE-DETEKTERING (per ticker, daglig kontroll av den redan
+  beräknade adjusted_close/close-kvoten): en dag klassificeras som en
+  UTDELNINGSJUSTERING om dag-till-dag-förändringen i kvoten ligger strikt
+  mellan -3.0% och -0.01% (särskiljer den från splittar, som typiskt ger
+  betydligt större, ofta rundtals-fraktionerade steg som redan hanteras av
+  den befintliga split-sanerings-logiken) OCH dagen inte redan är maskad av
+  flag_implausible_liquidity() eller mask_unrecovered_price_breaks().
+
+  INITIERING: en ticker med NOLL utdelningsjusteringsdagar under sina
+  tillgängliga föregående 36 kalendermånader, följt av dess FÖRSTA
+  utdelningsjusteringsdag → LONG-entry nästa handelsdag.
+
+  INDRAGNING: en ticker med utdelningsjusteringsdagar i minst 3 av sina
+  senaste 4 kalenderkvartal (etablerad regelbunden betalare), följt av ETT
+  FULLT kvartal (63 handelsdagar) UTAN någon utdelningsjusteringsdag, räknat
+  från slutet av det senast observerade utdelningskvartalet → SHORT-entry
+  nästa handelsdag efter att detta 63-dagarsfönster utan händelse löpt ut.
+
+  HÅLLPERIOD: FAST 120 handelsdagar för båda benen (låst - motiverat av att
+  den underliggande akademiska evidensen för post-eventdrift efter
+  utdelningspolicy-förändringar specifikt gäller LÅNGA horisonter, till
+  skillnad från de kortare fönster som redan testats för andra
+  eventsignaler i registret). Likaviktat inom vardera benet. INGEN
+  tvingad dollarneutralitet mellan benen (asymmetriskt antal händelser
+  förväntas - exponeringsobalansen redovisas som disclosure, inte gated).
+
+  MINIMUM-N-SPÄRR (adresserar att detta börsvärdesband innehåller många
+  bolag utan utdelning alls): om FÄRRE ÄN 30 initieringshändelser
+  INTRÄFFAR över hela 2010-2024-perioden, exkluderas LONG-benet från
+  PASS/FAIL-bedömningen och redovisas i stället som
+  otillräckligt-N-resultat. Samma regel, samma tröskel (30), gäller
+  oberoende för SHORT-benet (indragningar). Om BÅDA benen är
+  otillräckligt-N: hela hypotesen avbryts som FEASIBILITY-FAIL, inget
+  PASS/FAIL-resultat görs anspråk på.
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, flag_implausible_liquidity()) samt
+  mask_unrecovered_price_breaks() (byggd 2026-08-09). borrow_cost 3%/år samt
+  Corwin-Schultz-spread på entry/exit för SHORT-benet.
+
+  PASS KRÄVER, FÖR VARJE BEN MED TILLRÄCKLIGT N (var för sig, på den
+  avgörande $100k-nivån, rapporterat för alla tre kapitalnivåer):
+  1. Sharpe (efter friktion) >= 0.55.
+  2. MaxDD INTE sämre än -50%.
+
+  FAIL för ett givet ben om något villkor faller vid $100k för det benet.
+  Om ENDAST ett ben har tillräckligt N, avgör det benet ensamt hypotesens
+  PASS/FAIL-status (redovisas explicit som ett enbens-resultat, inte
+  jämförbart rakt av med tvåbens-hypoteser i registret).
+
+  OBLIGATORISK DISCLOSURE (icke-gating): totalt antal initierings- respektive
+  indragningshändelser funna, samt avkastning per enskilt kalenderår för
+  vardera benet (samma kontroll som HYP-053 fick, för att verifiera att
+  inget enskilt år eller enskild position dominerar resultatet).
+
+  Diagnostiskt syfte: testar om en FÖRÄNDRING i ledningens
+  kapitalallokeringspolicy (inte utdelningsNIVÅN eller -avkastningen, som
+  redan är en känd, väl utforskad värde-/carry-signal) är en distinkt
+  händelsedriven mekanism - ett "commitment device" som är kostsamt att
+  fejka, vilket skiljer den från prisbaserad momentum/trend/vol och från de
+  redan FAILADE redovisningsfaktorerna (book-to-market, rörelselönsamhet,
+  PEAD/SUE).
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 68
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000

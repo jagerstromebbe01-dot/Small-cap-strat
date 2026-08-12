@@ -388,3 +388,82 @@ Undviker även allt Kelly-viktat (Ejay är stängt, nio döda varianter).
 **Kort beskrivning (kandidat 6 — analytikeruppskattningars spridning som osäkerhetsproxy):** Hög spridning bland analytikers vinstprognoser (forecast dispersion) för ett bolag har i akademisk litteratur kopplats till lägre framtida avkastning (Diether, Malloy & Scherbina 2002) - tolkat som att hög oenighet/osäkerhet i sig är en riskfaktor institutioner undviker, vilket kan koppla direkt till kapacitetsbegränsningstesen (färre bevakande analytiker + högre oenighet = mer institutionellt undvikande = mer kapacitetsutrymme).
 
 **Varför relevant:** En helt annan datakälla (analytikerkonsensus/-spridning, inte pris eller redovisning) än allt tidigare testat. HÖG DATAOSÄKERHET: small-cap-bolag i detta börsvärdesband har ofta MYCKET gles eller obefintlig analytikerbevakning - måste verifieras separat om EODHD har tillräcklig täckning innan detta är ens genomförbart. Flaggas explicit som den mest osäkra kandidaten datamässigt.
+
+---
+
+## [Datum, 2026-08-12] — cross-AI-konvergensanalys, "genuint ny alfa"-runda
+
+CEO klistrade in samma "GENUINT NY ALFA (inte overlay)"-brainstormprompt
+(se `research/CANDIDATE_BRAINSTORM_PROMPT_NY_ALFA_2026-08-11.md`) i tre
+oberoende externa AI-konversationer OCH i denna Claude-session direkt.
+Claude hann INTE leverera ett eget blint förslag innan de tre externa
+svaren klistrades in i chatten - så det här är INTE ett fjärde
+oberoende konvergensdatapunkt i BATCH-002-bemärkelse. Det är i stället
+en verklighetskontroll av de tre externa svaren mot registret (K=68
+vid tidpunkten) och mot faktisk kodbas-infrastruktur, vilket ingen av
+de externa källorna hade tillgång till.
+
+**Konvergenskluster (2+ källor, inklusive Claudes egen avbrutna
+riktning):**
+1. Framtida utspädning/shelf-overhang (S-3/ATM) - två externa källor
+   oberoende + Claudes egen riktning.
+2. Revisorsbyte/going-concern/filing-stress-kaskad - tre externa
+   källor (olika djup) + Claudes egen riktning.
+3. Risk Factors-textlikhet (Item 1A, cosine/Jaccard) - två externa
+   källor, identisk konstruktion.
+4. Amihud-impact/likviditetschocks-reversal - tre externa källor.
+5. Turn-of-month-kalendereffekt - en extern källa + Claudes egen
+   riktning.
+6. Utdelningsinitiering/-indragning - en extern källa + Claudes egen
+   riktning.
+
+**Kritisk korrigering (registret vet något de externa källorna inte
+vet):** en extern källa avfärdade explicit en januari-/skatteförlust-
+variant som "utdöende anomaly, hög risk att slösa K"; en annan
+behandlade den som en fotnot. Ingen av dem hade tillgång till
+registret - **HYP-053 (skatteförlust-reversering, januarieffekten)
+testade nästan exakt denna mekanism 2026-08-09 och PASSADE** (Sharpe
+1,57/1,40/1,00 vid 100k/1M/10M, se HYP-053:s registerpost). Svag DSR
+(0,30/0,24/0,12) pga kort aktivt fönster och redan högt K vid
+låsningstillfället - men mekanismen är INTE bevisat döende, den är
+redan validerad. Relevant för alla framtida kandidater i samma
+familj: kontrollera korrelation mot HYP-053:s aktiva fönster innan
+en ny variant registreras, annars riskeras dubbeltestning av samma
+mekanism under ett nytt namn.
+
+**Varningsflagga (konvergens ≠ ny mark):** Amihud-impact/likviditets-
+chock-reversal-klustret konvergerade hos alla tre externa källor, men
+registret har redan TRE oberoende misslyckanden i närliggande
+mekanismer: HYP-013 (reversal), HYP-042 (reversal, MaxDD -98/-99%),
+och särskilt HYP-050 (volymchock + litet prisutslag → long) som
+FAILADE katastrofalt (Sharpe -1,24, MaxDD -98%) trots att
+distress-filtret fungerade som avsett vid entry - positionerna
+kollapsade ändå under hållperioden. Tekniskt skild konstruktion
+(kräver ett prisutslag att fade:a, inte "inget utslag"), men tre
+oberoende dödsfall i samma familj väger tyngre än extern konvergens
+utan registertillgång.
+
+**Infrastrukturverklighet (kontrollerat mot `data/sec_edgar_adapter.py`,
+`data/fetch_issuance_history.py`, `data/fetch_buyback_history.py`):**
+all befintlig SEC-infrastruktur pratar uteslutande mot `companyfacts`-
+XBRL-API:et (strukturerade numeriska taggar). Ingenting i repot läser
+idag filnings-index (formtyp+datum) eller faktisk dokumenttext.
+Verifierat via webbsökning 2026-08-12: `data.sec.gov/submissions/
+CIK##########.json` innehåller ett strukturerat `items`-fält för
+8-K-inlämningar (t.ex. "4.01" för revisorsbyte, "4.02" för
+non-reliance/omräkning) samt fullständig historik av `form`+
+`filingDate` (inkl. NT 10-K/NT 10-Q, 10-K/A, S-3, 424B5) - INGEN NLP
+krävs för formtyp- eller item-kod-baserade signaler. Textbaserade
+förslag (Risk Factors-likhet, going-concern-språk, osäkerhets-
+ordlistor, pressmeddelande-sentiment) kräver däremot en helt ny,
+väsentligt dyrare kapacitet (faktisk dokumenttexthämtning), inte
+byggd än.
+
+**Beslut samma dag:** tre kandidater valdes ut och pre-registrerades
+direkt (se HYP-072, HYP-073, HYP-074) baserat på ovanstående - alla tre
+byggbara på antingen den nya, verifierade `submissions`-API-formtyp/
+item-signalen (ingen NLP) eller på redan befintlig OHLCV/adjusted_close-
+infrastruktur. Textklustret (Risk Factors-likhet m.fl.) parkerades
+medvetet - högst extern konvergens men högst byggkostnad, bör
+utvärderas i en egen, ostressad session efter att de billigare
+kandidaterna gett resultat.

@@ -1,0 +1,114 @@
+# LÅST 2026-08-12 av CEO i chatt ("gör det sen välje och skriv 2-3
+# kandidater", efter en cross-AI-konvergensanalys samma dag - se
+# research/candidate_ideas.md, posten daterad 2026-08-12, för fullständig
+# konvergenskarta och infrastrukturverklighet). Del av en 3-kandidat-batch
+# (HYP-072 till HYP-074), samma disciplin som BATCH-002 (CLAUDE.md, avsnitt
+# "Batch Hypothesis Generation"): alla tre valda och låsta samtidigt, k_total
+# ökar med 3 vid låsningstillfället (68 -> 71).
+#
+# KONVERGENSURVAL: föreslogs oberoende av en extern AI-källa (kandidat
+# "Dilution Pipeline", rankad högst av den källan) OCH av Claude (avbruten
+# egen brainstorm, innan externa svar sågs) - två oberoende riktningar mot
+# samma mekanism.
+#
+# FEASIBILITY (verifierad via webbsökning 2026-08-12, INNAN låsning):
+# data.sec.gov/submissions/CIK##########.json innehåller ett strukturerat
+# `form`-fält (filingstyp) och `filingDate` för HELA en emittents
+# filingshistorik (aktuella filingar i filings.recent, äldre i
+# filings.files) - S-3/S-3-A/424B3/424B5 är standardformtyper, ingen NLP
+# krävs. INGEN dollarbelopps-parsning av kvarvarande shelf-kapacitet ingår i
+# denna LÅSTA v1 (det skulle kräva dokumenttextparsning, en väsentligt
+# dyrare, ej byggd kapacitet) - signalen är medvetet en grövre
+# filings-frekvenssignal, inte en exakt kapacitetsberäkning. Detta är en NY
+# datamodul (SEC submissions-API, formtyp+datum) - existerande SEC-infra
+# (sec_edgar_adapter.py, fetch_issuance_history.py, fetch_buyback_history.py)
+# pratar uteslutande mot companyfacts-XBRL:et och täcker INTE detta. Samma
+# nya modul delas med HYP-073 - byggs en gång, återanvänds.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-072
+date_registered: '2026-08-12'
+title: "Dilution Pipeline / shelf-registration overhang - framtida aktieutbud som prissättningsmekanism"
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla (HYP-008:s
+  redan låsta definition, filed-datum-korrigerat universum)
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World för priser, 2010-01-01 till 2024-12-31 (huvudperiod) +
+  genuin blind OOS-2025. SEC EDGAR submissions-API (form+filingDate) för hela
+  samma period per ticker (kräver ny datamodul, se feasibility-notering ovan).
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  SIGNAL (per ticker, beräknad månadsvis vid varje ombalanseringstillfälle,
+  samma snappade kalenderdatum som resten av registret): via SEC submissions-
+  API:et, räkna antalet S-3/S-3-A/S-3ASR/424B3/424B5-filingar för tickern
+  under de senaste 12 kalendermånaderna ("shelf_recent_12m"). AKTIVT PROGRAM
+  KRÄVS (adresserar att ett gammalt, oanvänt shelf-registreringsdatum är
+  svagt informativt): tickern klassificeras "aktiv shelf-användare" ENDAST
+  om shelf_recent_12m >= 1 OCH minst en YTTERLIGARE filing av samma
+  formtypsfamilj skett inom de senaste 6 kalendermånaderna (dvs. antingen
+  två separata filingar inom 12 månader, eller en filing inom de senaste 6
+  månaderna följt av en tidigare inom 6-12-månadersfönstret) - detta filtrerar
+  bort engångsregistreringar som aldrig följdes upp.
+
+  RANKNING OCH POSITION: vid varje månatlig ombalansering, dela eligible-
+  universumet i två grupper: SHORT alla "aktiva shelf-användare" (se ovan),
+  LONG alla ÖVRIGA namn i universumet UTAN någon S-3-familjefiling
+  registrerad de senaste 24 månaderna ("ren balansräkningsfinansiering").
+  Namn som varken kvalificerar som aktiv användare eller som "ren" (dvs. har
+  gammal, ej uppföljd shelf-aktivitet 6-24 månader bak) exkluderas helt från
+  båda benen. Likaviktat inom vardera benet, dollarneutralt (50/50 long/kort
+  av benets egen allokering vid varje ombalansering).
+
+  TVÅ SEPARATA DELTEST KRÄVS (adresserar risken att en positiv
+  brutto-long/short-Sharpe bara reflekterar borrowkostnadsarbitrage, inte en
+  verklig long-sidas edge):
+  A. FULL LONG/SHORT (med friktion): som ovan, med borrow_cost 3%/år på
+     kortbenet (samma sats som resten av registret) och Corwin-Schultz-spread
+     på entry/exit för båda benen.
+  B. LONG-ONLY UNDVIKANDE-TEST: samma LONG-ben som i A, men UTAN kortbenet -
+     jämförs mot ett likaviktat long-only-innehav av HELA eligible-universumet
+     (dvs. "undvik aktiva shelf-användare, håll allt annat" mot "håll allt").
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, flag_implausible_liquidity()) samt
+  mask_unrecovered_price_breaks() (byggd 2026-08-09) - friktion inbyggd från
+  start.
+
+  PASS KRÄVER BÅDA A OCH B, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre kapitalnivåer):
+  1. Deltest A: Sharpe (efter friktion) >= 0.55.
+  2. Deltest A: MaxDD INTE sämre än -50% (samma explicita tak som HYP-050,
+     motiverat av registrets upprepade small-cap-short-katastrofer).
+  3. Deltest B: Sharpe (long-only "undvik"-portföljen) >= Sharpe för
+     long-only "håll allt"-jämförelsen - annars är resultatet i A endast en
+     borrowkostnads-/blankningsartefakt, inte en genuin prissättningsmekanism
+     på long-sidan.
+
+  FAIL om något av de tre villkoren faller, ELLER om
+  datafeasibility-kontrollen (körs FÖRST, innan backtest) visar att
+  submissions-API:ets form+filingDate-fält saknas eller är opålitligt
+  ofullständigt för ett giltigt stickprov över hela 2010-2024-perioden - i så
+  fall avbryts hypotesen innan backtest körs, redovisas öppet som ett
+  feasibility-FAIL (samma disciplin som HYP-052).
+
+  OBLIGATORISK DISCLOSURE (icke-gating): andel av eligible-universumet som
+  klassificeras "aktiv shelf-användare" respektive "ren" respektive
+  exkluderad per månad (för att verifiera att grupperna inte är
+  försumbart små), samt Sharpe-skillnaden mellan deltest A och B separat
+  redovisad (inte bara det gatande villkoret).
+
+  Diagnostiskt syfte: testar om ANTICIPERAT, ännu ej realiserat framtida
+  aktieutbud (till skillnad från HYP-071:s redan FAILADE test av REALISERAD
+  nettoemission som marknadsbred överläggssignal) är en direkt,
+  per-aktie-prissättningsmekanism - existerande ägare möter en förutsägbar
+  potentiell säljare, en marknadsstruktur-/kapacitetsmekanism som varken
+  kräver momentum, trend, idiosynkratisk volpremie eller indexdrift, och som
+  är särskilt plausibel i small-cap där en emission kan vara stor relativt
+  float.
+status: pre-registered   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 68
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
