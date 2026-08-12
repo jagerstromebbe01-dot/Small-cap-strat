@@ -174,6 +174,34 @@ result_summary: >
   Overfitting Detector-rollen vid nasta registergranskning, K=71 vid
   lasningstillfallet).
 
+  TILLAGG 2026-08-12 (DSR beraknad, samma dag, mot dagens k_total=71 -
+  Overfitting Detector-rollens uppgift enligt CLAUDE.md, "recomputes
+  Deflated Sharpe Ratio for all still-under-consideration hypotheses
+  ... after every test"): beraknad pa deltest A:s (full_ls, den
+  gatande delserien) dagliga avkastning, RF=2%/ar, K=71.
+    $100k:  SR(per-period)=0,0455  skew=+13,95  kurt=366,2  DSR=0,7174
+    $1M:    SR(per-period)=0,0419  skew=+0,90   kurt=24,8   DSR=0,5799
+    $10M:   SR(per-period)=0,0321  skew=+0,60   kurt=14,5   DSR=0,3398
+
+  TOLKNING: DSR pa den avgorande $100k-nivan (0,7174) ar MATTLIG, INTE
+  i klass med HYP-047:s 0,96-0,98 - och faller kraftigt med kapitalniva
+  (0,72 -> 0,58 -> 0,34), brantare an den rada Sharpen sjalv (0,77 ->
+  0,73 -> 0,51), eftersom K-korrektionen samverkar med seriens
+  avvikelse fran normalfordelning. SARSKILD FORSIKTIGHETSFLAGG: $100k-
+  seriens EXTREMA kurtosis (366, mot 3,0 for en normalfordelning) och
+  skevhet (+13,95) drivs i hog grad av samma fatal enskilda extrema
+  dagar som BRTXD-spark-checken redan identifierade (se ovan) - ett
+  fatal observationer dominerar seriens hogre moment kraftigt, vilket
+  gor just DENNA DSR-siffra kansligare for enskilda extremobservationer
+  an en typisk, jamnare avkastningsserie i registret. Inte ett tecken
+  pa ett fel (spark-checken bekraftade redan att BRTXD-radata ar akta),
+  men ett skal att lasa 0,7174 som "mattligt uppmuntrande, inte
+  overtygande" snarare an nara-sakert genuin edge - ANNU en anledning
+  (utover den redan noterade kapacitetsnedgangen) att inte skynda pa
+  ett beslut om femte ben utan ytterligare robusthetskontroll (t.ex.
+  DSR pa en vinsorerad/trimmad avkastningsserie, eller uteslutning av
+  de mest extrema enskilda tradesen, for att se om slutsatsen haller).
+
   Diagnostiskt: ANTICIPERAT, ej realiserat framtida aktieutbud (shelf-
   registreringsaktivitet) ar en genuin, per-aktie, orthogonal
   prissattningsmekanism i small-cap - till skillnad fran HYP-071:s
