@@ -1,0 +1,1304 @@
+[
+  {
+    "date": "2010-07-30",
+    "n_new_long": 115,
+    "n_capped_long": 0,
+    "n_new_short": 33,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2010-08-31",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 6,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2010-09-30",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 8,
+    "n_capped_short": 8
+  },
+  {
+    "date": "2010-10-29",
+    "n_new_long": 36,
+    "n_capped_long": 0,
+    "n_new_short": 3,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2010-11-30",
+    "n_new_long": 9,
+    "n_capped_long": 0,
+    "n_new_short": 7,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2010-12-31",
+    "n_new_long": 251,
+    "n_capped_long": 0,
+    "n_new_short": 132,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-01-31",
+    "n_new_long": 46,
+    "n_capped_long": 0,
+    "n_new_short": 25,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-02-28",
+    "n_new_long": 25,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-03-31",
+    "n_new_long": 31,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-04-29",
+    "n_new_long": 35,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-05-31",
+    "n_new_long": 14,
+    "n_capped_long": 0,
+    "n_new_short": 8,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-06-30",
+    "n_new_long": 241,
+    "n_capped_long": 0,
+    "n_new_short": 107,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-07-29",
+    "n_new_long": 99,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-08-31",
+    "n_new_long": 85,
+    "n_capped_long": 0,
+    "n_new_short": 31,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-09-30",
+    "n_new_long": 57,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-10-31",
+    "n_new_long": 52,
+    "n_capped_long": 0,
+    "n_new_short": 17,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-11-30",
+    "n_new_long": 70,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2011-12-30",
+    "n_new_long": 99,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-01-31",
+    "n_new_long": 27,
+    "n_capped_long": 0,
+    "n_new_short": 15,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-02-29",
+    "n_new_long": 55,
+    "n_capped_long": 0,
+    "n_new_short": 13,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-03-30",
+    "n_new_long": 63,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-04-30",
+    "n_new_long": 64,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-05-31",
+    "n_new_long": 59,
+    "n_capped_long": 0,
+    "n_new_short": 38,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-06-29",
+    "n_new_long": 48,
+    "n_capped_long": 0,
+    "n_new_short": 25,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-07-31",
+    "n_new_long": 40,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-08-31",
+    "n_new_long": 66,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-09-28",
+    "n_new_long": 33,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-10-31",
+    "n_new_long": 36,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-11-30",
+    "n_new_long": 58,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2012-12-31",
+    "n_new_long": 100,
+    "n_capped_long": 0,
+    "n_new_short": 33,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-01-31",
+    "n_new_long": 47,
+    "n_capped_long": 0,
+    "n_new_short": 14,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-02-28",
+    "n_new_long": 76,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-03-28",
+    "n_new_long": 43,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-04-30",
+    "n_new_long": 56,
+    "n_capped_long": 0,
+    "n_new_short": 17,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-05-31",
+    "n_new_long": 47,
+    "n_capped_long": 0,
+    "n_new_short": 33,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-06-28",
+    "n_new_long": 55,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-07-31",
+    "n_new_long": 33,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-08-30",
+    "n_new_long": 52,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-09-30",
+    "n_new_long": 63,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-10-31",
+    "n_new_long": 39,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-11-29",
+    "n_new_long": 52,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2013-12-31",
+    "n_new_long": 96,
+    "n_capped_long": 0,
+    "n_new_short": 45,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-01-31",
+    "n_new_long": 34,
+    "n_capped_long": 0,
+    "n_new_short": 30,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-02-28",
+    "n_new_long": 36,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-03-31",
+    "n_new_long": 61,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-04-30",
+    "n_new_long": 56,
+    "n_capped_long": 0,
+    "n_new_short": 35,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-05-30",
+    "n_new_long": 36,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-06-30",
+    "n_new_long": 47,
+    "n_capped_long": 0,
+    "n_new_short": 30,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-07-31",
+    "n_new_long": 34,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-08-29",
+    "n_new_long": 63,
+    "n_capped_long": 0,
+    "n_new_short": 23,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-09-30",
+    "n_new_long": 42,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-10-31",
+    "n_new_long": 29,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-11-28",
+    "n_new_long": 39,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2014-12-31",
+    "n_new_long": 103,
+    "n_capped_long": 0,
+    "n_new_short": 35,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2015-01-30",
+    "n_new_long": 36,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2015-02-27",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 28,
+    "n_capped_short": 28
+  },
+  {
+    "date": "2015-03-31",
+    "n_new_long": 48,
+    "n_capped_long": 0,
+    "n_new_short": 25,
+    "n_capped_short": 25
+  },
+  {
+    "date": "2015-04-30",
+    "n_new_long": 59,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 19
+  },
+  {
+    "date": "2015-05-29",
+    "n_new_long": 46,
+    "n_capped_long": 0,
+    "n_new_short": 33,
+    "n_capped_short": 33
+  },
+  {
+    "date": "2015-06-30",
+    "n_new_long": 50,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 22
+  },
+  {
+    "date": "2015-07-31",
+    "n_new_long": 36,
+    "n_capped_long": 0,
+    "n_new_short": 25,
+    "n_capped_short": 25
+  },
+  {
+    "date": "2015-08-31",
+    "n_new_long": 55,
+    "n_capped_long": 0,
+    "n_new_short": 23,
+    "n_capped_short": 23
+  },
+  {
+    "date": "2015-09-30",
+    "n_new_long": 50,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 18
+  },
+  {
+    "date": "2015-10-30",
+    "n_new_long": 46,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2015-11-30",
+    "n_new_long": 55,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 18
+  },
+  {
+    "date": "2015-12-31",
+    "n_new_long": 84,
+    "n_capped_long": 0,
+    "n_new_short": 30,
+    "n_capped_short": 30
+  },
+  {
+    "date": "2016-01-29",
+    "n_new_long": 56,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 26
+  },
+  {
+    "date": "2016-02-29",
+    "n_new_long": 44,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 20
+  },
+  {
+    "date": "2016-03-31",
+    "n_new_long": 66,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 21
+  },
+  {
+    "date": "2016-04-29",
+    "n_new_long": 49,
+    "n_capped_long": 0,
+    "n_new_short": 13,
+    "n_capped_short": 13
+  },
+  {
+    "date": "2016-05-31",
+    "n_new_long": 53,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 26
+  },
+  {
+    "date": "2016-06-30",
+    "n_new_long": 43,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 21
+  },
+  {
+    "date": "2016-07-29",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 23,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2016-08-31",
+    "n_new_long": 53,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2016-09-30",
+    "n_new_long": 43,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 26
+  },
+  {
+    "date": "2016-10-31",
+    "n_new_long": 39,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2016-11-30",
+    "n_new_long": 46,
+    "n_capped_long": 0,
+    "n_new_short": 17,
+    "n_capped_short": 17
+  },
+  {
+    "date": "2016-12-30",
+    "n_new_long": 89,
+    "n_capped_long": 0,
+    "n_new_short": 27,
+    "n_capped_short": 27
+  },
+  {
+    "date": "2017-01-31",
+    "n_new_long": 37,
+    "n_capped_long": 0,
+    "n_new_short": 15,
+    "n_capped_short": 15
+  },
+  {
+    "date": "2017-02-28",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 17,
+    "n_capped_short": 17
+  },
+  {
+    "date": "2017-03-31",
+    "n_new_long": 61,
+    "n_capped_long": 0,
+    "n_new_short": 30,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2017-04-28",
+    "n_new_long": 49,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2017-05-31",
+    "n_new_long": 48,
+    "n_capped_long": 0,
+    "n_new_short": 30,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2017-06-30",
+    "n_new_long": 41,
+    "n_capped_long": 0,
+    "n_new_short": 30,
+    "n_capped_short": 30
+  },
+  {
+    "date": "2017-07-31",
+    "n_new_long": 32,
+    "n_capped_long": 0,
+    "n_new_short": 17,
+    "n_capped_short": 17
+  },
+  {
+    "date": "2017-08-31",
+    "n_new_long": 43,
+    "n_capped_long": 0,
+    "n_new_short": 36,
+    "n_capped_short": 36
+  },
+  {
+    "date": "2017-09-29",
+    "n_new_long": 31,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 22
+  },
+  {
+    "date": "2017-10-31",
+    "n_new_long": 38,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 20
+  },
+  {
+    "date": "2017-11-30",
+    "n_new_long": 46,
+    "n_capped_long": 0,
+    "n_new_short": 14,
+    "n_capped_short": 14
+  },
+  {
+    "date": "2017-12-29",
+    "n_new_long": 139,
+    "n_capped_long": 0,
+    "n_new_short": 33,
+    "n_capped_short": 33
+  },
+  {
+    "date": "2018-01-31",
+    "n_new_long": 39,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 22
+  },
+  {
+    "date": "2018-02-28",
+    "n_new_long": 50,
+    "n_capped_long": 0,
+    "n_new_short": 28,
+    "n_capped_short": 28
+  },
+  {
+    "date": "2018-03-29",
+    "n_new_long": 53,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 22
+  },
+  {
+    "date": "2018-04-30",
+    "n_new_long": 56,
+    "n_capped_long": 0,
+    "n_new_short": 24,
+    "n_capped_short": 24
+  },
+  {
+    "date": "2018-05-31",
+    "n_new_long": 40,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 22
+  },
+  {
+    "date": "2018-06-29",
+    "n_new_long": 39,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 18
+  },
+  {
+    "date": "2018-07-31",
+    "n_new_long": 30,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 18
+  },
+  {
+    "date": "2018-08-31",
+    "n_new_long": 52,
+    "n_capped_long": 0,
+    "n_new_short": 32,
+    "n_capped_short": 32
+  },
+  {
+    "date": "2018-09-28",
+    "n_new_long": 45,
+    "n_capped_long": 0,
+    "n_new_short": 14,
+    "n_capped_short": 14
+  },
+  {
+    "date": "2018-10-31",
+    "n_new_long": 50,
+    "n_capped_long": 0,
+    "n_new_short": 23,
+    "n_capped_short": 23
+  },
+  {
+    "date": "2018-11-30",
+    "n_new_long": 55,
+    "n_capped_long": 0,
+    "n_new_short": 15,
+    "n_capped_short": 15
+  },
+  {
+    "date": "2018-12-31",
+    "n_new_long": 118,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 19
+  },
+  {
+    "date": "2019-01-31",
+    "n_new_long": 49,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 16
+  },
+  {
+    "date": "2019-02-28",
+    "n_new_long": 45,
+    "n_capped_long": 0,
+    "n_new_short": 28,
+    "n_capped_short": 28
+  },
+  {
+    "date": "2019-03-29",
+    "n_new_long": 42,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 21
+  },
+  {
+    "date": "2019-04-30",
+    "n_new_long": 45,
+    "n_capped_long": 0,
+    "n_new_short": 12,
+    "n_capped_short": 12
+  },
+  {
+    "date": "2019-05-31",
+    "n_new_long": 52,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 21
+  },
+  {
+    "date": "2019-06-28",
+    "n_new_long": 42,
+    "n_capped_long": 0,
+    "n_new_short": 23,
+    "n_capped_short": 23
+  },
+  {
+    "date": "2019-07-31",
+    "n_new_long": 28,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 16
+  },
+  {
+    "date": "2019-08-30",
+    "n_new_long": 53,
+    "n_capped_long": 0,
+    "n_new_short": 23,
+    "n_capped_short": 23
+  },
+  {
+    "date": "2019-09-30",
+    "n_new_long": 34,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 19
+  },
+  {
+    "date": "2019-10-31",
+    "n_new_long": 24,
+    "n_capped_long": 0,
+    "n_new_short": 8,
+    "n_capped_short": 8
+  },
+  {
+    "date": "2019-11-29",
+    "n_new_long": 41,
+    "n_capped_long": 0,
+    "n_new_short": 14,
+    "n_capped_short": 14
+  },
+  {
+    "date": "2019-12-31",
+    "n_new_long": 123,
+    "n_capped_long": 0,
+    "n_new_short": 39,
+    "n_capped_short": 39
+  },
+  {
+    "date": "2020-01-31",
+    "n_new_long": 30,
+    "n_capped_long": 0,
+    "n_new_short": 14,
+    "n_capped_short": 14
+  },
+  {
+    "date": "2020-02-28",
+    "n_new_long": 55,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 21
+  },
+  {
+    "date": "2020-03-31",
+    "n_new_long": 45,
+    "n_capped_long": 0,
+    "n_new_short": 21,
+    "n_capped_short": 21
+  },
+  {
+    "date": "2020-04-30",
+    "n_new_long": 42,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 20
+  },
+  {
+    "date": "2020-05-29",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 22
+  },
+  {
+    "date": "2020-06-30",
+    "n_new_long": 41,
+    "n_capped_long": 0,
+    "n_new_short": 33,
+    "n_capped_short": 33
+  },
+  {
+    "date": "2020-07-31",
+    "n_new_long": 21,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 26
+  },
+  {
+    "date": "2020-08-31",
+    "n_new_long": 68,
+    "n_capped_long": 0,
+    "n_new_short": 25,
+    "n_capped_short": 25
+  },
+  {
+    "date": "2020-09-30",
+    "n_new_long": 34,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 18
+  },
+  {
+    "date": "2020-10-30",
+    "n_new_long": 20,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 20
+  },
+  {
+    "date": "2020-11-30",
+    "n_new_long": 75,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 16
+  },
+  {
+    "date": "2020-12-31",
+    "n_new_long": 189,
+    "n_capped_long": 0,
+    "n_new_short": 47,
+    "n_capped_short": 47
+  },
+  {
+    "date": "2021-01-29",
+    "n_new_long": 71,
+    "n_capped_long": 0,
+    "n_new_short": 39,
+    "n_capped_short": 39
+  },
+  {
+    "date": "2021-02-26",
+    "n_new_long": 63,
+    "n_capped_long": 0,
+    "n_new_short": 34,
+    "n_capped_short": 34
+  },
+  {
+    "date": "2021-03-31",
+    "n_new_long": 94,
+    "n_capped_long": 0,
+    "n_new_short": 40,
+    "n_capped_short": 40
+  },
+  {
+    "date": "2021-04-30",
+    "n_new_long": 61,
+    "n_capped_long": 0,
+    "n_new_short": 23,
+    "n_capped_short": 23
+  },
+  {
+    "date": "2021-05-28",
+    "n_new_long": 52,
+    "n_capped_long": 0,
+    "n_new_short": 28,
+    "n_capped_short": 28
+  },
+  {
+    "date": "2021-06-30",
+    "n_new_long": 69,
+    "n_capped_long": 0,
+    "n_new_short": 37,
+    "n_capped_short": 37
+  },
+  {
+    "date": "2021-07-30",
+    "n_new_long": 40,
+    "n_capped_long": 0,
+    "n_new_short": 31,
+    "n_capped_short": 31
+  },
+  {
+    "date": "2021-08-31",
+    "n_new_long": 60,
+    "n_capped_long": 0,
+    "n_new_short": 39,
+    "n_capped_short": 39
+  },
+  {
+    "date": "2021-09-30",
+    "n_new_long": 36,
+    "n_capped_long": 0,
+    "n_new_short": 27,
+    "n_capped_short": 27
+  },
+  {
+    "date": "2021-10-29",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 26,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2021-11-30",
+    "n_new_long": 48,
+    "n_capped_long": 0,
+    "n_new_short": 36,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2021-12-31",
+    "n_new_long": 118,
+    "n_capped_long": 0,
+    "n_new_short": 49,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2022-01-31",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 18,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2022-02-28",
+    "n_new_long": 37,
+    "n_capped_long": 0,
+    "n_new_short": 22,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2022-03-31",
+    "n_new_long": 45,
+    "n_capped_long": 0,
+    "n_new_short": 27,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2022-04-29",
+    "n_new_long": 38,
+    "n_capped_long": 0,
+    "n_new_short": 12,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2022-05-31",
+    "n_new_long": 39,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2022-06-30",
+    "n_new_long": 31,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2022-07-29",
+    "n_new_long": 23,
+    "n_capped_long": 0,
+    "n_new_short": 6,
+    "n_capped_short": 6
+  },
+  {
+    "date": "2022-08-31",
+    "n_new_long": 44,
+    "n_capped_long": 0,
+    "n_new_short": 35,
+    "n_capped_short": 35
+  },
+  {
+    "date": "2022-09-30",
+    "n_new_long": 26,
+    "n_capped_long": 0,
+    "n_new_short": 11,
+    "n_capped_short": 11
+  },
+  {
+    "date": "2022-10-31",
+    "n_new_long": 11,
+    "n_capped_long": 0,
+    "n_new_short": 15,
+    "n_capped_short": 15
+  },
+  {
+    "date": "2022-11-30",
+    "n_new_long": 38,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 16
+  },
+  {
+    "date": "2022-12-30",
+    "n_new_long": 51,
+    "n_capped_long": 0,
+    "n_new_short": 20,
+    "n_capped_short": 20
+  },
+  {
+    "date": "2023-01-31",
+    "n_new_long": 14,
+    "n_capped_long": 0,
+    "n_new_short": 14,
+    "n_capped_short": 14
+  },
+  {
+    "date": "2023-02-28",
+    "n_new_long": 32,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 16
+  },
+  {
+    "date": "2023-03-31",
+    "n_new_long": 29,
+    "n_capped_long": 0,
+    "n_new_short": 14,
+    "n_capped_short": 14
+  },
+  {
+    "date": "2023-04-28",
+    "n_new_long": 18,
+    "n_capped_long": 0,
+    "n_new_short": 8,
+    "n_capped_short": 8
+  },
+  {
+    "date": "2023-05-31",
+    "n_new_long": 27,
+    "n_capped_long": 0,
+    "n_new_short": 19,
+    "n_capped_short": 19
+  },
+  {
+    "date": "2023-06-30",
+    "n_new_long": 31,
+    "n_capped_long": 0,
+    "n_new_short": 10,
+    "n_capped_short": 10
+  },
+  {
+    "date": "2023-07-31",
+    "n_new_long": 21,
+    "n_capped_long": 0,
+    "n_new_short": 7,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2023-08-31",
+    "n_new_long": 25,
+    "n_capped_long": 0,
+    "n_new_short": 15,
+    "n_capped_short": 15
+  },
+  {
+    "date": "2023-09-29",
+    "n_new_long": 17,
+    "n_capped_long": 0,
+    "n_new_short": 11,
+    "n_capped_short": 11
+  },
+  {
+    "date": "2023-10-31",
+    "n_new_long": 8,
+    "n_capped_long": 0,
+    "n_new_short": 5,
+    "n_capped_short": 5
+  },
+  {
+    "date": "2023-11-30",
+    "n_new_long": 8,
+    "n_capped_long": 0,
+    "n_new_short": 6,
+    "n_capped_short": 6
+  },
+  {
+    "date": "2023-12-29",
+    "n_new_long": 40,
+    "n_capped_long": 0,
+    "n_new_short": 4,
+    "n_capped_short": 4
+  },
+  {
+    "date": "2024-01-31",
+    "n_new_long": 14,
+    "n_capped_long": 0,
+    "n_new_short": 16,
+    "n_capped_short": 16
+  },
+  {
+    "date": "2024-02-29",
+    "n_new_long": 12,
+    "n_capped_long": 0,
+    "n_new_short": 7,
+    "n_capped_short": 7
+  },
+  {
+    "date": "2024-03-28",
+    "n_new_long": 11,
+    "n_capped_long": 0,
+    "n_new_short": 12,
+    "n_capped_short": 12
+  },
+  {
+    "date": "2024-04-30",
+    "n_new_long": 19,
+    "n_capped_long": 0,
+    "n_new_short": 7,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2024-05-31",
+    "n_new_long": 15,
+    "n_capped_long": 0,
+    "n_new_short": 8,
+    "n_capped_short": 8
+  },
+  {
+    "date": "2024-06-28",
+    "n_new_long": 6,
+    "n_capped_long": 0,
+    "n_new_short": 2,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2024-07-31",
+    "n_new_long": 8,
+    "n_capped_long": 0,
+    "n_new_short": 6,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2024-08-30",
+    "n_new_long": 9,
+    "n_capped_long": 0,
+    "n_new_short": 4,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2024-09-30",
+    "n_new_long": 5,
+    "n_capped_long": 0,
+    "n_new_short": 5,
+    "n_capped_short": 5
+  },
+  {
+    "date": "2024-10-31",
+    "n_new_long": 4,
+    "n_capped_long": 0,
+    "n_new_short": 3,
+    "n_capped_short": 3
+  },
+  {
+    "date": "2024-11-29",
+    "n_new_long": 14,
+    "n_capped_long": 0,
+    "n_new_short": 7,
+    "n_capped_short": 7
+  },
+  {
+    "date": "2024-12-31",
+    "n_new_long": 18,
+    "n_capped_long": 0,
+    "n_new_short": 5,
+    "n_capped_short": 5
+  },
+  {
+    "date": "2025-01-31",
+    "n_new_long": 4,
+    "n_capped_long": 0,
+    "n_new_short": 3,
+    "n_capped_short": 3
+  },
+  {
+    "date": "2025-02-28",
+    "n_new_long": 5,
+    "n_capped_long": 0,
+    "n_new_short": 4,
+    "n_capped_short": 4
+  },
+  {
+    "date": "2025-03-31",
+    "n_new_long": 9,
+    "n_capped_long": 0,
+    "n_new_short": 2,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-04-30",
+    "n_new_long": 7,
+    "n_capped_long": 0,
+    "n_new_short": 2,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-05-30",
+    "n_new_long": 0,
+    "n_capped_long": 0,
+    "n_new_short": 0,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-06-30",
+    "n_new_long": 66,
+    "n_capped_long": 0,
+    "n_new_short": 15,
+    "n_capped_short": 15
+  },
+  {
+    "date": "2025-07-31",
+    "n_new_long": 3,
+    "n_capped_long": 0,
+    "n_new_short": 1,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-08-29",
+    "n_new_long": 0,
+    "n_capped_long": 0,
+    "n_new_short": 0,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-09-30",
+    "n_new_long": 52,
+    "n_capped_long": 0,
+    "n_new_short": 8,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-10-31",
+    "n_new_long": 4,
+    "n_capped_long": 0,
+    "n_new_short": 0,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-11-28",
+    "n_new_long": 0,
+    "n_capped_long": 0,
+    "n_new_short": 0,
+    "n_capped_short": 0
+  },
+  {
+    "date": "2025-12-31",
+    "n_new_long": 35,
+    "n_capped_long": 0,
+    "n_new_short": 5,
+    "n_capped_short": 5
+  }
+]

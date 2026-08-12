@@ -1,0 +1,75 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "cagr": 0.05784899994672066,
+      "sharpe": 0.771232267967301,
+      "max_drawdown": -0.05935415180526438,
+      "n_trims": 311,
+      "capacity_disclosure": {
+        "n_new_long_total": 8582,
+        "n_capacity_limited_long": 39,
+        "n_new_short_total": 3849,
+        "n_capacity_limited_short": 69
+      },
+      "sharpe_ex2020": 0.7349997367912515,
+      "kurtosis": 7.869596661905798
+    },
+    {
+      "capital_level": 1000000,
+      "cagr": 0.052769960752267586,
+      "sharpe": 0.6708738341801971,
+      "max_drawdown": -0.06242780923765626,
+      "n_trims": 312,
+      "capacity_disclosure": {
+        "n_new_long_total": 8582,
+        "n_capacity_limited_long": 200,
+        "n_new_short_total": 3845,
+        "n_capacity_limited_short": 421
+      },
+      "sharpe_ex2020": 0.6786178266749208,
+      "kurtosis": 11.334778487342032
+    },
+    {
+      "capital_level": 10000000,
+      "cagr": 0.049235275740650675,
+      "sharpe": 0.6150374051599464,
+      "max_drawdown": -0.08043769211553495,
+      "n_trims": 312,
+      "capacity_disclosure": {
+        "n_new_long_total": 8558,
+        "n_capacity_limited_long": 1084,
+        "n_new_short_total": 3830,
+        "n_capacity_limited_short": 1524
+      },
+      "sharpe_ex2020": 0.6588772689684417,
+      "kurtosis": 6.32500268795272
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": -0.04711892052936587,
+      "oos_2025_max_drawdown": -0.11858854791211758
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": 0.2503413429977719,
+      "oos_2025_max_drawdown": -0.054949057439616894
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 1.2918135093699228,
+      "oos_2025_max_drawdown": -0.015228787914699001
+    }
+  ],
+  "capacity_ratio": 0.7974736414763484,
+  "pass_fail": {
+    "cond1_sharpe": false,
+    "cond2_maxdd": true,
+    "cond3_sharpe_ex2020": false,
+    "cond4_kurtosis": true,
+    "cond5_capacity_ratio": true
+  },
+  "overall": "FAILED"
+}
