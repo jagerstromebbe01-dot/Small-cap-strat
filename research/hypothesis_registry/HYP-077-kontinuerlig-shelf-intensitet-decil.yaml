@@ -72,9 +72,52 @@ pass_fail_criterion: >
   aktieutbud) ger en strukturellt jämnare avkastningsfördelning än
   HYP-072:s binära tröskelregel, utan att förlita sig på ett
   efterhandsingripande (till skillnad från HYP-075/HYP-076).
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: failed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 71
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.7006, cagr: 0.1208, max_drawdown: -0.1196, sharpe_ex2020: 0.4994, kurtosis: 536.6, deflated_sharpe_ratio: 0.6044}
+  1000000: {sharpe: 0.7537, cagr: 0.0730, max_drawdown: -0.1094, sharpe_ex2020: 0.6757, kurtosis: 34.8, deflated_sharpe_ratio: 0.5607}
+  10000000: {sharpe: 0.5000, cagr: 0.0546, max_drawdown: -0.1312, sharpe_ex2020: 0.5420, kurtosis: 70.3, deflated_sharpe_ratio: 0.2568}
+  avg_n_eligible_per_month: 696.5
+  avg_n_per_decile: 69.6
+  share_zero_score_in_long_decile: 1.0
+result_summary: >
+  FAILED PA VILLKOR 4 (kurtosis) PA DEN AVGORANDE $100k-NIVAN, TROTS ATT
+  VILLKOR 1-3 PASSERADE (Sharpe 0,7006 >= 0,55; MaxDD -11,96% >= -50%;
+  Sharpe ex-2020 0,4994 >= 0,4894 - en MARGINELL passering, bara 0,01
+  over tröskeln). Villkor 4: kurtosis 536,6, HOGRE an HYP-072:s egen
+  366,2 - alltsa VARRE, inte battre, trots hypotesens uttryckliga syfte
+  att minska koncentration genom bredare deciler.
+
+  DIAGNOS: bottendecilen bestar till 100% av score=0-namn (tie-break-
+  fordelningen slog igenom fullt ut - se disclosure), dvs. i praktiken
+  SAMMA "rena"-population som HYP-072:s befintliga klassificering, men
+  nu begransad till EXAKT 10% (~70 namn/manad) istallet for HYP-072:s
+  bredare "ren"-grupp (~50,5% av universumet, se HYP-072:s disclosure).
+  En SMALARE long-korg (70 istallet for ~350 namn) okar - inte minskar -
+  enskild-namn-koncentrationen, rakt motsatt den avsedda effekten. Detta
+  ar en direkt, forklarad konsekvens av konstruktionen (tie-break pa
+  alfabetisk ordning bland tusentals identiska score=0-namn slumpar i
+  praktiken fram en GODTYCKLIG, smal delmangd av den redan breda "rena"-
+  gruppen), inte en bugg eller ett datafel.
+
+  MaxDD forsamrades ocksa (-11,96% mot HYP-072:s -6,18%) - konsistent
+  med samma diagnos (smalare korg = mer koncentrerad risk, inte mindre).
+
+  DSR (K=74) = 0,6044/0,5607/0,2568 - mattlig vid $100k men irrelevant
+  har eftersom Villkor 4 redan avgor FAIL.
+
+  Diagnostiskt: den kontinuerliga tidsviktningen i sig (exponentiellt
+  avtagande shelf_score) var INTE problemet - problemet var att
+  DECILRANGORDNING pa en signal dar en majoritet av universumet delar
+  samma (noll-)varde oavsiktligt SMALNAR AV long-benet jamfort med
+  HYP-072:s binara "alla score=0-namn"-regel. En framtida variant som
+  vill behalla den kontinuerliga poangen men undvika denna fallgrop
+  skulle behova en annan LONG-regel (t.ex. "alla score=0-namn", som i
+  HYP-072, snarare an "bottendecilen av score") - men det vore en ny,
+  separat hypotes, inte en efterhandsjustering av denna.

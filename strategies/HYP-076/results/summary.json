@@ -1,0 +1,55 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "cagr": 0.07476904897354508,
+      "sharpe": 0.8622015439869862,
+      "max_drawdown": -0.0588260356076169,
+      "n_profit_takes": 732,
+      "sharpe_ex2020": 0.6681300167131109,
+      "kurtosis": 169.18631543472625
+    },
+    {
+      "capital_level": 1000000,
+      "cagr": 0.05730049149195793,
+      "sharpe": 0.7399102762658781,
+      "max_drawdown": -0.06600867167519078,
+      "n_profit_takes": 735,
+      "sharpe_ex2020": 0.6396464944207013,
+      "kurtosis": 7.776423991527951
+    },
+    {
+      "capital_level": 10000000,
+      "cagr": 0.04823629941993768,
+      "sharpe": 0.5650138240924707,
+      "max_drawdown": -0.08636479312354925,
+      "n_profit_takes": 735,
+      "sharpe_ex2020": 0.5666880925876316,
+      "kurtosis": 7.458667772192514
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": 0.18251847035950772,
+      "oos_2025_max_drawdown": -0.11300378880204834
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": 0.25740448814617883,
+      "oos_2025_max_drawdown": -0.09143352641984769
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 0.5729451494907876,
+      "oos_2025_max_drawdown": -0.044167680069469493
+    }
+  ],
+  "pass_fail": {
+    "cond1_sharpe": true,
+    "cond2_maxdd": true,
+    "cond3_sharpe_ex2020": true,
+    "cond4_kurtosis": true
+  },
+  "overall": "PASSED"
+}

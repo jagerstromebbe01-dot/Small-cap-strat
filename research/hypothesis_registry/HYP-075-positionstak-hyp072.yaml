@@ -86,9 +86,50 @@ pass_fail_criterion: >
   ändring av signalen) kan bevara HYP-072:s redan starka MaxDD och
   låga korrelation mot befintlig portfölj samtidigt som den gör
   avkastningen mindre beroende av enstaka extrema positioner.
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: passed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 71
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.8065, cagr: 0.0596, max_drawdown: -0.0605, sharpe_ex2020: 0.7737, kurtosis: 7.7, n_trims: 311, deflated_sharpe_ratio: 0.5543}
+  1000000: {sharpe: 0.7122, cagr: 0.0547, max_drawdown: -0.0585, sharpe_ex2020: 0.7104, kurtosis: 10.1, n_trims: 311, deflated_sharpe_ratio: 0.5266}
+  10000000: {sharpe: 0.6408, cagr: 0.0508, max_drawdown: -0.0743, sharpe_ex2020: 0.6714, kurtosis: 7.6, n_trims: 313, deflated_sharpe_ratio: 0.5293}
+result_summary: >
+  PASSED PA ALLA FYRA LASTA VILLKOREN PA DEN AVGORANDE $100k-NIVAN, OCH
+  SLAR HYP-072 PA NASTAN VARJE MATT. Sharpe 0,8065 (mot HYP-072:s 0,7704).
+  MaxDD -6,05% (jamforbart med HYP-072:s -6,18%). Sharpe ex-2020 0,7737 -
+  langt over bade 0,4894-tröskeln OCH HYP-072:s egen ex-2020-siffra,
+  vilket visar att "normala" ar faktiskt star sig BATTRE nar
+  koncentrationsrisken tas bort, inte bara att den extrema 2020-episoden
+  dampas. Kurtosis 7,7 - en DRAMATISK forbattring fran HYP-072:s 366,2
+  (48x lagre), i praktiken normalfordelningsniva (3,0 = normal). 311-313
+  trimningar utfordes over hela perioden.
+
+  SPARCHECK: varsta enskilda vinsttradet i $100k-boken foll fran
+  HYP-072:s +25625% (BRTXD) till +533% (AXRX, 2012-12) - positionstaket
+  fungerade exakt som designat, ingen enskild position tillats langre
+  dominera. Varsta forlusttradet ofOrandrat (FTSV -676%, samma
+  kortbensmekanism som HYP-072, ej berord av denna regel eftersom den ar
+  symmetrisk och redan aktiv dar - ingen ny bugg).
+
+  DSR (K=74, RF=2%/ar) = 0,5543/0,5266/0,5293 - LAGRE an HYP-072:s
+  0,7174 vid $100k, TROTS battre Sharpe och mycket lagre kurtosis. INTE
+  en motsagelse: DSR-formeln straffar avkastningsseriens SKEVHET
+  (skew=-1,96 vid $100k, mot HYP-072:s +13,95) separat fran kurtosis -
+  att klippa de extrema VINSTERNA gjorde fordelningen mer NEGATIVT skev
+  (forlustsvansen blir relativt sett mer framtradande nar vinstsvansen
+  kapas), vilket DSR-formeln (som anvander bade skew och kurt i sin
+  varianstermer) rakar straffa nastan lika hart som den ursprungliga
+  positiva skevheten belonade. Bade Sharpe-forbattringen OCH DSR-
+  forsamringen ar akta, matematiska konsekvenser av samma ingrepp -
+  ingendera doljs har.
+
+  Diagnostiskt: en symmetrisk, ren storlekshanteringsregel (ingen
+  signalandring) bevarar och till och med FORBATTRAR HYP-072:s kärnedge,
+  och loser den diagnostiserade koncentrationsrisken nastan helt (7,7 mot
+  366,2 i kurtosis) - men gor INTE DSR-siffran hogre, vilket visar att
+  "mindre koncentrerad" och "mer statistiskt sakerstalld givet K forsok"
+  inte alltid ar samma sak.

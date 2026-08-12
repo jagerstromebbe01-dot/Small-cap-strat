@@ -68,9 +68,45 @@ pass_fail_criterion: >
   kurtosis/skevhet utan att bygga ett strukturellt tak som kan klippa
   legitim, upprepad vinsttillväxt (den risk HYP-075:s upprepbara regel
   bär).
-status: pre-registered   # pre-registered -> tested -> passed/failed
+status: passed   # pre-registered -> tested -> passed/failed
 k_total_hypotheses_before_this: 71
 tested_capital_levels:
 - 100000
 - 1000000
 - 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.8622, cagr: 0.0748, max_drawdown: -0.0588, sharpe_ex2020: 0.6681, kurtosis: 169.2, n_profit_takes: 732, deflated_sharpe_ratio: 0.7380}
+  1000000: {sharpe: 0.7399, cagr: 0.0573, max_drawdown: -0.0660, sharpe_ex2020: 0.6396, kurtosis: 7.8, n_profit_takes: 735, deflated_sharpe_ratio: 0.5760}
+  10000000: {sharpe: 0.5650, cagr: 0.0482, max_drawdown: -0.0864, sharpe_ex2020: 0.5667, kurtosis: 7.5, n_profit_takes: 735, deflated_sharpe_ratio: 0.4113}
+result_summary: >
+  PASSED PA ALLA FYRA LASTA VILLKOREN PA DEN AVGORANDE $100k-NIVAN -
+  HOGSTA RAA SHARPEN AV SAMTLIGA HYP-072-VARIANTER (inklusive HYP-072
+  sjalv och HYP-075): 0,8622. MaxDD -5,88%. Sharpe ex-2020 0,6681 - klart
+  over 0,4894-tröskeln. Kurtosis 169,2 - forbattrad fran HYP-072:s 366,2
+  men INTE lika langt som HYP-075:s 7,7 (forvantat, se sparcheck nedan -
+  regeln lamnar halva positionen okontrollerad efter forsta
+  vinsthemtagningen).
+
+  SPARCHECK: BRTXD-tradet finns KVAR i toppen (+12762% pa den kvarvarande
+  halvan, mot HYP-072:s +25625% pa hela positionen) - regeln halverade
+  korrekt dollarpaverkan fran just detta enskilda extremfall men eliminerade
+  den inte, till skillnad fran HYP-075:s upprepbara tak som kapade den till
+  +533%. Detta ar EXAKT det designade beteendet (en engangshandelse,
+  inte ett tak) - inte ett fel.
+
+  DSR (K=74, RF=2%/ar) = 0,7380/0,5760/0,4113 - vid $100k HOGST av
+  SAMTLIGA HYP-072-varianter (inklusive HYP-072 sjalv, 0,7174), trots
+  hogre kurtosis an HYP-075. Skevheten (skew=+5,28, fortfarande positiv
+  men mycket lagre an HYP-072:s +13,95) forklarar skillnaden mot HYP-075
+  (som fick negativ skev och darmed en hardare DSR-straff, se HYP-075:s
+  registerpost) - en engångs-halvering bevarar mer av den ursprungliga
+  positiva skevheten an ett upprepat tak, vilket rakar ge en gynnsammare
+  DSR-profil har.
+
+  Diagnostiskt: en riktad, engångs-vinsthemtagning fangar en stor del av
+  koncentrationsfordelen utan att bygga ett strukturellt, upprepat tak -
+  och ger dessutom den HOGSTA DSR:n av alla testade HYP-072-varianter vid
+  $100k. Tillsammans med HYP-075 ger detta CEO tva genuint forbattrade,
+  oberoende alternativ till HYP-072:s ursprungliga konstruktion att valja
+  mellan (eller kombinera) for ett eventuellt femte-bens-beslut.
