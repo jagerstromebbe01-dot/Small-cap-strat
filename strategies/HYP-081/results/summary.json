@@ -1,0 +1,50 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "sharpe": 1.3843550191805778,
+      "cagr": 0.07874840392711979,
+      "max_drawdown": -0.04201646329055288,
+      "n_days": 3458
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": 1.3556871853248933,
+      "cagr": 0.07740844301067251,
+      "max_drawdown": -0.04262814080084358,
+      "n_days": 3458
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": 1.31747769507765,
+      "cagr": 0.07302319321773831,
+      "max_drawdown": -0.03987683153920621,
+      "n_days": 3458
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": 1.6577126283008838,
+      "oos_2025_max_drawdown": -0.030136390247414522,
+      "n_days_oos": 247
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": 1.698123812105577,
+      "oos_2025_max_drawdown": -0.028716112488877038,
+      "n_days_oos": 247
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 1.851853484601698,
+      "oos_2025_max_drawdown": -0.03010370592962231,
+      "n_days_oos": 247
+    }
+  ],
+  "pass_fail": {
+    "cond1_sharpe": true,
+    "cond2_maxdd": true
+  },
+  "overall": "PASSED"
+}

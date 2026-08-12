@@ -1,0 +1,87 @@
+# LÅST 2026-08-12 av CEO i chatt ("ja kör"). Kombinationshypotes per
+# spec §5b, identisk konvention som HYP-078 (som testade HYP-075 på
+# samma sätt) - korrelation kontrollerad FÖRST, naiv viktning, egen K.
+#
+# KORRELATION MOT BEFINTLIGA BEN (HYP-079, $100k, kontrollerad INNAN
+# denna hypotes las, 2026-08-12): Leg 2 (HYP-037) -0,0523. Leg 3
+# (HYP-043) +0,0111. Leg 4 (HYP-047) +0,1150. Hela referensportföljen
+# (HYP-056) -0,0203. Samtliga nära noll, praktiskt taget identiska med
+# HYP-075:s egna korrelationstal (väntat, samma underliggande signal).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-081
+date_registered: '2026-08-12'
+title: "Naiv 80/20-kombination (kvartalsvis ombalanserad) - HYP-056 (befintlig referensportfölj) + HYP-079 (femte ben, branschtaksvarianten)"
+universe: "N/A - portföljnivå-kombination av två REDAN KÄNDA, REDAN
+  INDIVIDUELLT TESTADE avkastningsserier. Ingen ny small-cap-signal,
+  ingen ny backtest-motor - identisk princip som HYP-078 (samma metod,
+  bytt HYP-075 mot dess starkare efterföljare HYP-079)."
+small_cap_definition: "N/A - se ovan."
+data_range: "Samma period som HYP-056/HYP-079:s redan beräknade serier
+  (2010-01-01 till 2025-12-31), slicat till gemensamt överlappande
+  datumintervall."
+pass_fail_criterion: >
+  MEKANISM (låst, identisk med HYP-078 förutom vilken HYP-072-variant
+  som utgör det femte benet):
+
+  Portfölj = 80% notional i HYP-056:s redan färdiga, redan vol-målsatta
+  portföljvärdesserie (oförändrad) + 20% notional i HYP-079:s
+  portföljvärdesserie (oförändrad, samma kapitalnivå). Ombalanserat till
+  EXAKT 80/20 VARJE KVARTAL (REBAL_FREQ="QE", 10 baspunkters
+  omallokeringskostnad - identisk metod och konstanter som
+  HYP-039/041/043/044/045/046/047/078).
+
+  80/20-VIKTEN ÄR SAMMA NAIVA "EN-AV-FEM-BEN"-LOGIK SOM HYP-078 (per
+  spec §5b), INTE en vikt vald efter att ha sett hur just DENNA
+  kombination presterar.
+
+  PASS KRÄVER, PÅ ALLA TRE KAPITALNIVÅER:
+  1. Sharpe (huvudperiod, med kombinationen) >= HYP-056:s EGEN redan
+     uppmätta Sharpe (1,2228/1,2177/1,1923).
+  2. MaxDD (huvudperiod, med kombinationen) BÄTTRE än HYP-056:s EGEN
+     redan uppmätta MaxDD (-5,92%/-6,02%/-5,64%).
+
+  FAIL om något villkor faller på någon nivå.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): jämförelse mot HYP-078:s
+  redan uppmätta resultat (Sharpe 1,3756/1,3469/1,3056, MaxDD
+  -4,20%/-4,26%/-3,98%) - testar om HYP-079:s egna förbättringar
+  (branschtak) också syns igenom när den kombineras med resten av
+  portföljen, inte bara isolerat.
+
+  Diagnostiskt syfte: samma som HYP-078, men med den starkare,
+  branschtaksförbättrade HYP-072-varianten.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 77
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 1.3844, cagr: 0.0787, max_drawdown: -0.0420, oos_2025_sharpe: 1.6577}
+  1000000: {sharpe: 1.3557, cagr: 0.0774, max_drawdown: -0.0426, oos_2025_sharpe: 1.6981}
+  10000000: {sharpe: 1.3175, cagr: 0.0730, max_drawdown: -0.0399, oos_2025_sharpe: 1.8519}
+result_summary: >
+  PASSED PA BADA VILLKOREN, PA ALLA TRE KAPITALNIVAER. Sharpe
+  1,3844/1,3557/1,3175 - over bade HYP-056:s egna 1,2228/1,2177/1,1923
+  OCH (marginellt) over HYP-078:s (HYP-075-versionen) 1,3756/1,3469/
+  1,3056. MaxDD -4,20%/-4,26%/-3,99% - i praktiken identisk med HYP-078
+  (utspadningseffekten av 80/20-blandningen dominerar; HYP-079:s egen
+  MaxDD-forbattring mot HYP-075 syns bara svagt igenom i den redan
+  utspadda kombinationen).
+
+  Forbattringen fran HYP-079 mot HYP-075 (isolerat: Sharpe 0,84 mot
+  0,81) overlever alltsa kombinationen, men i utspadd form (0,20-viktad)
+  blir den marginella skillnaden liten i absoluta tal - vantat, inte ett
+  tecken pa att branschtaket "inte spelar roll" i kombination, bara att
+  80/20-blandningens dominerande komponent (HYP-056) begransar hur
+  mycket en forbattring i det femte, mindre benet kan synas i
+  helhetstalet.
+
+  Diagnostiskt: bekraftar samma slutsats som HYP-078 men med den
+  starkare byggstenen - HYP-079 fungerar genuint som femte ben, och ar
+  nu den att foredra framfor HYP-075 for ett eventuellt CEO-beslut om
+  permanent femte-bens-status.
+- 10000000
