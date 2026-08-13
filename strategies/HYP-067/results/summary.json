@@ -1,0 +1,94 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "cagr": 0.18900533546172338,
+      "sharpe": 0.29482950857154705,
+      "calmar": 0.31528248618002097,
+      "max_drawdown": -0.5994793359812715,
+      "trade_stats": {
+        "n": 823,
+        "win_rate": 0.4240583232077764,
+        "avg_ret": 0.46410049772942386,
+        "pf": 3.6397049853579144
+      },
+      "n_stop_loss_exits": 393
+    },
+    {
+      "capital_level": 1000000,
+      "cagr": 0.186664566074481,
+      "sharpe": 0.29277933308324694,
+      "calmar": 0.3077515983470177,
+      "max_drawdown": -0.6065429621717183,
+      "trade_stats": {
+        "n": 823,
+        "win_rate": 0.4240583232077764,
+        "avg_ret": 0.46410049772942386,
+        "pf": 3.6397049853579144
+      },
+      "n_stop_loss_exits": 393
+    },
+    {
+      "capital_level": 10000000,
+      "cagr": 0.1067463246934437,
+      "sharpe": 0.3183441646064882,
+      "calmar": 0.172874927394837,
+      "max_drawdown": -0.6174771917598024,
+      "trade_stats": {
+        "n": 823,
+        "win_rate": 0.4240583232077764,
+        "avg_ret": 0.4641004977294239,
+        "pf": 3.6397049853579144
+      },
+      "n_stop_loss_exits": 393
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": 0.3617258922663581,
+      "oos_2025_max_drawdown": -0.3915060716087281,
+      "oos_2025_total_return": 0.07994920076545786,
+      "n_days": 250
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": 0.8496435890429956,
+      "oos_2025_max_drawdown": -0.23525307259900913,
+      "oos_2025_total_return": 0.23705454541157067,
+      "n_days": 250
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 0.5650188487827886,
+      "oos_2025_max_drawdown": -0.13666677779224234,
+      "oos_2025_total_return": 0.12492845512396822,
+      "n_days": 250
+    }
+  ],
+  "hyp066_main_maxdd_ref": {
+    "100000": -0.6685,
+    "1000000": -0.709,
+    "10000000": -0.7264
+  },
+  "pass_fail": {
+    "per_level": [
+      {
+        "level": 100000,
+        "condition_1_sharpe": false,
+        "condition_2_maxdd": true
+      },
+      {
+        "level": 1000000,
+        "condition_1_sharpe": false,
+        "condition_2_maxdd": true
+      },
+      {
+        "level": 10000000,
+        "condition_1_sharpe": false,
+        "condition_2_maxdd": true
+      }
+    ],
+    "overall": "FAILED"
+  }
+}

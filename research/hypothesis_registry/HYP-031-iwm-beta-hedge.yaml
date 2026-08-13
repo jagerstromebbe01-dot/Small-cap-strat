@@ -1,0 +1,106 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Uppfoljare till HYP-023 (nuvarande
+# referensimplementation) - foreslagen efter extern konsultation (CEO
+# stamde av strategin med tre andra AI-assistenter). Riktad mot en
+# konkret, tidigare oidentifierad risk: HYP-023 handlar micro/small-cap
+# ($100M-$2B) men neutraliserar marknadsbeta mot SPY (mega-cap) - en
+# potentiell "basis risk" mellan det handlade bocket och hedgeinstrumentet
+# som INTE ar en del av den avsedda edgen.
+#
+# VIKTIGT: detta ar EN ANNAN fraga an HYP-021 (som redan testade att byta
+# SIGNALENS referensindex - fann ingen skillnad, HYP-017 forblev
+# referensen). HYP-021 anvande medvetet SPY OFORANDRAD som det FAKTISKA
+# hedgeinstrumentet, med motiveringen att SPY ar "ett riktigt, likvitt,
+# blankningsbart instrument man faktiskt kan hedga med i verkligheten."
+# IWM (Russell 2000 ETF) uppfyller SAMMA krav - lika likvitt, lika
+# blankningsbart - men reflekterar small-cap-marknaden mer direkt. Denna
+# hypotes testar alltsa HEDGE-INSTRUMENTET, inte signalreferensen.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-031
+date_registered: '2026-07-31'
+title: Beta-hedge mot IWM (Russell 2000) i stallet for SPY, pa HYP-023
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD, sektor-krasch-trigger pa bank-/finanskomposit
+  OFORANDRAD, friktion/kapacitetsspärr, de tre motorfixarna). Idiosynkratisk-vol-SIGNALENS
+  residualisering forblir OFORANDRAD mot SPY (HYP-021 visade redan att signalreferensen inte paverkar
+  resultatet - denna hypotes testar en annan variabel).
+
+  ENDA andringen: den FAKTISKA korta hedgepositionens instrument (beta-berakning OCH hedge-P&L, dvs
+  vad som tidigare kallades HEDGE i motorn) byts fran SPY till IWM. Allt annat i hedge-mekaniken
+  (126-dagars rullande beta, sakerhetsspärren mot degenererad beta, lanekostnad 3% arlig ranta pa
+  hedgens exponering) ar OFORANDRAT - bara vilket index betan racknas mot och P&L:n baseras pa andras.
+
+  MOTORKRAV (samma tre som HYP-015/017/022/023): snappade ombalanseringsdatum, adjusted_close
+  genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M).
+  2. Maxdrawdown INTE samre (inte mer negativ) an HYP-023:s EGET redan uppnadda resultat pa SAMMA
+     kapitalniva (100k: -25.46%, 1M: -19.29%, 10M: -13.16%) - samma standard som BATCH-001:s
+     stop-loss-varianter holls till, eftersom syftet ar att MINSKA brus/basis-risk, inte introducera
+     ny risk.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte: testar om en mer representativ hedge-referens (small-cap-index i stallet for
+  mega-cap-index) minskar den friktion/brus som en potentiell basis-risk mellan det handlade
+  micro/small-cap-bocket och hedgeinstrumentet SPY orsakar - utan att paverka signalen eller
+  krasch-skyddsmekanismerna, som redan ar validerade i sin nuvarande form.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 29
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1181, sharpe: 0.7076, calmar: 0.4558, sharpe_excl_best_trade: 0.6565, max_drawdown: -0.2592, win_rate: 0.4918, profit_factor: 1.1982, n_trades: 2253, march_2023_episode_return: -0.1391, deflated_sharpe_ratio: 0.7285}
+  1000000: {cagr: 0.1212, sharpe: 0.7440, calmar: 0.6174, sharpe_excl_best_trade: 0.6902, max_drawdown: -0.1964, win_rate: 0.4913, profit_factor: 1.1982, n_trades: 2253, march_2023_episode_return: -0.0813, deflated_sharpe_ratio: 0.7739}
+  10000000: {cagr: 0.0957, sharpe: 0.7133, calmar: 0.6367, sharpe_excl_best_trade: 0.7050, max_drawdown: -0.1503, win_rate: 0.4922, profit_factor: 1.1982, n_trades: 2253, march_2023_episode_return: -0.0227, deflated_sharpe_ratio: 0.7326}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED - villkor 1 (Sharpe >= 0.55) klarar sig gott och val pa alla tre
+  nivaer (0.71/0.74/0.71), MEN villkor 2 (MaxDD INTE samre an HYP-023:s
+  eget resultat) FALLER PA ALLA TRE NIVAER: 100k -25.92% (mot -25.46%),
+  1M -19.64% (mot -19.29%), 10M -15.03% (mot -13.16% - den storsta
+  forsamringen, 1.87pp).
+
+  BASIS-RISK-HYPOTESEN FICK ALLTSA INTE STOD - TVARTOM: att byta
+  hedgeinstrumentet fran SPY (mega-cap) till IWM (small-cap, teoretiskt
+  "mer representativt" for det handlade bocket) gjorde MaxDD SVAGT
+  SAMRE pa varje enda nivo, inte battre. Sharpe forblev i praktiken
+  oforandrad (0.71/0.74/0.71 mot 0.72/0.75/0.72 - marginellt lagre,
+  inte statistiskt meningsfullt skilt).
+
+  TOLKNING: den teoretiska oron (mega-cap-hedge mot micro/small-cap-book
+  ger basis-risk som ar ren kostnad) visade sig INTE materialisera sig
+  som en verklig fordel att fixa. Mojliga forklaringar (INTE testade
+  har, skulle krava egna hypoteser): (a) IWM:s egen sammansattning
+  (Russell 2000, viktat mot de STORRE small-cap-namnen inom sitt eget
+  index) kanske inte battre representerar just $100M-$2B-bandet an SPY
+  gor - IWM ar inte nodvandigtvis en battre proxy for VART universum
+  bara for att det heter "small-cap"; (b) SPY:s storre likviditet och
+  lagre egen brus kan i praktiken ge en RENARE, mindre volatil
+  hedgesignal an IWM, vilket vager tyngre an den teoretiska basis-risk-
+  fordelen; (c) 126-dagars rullande beta-fonstret kanske redan
+  absorberar det mesta av den systematiska skillnaden mellan mega- och
+  small-cap-rorelser, sa den faktiska basis-risken var mindre an
+  teorin antydde.
+
+  ROBUSTHET: sharpe_excl_best_trade forblir 0.66/0.69/0.70 - fortfarande
+  klart over 0.55-golvet, ingen enskild-trade-artefakt.
+
+  SLUTSATS: HYP-023 forblir referensimplementationen OFORANDRAD - SPY
+  kvarstar som hedgeinstrument. En rimligt motiverad, extern idé som
+  testades hederligt och inte holl, snarare an ett misstag i
+  implementationen.
+sharpe_raw:
+  100000: 0.7076
+  1000000: 0.7440
+  10000000: 0.7133
+deflated_sharpe_ratio:
+  100000: 0.7285
+  1000000: 0.7739
+  10000000: 0.7326

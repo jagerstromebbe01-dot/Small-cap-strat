@@ -1,0 +1,932 @@
+[
+  {
+    "date": "2010-07-30",
+    "avg_crowding_long": 0.5148243869465368,
+    "avg_crowding_short": 0.5127227142608652
+  },
+  {
+    "date": "2010-08-31",
+    "avg_crowding_long": 0.37839494111158384,
+    "avg_crowding_short": 0.4368911576705128
+  },
+  {
+    "date": "2010-09-30",
+    "avg_crowding_long": 0.30742098688271285,
+    "avg_crowding_short": 0.3302879523146224
+  },
+  {
+    "date": "2010-10-29",
+    "avg_crowding_long": 0.24637590899266396,
+    "avg_crowding_short": 0.3835069805240525
+  },
+  {
+    "date": "2010-11-30",
+    "avg_crowding_long": 0.19148658965026388,
+    "avg_crowding_short": 0.19566159865296914
+  },
+  {
+    "date": "2010-12-31",
+    "avg_crowding_long": 0.11956266876951978,
+    "avg_crowding_short": 0.1414294283597089
+  },
+  {
+    "date": "2011-01-31",
+    "avg_crowding_long": 0.08032392177795689,
+    "avg_crowding_short": 0.09653357312980015
+  },
+  {
+    "date": "2011-02-28",
+    "avg_crowding_long": 0.04509699890930535,
+    "avg_crowding_short": 0.13347796640726317
+  },
+  {
+    "date": "2011-03-31",
+    "avg_crowding_long": 0.11958337505515212,
+    "avg_crowding_short": 0.09839126076845522
+  },
+  {
+    "date": "2011-04-29",
+    "avg_crowding_long": 0.12641986670730604,
+    "avg_crowding_short": 0.15330728124824028
+  },
+  {
+    "date": "2011-05-31",
+    "avg_crowding_long": 0.2608318520383565,
+    "avg_crowding_short": 0.33378918541017977
+  },
+  {
+    "date": "2011-06-30",
+    "avg_crowding_long": 0.16968054790119616,
+    "avg_crowding_short": 0.1652447242812235
+  },
+  {
+    "date": "2011-07-29",
+    "avg_crowding_long": 0.17743690889359426,
+    "avg_crowding_short": 0.1626927724684333
+  },
+  {
+    "date": "2011-08-31",
+    "avg_crowding_long": 0.32486774525510825,
+    "avg_crowding_short": 0.37031798320422793
+  },
+  {
+    "date": "2011-09-30",
+    "avg_crowding_long": 0.3720828735476053,
+    "avg_crowding_short": 0.3591840297893208
+  },
+  {
+    "date": "2011-10-31",
+    "avg_crowding_long": 0.19485119708063806,
+    "avg_crowding_short": 0.3176243094191166
+  },
+  {
+    "date": "2011-11-30",
+    "avg_crowding_long": 0.22707034860130976,
+    "avg_crowding_short": 0.30413220902873683
+  },
+  {
+    "date": "2011-12-30",
+    "avg_crowding_long": 0.14982569734275436,
+    "avg_crowding_short": 0.18855901266627406
+  },
+  {
+    "date": "2012-01-31",
+    "avg_crowding_long": 0.0834729161465474,
+    "avg_crowding_short": 0.1382972859417878
+  },
+  {
+    "date": "2012-02-29",
+    "avg_crowding_long": 0.056152905649114404,
+    "avg_crowding_short": 0.16920140956576837
+  },
+  {
+    "date": "2012-03-30",
+    "avg_crowding_long": 0.053294118854359245,
+    "avg_crowding_short": 0.18750438034976508
+  },
+  {
+    "date": "2012-04-30",
+    "avg_crowding_long": 0.12108127071212657,
+    "avg_crowding_short": 0.13811663214372155
+  },
+  {
+    "date": "2012-05-31",
+    "avg_crowding_long": 0.16533788394836785,
+    "avg_crowding_short": 0.14847668117612875
+  },
+  {
+    "date": "2012-06-29",
+    "avg_crowding_long": 0.12277664398381459,
+    "avg_crowding_short": 0.17005514604705788
+  },
+  {
+    "date": "2012-07-31",
+    "avg_crowding_long": 0.10007052999712678,
+    "avg_crowding_short": 0.12801045220211793
+  },
+  {
+    "date": "2012-08-31",
+    "avg_crowding_long": 0.14562964017969618,
+    "avg_crowding_short": 0.11547194613279331
+  },
+  {
+    "date": "2012-09-28",
+    "avg_crowding_long": 0.06556443257958385,
+    "avg_crowding_short": 0.1447862554235573
+  },
+  {
+    "date": "2012-10-31",
+    "avg_crowding_long": 0.08693968651470424,
+    "avg_crowding_short": 0.1443246885834109
+  },
+  {
+    "date": "2012-11-30",
+    "avg_crowding_long": 0.10928194701560626,
+    "avg_crowding_short": 0.10242443398568069
+  },
+  {
+    "date": "2012-12-31",
+    "avg_crowding_long": 0.06427286026653507,
+    "avg_crowding_short": 0.10795330659825353
+  },
+  {
+    "date": "2013-01-31",
+    "avg_crowding_long": 0.061011126203044504,
+    "avg_crowding_short": 0.09051917000076878
+  },
+  {
+    "date": "2013-02-28",
+    "avg_crowding_long": 0.06888614283024523,
+    "avg_crowding_short": 0.13209777499791361
+  },
+  {
+    "date": "2013-03-28",
+    "avg_crowding_long": 0.04631985875191318,
+    "avg_crowding_short": 0.08294726590631682
+  },
+  {
+    "date": "2013-04-30",
+    "avg_crowding_long": 0.09339020552025344,
+    "avg_crowding_short": 0.13164104126018195
+  },
+  {
+    "date": "2013-05-31",
+    "avg_crowding_long": 0.10380387320072856,
+    "avg_crowding_short": 0.11400262201552315
+  },
+  {
+    "date": "2013-06-28",
+    "avg_crowding_long": 0.06343648773735663,
+    "avg_crowding_short": 0.1537785274922059
+  },
+  {
+    "date": "2013-07-31",
+    "avg_crowding_long": 0.03466205387815649,
+    "avg_crowding_short": 0.09056839596803742
+  },
+  {
+    "date": "2013-08-30",
+    "avg_crowding_long": 0.08076624087254264,
+    "avg_crowding_short": 0.20594905314667222
+  },
+  {
+    "date": "2013-09-30",
+    "avg_crowding_long": 0.03847810706542338,
+    "avg_crowding_short": 0.09215537842195443
+  },
+  {
+    "date": "2013-10-31",
+    "avg_crowding_long": 0.06607456173731435,
+    "avg_crowding_short": 0.12926130157765803
+  },
+  {
+    "date": "2013-11-29",
+    "avg_crowding_long": 0.07607143675598546,
+    "avg_crowding_short": 0.1007555601376513
+  },
+  {
+    "date": "2013-12-31",
+    "avg_crowding_long": 0.05375729318061336,
+    "avg_crowding_short": 0.11713101100145162
+  },
+  {
+    "date": "2014-01-31",
+    "avg_crowding_long": 0.06942025695864838,
+    "avg_crowding_short": 0.07885972326394096
+  },
+  {
+    "date": "2014-02-28",
+    "avg_crowding_long": 0.039354441067171966,
+    "avg_crowding_short": 0.12221018877140902
+  },
+  {
+    "date": "2014-03-31",
+    "avg_crowding_long": 0.046751443787503115,
+    "avg_crowding_short": 0.13902877572073624
+  },
+  {
+    "date": "2014-04-30",
+    "avg_crowding_long": 0.09627847932618525,
+    "avg_crowding_short": 0.10084393233976023
+  },
+  {
+    "date": "2014-05-30",
+    "avg_crowding_long": 0.11957163111333413,
+    "avg_crowding_short": 0.1350978558665717
+  },
+  {
+    "date": "2014-06-30",
+    "avg_crowding_long": 0.045636044208776684,
+    "avg_crowding_short": 0.20235883663828247
+  },
+  {
+    "date": "2014-07-31",
+    "avg_crowding_long": 0.06314878752853247,
+    "avg_crowding_short": 0.10621735793452042
+  },
+  {
+    "date": "2014-08-29",
+    "avg_crowding_long": 0.04051820294766854,
+    "avg_crowding_short": 0.13439129076186163
+  },
+  {
+    "date": "2014-09-30",
+    "avg_crowding_long": 0.07091834709066387,
+    "avg_crowding_short": 0.09091187232815036
+  },
+  {
+    "date": "2014-10-31",
+    "avg_crowding_long": 0.028768045069711597,
+    "avg_crowding_short": 0.07400362021656283
+  },
+  {
+    "date": "2014-11-28",
+    "avg_crowding_long": 0.0577967962196006,
+    "avg_crowding_short": 0.14154726574422663
+  },
+  {
+    "date": "2014-12-31",
+    "avg_crowding_long": 0.0812673069467068,
+    "avg_crowding_short": 0.10924816924418333
+  },
+  {
+    "date": "2015-01-30",
+    "avg_crowding_long": 0.06273301266910135,
+    "avg_crowding_short": 0.1697535861510342
+  },
+  {
+    "date": "2015-02-27",
+    "avg_crowding_long": 0.0308374295325875,
+    "avg_crowding_short": 0.10716921132251907
+  },
+  {
+    "date": "2015-03-31",
+    "avg_crowding_long": 0.08243464095413784,
+    "avg_crowding_short": 0.16025382747006006
+  },
+  {
+    "date": "2015-04-30",
+    "avg_crowding_long": 0.06453841857474847,
+    "avg_crowding_short": 0.06431715731502095
+  },
+  {
+    "date": "2015-05-29",
+    "avg_crowding_long": 0.056248073734463014,
+    "avg_crowding_short": 0.08211935442986354
+  },
+  {
+    "date": "2015-06-30",
+    "avg_crowding_long": 0.03114021699961046,
+    "avg_crowding_short": 0.09550759649665795
+  },
+  {
+    "date": "2015-07-31",
+    "avg_crowding_long": 0.04768409584502968,
+    "avg_crowding_short": 0.12906856601489092
+  },
+  {
+    "date": "2015-08-31",
+    "avg_crowding_long": 0.06742290505606525,
+    "avg_crowding_short": 0.130208321493848
+  },
+  {
+    "date": "2015-09-30",
+    "avg_crowding_long": 0.11712244042518011,
+    "avg_crowding_short": 0.10201397474201956
+  },
+  {
+    "date": "2015-10-30",
+    "avg_crowding_long": 0.0721629223886051,
+    "avg_crowding_short": 0.11725153973446628
+  },
+  {
+    "date": "2015-11-30",
+    "avg_crowding_long": 0.06516426154275633,
+    "avg_crowding_short": 0.0988537119503165
+  },
+  {
+    "date": "2015-12-31",
+    "avg_crowding_long": 0.07258093334085428,
+    "avg_crowding_short": 0.16576208904732187
+  },
+  {
+    "date": "2016-01-29",
+    "avg_crowding_long": 0.042799622343019185,
+    "avg_crowding_short": 0.15587920881175152
+  },
+  {
+    "date": "2016-02-29",
+    "avg_crowding_long": 0.07048941207331542,
+    "avg_crowding_short": 0.12652580393364002
+  },
+  {
+    "date": "2016-03-31",
+    "avg_crowding_long": 0.07860585182663851,
+    "avg_crowding_short": 0.15605551295547127
+  },
+  {
+    "date": "2016-04-29",
+    "avg_crowding_long": 0.1074033946302653,
+    "avg_crowding_short": 0.11714986964822323
+  },
+  {
+    "date": "2016-05-31",
+    "avg_crowding_long": 0.083093767554319,
+    "avg_crowding_short": 0.11119975844935236
+  },
+  {
+    "date": "2016-06-30",
+    "avg_crowding_long": 0.056568776404060696,
+    "avg_crowding_short": 0.12532328973944745
+  },
+  {
+    "date": "2016-07-29",
+    "avg_crowding_long": 0.08182212175832126,
+    "avg_crowding_short": 0.08485788071625136
+  },
+  {
+    "date": "2016-08-31",
+    "avg_crowding_long": 0.06184226072300778,
+    "avg_crowding_short": 0.12085808283113327
+  },
+  {
+    "date": "2016-09-30",
+    "avg_crowding_long": 0.060269383337228095,
+    "avg_crowding_short": 0.10897117623993854
+  },
+  {
+    "date": "2016-10-31",
+    "avg_crowding_long": 0.04314612925520775,
+    "avg_crowding_short": 0.1322078327511173
+  },
+  {
+    "date": "2016-11-30",
+    "avg_crowding_long": 0.05621514270365463,
+    "avg_crowding_short": 0.16429857117284574
+  },
+  {
+    "date": "2016-12-30",
+    "avg_crowding_long": 0.060128552023706226,
+    "avg_crowding_short": 0.10535206225226146
+  },
+  {
+    "date": "2017-01-31",
+    "avg_crowding_long": 0.053163076229393307,
+    "avg_crowding_short": 0.11130371933729233
+  },
+  {
+    "date": "2017-02-28",
+    "avg_crowding_long": 0.027525954743996724,
+    "avg_crowding_short": 0.056387644846449016
+  },
+  {
+    "date": "2017-03-31",
+    "avg_crowding_long": 0.05154825905408518,
+    "avg_crowding_short": 0.0907606917627425
+  },
+  {
+    "date": "2017-04-28",
+    "avg_crowding_long": 0.06184309811205345,
+    "avg_crowding_short": 0.14204457065063777
+  },
+  {
+    "date": "2017-05-31",
+    "avg_crowding_long": 0.04756645603260643,
+    "avg_crowding_short": 0.13770446546207346
+  },
+  {
+    "date": "2017-06-30",
+    "avg_crowding_long": 0.05317229198681163,
+    "avg_crowding_short": 0.10520002219892508
+  },
+  {
+    "date": "2017-07-31",
+    "avg_crowding_long": 0.05819883865834413,
+    "avg_crowding_short": 0.0626468188518473
+  },
+  {
+    "date": "2017-08-31",
+    "avg_crowding_long": 0.04714755322350404,
+    "avg_crowding_short": 0.1194373052618324
+  },
+  {
+    "date": "2017-09-29",
+    "avg_crowding_long": 0.028138971592057423,
+    "avg_crowding_short": 0.0762013138537171
+  },
+  {
+    "date": "2017-10-31",
+    "avg_crowding_long": 0.04481301232379422,
+    "avg_crowding_short": 0.06247073584715346
+  },
+  {
+    "date": "2017-11-30",
+    "avg_crowding_long": 0.024656610720694177,
+    "avg_crowding_short": 0.0923372271674088
+  },
+  {
+    "date": "2017-12-29",
+    "avg_crowding_long": 0.04116278862972367,
+    "avg_crowding_short": 0.08978300277485553
+  },
+  {
+    "date": "2018-01-31",
+    "avg_crowding_long": 0.02854208410791679,
+    "avg_crowding_short": 0.07482564683659254
+  },
+  {
+    "date": "2018-02-28",
+    "avg_crowding_long": 0.022924337148877216,
+    "avg_crowding_short": 0.0921955046074328
+  },
+  {
+    "date": "2018-03-29",
+    "avg_crowding_long": 0.05408149988169386,
+    "avg_crowding_short": 0.13942675593997936
+  },
+  {
+    "date": "2018-04-30",
+    "avg_crowding_long": 0.07537742091615161,
+    "avg_crowding_short": 0.10549604251941032
+  },
+  {
+    "date": "2018-05-31",
+    "avg_crowding_long": 0.03924934913814808,
+    "avg_crowding_short": 0.06775899960026105
+  },
+  {
+    "date": "2018-06-29",
+    "avg_crowding_long": 0.02561517133090391,
+    "avg_crowding_short": 0.06451750662755962
+  },
+  {
+    "date": "2018-07-31",
+    "avg_crowding_long": 0.028093571881965342,
+    "avg_crowding_short": 0.1183116818060636
+  },
+  {
+    "date": "2018-08-31",
+    "avg_crowding_long": 0.03740490031152212,
+    "avg_crowding_short": 0.07244888789228385
+  },
+  {
+    "date": "2018-09-28",
+    "avg_crowding_long": 0.02199697656608746,
+    "avg_crowding_short": 0.12159787790235713
+  },
+  {
+    "date": "2018-10-31",
+    "avg_crowding_long": 0.07958600551196676,
+    "avg_crowding_short": 0.186870848453749
+  },
+  {
+    "date": "2018-11-30",
+    "avg_crowding_long": 0.033976150902891515,
+    "avg_crowding_short": 0.1262372200432902
+  },
+  {
+    "date": "2018-12-31",
+    "avg_crowding_long": 0.08331226867454931,
+    "avg_crowding_short": 0.18310546310985695
+  },
+  {
+    "date": "2019-01-31",
+    "avg_crowding_long": 0.07026385492208587,
+    "avg_crowding_short": 0.15299414149773194
+  },
+  {
+    "date": "2019-02-28",
+    "avg_crowding_long": 0.03741869282173411,
+    "avg_crowding_short": 0.12360423809244173
+  },
+  {
+    "date": "2019-03-29",
+    "avg_crowding_long": 0.06081387190297605,
+    "avg_crowding_short": 0.0870920045513506
+  },
+  {
+    "date": "2019-04-30",
+    "avg_crowding_long": 0.042893249315497164,
+    "avg_crowding_short": 0.17203443783233438
+  },
+  {
+    "date": "2019-05-31",
+    "avg_crowding_long": 0.10509151397082785,
+    "avg_crowding_short": 0.0938168589440634
+  },
+  {
+    "date": "2019-06-28",
+    "avg_crowding_long": 0.03646192214145979,
+    "avg_crowding_short": 0.06924510815683199
+  },
+  {
+    "date": "2019-07-31",
+    "avg_crowding_long": 0.014188110179753232,
+    "avg_crowding_short": 0.08836821075036566
+  },
+  {
+    "date": "2019-08-30",
+    "avg_crowding_long": 0.059461133657097695,
+    "avg_crowding_short": 0.09774396999562308
+  },
+  {
+    "date": "2019-09-30",
+    "avg_crowding_long": 0.0308975258586747,
+    "avg_crowding_short": 0.12610952065463787
+  },
+  {
+    "date": "2019-10-31",
+    "avg_crowding_long": 0.03369182930083855,
+    "avg_crowding_short": 0.0738360599981138
+  },
+  {
+    "date": "2019-11-29",
+    "avg_crowding_long": 0.027762827723961957,
+    "avg_crowding_short": 0.15726425969236493
+  },
+  {
+    "date": "2019-12-31",
+    "avg_crowding_long": 0.045660337293555335,
+    "avg_crowding_short": 0.07398786615274125
+  },
+  {
+    "date": "2020-01-31",
+    "avg_crowding_long": 0.06361035211504203,
+    "avg_crowding_short": 0.06064999049338422
+  },
+  {
+    "date": "2020-02-28",
+    "avg_crowding_long": 0.08639591566425246,
+    "avg_crowding_short": 0.11179200903705944
+  },
+  {
+    "date": "2020-03-31",
+    "avg_crowding_long": 0.18981249997595065,
+    "avg_crowding_short": 0.4683707285988173
+  },
+  {
+    "date": "2020-04-30",
+    "avg_crowding_long": 0.19927243556794766,
+    "avg_crowding_short": 0.3639470617994145
+  },
+  {
+    "date": "2020-05-29",
+    "avg_crowding_long": 0.2859263421805158,
+    "avg_crowding_short": 0.3152705000690494
+  },
+  {
+    "date": "2020-06-30",
+    "avg_crowding_long": 0.061962108564190495,
+    "avg_crowding_short": 0.12822905421605713
+  },
+  {
+    "date": "2020-07-31",
+    "avg_crowding_long": 0.04396915679533968,
+    "avg_crowding_short": 0.1464430254761839
+  },
+  {
+    "date": "2020-08-31",
+    "avg_crowding_long": 0.06611333448536803,
+    "avg_crowding_short": 0.13638187140319621
+  },
+  {
+    "date": "2020-09-30",
+    "avg_crowding_long": 0.05443592440252514,
+    "avg_crowding_short": 0.11109075757046549
+  },
+  {
+    "date": "2020-10-30",
+    "avg_crowding_long": 0.018612906856327965,
+    "avg_crowding_short": 0.1070413345789613
+  },
+  {
+    "date": "2020-11-30",
+    "avg_crowding_long": 0.0552765986149263,
+    "avg_crowding_short": 0.10621169517136314
+  },
+  {
+    "date": "2020-12-31",
+    "avg_crowding_long": 0.04531214880904906,
+    "avg_crowding_short": 0.08135377304721297
+  },
+  {
+    "date": "2021-01-29",
+    "avg_crowding_long": 0.020126564590343902,
+    "avg_crowding_short": 0.09176849377384076
+  },
+  {
+    "date": "2021-02-26",
+    "avg_crowding_long": 0.03041102124316871,
+    "avg_crowding_short": 0.1319472105726532
+  },
+  {
+    "date": "2021-03-31",
+    "avg_crowding_long": 0.05821174073966136,
+    "avg_crowding_short": 0.16002939762702267
+  },
+  {
+    "date": "2021-04-30",
+    "avg_crowding_long": 0.05968394933438124,
+    "avg_crowding_short": 0.11261861141751198
+  },
+  {
+    "date": "2021-05-28",
+    "avg_crowding_long": 0.039661025636781484,
+    "avg_crowding_short": 0.13195607473035978
+  },
+  {
+    "date": "2021-06-30",
+    "avg_crowding_long": 0.04997869667357653,
+    "avg_crowding_short": 0.1037515528816872
+  },
+  {
+    "date": "2021-07-30",
+    "avg_crowding_long": 0.03532625304609206,
+    "avg_crowding_short": 0.1434016889098067
+  },
+  {
+    "date": "2021-08-31",
+    "avg_crowding_long": 0.03513633618518738,
+    "avg_crowding_short": 0.10071356259372569
+  },
+  {
+    "date": "2021-09-30",
+    "avg_crowding_long": 0.05822426295095741,
+    "avg_crowding_short": 0.09040938639895814
+  },
+  {
+    "date": "2021-10-29",
+    "avg_crowding_long": 0.012734303279521356,
+    "avg_crowding_short": 0.07653174881027247
+  },
+  {
+    "date": "2021-11-30",
+    "avg_crowding_long": 0.034838546096865146,
+    "avg_crowding_short": 0.07134413215220133
+  },
+  {
+    "date": "2021-12-31",
+    "avg_crowding_long": 0.061346478769571035,
+    "avg_crowding_short": 0.06575938969758781
+  },
+  {
+    "date": "2022-01-31",
+    "avg_crowding_long": 0.03271956839285076,
+    "avg_crowding_short": 0.12440742943322886
+  },
+  {
+    "date": "2022-02-28",
+    "avg_crowding_long": 0.03175612068573263,
+    "avg_crowding_short": 0.14942028520652945
+  },
+  {
+    "date": "2022-03-31",
+    "avg_crowding_long": 0.07559556119944863,
+    "avg_crowding_short": 0.20931353363113328
+  },
+  {
+    "date": "2022-04-29",
+    "avg_crowding_long": 0.06165810144267048,
+    "avg_crowding_short": 0.22211088788344083
+  },
+  {
+    "date": "2022-05-31",
+    "avg_crowding_long": 0.06294820052733473,
+    "avg_crowding_short": 0.16138468410162182
+  },
+  {
+    "date": "2022-06-30",
+    "avg_crowding_long": 0.13952907265102849,
+    "avg_crowding_short": 0.1075994264025658
+  },
+  {
+    "date": "2022-07-29",
+    "avg_crowding_long": 0.07925599768943821,
+    "avg_crowding_short": 0.2829178134979546
+  },
+  {
+    "date": "2022-08-31",
+    "avg_crowding_long": 0.06793765380480925,
+    "avg_crowding_short": 0.146761456428109
+  },
+  {
+    "date": "2022-09-30",
+    "avg_crowding_long": 0.07185913004204755,
+    "avg_crowding_short": 0.12896808639037133
+  },
+  {
+    "date": "2022-10-31",
+    "avg_crowding_long": 0.10648700451877108,
+    "avg_crowding_short": 0.10969662547849389
+  },
+  {
+    "date": "2022-11-30",
+    "avg_crowding_long": 0.027489053920842322,
+    "avg_crowding_short": 0.09924905201916162
+  },
+  {
+    "date": "2022-12-30",
+    "avg_crowding_long": 0.0749646685995522,
+    "avg_crowding_short": 0.06855772064013513
+  },
+  {
+    "date": "2023-01-31",
+    "avg_crowding_long": 0.06810607070610177,
+    "avg_crowding_short": 0.1577326752745276
+  },
+  {
+    "date": "2023-02-28",
+    "avg_crowding_long": 0.06354380516421138,
+    "avg_crowding_short": 0.08324650780646659
+  },
+  {
+    "date": "2023-03-31",
+    "avg_crowding_long": 0.07557597243334889,
+    "avg_crowding_short": 0.134165689987661
+  },
+  {
+    "date": "2023-04-28",
+    "avg_crowding_long": 0.03161464588378603,
+    "avg_crowding_short": 0.19974836029851606
+  },
+  {
+    "date": "2023-05-31",
+    "avg_crowding_long": 0.09129662467186118,
+    "avg_crowding_short": 0.13409175871161477
+  },
+  {
+    "date": "2023-06-30",
+    "avg_crowding_long": 0.05745124968337516,
+    "avg_crowding_short": 0.06374091367747595
+  },
+  {
+    "date": "2023-07-31",
+    "avg_crowding_long": 0.03917645899556119,
+    "avg_crowding_short": 0.07814061153320888
+  },
+  {
+    "date": "2023-08-31",
+    "avg_crowding_long": 0.06418138827832977,
+    "avg_crowding_short": 0.11292665115523182
+  },
+  {
+    "date": "2023-09-29",
+    "avg_crowding_long": 0.07249931304221183,
+    "avg_crowding_short": 0.0798047789418448
+  },
+  {
+    "date": "2023-10-31",
+    "avg_crowding_long": 0.06925408225516289,
+    "avg_crowding_short": 0.06017017340668389
+  },
+  {
+    "date": "2023-11-30",
+    "avg_crowding_long": 0.06727664931026052,
+    "avg_crowding_short": 0.09151785040437911
+  },
+  {
+    "date": "2023-12-29",
+    "avg_crowding_long": 0.05508027130786793,
+    "avg_crowding_short": 0.10605878853447462
+  },
+  {
+    "date": "2024-01-31",
+    "avg_crowding_long": 0.04227718987456904,
+    "avg_crowding_short": 0.17068596844286185
+  },
+  {
+    "date": "2024-02-29",
+    "avg_crowding_long": 0.0217537096522924,
+    "avg_crowding_short": 0.0812227451091565
+  },
+  {
+    "date": "2024-03-28",
+    "avg_crowding_long": 0.037716778391073354,
+    "avg_crowding_short": 0.11932459120099947
+  },
+  {
+    "date": "2024-04-30",
+    "avg_crowding_long": 0.15427961104830631,
+    "avg_crowding_short": 0.08466187659596615
+  },
+  {
+    "date": "2024-05-31",
+    "avg_crowding_long": 0.0633806180638258,
+    "avg_crowding_short": 0.061014838765983966
+  },
+  {
+    "date": "2024-06-28",
+    "avg_crowding_long": 0.026979348124584964,
+    "avg_crowding_short": 0.04057644873922584
+  },
+  {
+    "date": "2024-07-31",
+    "avg_crowding_long": 0.11434544082130127,
+    "avg_crowding_short": 0.07936736640530519
+  },
+  {
+    "date": "2024-08-30",
+    "avg_crowding_long": 0.23687622906468375,
+    "avg_crowding_short": 0.17048752920321358
+  },
+  {
+    "date": "2024-09-30",
+    "avg_crowding_long": 0.11644898092695806,
+    "avg_crowding_short": 0.4015618909342934
+  },
+  {
+    "date": "2024-10-31",
+    "avg_crowding_long": 0.04690242686783308,
+    "avg_crowding_short": 0.38758461814176837
+  },
+  {
+    "date": "2024-11-29",
+    "avg_crowding_long": 0.058236238991653186,
+    "avg_crowding_short": 0.08997811104937346
+  },
+  {
+    "date": "2024-12-31",
+    "avg_crowding_long": 0.0744019187259259,
+    "avg_crowding_short": 0.19625712703101555
+  },
+  {
+    "date": "2025-01-31",
+    "avg_crowding_long": 0.07035751128846554,
+    "avg_crowding_short": 0.07300341767187278
+  },
+  {
+    "date": "2025-02-28",
+    "avg_crowding_long": 0.004784615761844869,
+    "avg_crowding_short": 0.011711543850966467
+  },
+  {
+    "date": "2025-03-31",
+    "avg_crowding_long": 0.058916994203029524,
+    "avg_crowding_short": 0.0
+  },
+  {
+    "date": "2025-04-30",
+    "avg_crowding_long": 0.04401296074991092,
+    "avg_crowding_short": 0.14301845845696204
+  },
+  {
+    "date": "2025-05-30",
+    "avg_crowding_long": null,
+    "avg_crowding_short": null
+  },
+  {
+    "date": "2025-06-30",
+    "avg_crowding_long": 0.2267664381575355,
+    "avg_crowding_short": 0.14998232698957983
+  },
+  {
+    "date": "2025-07-31",
+    "avg_crowding_long": 0.05685457585872105,
+    "avg_crowding_short": 0.0
+  },
+  {
+    "date": "2025-08-29",
+    "avg_crowding_long": null,
+    "avg_crowding_short": null
+  },
+  {
+    "date": "2025-09-30",
+    "avg_crowding_long": 0.1345565556639265,
+    "avg_crowding_short": 0.09282294637047947
+  },
+  {
+    "date": "2025-10-31",
+    "avg_crowding_long": 0.0,
+    "avg_crowding_short": null
+  },
+  {
+    "date": "2025-11-28",
+    "avg_crowding_long": null,
+    "avg_crowding_short": null
+  },
+  {
+    "date": "2025-12-31",
+    "avg_crowding_long": 0.08399518846401877,
+    "avg_crowding_short": 0.14801687255531815
+  }
+]

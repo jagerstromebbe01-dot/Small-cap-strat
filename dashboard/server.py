@@ -7,10 +7,12 @@ ingen roll, genererar inga hypoteser, och kör aldrig backtests.
 
 HÅRD REGEL - läs detta innan du ändrar något här:
 
-Denna server exponerar EXAKT tre skrivbara endpoints:
+Denna server exponerar EXAKT fem skrivbara endpoints:
   POST /api/candidate/<id>/archive
   POST /api/note
   POST /api/hypothesis/<id>/set-pre-registered
+  POST /api/candidate/<id>/draft-hypothesis
+  POST /api/candidate/<id>/mark-component
 
 INGEN annan endpoint får skriva något. Ingen endpoint här får NÅGONSIN:
   - ändra pass_fail_criterion
@@ -53,6 +55,27 @@ med Claude - exakt som med HYP-008. Dashboarden är ett fönster in i
 registret och en mekanisk "flytta till pre-registered"-knapp för redan
 klart kriterium, aldrig en väg att skriva till de skyddade fälten.
 
+Sedan 2026-07-28 (CEO-beslut): POST /api/candidate/<id>/draft-hypothesis
+låter CEO skapa ett HYP-XXX.yaml-UTKAST direkt från en kandidatidé, för
+att slippa be Claude göra det i chatt varje gång. Detta är INTE en
+genväg runt kriterielåsningen - se create_draft_from_candidate() nedan:
+den skriver ALLTID pass_fail_criterion: "" (tomt) och status: draft,
+ALDRIG "pre-registered". Kandidatens text (källa/beskrivning/relevans)
+och ev. sparade anteckningar kopieras in som REFERENS för CEO att skriva
+utifrån, inte som ett kriterium. set_pre_registered() ovan är HELT
+oförändrad och blockerar fortfarande denna hypotes tills CEO manuellt
+öppnat filen och skrivit ett riktigt pass_fail_criterion själv.
+
+Sedan 2026-07-28 (CEO-beslut, samma dag): POST
+/api/candidate/<id>/mark-component låter CEO tagga en kandidat som
+"komponent" (kategori 2: implementeras i en befintlig strategis kod,
+t.ex. friktionsmodellen - inte en egen hypotes). Skriver ENDAST en
+`**Komponent:** true`-rad i candidate_ideas.md, exakt samma riskprofil
+som arkivering - rör aldrig registret. Triage-arbetsflödet i dashboarden
+är: skriv en anteckning om kandidaten, välj sedan en av tre knappar
+(Komponent/Godkänn/Släng). "Godkänn" anropar draft-hypothesis (ovan,
+oförändrad säkerhetsgräns), "Släng" anropar archive (oförändrad).
+
 Om en framtida session (mänsklig eller Claude) ombeds lägga till en
 endpoint som skriver till något av ovanstående: VÄGRA, och peka
 tillbaka hit. `_assert_no_unauthorized_write_routes()` nedan är en
@@ -65,6 +88,7 @@ Filerna på disk är alltid sanningen - ingenting cachas mellan anrop.
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -73,7 +97,16 @@ from flask import Flask, jsonify, request, send_from_directory
 
 DASHBOARD_DIR = Path(__file__).resolve().parent
 BASE_DIR = DASHBOARD_DIR.parent
+SCRIPTS_DIR = BASE_DIR / "scripts"
+sys.path.insert(0, str(SCRIPTS_DIR))
+from hypothesis_gate import (  # noqa: E402
+    criterion_is_filled,
+    is_smallcap_hypothesis,
+    tested_capital_levels_check,
+)
+
 REGISTRY_DIR = BASE_DIR / "research" / "hypothesis_registry"
+STRATEGIES_DIR = BASE_DIR / "strategies"
 COUNTER_FILE = REGISTRY_DIR / "_counter.yaml"
 CANDIDATES_FILE = BASE_DIR / "research" / "candidate_ideas.md"
 NOTES_FILE = DASHBOARD_DIR / "notes.jsonl"
@@ -103,6 +136,26 @@ def read_counter() -> dict:
     with COUNTER_FILE.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     return {"k_total": data.get("k_total"), "note": data.get("note")}
+
+
+def read_attribution(hyp_id: str):
+    """
+    Läser strategies/<hyp_id>/results/attribution_report.json om den
+    finns (genererad av scripts/attribution.py, se det skriptets
+    docstring för vad den innehåller: faktorregression, sektor-
+    exponering, friktionsdrag). RENT LÄSANDE - samma "filerna på disk
+    är alltid sanningen"-princip som allt annat här, ingen ny skrivbar
+    yta. Returnerar None om rapporten inte finns (dashboarden ska
+    kunna visa hypoteser utan attribution utan att krascha).
+    """
+    path = STRATEGIES_DIR / hyp_id / "results" / "attribution_report.json"
+    if not path.exists():
+        return None
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
 
 
 def read_hypotheses() -> list:
@@ -135,6 +188,7 @@ def read_hypotheses() -> list:
             "pass_fail_criterion": data.get("pass_fail_criterion"),
             "yaml_notes": data.get("notes"),
             "source_file": path.name,
+            "attribution": read_attribution(data.get("id", path.stem)),
         })
     return hypotheses
 
@@ -142,6 +196,7 @@ def read_hypotheses() -> list:
 _FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
 _HEADER_RE = re.compile(r"(?m)^## +")
 _ARCHIVED_RE = re.compile(r"\*\*Arkiverad:\*\*\s*true", re.IGNORECASE)
+_COMPONENT_RE = re.compile(r"\*\*Komponent:\*\*\s*true", re.IGNORECASE)
 
 
 def _field(body: str, label: str):
@@ -177,6 +232,8 @@ def read_candidates() -> list:
             "description": _field(body, "Kort beskrivning"),
             "relevance": _field(body, "Varför relevant"),
             "archived": bool(_ARCHIVED_RE.search(body)),
+            "component": bool(_COMPONENT_RE.search(body)),
+            "draft_hypothesis_id": _field(body, "Hypotesutkast"),
         })
     return candidates
 
@@ -222,32 +279,60 @@ def _entries_start_offset(raw: str) -> int:
     return 0
 
 
-def archive_candidate(candidate_id: str) -> bool:
+def _find_candidate_entry(candidate_id: str):
+    """
+    Delad uppslagslogik mellan archive_candidate och nedladdning - samma
+    1-baserade id-ordning som read_candidates() anvander. Returnerar
+    (tail, entry_start, entry_end, entry) eller None om id inte finns.
+    """
     if not CANDIDATES_FILE.exists():
-        return False
+        return None
     raw = CANDIDATES_FILE.read_text(encoding="utf-8")
     start = _entries_start_offset(raw)
-    head, tail = raw[:start], raw[start:]
+    tail = raw[start:]
 
     header_positions = [m.start() for m in re.finditer(r"(?m)^## +", tail)]
     try:
         idx = int(candidate_id) - 1
     except ValueError:
-        return False
+        return None
     if idx < 0 or idx >= len(header_positions):
-        return False
+        return None
 
     entry_start = header_positions[idx]
     entry_end = header_positions[idx + 1] if idx + 1 < len(header_positions) else len(tail)
-    entry = tail[entry_start:entry_end]
+    return tail, entry_start, entry_end, tail[entry_start:entry_end]
 
-    if _ARCHIVED_RE.search(entry):
-        return True  # redan arkiverad - inget att göra, inte ett fel
 
-    entry = entry.rstrip("\n") + "\n\n**Arkiverad:** true\n\n"
+def _tag_candidate_entry(candidate_id: str, label: str, value: str, already_tagged_re: "re.Pattern") -> bool:
+    """
+    Delad logik för att lägga till en enkel `**Label:** value`-tagg i slutet
+    av en kandidatpost - används av arkivering, komponent-märkning, och
+    hypotesutkasts-spårning. Rör ALDRIG hypothesis_registry/ eller något
+    kriterium - skriver bara en rad text i candidate_ideas.md.
+    """
+    found = _find_candidate_entry(candidate_id)
+    if found is None:
+        return False
+    tail, entry_start, entry_end, entry = found
+    raw = CANDIDATES_FILE.read_text(encoding="utf-8")
+    head = raw[:_entries_start_offset(raw)]
+
+    if already_tagged_re.search(entry):
+        return True  # redan taggad - inget att göra, inte ett fel
+
+    entry = entry.rstrip("\n") + f"\n\n**{label}:** {value}\n\n"
     new_tail = tail[:entry_start] + entry + tail[entry_end:]
     CANDIDATES_FILE.write_text(head + new_tail, encoding="utf-8")
     return True
+
+
+def archive_candidate(candidate_id: str) -> bool:
+    return _tag_candidate_entry(candidate_id, "Arkiverad", "true", _ARCHIVED_RE)
+
+
+def mark_component(candidate_id: str) -> bool:
+    return _tag_candidate_entry(candidate_id, "Komponent", "true", _COMPONENT_RE)
 
 
 def append_note(target_type: str, target_id: str, text: str) -> dict:
@@ -372,6 +457,105 @@ def launch_chain_if_not_running(hyp_id: str) -> dict:
     return {"launched": True}
 
 
+def _next_hypothesis_id() -> str:
+    """Näst lediga HYP-numret, baserat på existerande filer i registret."""
+    max_n = 0
+    if REGISTRY_DIR.exists():
+        for path in REGISTRY_DIR.glob("HYP-*.yaml"):
+            m = re.match(r"HYP-(\d+)", path.stem)
+            if m:
+                max_n = max(max_n, int(m.group(1)))
+    return f"HYP-{max_n + 1:03d}"
+
+
+def _slugify(text: str, max_len: int = 40) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", text or "").strip("-").lower()
+    return slug[:max_len].strip("-") or "candidate"
+
+
+def create_draft_from_candidate(candidate_id: str) -> dict:
+    """
+    Skapar ett HYP-XXX.yaml-UTKAST fran en kandidatide - status: draft,
+    pass_fail_criterion: "" (tomt MED FLIT). Skriver ALDRIG kriteriet,
+    ALDRIG status: pre-registered - se modul-docstringen for varfor detta
+    inte ar en genvag runt kriterielasningen.
+    """
+    found = _find_candidate_entry(candidate_id)
+    if found is None:
+        return {"ok": False, "message": f"okänd kandidatidé: {candidate_id}"}
+    _tail, _start, _end, entry = found
+
+    lines = entry.splitlines()
+    header = lines[0].strip().lstrip("#").strip() if lines else f"Kandidat {candidate_id}"
+    body = "\n".join(lines[1:])
+    source = _field(body, "Källa") or ""
+    description = _field(body, "Kort beskrivning") or ""
+    relevance = _field(body, "Varför relevant") or ""
+
+    candidate_notes = [n["text"] for n in read_notes()
+                        if n.get("target_type") == "candidate" and n.get("target_id") == str(candidate_id)]
+
+    title = source or header
+    new_id = _next_hypothesis_id()
+    slug = _slugify(source or header)
+    path = REGISTRY_DIR / f"{new_id}-{slug}.yaml"
+    if path.exists():
+        return {"ok": False, "message": f"filen finns redan: {path.name}"}
+
+    data = {
+        "id": new_id,
+        "date_registered": datetime.now(timezone.utc).date().isoformat(),
+        "title": title,
+        "universe": "",
+        "small_cap_definition": "",
+        "data_range": "",
+        "pass_fail_criterion": "",
+        "status": "draft",
+        "k_total_hypotheses_before_this": read_counter().get("k_total"),
+        "tested_capital_levels": [],
+        "source_candidate": {
+            "id": str(candidate_id),
+            "header": header,
+            "source": source,
+            "description": description,
+            "relevance": relevance,
+        },
+        "draft_notes_from_dashboard": "\n\n".join(candidate_notes) if candidate_notes else None,
+    }
+
+    comment_header = (
+        "# UTKAST skapat via dashboarden fran kandidatide "
+        f"{candidate_id} ({datetime.now(timezone.utc).date().isoformat()}).\n"
+        "# pass_fail_criterion ar TOMT MED FLIT - CEO maste skriva det sjalv,\n"
+        "# i chatt, innan status nagonsin kan bli pre-registered. Ingen agent\n"
+        "# fyller i det ha faltet at dig. source_candidate/draft_notes_from_dashboard\n"
+        "# ar bara REFERENS - inte ett kriterium.\n"
+        "# status: draft -> (CEO fyller i universe/pass_fail_criterion/tested_capital_levels) -> pre-registered -> tested -> passed/failed\n\n"
+    )
+    yaml_body = yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=100)
+    path.write_text(comment_header + yaml_body, encoding="utf-8")
+
+    try:
+        subprocess.run(["git", "add", str(path.relative_to(BASE_DIR))], cwd=BASE_DIR,
+                        check=True, capture_output=True, text=True)
+        subprocess.run(
+            ["git", "commit", "-m",
+             f"Draft {new_id} scaffolded from candidate {candidate_id} via dashboard (criterion NOT locked)"],
+            cwd=BASE_DIR, check=True, capture_output=True, text=True,
+        )
+        git_ok = True
+    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
+        git_ok = False
+        git_error = str(exc)
+
+    _tag_candidate_entry(candidate_id, "Hypotesutkast", new_id, re.compile(rf"\*\*Hypotesutkast:\*\*\s*{re.escape(new_id)}"))
+
+    result = {"ok": True, "id": new_id, "file": path.name, "git_committed": git_ok}
+    if not git_ok:
+        result["git_error"] = git_error
+    return result
+
+
 def set_pre_registered(hyp_id: str) -> dict:
     """
     Flyttar en hypotes till status: pre-registered - men ENDAST om
@@ -391,25 +575,22 @@ def set_pre_registered(hyp_id: str) -> dict:
     raw_text = path.read_text(encoding="utf-8")
     data = yaml.safe_load(raw_text) or {}
 
-    if not data.get("pass_fail_criterion"):
+    if not criterion_is_filled(data):
         return {
             "ok": False,
             "message": (
-                "pass_fail_criterion är tomt - måste låsas manuellt i chatt "
-                "med CEO innan detta kan sättas. Ändrar ingenting."
+                "pass_fail_criterion är tomt (eller en platshållare) - måste låsas manuellt "
+                "i chatt med CEO innan detta kan sättas. Ändrar ingenting."
             ),
         }
 
-    universe = str(data.get("universe", "")).lower()
-    is_smallcap = "small-cap" in universe or "small cap" in universe
-    if is_smallcap and not data.get("tested_capital_levels"):
-        return {
-            "ok": False,
-            "message": (
-                "tested_capital_levels är tomt - obligatoriskt för "
-                "small-cap-hypoteser innan detta kan sättas. Ändrar ingenting."
-            ),
-        }
+    if is_smallcap_hypothesis(data):
+        ok, msg = tested_capital_levels_check(data)
+        if not ok:
+            return {
+                "ok": False,
+                "message": f"{msg} - obligatoriskt för small-cap-hypoteser innan detta kan sättas. Ändrar ingenting.",
+            }
 
     current_status = data.get("status")
     if current_status == "pre-registered":
@@ -429,7 +610,17 @@ def set_pre_registered(hyp_id: str) -> dict:
     path.write_text(new_text, encoding="utf-8")
 
     git_result = _git_commit_status_change(path, hyp_id)
-    chain_result = launch_chain_if_not_running(hyp_id)
+    if git_result.get("committed"):
+        chain_result = launch_chain_if_not_running(hyp_id)
+    else:
+        # BUGGFIX (kodgranskning 2026-08-05): kedjan startade tidigare OVILLKORLIGT,
+        # även om git-committen av statusändringen misslyckats - ett gap mot
+        # CLAUDE.md:s modell att git-historiken ÄR revisionsspåret. Filen är redan
+        # skriven till disk (kan inte ångras här utan att dölja vad som hände), men
+        # vi startar INTE Strategy Builder->Backtester-kedjan utan en motsvarande
+        # commit - annars kan en hel körning ske utan att statusändringen någonsin
+        # syns i git-loggen.
+        chain_result = {"launched": False, "reason": "git-commit misslyckades, kedjan startades inte - se git-fältet"}
     return {
         "ok": True,
         "message": "status satt till pre-registered",
@@ -491,6 +682,14 @@ def api_archive_candidate(candidate_id):
     return jsonify({"ok": True, "id": candidate_id, "archived": True})
 
 
+@app.route("/api/candidate/<candidate_id>/mark-component", methods=["POST"])
+def api_mark_component(candidate_id):
+    ok = mark_component(candidate_id)
+    if not ok:
+        return jsonify({"error": f"okänt kandidat-id: {candidate_id}"}), 404
+    return jsonify({"ok": True, "id": candidate_id, "component": True})
+
+
 @app.route("/api/note", methods=["POST"])
 def api_add_note():
     payload = request.get_json(silent=True) or {}
@@ -515,6 +714,34 @@ def api_set_pre_registered(hyp_id):
     return jsonify(result), (200 if result["ok"] else 400)
 
 
+@app.route("/api/candidate/<candidate_id>/draft-hypothesis", methods=["POST"])
+def api_draft_hypothesis(candidate_id):
+    result = create_draft_from_candidate(candidate_id)
+    return jsonify(result), (201 if result["ok"] else 400)
+
+
+@app.route("/api/candidate/<candidate_id>/download")
+def api_download_candidate(candidate_id):
+    """
+    Ren lasoperation - laddar ner EN specifik kandidatides text som en
+    fristående .md-fil (samma post som visas i kandidatidé-listan,
+    identifierad med samma 1-baserade id som read_candidates() ger den).
+    Rör write-spärren inte alls (GET ar inte i write_methods i
+    _assert_no_unauthorized_write_routes nedan), och skriver ingenting.
+    """
+    found = _find_candidate_entry(candidate_id)
+    if found is None:
+        return jsonify({"error": f"okänd kandidatidé: {candidate_id}"}), 404
+    _tail, _start, _end, entry = found
+    header_line = entry.splitlines()[0].strip() if entry.splitlines() else f"Kandidat {candidate_id}"
+    filename = f"candidate-{candidate_id}-{re.sub(r'[^a-zA-Z0-9]+', '-', header_line).strip('-')[:60]}.md"
+    return app.response_class(
+        entry.strip() + "\n",
+        mimetype="text/markdown",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
 # ---------------------------------------------------------------------------
 # Körtidsspärr: vägrar starta om en oväntad skrivbar route någonsin finns.
 # Detta är samma princip som scripts/validate_hypothesis.py - enforcement
@@ -525,6 +752,8 @@ _ALLOWED_WRITE_RULES = {
     ("POST", "/api/candidate/<candidate_id>/archive"),
     ("POST", "/api/note"),
     ("POST", "/api/hypothesis/<hyp_id>/set-pre-registered"),
+    ("POST", "/api/candidate/<candidate_id>/draft-hypothesis"),
+    ("POST", "/api/candidate/<candidate_id>/mark-component"),
 }
 
 
@@ -546,8 +775,16 @@ def _assert_no_unauthorized_write_routes():
         )
 
 
+# BUGGFIX (kodgranskning 2026-08-05): körs nu på MODULNIVÅ (vid import), inte
+# bara under `if __name__ == "__main__":`. Tidigare skulle servern inte vägra
+# starta om den någonsin kördes på annat sätt än `python server.py` - t.ex.
+# `flask run`, en WSGI-server (gunicorn/waitress) som importerar `app`
+# direkt, eller ett testskript som gör detsamma. Modulnivå garanterar att
+# kontrollen körs oavsett startmetod, eftersom Python bara kör modulkroppen
+# en gång vid första import/körning.
+_assert_no_unauthorized_write_routes()
+
 if __name__ == "__main__":
-    _assert_no_unauthorized_write_routes()
     print(f"Small-Cap Edge Lab dashboard: http://127.0.0.1:{PORT}")
     print("Endast localhost - servern binder inte till nätverket.")
     app.run(host="127.0.0.1", port=PORT, debug=False)

@@ -1,0 +1,203 @@
+# LÅST 2026-08-13 av CEO i chatt ("5m per dag, tvärsnitt är bra och pass
+# fail är sr >0.7 maxdd <25%"). De tre öppna punkterna från utkastet
+# löstes samtidigt: likviditetströskel $5M/dag, tvärsnitt (inte par)
+# godkänt som mekanism - behandlas som v6-metodik applicerad på nytt
+# universum (samma typ av återanvändning som HYP-008), inget separat
+# scope-beslut bedömt nödvändigt. Bakgrund/datasondering (1911
+# tillgängliga symboler, 28/30 kända mynt med lång obruten historik,
+# UNI/MATIC stale) - se git-historiken för detta filnamn, oförändrad
+# nedan.
+#
+# MEKANISK FULLSPECIFIKATION: CEO gav trösklarna (likviditet, Sharpe,
+# MaxDD) och mekanismtypen (tvärsnitt), inte varje enskild
+# implementationsdetalj. Punkterna nedan markerade "KONVENTION" är INTE
+# nya fria val - de återanvänder EXAKT en redan etablerad konvention på
+# annan plats i detta registret/denna kodbasen (hänvisning ges i varje
+# punkt), i linje med principen "inga fria parametrar kvar att välja".
+# Om CEO vill ändra någon av dem är det en enkel redigering av denna
+# låsta fil (med ny daterad kommentar), inte ett nytt K-test, EFTERSOM
+# inget resultat ännu observerats för denna hypotes.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-089
+date_registered: '2026-08-13'
+title: "Marknadsneutral crypto: tvärsnitts-residual mot rullande OLS-betahedge, dynamiskt likviditetsfiltrerat universum"
+universe: >
+  DYNAMISKT, inte statiskt (skiljer sig medvetet från HYP-060-064:s
+  fasta 5-coin-lista). Ett mynt kvalificerar sig för handel från och med
+  det första kvartalsvisa universum-omvärderingsdatumet där BÅDA gäller:
+    (a) minst 730 kalenderdagars sammanhängande prishistorik i EODHD:s
+        eod/{TICKER}.CC-endpoint (ingen datalucka > 5 dagar),
+    (b) rullande 90-dagars genomsnittligt dollarvolym (close × volume)
+        >= $5 000 000/dag (CEO-LÅST NIVÅ).
+  Universumet omvärderas KVARTALSVIS (samma snap_rebalance_dates-
+  konvention som strategies/common/crypto_data.py använder för
+  ombalansering). Mynt som slutar uppdateras (som UNI/MATIC, se nedan)
+  faller ur universumet automatiskt via villkor (a) vid nästa
+  omvärdering. GOLV: om färre än 6 mynt kvalificerar vid ett givet
+  omvärderingsdatum (matematiskt minimum för meningsfulla tredjedelar,
+  se mechanism nedan, minst 2 per sida) genomförs INGA handlingar den
+  kvartalsperioden - föregående vikter behålls oförändrade till nästa
+  omvärdering. Kandidatlista att initialt kontrollera universumkraven
+  mot (INTE en fast handelslista - se datasonderingen i filhuvudets
+  historik): BTC, ETH, LTC, XRP, DOGE, XLM, XMR, DASH, ETC, ADA, LINK,
+  BCH, TRX, EOS, VET, FIL, MANA, XTZ, ZEC, ATOM, ALGO, AAVE, AVAX, NEAR,
+  SAND, ICP, SOL, DOT (28 kandidater; UNI/MATIC exkluderade, stale data
+  sedan 2025-04-17 resp. 2025-03-24, verifierat i datasonderingen).
+small_cap_definition: >
+  N/A - crypto spot, inget market cap-baserat universum (fundamentals/
+  market cap ger 403 Forbidden på denna EODHD-nivå, samma begränsning
+  som HYP-060-064). Likviditet (rullande dollarvolym) ersätter storlek
+  som urvalskriterium, se universe-fältet.
+data_range: >
+  Huvudperiod: från det första kvartalsvisa omvärderingsdatumet där
+  minst 8 mynt uppfyller universumkraven (exakt datum bestäms av
+  Coder vid implementation - helt determinerat av redan låsta regler
+  ovan, inget fritt val) till 2024-12-31. Genuin OOS-2025 därefter,
+  samma konvention som resten av registret.
+pass_fail_criterion: >
+  KVARTALSVIS universum-omvärdering (se universe-fältet), VECKOVIS
+  ombalansering av positioner inom det då gällande universumet
+  (KONVENTION: samma veckocadence som HYP-056/HYP-061:s overlay-beslut,
+  "vid VARJE veckoslut").
+
+  Vid varje veckoslut: för varje kvalificerande mynt, rullande 90-
+  kalenderdagars OLS-regression av myntets dagliga avkastning mot BTC:s
+  dagliga avkastning (KONVENTION: samma 90-dagarsfönster som
+  likviditetsfiltret för intern konsistens) → residual för
+  veckoslutsdagen. Tvärsnitts-z-score av residualerna över samtliga
+  kvalificerande mynt SAMMA vecka (BTC självt exkluderas ur
+  long/short-benen - det är hedge-referensen, inte ett handlat mynt).
+
+  Rangordning i TREDJEDELAR (KONVENTION: minsta indelning som ger
+  minst 2 mynt per sida vid golvet på 6 mynt; deciler som används på
+  small-cap-sidan kräver fler namn än detta universum realistiskt ger):
+  long den nedre tredjedelen (mest negativa residualer), short den övre
+  tredjedelen (mest positiva), mellersta tredjedelen flat. LIKAVIKTAT
+  inom varje ben (KONVENTION: samma "naiv, ej in-sample-optimerad
+  viktning" som CLAUDE.md:s kombinationstestnings-princip föreskriver).
+  DOLLAR-neutralt mellan benen (lika stort $ long som $ short, INTE
+  beta-viktat neutralt - enklaste, mest naiva konstruktionen; brutto
+  beta-exponering mot BTC rapporteras som disclosure, se nedan).
+  Bruttoexponering 1,0x long + 1,0x short (ingen extra hävstång).
+
+  FRIKTION (KONVENTION: återanvänder exakt strategies/common/
+  crypto_data.py::transition_cost - halva Corwin-Schultz-spreaden +
+  0,15% EXCHANGE_FEE - på notional som flyttas vid varje veckovis
+  ombalansering, inklusive dagar då universum-omvärderingen ändrar
+  vilka mynt som är kvalificerade).
+
+  ANNUALISERING: 365 dagar, INTE 252 (KONVENTION: samma som HYP-060-064,
+  crypto handlas alla kalenderdagar).
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (huvudperioden, CEO-LÅST):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -25,0%.
+
+  FAIL om något villkor faller vid $100k-nivån.
+
+  $1M och $10M rapporteras som OBLIGATORISK, ICKE-GATING disclosure
+  (samma "avgörande nivå + disclosure övriga"-mönster som HYP-088) -
+  altcoin-likviditet vid $10M är en uttalad kapacitetsoro för denna
+  hypotes specifikt, se motiveringen i utkastets historik.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating, direkt kopplat till hypotesens
+  syfte - genuin marknadsneutralitet): korrelation av strategins
+  dagliga avkastning mot (a) BTC buy-and-hold, (b) SPY buy-and-hold,
+  över huvudperioden. Antal kvalificerande mynt per omvärderingsdatum
+  över tid (visar om universumet faktiskt växer som avsett). Genomsnittlig
+  brutto BTC-beta-exponering (se ovan, eftersom konstruktionen är
+  dollar- inte beta-neutral). Andel kvartal där golvet (<6 mynt) slog
+  till.
+
+  Diagnostiskt syfte: testar om en genuint marknadsneutral (till
+  skillnad från HYP-060-064:s samtliga riktade konstruktioner)
+  tvärsnittsstrategi på ett breddat, likviditetsfiltrerat crypto-
+  universum har en egen, oberoende alfakälla - och om den håller sig
+  inom en tightare MaxDD-ram (-25%) som är rimlig för en hedgad
+  konstruktion, till skillnad från riktade cryptostrategiers typiska
+  -50%+ drawdowns.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 85
+date_tested: '2026-08-13'
+result:
+  100000: {sharpe: -6.0604, cagr: -0.9995, max_drawdown: -1.0, deflated_sharpe_ratio: 1.75e-121, oos_2025_sharpe: -6.5441}
+  1000000: {sharpe: -6.0604, cagr: -0.9995, max_drawdown: -1.0, deflated_sharpe_ratio: 1.75e-121, oos_2025_sharpe: -6.5440}
+  10000000: {sharpe: -6.0108, cagr: -0.9994, max_drawdown: -1.0, deflated_sharpe_ratio: 1.42e-119, oos_2025_sharpe: -6.5338}
+disclosure:
+  corr_vs_btc_100k: 0.0332
+  corr_vs_spy_100k: -0.0262
+  avg_gross_long_100k: 1.000
+  avg_gross_short_100k: 1.000
+  avg_n_universe: 18.8
+  avg_n_long: 5.9
+  avg_n_short: 5.9
+  pct_weeks_below_floor: 0.0
+  avg_weekly_friction_cost_by_year: {2019: 0.0879, 2020: 0.1040, 2021: 0.1256, 2022: 0.0802, 2023: 0.0569, 2024: 0.0848}
+result_summary: >
+  FAILED PÅ BÅDA VILLKOREN, KRAFTIGT, PÅ ALLA KAPITALNIVÅER. Sharpe
+  -6,06/-6,06/-6,01. MaxDD -100,0% (portföljvärdet komprimerades till
+  ~1,4e-20 av startkapitalet - beräkningsmässigt utplånat, inte bara
+  en dålig period). CAGR -99,95%/-99,95%/-99,94%. DSR i praktiken noll.
+
+  VIKTIGT - DETTA ÄR INTE ETT "INGEN ALFA HITTAD"-RESULTAT, det är ett
+  FRIKTIONS-DOMINERAT resultat, och grundorsaken är identifierad och
+  disclosad fullständigt istället för att bara rapporteras som ett
+  platt FAIL:
+
+  Under implementationen hittades OCH ÅTGÄRDADES (INNAN resultatet
+  ovan beräknades, samma disclosure-standard som redan etablerad i
+  detta registret för datafel) ett genuint datafel: VET (VeChain)
+  hade en ~99% "engångsdrop" 2018-08-04 (VEN->VET-tokenredenomination,
+  aldrig återhämtad till den gamla prisnivån) som initialt gav
+  MaxDD=-100%/Sharpe=-6 rent artificiellt. Åtgärdat genom att
+  ÅTERANVÄNDA (inte omimplementera) strategies/common/data_hygiene.py::
+  clean_price_matrix + mask_unrecovered_price_breaks - exakt samma
+  modul och policy som redan används på small-cap-sidan (SSN-fallet).
+  Efter denna sanering kvarstod IDENTISKT resultat (Sharpe -6,06 mot
+  -6,05 fore) - datafelet var alltså INTE huvudorsaken, bara en
+  bidragande artefakt som maskerade den riktiga.
+
+  DEN RIKTIGA ORSAKEN (verifierad via veckologgen, se
+  results/weekly_log_main_100000.csv): genomsnittlig FRIKTIONSKOSTNAD
+  PER VECKA låg på 5,7-12,6% ÅRET RUNT, OBEROENDE av universumets
+  storlek (lika hög 2023 med 8 mynt/ben som 2019 med 2,5 mynt/ben, se
+  avg_weekly_friction_cost_by_year ovan). Det betyder att tvärsnitts-
+  rankingen (ny oberoende 90-dagars OLS-skattning varje veckoslut)
+  omsätter NÄRA HELA benen varje vecka - väldigt lite persistens i
+  vilka mynt som rankas topp/botten från en vecka till nästa. Kombinerat
+  med Corwin-Schultz-spreadskattningen (som gav 1,9-7,1% enkelriktad
+  kostnad för en FULL positionsstorlek på dessa mynt, se sonderingen i
+  filhuvudets historik) blir detta en veckovis kostnad som ÖVERSTIGER
+  vad någon rimlig veckovis mean-reversion-signal kan generera i
+  bruttoavkastning - resultatet är matematiskt oundvikligt utplåning
+  inom 6-9 månader, i praktiken oberoende av om den underliggande
+  signalen har genuin prediktiv kraft eller inte.
+
+  Två separata, ej ömsesidigt uteslutande förklaringskomponenter,
+  INTE isärskilda i denna körning (skulle kräva egna testfall):
+  (a) Corwin-Schultz är kalibrerad för aktiers bid-ask-dynamik och kan
+  överskatta cryptos verkliga spread, eftersom cryptos dagliga
+  high-low-intervall domineras av genuin intradagsvolatilitet snarare
+  än bid-ask-studs i högre grad än aktier - en känd, dokumenterad
+  begränsning hos estimatorn för denna tillgångsklass, INTE
+  verifierad kvantitativt här.
+  (b) veckovis FULL ombalansering (hela benet byggs om varje
+  veckoslut, ingen minsta hålltid) är en ovanligt hög omsättningstakt
+  för en mean-reversion-strategi och skulle med VILKEN SOM HELST
+  icke-trivial friktionsmodell ge hög kostnad.
+
+  DSR: i praktiken 0 vid alla nivåer, K=86 - konsistent med att detta
+  INTE är ett nästan-lyckat resultat nära bruset, utan ett mekaniskt,
+  strukturellt friktionsproblem.
+
+  KONSEKVENS: denna hypotes, EXAKT SOM LÅST, är formellt FAILED - inget
+  villkor ändras i efterhand. Om marknadsneutral crypto ska prövas
+  vidare krävs en NY, separat pre-registrerad hypotes med explicit
+  omprövad ombalanseringsfrekvens och/eller friktionsmetodik (t.ex.
+  lägre frekvens, minsta hålltid, eller en cryptospecifik
+  spreadskattning istället för Corwin-Schultz) - INTE en efterhands-
+  justering av denna redan låsta och testade kriteriet.

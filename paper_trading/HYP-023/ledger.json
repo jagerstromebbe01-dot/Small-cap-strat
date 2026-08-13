@@ -1,0 +1,20 @@
+{
+  "hypothesis": "HYP-023",
+  "started": "2026-07-31",
+  "starting_capital": 100000.0,
+  "note": "INGA RIKTIGA PENGAR - loggar bara vad HYP-023 SKULLE gora framat, for genuin OOS-validering.",
+  "history": [
+    {
+      "as_of_date": "2026-07-30",
+      "computed_at": "2026-07-31",
+      "universe_key": "2024-12-31",
+      "universe_size": 222,
+      "n_scored": 0,
+      "target_decile_tickers": [],
+      "spy_10d_return": -0.012028452685421964,
+      "spy_crash_overlay_active": false,
+      "sector_10d_return": 0.0,
+      "sector_crash_trigger_active": false
+    }
+  ]
+}

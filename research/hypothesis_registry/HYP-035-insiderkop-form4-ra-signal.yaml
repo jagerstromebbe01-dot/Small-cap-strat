@@ -1,0 +1,164 @@
+# LÅST 2026-08-01 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Forsta NYA alfasignalen sedan HYP-023 (INTE
+# en HYP-023-variant) - foljd av feasibility-checken samma dag
+# (data/test_sec_form4_feasibility.py, se aven CLAUDE.md/minnesanteckning
+# 2026-07-31/08-01) som bekraftade att SEC:s kvartalsvisa strukturerade
+# Form 3/4/5-dataset racker: ISSUERTRADINGSYMBOL direkt (ingen CIK-
+# namnmatchning), tacker 2010q1-2024q4, 11-18% av small-cap-universumet
+# har minst ett kod-P-kop (oppet marknadskop) per kvartal i tva testade
+# stickprovskvartal (2012q2/2023q1).
+#
+# MOTIV: 5/5 externa AI:er (5-AI-brainstorm 2026-07-31) foreslog
+# oberoende insiderkop som ny signal, direkt matchat mot projektets egen
+# kapacitetstes (institutioner ar kapacitetsbegransade i small-cap,
+# insiders ar det inte).
+#
+# ARKITEKTURVAL: byggd PA SAMMA BAS som HYP-008/012/015 (friktion,
+# ADV-kapacitetsspärr, beta-hedge mot SPY, kvartalsvis ombalansering,
+# INGEN SPY-krasch-overlay/sektortrigger) - INTE en HYP-023-variant.
+# Samma precedent som momentum/idio-vol i denna registerhistorik: en NY
+# signal testas RA forst, en overlay (om signalen visar sig lovande men
+# skor pa drawdown) blir en egen, separat hypotes med egen K-kostnad -
+# att bunta ihop en oprovad ny signal med redan bevisade overlaymekanismer
+# fran forsta start skulle gora det omojligt att sarskilja vad som
+# faktiskt drev resultatet.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-035
+date_registered: '2026-08-01'
+title: Insiderköp (SEC Form 4, öppna marknadsköp) - ny alfasignal, rå (utan overlay)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World för priser + SEC Form 3/4/5 strukturerade kvartalsdataset
+  för insiderköp, samma period som HYP-008/015/017/023/034 (2010/2011-2024)
+pass_fail_criterion: 'NY, OBEROENDE hypotes (INTE en HYP-023-variant) - signal, universum,
+  motor allt nytt specificerat har, INTE en tillaggsmekanism pa en befintlig referens.
+
+  SIGNAL, exakt specificerad (INTE fri, INTE anpassad efter resultat - vald INNAN nagon
+  backtest kors):
+  - Kalla: SEC:s kvartalsvisa strukturerade Form 3/4/5-dataset (NONDERIV_TRANS.tsv join
+    SUBMISSION.tsv pa ACCESSION_NUMBER) - EN ANNAN endpoint an companyfacts-XBRL:n som
+    redan anvands for lonsamhet/varde/EPS.
+  - Filter pa transaktionsniva: TRANS_CODE == "P" (oppet marknads-/privatkop) OCH
+    TRANS_FORM_TYPE == 4 (Form 4 - INTE Form 5, haller signalen aktuell/snabb) OCH
+    TRANS_ACQUIRED_DISP_CD == "A" (bekraftar forvarv) OCH TRANS_PRICEPERSHARE inte null.
+  - Transaktionsvarde = TRANS_SHARES x TRANS_PRICEPERSHARE. BRUTTO KOPVARDE - INTE nettat
+    mot forsaljningar (kod S). Motivering: insiderforsaljningar har manga informationslosa
+    skal (diversifiering, skatt, likviditetsbehov) medan kop ar den renare signalen i
+    litteraturen (Lakonishok & Lee 2001) - en medveten forenkling av "netto insiderkop" fran
+    den ursprungliga AI-brainstormens ordalydelse, explicit vald av CEO vid lasningen.
+  - LOOK-AHEAD-SAKERHET: signalens synlighetsdatum ar FILING_DATE (ALDRIG TRANS_DATE).
+    Om FILING_DATE inte ar en handelsdag, blir transaktionen synlig forsta handelsdagen
+    DÄREFTER (aldrig tidigare).
+  - Fonster: rullande summa av kvalificerande transaktionsvarden over TRAILING 63
+    handelsdagar (~90 kalenderdagar, ~ett kvartal - matchar den kvartalsvisa
+    ombalanseringen), min_periods=1 (kraver INTE ett fullt fonster - en enskild transaktion
+    tidigt i en tickers historik raknas anda, medvetet val for att inte forvarra den redan
+    kanda glesheten).
+  - Normalisering: dividerat med borsvarde vid samma ombalanseringsdatum (aterananvander
+    data/cache/market_cap_by_ticker_month.csv, redan byggd for universumbandet - ingen ny
+    berakning).
+
+  RANKNING (adresserar signalglesheten fran feasibility-checken - 80-90% av universumet
+  saknar insiderkop nagot enskilt kvartal):
+  - Endast namn i manadens eligible-universum MED MINST EN kvalificerande transaktion i
+    fonstret konkurrerar om plats - namn utan aktivitet EXKLUDERAS HELT fran rankningen
+    (delar INTE en nollpott med varandra).
+  - Topp-decilen (10%) av DENNA delpopulation (INTE av hela universumet) kops lang,
+    n_top = max(1, int(len(scores) * 0.10)) av delpopulationen, hogst normaliserat
+    kopvarde forst.
+  - Om NOLL namn har kvalificerande signal ett ombalanseringstillfalle: portfoljen gar till
+    kontant (inga nya positioner) till nasta ombalansering - accepterad, INTE patchad med
+    en konstgjord miniminiva.
+
+  MOTOR (aterananvander SAMMA bas-motor som HYP-008/012/015, INTE HYP-017/023:s
+  overlay-lager): kvartalsvis ombalansering, snappade ombalanseringsdatum
+  (strategies/common/rebalancing.py), adjusted_close for alla avkastnings-/
+  signalberakningar, ra close for positionsvardering/ADV-kapacitetsspärr,
+  flag_implausible_liquidity(), Corwin-Schultz-spread (halva spreaden per sida),
+  laneranta 3%/ar pa hedgen, beta-hedge mot SPY (samma beta-skattning som HYP-014/015),
+  ADV-kapacitetsspärr 10%. INGEN SPY-krasch-overlay, INGEN sektor-krasch-trigger (se
+  arkitekturmotivering ovan).
+
+  KANDA, ACCEPTERADE BEGRANSNINGAR (redovisas, fixas INTE i efterhand om de materialiseras):
+  1. Rollagnostiskt - alla Form 4-filers (styrelse, ledning, 10%-agare) raknas lika, ingen
+     filtrering pa RPTOWNER-roll.
+  2. 10b5-1-schemalagda kop kan INTE skiljas ut fore ~feb 2023 (AFF10B5ONE-flaggan finns
+     bara fran dess) - kod-P-signalen blandar discretionara och schemalagda kop under
+     merparten av backtest-fonstret.
+  3. Decilstorleken varierar kraftigt kvartal till kvartal (glest universum, se
+     feasibility-checken: 11-18% deltagande i tva stickprovskvartal) - kan ge hog
+     koncentration vissa kvartal, ingen konstgjord utjamning.
+
+  PASS kraver: Sharpe (efter friktion) >= 0.55 PA SAMTLIGA tre kapitalnivaer (100k/1M/10M) -
+  SAMMA golv som ALLA tidigare forstatest av en ny, oberoende signal i registret
+  (HYP-008/012/015/019/020/021/024/033) - INGEN jamforelsebaslinje mot en annan hypotes,
+  eftersom detta INTE bygger pa en befintlig referens.
+  FAIL om nagon niva faller under golvet.
+
+  Diagnostiskt syfte: testar om 5/5 externa AI:ers oberoende forslag (insiderkop som ny
+  small-cap-signal, direkt matchat mot projektets kapacitetstes) haller for en ra,
+  overlayfri backtest - forsta genuint nya alfasignalen sedan HYP-023 sjalv.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 33
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+# OBS: 1000000/10000000 KORDES INTE - se result_summary for varfor
+# (CEO-instruktion att avbryta efter en entydig $100k-golvmiss, ej en
+# retroaktiv andring av det ursprungligen lasta atagandet ovan).
+capital_level_results:
+  100000: {cagr: 0.0667, sharpe: 0.2864, calmar: 0.0889, sharpe_excl_best_trade: 0.2955, max_drawdown: -0.7493, win_rate: 0.4422, profit_factor: 1.2926, n_trades: 658, deflated_sharpe_ratio: 0.1219}
+date_tested: '2026-08-01'
+result_summary: >
+  FAILED - RENT, PA DEN ENDA TESTADE NIVAN. $1M/$10M kordes INTE - CEO
+  gav explicit instruktion att avbryta efter $100k, eftersom golvet
+  missades med bred marginal (Sharpe 0.29 mot kravet 0.55, ungefar
+  HALVA det kravda vardet) och MaxDD var katastrofal (-74.9%) - samma
+  monster som HYP-012:s rena momentum-misslyckande (-72/-78%), inte ett
+  gransfall dar en niva-effekt rimligen kunde vanda utfallet (jmf
+  HYP-032:s Kelly-nyans, dar $100k missade men $1M/$10M klarade sig -
+  den situationen hade motiverat en fullstandig korning). Detta ar ett
+  avsteg fran projektets normala "rapportera alla tre niva alltid"-
+  disciplin, gjort medvetet och redovisat har (INTE tyst utelamnat) -
+  se feedback-minnesanteckning 2026-08-01.
+
+  Sharpe 0.29 (golv 0.55) och sharpe_excl_best_trade 0.30 - den svaga
+  Sharpen ar INTE en enskild-trade-artefakt, den ar strukturellt lag.
+
+  DSR vid K=34: 0.12 - mycket lagt, konsistent med FAIL, INTE ett
+  gransfall som DSR skulle kunna radda.
+
+  DIAGNOSTISKT INTRESSANT (redovisas, inte doljs): avkastningsseriens
+  skevhet 12.8 och kurtosis 425.8 ar EXTREMA (en normalfordelning har
+  skevhet 0/kurtosis 3) - tyder pa att resultatet domineras av ett fatal
+  extremt stora enskilda vinsttrades, konsistent med den kanda
+  signalglesheten (decilstorleken av delpopulationen med insiderkop
+  varierar kraftigt kvartal till kvartal, kan bli mycket liten/
+  koncentrerad vissa kvartal - se pass_fail_criterions kanda
+  begransning 3). En koncentrerad portfolj i tunt handlade
+  small-cap-namn med sallsynta, extrema utfall ar exakt den typ av
+  svansrisk kapacitetsspärren och friktionsmotorn INTE ensamma loser -
+  MaxDD -74.9% bekraftar bilden.
+
+  TOLKNING: 5/5 externa AI:ers oberoende forslag om insiderkop som ny
+  small-cap-signal fick INTE stod i en ra, overlayfri backtest. Detta
+  utesluter INTE nodvandigtvis signalen helt (en krasch-overlay eller
+  liknande riskbegransning skulle kunna tamja svansrisken, samma monster
+  som idio-vol-signalen som ocksa FAILADE ra (HYP-015, Sharpe 0.45-0.52)
+  innan SPY-krasch-overlayen (HYP-017) gjorde den till projektets forsta
+  PASS) - men det kraver en ny, separat, oberoende lasning innan det
+  testas, INTE nagot som ska antas fungera per automatik. Med den redan
+  extrema koncentrationen/skevheten har ar det dessutom en svagare
+  kandidat for en sadan uppfoljare an idio-vol var - glesheten i sjalva
+  signalen (inte bara volatiliteten hos de valda namnen) ar en annan typ
+  av problem an det en krasch-overlay adresserar.
+
+  SLUTSATS: HYP-023 forblir referensimplementationen. Insiderkop (rutt
+  signal, kod P, ra) ar nu testad och FAILED - forsta genuint nya
+  alfasignalen sedan HYP-023 missade golvet rejalt.
+sharpe_raw:
+  100000: 0.2864
+deflated_sharpe_ratio:
+  100000: 0.1219

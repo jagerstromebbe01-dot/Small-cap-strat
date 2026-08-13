@@ -1,0 +1,32 @@
+[
+  {
+    "capital_level": 100000,
+    "full_series_sharpe_2011_2025": 0.6936355013802201,
+    "oos_2025_sharpe": 0.38614476034584433,
+    "oos_2025_cagr": 0.063719822753173,
+    "oos_2025_total_return": 0.06319845743202146,
+    "oos_2025_max_drawdown": -0.11796979244397054,
+    "oos_2025_n_trades": 46,
+    "oos_2025_trading_days": 250
+  },
+  {
+    "capital_level": 1000000,
+    "full_series_sharpe_2011_2025": 0.7191820643897643,
+    "oos_2025_sharpe": 0.17081116488307116,
+    "oos_2025_cagr": 0.032907704947894745,
+    "oos_2025_total_return": 0.032642315873484096,
+    "oos_2025_max_drawdown": -0.10738854790860251,
+    "oos_2025_n_trades": 46,
+    "oos_2025_trading_days": 250
+  },
+  {
+    "capital_level": 10000000,
+    "full_series_sharpe_2011_2025": 0.6976328920054436,
+    "oos_2025_sharpe": 0.08232597240843675,
+    "oos_2025_cagr": 0.02180575125372819,
+    "oos_2025_total_return": 0.021630831408602003,
+    "oos_2025_max_drawdown": -0.02427220789443508,
+    "oos_2025_n_trades": 46,
+    "oos_2025_trading_days": 250
+  }
+]

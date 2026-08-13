@@ -46,6 +46,8 @@ enbart börsvärde som urvalskriterium.
 
 ---
 
+**Arkiverad:** true
+
 ## [Datum, 2026-07-28]
 
 **Källa:** Berk, J. B., & Green, R. C. (2004). "Mutual Fund Flows and
@@ -115,6 +117,8 @@ denna typ av edge rimligen borde finnas kvar.
 
 ---
 
+**Arkiverad:** true
+
 ## [Datum, 2026-07-28]
 
 **Källa:** D'Avolio, G. (2002). "The Market for Borrowing Stock."
@@ -146,6 +150,8 @@ edge som är en artefakt av att inte modellera borrow-kostnad och
 recall-risk korrekt, snarare än verklig, realiserbar avkastning.
 
 ---
+
+**Arkiverad:** true
 
 ## [Datum, 2026-07-28]
 
@@ -181,6 +187,8 @@ tid.
 
 ---
 
+**Arkiverad:** true
+
 ## [Datum, 2026-07-28]
 
 **Källa:** Frazzini, A., Israel, R., & Moskowitz, T. J. (2012, working
@@ -213,3 +221,347 @@ att anta ett binärt "fungerar/fungerar inte". Relevant om en framtida
 hypotes vill bygga en explicit impact-kostnadsmodell (skalad mot
 genomsnittlig daglig volym per aktie) i stället för en platt
 kostnadsantagande per trade.
+
+---
+
+**Arkiverad:** true
+
+## [Datum, 2026-07-29]
+
+**Källa:** Ang, A., Hodrick, R. J., Xing, Y., & Zhang, X. (2006). "The
+Cross-Section of Volatility and Expected Returns." Journal of Finance,
+61(1), 259-299.
+
+**Kort beskrivning:** Visar att det är den IDIOSYNKRATISKA
+volatiliteten - residualvolatiliteten efter att marknadsbetan räknats
+bort via en faktormodell - snarare än TOTAL realiserad volatilitet, som
+är den robusta, starkare formen av lågvolatilitetsanomalin. Aktier med
+hög idiosynkratisk volatilitet har historiskt haft anmärkningsvärt lägre
+genomsnittlig framtida avkastning, ett resultat som är svårförklarat
+inom standardmodeller och renare än sorteringar på total std.
+
+**Varför relevant:** HYP-014 (low-volatility-faktorn på small-cap,
+testad 2026-07-29) sorterade på TOTAL realiserad volatilitet och gav
+det hittills bästa resultatet av alla K=13 testade hypoteser (Sharpe
+0.39/0.39/0.21, DSR 0.35-0.37) - men fortfarande FAILED. Ang et al. ger
+en konkret, väldokumenterad, annorlunda signal att testa i stället:
+residualen efter att marknadsbetan (redan beräknad via `compute_beta()`
+i delad kod) dragits bort, snarare än total std - inte en omkörning av
+samma sak, utan en specifik metodskillnad med egen litteraturgrund.
+OBS (upptäckt vid granskning 2026-07-29): HYP-014:s befintliga
+backtest-motor har en ombalanseringsbugg (kalenderdatum från
+`resample().last()` matchas mot handelskalendern, och ~32% av
+kvartalsslut hoppas tyst över när de faller på en icke-handelsdag) som
+lät en felklassificerad ticker (ESSA) rida igenom ett datafel
+okontrollerat i 9 månader och dominera det rapporterade resultatet
+(dess enda trade stod för hela skillnaden mellan Sharpe 0.39 och 0.21
+exkl. bästa traden). En idiosynkratisk-vol-uppföljare bör byggas på en
+FIXAD ombalanseringsmotor, inte ärva samma defekt.
+
+---
+
+## [Datum, 2026-07-29]
+
+**Källa:** Barroso, P., & Santa-Clara, P. (2015). "Momentum has its
+Moments." Journal of Financial Economics, 116(1), 111-120. Se även
+Daniel, K., & Moskowitz, T. J. (2016). "Momentum Crashes." Journal of
+Financial Economics, 122(2), 221-247.
+
+**Kort beskrivning:** Daniel & Moskowitz dokumenterar att
+momentumstrategier drabbas av sällsynta men extrema "krascher" -
+kraftiga, kortvariga reverseringar, typiskt strax efter marknadsbottnar
+när tidigare förlorare rekylerar kraftigt medan momentumportföljen är
+kort dem. Barroso & Santa-Clara visar att man kan eliminera merparten
+av denna svansrisk, med bibehållen genomsnittlig avkastning, genom att
+skala positionsstorleken OMVÄNT mot momentumportföljens EGEN nyligen
+realiserade volatilitet (inte marknadens) - dvs minska exponeringen när
+portföljen själv blivit ovanligt volatil, ett tecken på att en krasch
+är nära förestående.
+
+**Varför relevant:** HYP-012 (cross-sectional momentum 12-1 mån på
+small-cap, testad 2026-07-29) misslyckades INTE på grund av avsaknad av
+genomsnittlig edge (rå Sharpe var faktiskt positivt vid $100k/$1M:
+0.16/0.12) utan på grund av katastrofal maxdrawdown (-72% till -78%) -
+exakt den typ av svansrisk Daniel & Moskowitz beskriver, och exakt den
+mekanism Barroso & Santa-Clara adresserar direkt. Detta är alltså inte
+"testa momentum igen" utan en riktad fix mot en redan diagnostiserad
+felorsak. OBS (upptäckt vid granskning 2026-07-29): samma
+ombalanseringsbugg som i HYP-014 finns även i HYP-012:s backtest-motor
+(~29% av månadsslut hoppas tyst över), och det dominerande vinsttradet
+(ARDMQ, +3923% på en månad) ser ut att vara en icke split-justerad
+omvänd aktiesplit snarare än en riktig kursrörelse - samma mekanism som
+möjliggjorde ESSA-fallet ovan gav sannolikt en konstlat hög rapporterad
+Sharpe även här. En vol-hanterad-momentum-uppföljare bör byggas på en
+fixad ombalanseringsmotor OCH kontrollera att prisserien är
+split-justerad, inte bara återanvända befintlig infrastruktur
+oförändrad.
+
+---
+
+## [Datum, 2026-07-30]
+
+**Källa:** Daniel, K., & Moskowitz, T. J. (2016). "Momentum Crashes."
+Journal of Financial Economics, 122(2), 221-247 (samma källa som redan
+citerad ovan för HYP-016, men en annan del av dess mekanism).
+
+**Kort beskrivning:** Daniel & Moskowitz visar att de värsta momentum-
+kraschperioderna inte nödvändigtvis sammanfaller med när marknaden
+faller snabbt, utan uppstår när tidigare FÖRLORARE studsar kraftigt
+tillbaka strax efter en marknadsbotten (momentumportföljen är kort
+dessa, eller i alla fall inte lång dem, och missar/förlorar på studsen).
+Det är en annan signatur än en generell, snabb marknadsnedgång.
+
+**Varför relevant:** Testade 2026-07-30 (diagnostik, se
+scripts/diagnostic_momentum_crash_overlay.py) om HYP-017:s SPY-krasch-
+overlay (triggar på SPY:s egen 10-dagars-nedgång < -10%) även skulle
+tämja HYP-012/016:s momentum-signals MaxDD-problem. Svar: nej -
+MaxDD rörde sig praktiskt taget inte (-76.6% med overlay mot -76.6%
+utan). Det bekräftar att momentums kraschmekanism är en ANNAN än den
+generella marknadspanik som drabbade lågvol-signalen (HYP-015/017) -
+overlayen bevakar fel sak för just momentum. En framtida momentum-
+uppföljare skulle behöva en signal som specifikt bevakar rebound hos
+tidigare förlorare (t.ex. avkastningen för BOTTENdecilen av samma
+momentum-rankning, inte SPY-index), inte en generell marknadsnedgångs-
+trigger. Inte byggt eller testat - bara en riktad idé grundad i en
+konkret, redan observerad negativ diagnostik.
+
+---
+
+## [Datum, 2026-08-09] — bredare sökrunda, sex kandidater
+
+CEO-beslut 2026-08-09: nästa hypotesrunda får bredare scope (nya
+alfasignaler/mekanismtyper, inte bara parametervarianter inom redan
+bevisade mekanismer - se AskUserQuestion-svaret samma dag). Nedan är
+Claudes EGNA, oberoende genererade kandidater (skrivna INNAN några
+externa AI-svar setts, för att undvika adaptiv snedvridning - samma
+disciplin som redan etablerad för multi-AI-brainstormar). Ingen K-
+kostnad - dessa är förslag, inte pre-registrerade hypoteser.
+
+Undviker medvetet: låg-vol L/S, kvalitet L/S, 52-veckors-högsta L/S,
+generiska trendföljningsvarianter, bred CTA-korg, merger-arb - alla
+redan diagnostiskt avfärdade under HYP-044:s kandidatsökning
+2026-08-07 (se project-minnesanteckningen "HYP-044 candidate search").
+Undviker även allt Kelly-viktat (Ejay är stängt, nio döda varianter).
+
+**Källa:** Egen idé (Claude, 2026-08-09)
+
+**Kort beskrivning (kandidat 1 — makroregim-timing utan prisbaserad trigger):** Använd VIX-terminskurvans lutning (spot-VIX minus 3-månaders VIX-futures, eller enklare: VIX-nivå relativt sitt eget 1-års rullande percentil) som en ANNAN typ av kraschtrigger än de redan använda SPY-pris-baserade (10-dagars-avkastning). Samma haircut-mekanik som redan validerad (HYP-017/023/037/047), men triggad av ett marknadsstämnings-/riskaversionsmått istället för realiserad prisrörelse.
+
+**Varför relevant:** De fyra lyckade timing-mekanismerna använder alla SAMMA underliggande signal (SPY:s egen realiserade avkastning). VIX-terminsstrukturen är känd för att invertera (backwardation) INNAN och UNDER stress, vilket kan ge en tidigare eller kompletterande signal än ett rent lagg-baserat pris-mått. Kräver extern datakälla (CBOE VIX-data, inte i EODHD-cachen idag) - datafeasibility måste kollas innan lasning.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09)
+
+**Kort beskrivning (kandidat 2 — blankningsintresse som ALFA-signal, inte bara friktion):** D'Avolio (2002, redan citerad ovan) dokumenterar att "specials" (dyra/svåra att låna aktier) koncentreras till mindre, mer illikvida bolag. Testa om HÖGT och STIGANDE short interest / days-to-cover i sig är en signal (kort de mest blankade namnen, eller tvärtom undvik dem i en long-portfölj) - inte bara en kostnadsjustering av en redan vald position.
+
+**Varför relevant:** Detta skiljer sig strukturellt från alla redan testade urvalssignaler (som alla varit pris-/redovisningsbaserade) genom att direkt mäta ANDRA sofistikerade aktörers positionering - en mer direkt koppling till kapacitetsbegränsningstesen än något redan testat. Kräver short-interest-data (tvåveckorsfrekvens från FINRA/börser) - måste verifieras om EODHD tillhandahåller detta för small-cap-universumet.
+
+---
+
+**Källa:** Sloan, R. G. (1996). "Do Stock Prices Fully Reflect Information in Accruals and Cash Flows about Future Earnings?" The Accounting Review, 71(3), 289-315.
+
+**Kort beskrivning (kandidat 3 — accrual-anomalin):** Bolag med höga periodiseringar (accruals - vinst som inte stöds av kassaflöde) tenderar att ha sämre framtida avkastning än bolag vars vinst är kassaflödesgrundad. En etablerad, väldokumenterad anomali - strukturellt annorlunda från PEAD/SUE (som redan testats och misslyckats två gånger, HYP-020/044) eftersom den mäter VINSTKVALITET, inte vinstöverraskning.
+
+**Varför relevant:** Redovisningsdata (kassaflöde vs. resultaträkning) finns sannolikt redan tillgänglig via samma SEC EDGAR-pipeline som byggdes för HYP-020:s PEAD-signal - låg extra datakostnad. En genuint annan mekanism än de två redan misslyckade redovisningssignalerna (book-to-market, PEAD), inte en variant av dem.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09), inspirerad av det redan etablerade registermönstret
+
+**Kort beskrivning (kandidat 4 — kvalitet som GATE för timing-aggressivitet, inte som urvalssignal):** Istället för att använda en kvalitetskomposit (lönsamhet/skuldsättning/stabilitet) för att VÄLJA aktier (redan avfärdat, se HYP-044-sökningen) - använd den för att MODULERA hur aggressivt en redan validerad timing-mekanism (t.ex. bear catcher-triggern) agerar. Exempel: djupare haircut vid trigger för portföljens lågkvalitetssegment, mildare för högkvalitetssegmentet.
+
+**Varför relevant:** Direkt konsekvens av registrets eget starkaste mönster (timing fungerar, urval inte) - testar INTE kvalitet som en ny selektionsfaktor (redan dött spår) utan som en modifierare av en REDAN bevisad mekanismtyp. Strukturellt en ny sorts kombination, inte bara ännu en likaviktad portfölj av kända delar.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09), löst inspirerad av volatilitetsmålsättning i managed futures/crypto-kvantstrategier
+
+**Kort beskrivning (kandidat 5 — portföljbred volatilitetsmålsättning som EGEN timing-mekanism):** Barroso & Santa-Clara (2015, redan citerad ovan) skalar EN signals (momentums) positionsstorlek mot dess egen realiserade volatilitet. Generalisera detta till att skala HELA HYP-047-portföljens exponering mot dess EGEN rullande realiserade volatilitet (inte någon enskild signals) - minska exponering när portföljen redan blivit ovanligt volatil, oavsett vad som orsakar det.
+
+**Varför relevant:** Vol-targeting är en väletablerad teknik i managed futures och crypto-kvantstrategier (varifrån HYP-047:s bear catcher-mekanism ursprungligen hämtades, Hurst/Ooi/Pedersen-traditionen) men har inte testats på PORTFÖLJNIVÅ i detta register - bara indirekt via prisbaserade kraschtriggers. En strukturellt annan typ av riskhantering (kontinuerlig skalning, inte binär haircut/no-haircut).
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-09)
+
+**Kort beskrivning (kandidat 6 — analytikeruppskattningars spridning som osäkerhetsproxy):** Hög spridning bland analytikers vinstprognoser (forecast dispersion) för ett bolag har i akademisk litteratur kopplats till lägre framtida avkastning (Diether, Malloy & Scherbina 2002) - tolkat som att hög oenighet/osäkerhet i sig är en riskfaktor institutioner undviker, vilket kan koppla direkt till kapacitetsbegränsningstesen (färre bevakande analytiker + högre oenighet = mer institutionellt undvikande = mer kapacitetsutrymme).
+
+**Varför relevant:** En helt annan datakälla (analytikerkonsensus/-spridning, inte pris eller redovisning) än allt tidigare testat. HÖG DATAOSÄKERHET: small-cap-bolag i detta börsvärdesband har ofta MYCKET gles eller obefintlig analytikerbevakning - måste verifieras separat om EODHD har tillräcklig täckning innan detta är ens genomförbart. Flaggas explicit som den mest osäkra kandidaten datamässigt.
+
+---
+
+## [Datum, 2026-08-12] — cross-AI-konvergensanalys, "genuint ny alfa"-runda
+
+CEO klistrade in samma "GENUINT NY ALFA (inte overlay)"-brainstormprompt
+(se `research/CANDIDATE_BRAINSTORM_PROMPT_NY_ALFA_2026-08-11.md`) i tre
+oberoende externa AI-konversationer OCH i denna Claude-session direkt.
+Claude hann INTE leverera ett eget blint förslag innan de tre externa
+svaren klistrades in i chatten - så det här är INTE ett fjärde
+oberoende konvergensdatapunkt i BATCH-002-bemärkelse. Det är i stället
+en verklighetskontroll av de tre externa svaren mot registret (K=68
+vid tidpunkten) och mot faktisk kodbas-infrastruktur, vilket ingen av
+de externa källorna hade tillgång till.
+
+**Konvergenskluster (2+ källor, inklusive Claudes egen avbrutna
+riktning):**
+1. Framtida utspädning/shelf-overhang (S-3/ATM) - två externa källor
+   oberoende + Claudes egen riktning.
+2. Revisorsbyte/going-concern/filing-stress-kaskad - tre externa
+   källor (olika djup) + Claudes egen riktning.
+3. Risk Factors-textlikhet (Item 1A, cosine/Jaccard) - två externa
+   källor, identisk konstruktion.
+4. Amihud-impact/likviditetschocks-reversal - tre externa källor.
+5. Turn-of-month-kalendereffekt - en extern källa + Claudes egen
+   riktning.
+6. Utdelningsinitiering/-indragning - en extern källa + Claudes egen
+   riktning.
+
+**Kritisk korrigering (registret vet något de externa källorna inte
+vet):** en extern källa avfärdade explicit en januari-/skatteförlust-
+variant som "utdöende anomaly, hög risk att slösa K"; en annan
+behandlade den som en fotnot. Ingen av dem hade tillgång till
+registret - **HYP-053 (skatteförlust-reversering, januarieffekten)
+testade nästan exakt denna mekanism 2026-08-09 och PASSADE** (Sharpe
+1,57/1,40/1,00 vid 100k/1M/10M, se HYP-053:s registerpost). Svag DSR
+(0,30/0,24/0,12) pga kort aktivt fönster och redan högt K vid
+låsningstillfället - men mekanismen är INTE bevisat döende, den är
+redan validerad. Relevant för alla framtida kandidater i samma
+familj: kontrollera korrelation mot HYP-053:s aktiva fönster innan
+en ny variant registreras, annars riskeras dubbeltestning av samma
+mekanism under ett nytt namn.
+
+**Varningsflagga (konvergens ≠ ny mark):** Amihud-impact/likviditets-
+chock-reversal-klustret konvergerade hos alla tre externa källor, men
+registret har redan TRE oberoende misslyckanden i närliggande
+mekanismer: HYP-013 (reversal), HYP-042 (reversal, MaxDD -98/-99%),
+och särskilt HYP-050 (volymchock + litet prisutslag → long) som
+FAILADE katastrofalt (Sharpe -1,24, MaxDD -98%) trots att
+distress-filtret fungerade som avsett vid entry - positionerna
+kollapsade ändå under hållperioden. Tekniskt skild konstruktion
+(kräver ett prisutslag att fade:a, inte "inget utslag"), men tre
+oberoende dödsfall i samma familj väger tyngre än extern konvergens
+utan registertillgång.
+
+**Infrastrukturverklighet (kontrollerat mot `data/sec_edgar_adapter.py`,
+`data/fetch_issuance_history.py`, `data/fetch_buyback_history.py`):**
+all befintlig SEC-infrastruktur pratar uteslutande mot `companyfacts`-
+XBRL-API:et (strukturerade numeriska taggar). Ingenting i repot läser
+idag filnings-index (formtyp+datum) eller faktisk dokumenttext.
+Verifierat via webbsökning 2026-08-12: `data.sec.gov/submissions/
+CIK##########.json` innehåller ett strukturerat `items`-fält för
+8-K-inlämningar (t.ex. "4.01" för revisorsbyte, "4.02" för
+non-reliance/omräkning) samt fullständig historik av `form`+
+`filingDate` (inkl. NT 10-K/NT 10-Q, 10-K/A, S-3, 424B5) - INGEN NLP
+krävs för formtyp- eller item-kod-baserade signaler. Textbaserade
+förslag (Risk Factors-likhet, going-concern-språk, osäkerhets-
+ordlistor, pressmeddelande-sentiment) kräver däremot en helt ny,
+väsentligt dyrare kapacitet (faktisk dokumenttexthämtning), inte
+byggd än.
+
+**Beslut samma dag:** tre kandidater valdes ut och pre-registrerades
+direkt (se HYP-072, HYP-073, HYP-074) baserat på ovanstående - alla tre
+byggbara på antingen den nya, verifierade `submissions`-API-formtyp/
+item-signalen (ingen NLP) eller på redan befintlig OHLCV/adjusted_close-
+infrastruktur. Textklustret (Risk Factors-likhet m.fl.) parkerades
+medvetet - högst extern konvergens men högst byggkostnad, bör
+utvärderas i en egen, ostressad session efter att de billigare
+kandidaterna gett resultat.
+
+---
+
+## [Datum, 2026-08-13] — statusuppdatering + ny brainstormrunda
+
+CEO-läge samma dag: hävstång formellt stängd (se HYP-081/088:s
+registerposter), crypto-spåret uttömt (HYP-060-064 riktade + HYP-089/090
+marknadsneutrala, 7/7 FAILED), och dilution-pipeline-familjen (HYP-072→
+HYP-081) bedömd utmjölkad efter sex raka FAILED-uppföljare (082-086).
+CEO efterfrågade en ny brainstormrunda för genuint ny, oberoende alfa.
+
+**PÅMINNELSE - TEXTKLUSTRET FRÅN 2026-08-12 ÄR FORTFARANDE LEVANDE, INTE
+AVFÄRDAT:** det parkerades uttryckligen "tills de billigare kandidaterna
+gett resultat" (se ovan) - det har de nu (072/075/079/081 gav faktiskt
+resultat, plus sex FAILED uppföljare). Detta var det kluster med HÖGST
+extern konvergens av alla sex (Risk Factors-textlikhet: två oberoende
+externa källor, IDENTISK konstruktion). Byggkostnaden är känd och
+avgränsad (kräver faktisk dokumenttexthämtning från SEC EDGAR - inte
+byggd ännu, men inget okänt hinder). Detta är sannolikt den enskilt
+starkaste kandidaten att greenlighta först, inte en ny idé bland andra.
+
+Nedan: Claudes EGNA, oberoende genererade kandidater för denna runda
+(skrivna innan någon extern AI konsulterats, samma disciplin som
+2026-08-09/12). Undviker medvetet allt redan dött (se de långa listorna
+av FAILED-familjer i registret: pardhandel, momentum/reversal utan
+riskhantering, lågvol/kvalitet/52v-högsta L/S, PEAD/SUE, Kelly/Ejay,
+återköp/nettoemission, sektorlikviditets-lead-lag, kort ränta som
+carry).
+
+**Källa:** Egen idé (Claude, 2026-08-13)
+
+**Kort beskrivning (kandidat A — accrual-anomalin, PROMOVERAD från
+2026-08-09-listans kandidat 3):** Sloan (1996) - bolag med höga
+periodiseringar (vinst ej stödd av kassaflöde) har historiskt sämre
+framtida avkastning än bolag vars vinst är kassaflödesgrundad. Byggbar
+på samma `companyfacts`-XBRL-API som redan används för
+utdelnings-/nyemissions-/återköpsdata (`NetIncomeLoss` och
+`NetCashProvidedByUsedInOperatingActivities`, båda standardtaggar) -
+låg extra infrastrukturkostnad, ingen ny datakälla.
+
+**Varför relevant:** Strukturellt skild från de två redan misslyckade
+redovisningssignalerna i registret (book-to-market HYP-033, PEAD/SUE
+HYP-020/044) - mäter vinstKVALITET, inte värdering eller överraskning.
+Ingen ny feasibility-osäkerhet kvar att lösa - redo att skrivas som
+spec direkt om CEO promoverar den.
+
+---
+
+**Källa:** Cohen, L., & Frazzini, A. (2008). "Economic Links and
+Predictable Returns." Journal of Finance, 63(4), 1977-2011.
+
+**Kort beskrivning (kandidat B — leverantörskedje-lead-lag):** Visar
+att en akties avkastning kan predikteras av avkastningen hos dess
+KÄNDA STORKUNDER/leverantörer (ekonomiska länkar dokumenterade i
+10-K-kundkoncentrationsupplysningar), eftersom marknaden systematiskt
+underreagerar på information som kräver att aktivt spåra dessa länkar -
+en uppgift för dyr/obskyr för de flesta investerare att göra
+systematiskt, särskilt för small-cap-leverantörer till större kunder.
+
+**Varför relevant:** En AV DE STARKASTE kapacitetsbegränsnings-
+berättelserna av alla kandidater hittills - kräver att aktivt bygga och
+underhålla en länkgraf, exakt den typ av arbete stora institutioner
+inte gör för small-cap-namn. Strukturellt helt skild från allt redan
+testat (inget annat i registret använder INTER-bolags-länkar). HÖG
+DATAOSÄKERHET, flaggas explicit: kräver extraktion av
+kundkoncentrations-text ur 10-K Item 1/MD&A (namngivna storkunder
+över en tröskel, t.ex. >10% av intäkter) - sannolikt textutvinning,
+inte en ren XBRL-tagg, closer i kostnad till textklustret ovan än till
+kandidat A.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-13), löst grundad i akademisk
+litteratur om analytikerbevakning och synlighet (t.ex. Hong &
+Kacperczyk (2010) om bevakningsluckors marknadseffekter)
+
+**Kort beskrivning (kandidat C — analytikerbevakning INITIERAS/TAPPAS
+HELT):** Inte forecast-SPRIDNING (redan föreslaget 2026-08-09, kandidat
+6, ej byggt) utan bevakningens EXISTENS: ett small-cap-bolag som får
+sin FÖRSTA analytiker, eller tvärtom förlorar SIN SISTA (noll
+bevakning kvar), som en diskret regimförändringssignal - inte en
+kontinuerlig variabel.
+
+**Varför relevant:** Direkt attention-baserad kapacitetsbegränsnings-
+mekanism (institutioner screenar ofta bort namn utan analytikerbevakning
+helt, oavsett fundamenta) - skild från kandidat 6:s spridningsmått.
+SAMMA DATAOSÄKERHET som redan flaggad för kandidat 6: small-cap i detta
+börsvärdesband har ofta gles/obefintlig bevakning i EODHD - måste
+verifieras innan byggstart, sannolikt den svagaste länken i denna
+runda.
+
+---
+
+**Öppen fråga till CEO, inte avgjord här:** samma process som
+2026-08-12 (klistra in en delad brainstormprompt i externa AI-
+konversationer parallellt) för konvergensfördelen, eller gå vidare
+direkt på textklustret (redan hög konvergens, känd kostnad) plus
+kandidat A (redo, låg kostnad) utan en ny extern runda?

@@ -1,0 +1,149 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås kör"), innan denna hypotes sätts
+# pre-registered eller någon backtest körs.
+#
+# URSPRUNG: uppföljning på HYP-061:s FAILADE resultat (razor-thin miss
+# mot BASELINE_BASKET:s Sharpe, MaxDD-förbättring men INTE bättre Calmar
+# än att bara hålla korgen - CEO påpekade explicit att Sharpe-talen i
+# hela BATCH-003 är svåra att lita på rakt av givet cryptos generella
+# uppgång senaste åren, och efterfrågade Calmar>1, gärna >1,5 istället).
+# scripts/diagnostic_hyp061_followup_drawdown_trigger.py (ren diagnostik,
+# ingen K-kostnad) testade ett rutnät av 8 tröskel×haircut-kombinationer
+# för en SNABB, pris-drawdown-triggad nedskalning (till skillnad från
+# HYP-061:s långsamma 60-dagars volsignal) INNAN denna hypotes las.
+#
+# KÄND, ÖPPET REDOVISAD RESERVATION #1 (metodologisk, väger tungt):
+# parametrarna (-25% drawdown-tröskel, 25% haircut) valdes från
+# diagnostikens rutnät EFTER att ha sett deras Calmar-utfall - till
+# skillnad från t.ex. bear catcherns 200-dagars-SMA (vald från etablerad
+# litteratur, INTE från prestanda). Strukturellt närmare ett sökt-och-
+# valt-bästa-resultat än en blint vald mekanism, även om bara ETT
+# kriterium låses här (ingen batch, inga separata K-test för de andra
+# 7 rutnätskombinationerna).
+#
+# KÄND, ÖPPET REDOVISAD RESERVATION #2: bara 3-4 OBEROENDE triggningar
+# över hela huvudperioden (2010-2024... egentligen 2015-2024 pga det
+# gemensamma 5-coin-fönstret), koncentrerade till 2-3 redan kända
+# crypto-kraschar (2018-vintern, maj 2021) - verifierat via triggerdatum
+# INNAN lasning. Mekanismen ligger sedan kvar i defensivt läge i flera
+# år i sträck (jan 2018-jan 2021, maj 2021-dec 2024) - detta är alltså
+# en mekanism som identifierar ett fåtal stora regimskiften, INTE en
+# nimbel, ofta-agerande timing-signal.
+#
+# KONSEKVENS AV BÅDA RESERVATIONERNA (CEO-instruktion INNAN lasning):
+# även om detta formellt PASSAR ska resultatet betraktas som
+# PROVISORISKT, SVAGARE BEVIS än ett vanligt förhandsregistrerat
+# resultat - samma princip som Batch Hypothesis Generation-reglerna
+# redan tillämpar på sökta resultat (spec: "a historical-data PASS...
+# is treated as weaker evidence... precisely because the search space...
+# was chosen by the same system being evaluated"). INTE automatiskt
+# kandidat för referensimplementation utan vidare granskning, oavsett
+# utfall.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-064
+date_registered: '2026-08-11'
+title: "Drawdown-triggad nedskalning (-25%/25%-haircut) på 5-coin crypto-korg"
+universe: "BTC/ETH/LTC/XRP/DOGE (EODHD spot .CC), samma statiska lista
+  som BATCH-003 (HYP-060-063), se HYP-060:s registerpost för feasibility-
+  motiveringen."
+small_cap_definition: "N/A - crypto spot, se HYP-060:s identiska motivering."
+data_range: "Samma gemensamma fönster som HYP-061/062/063 (från ETH:s
+  första handelsdag 2015-08-07) till 2024-12-31 huvudperiod + genuin
+  OOS-2025."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Bas: BASELINE_BASKET (samma delade, friktionsjusterade 5-coin
+  likaviktade kvartalsvisa referenskorg som HYP-061/062/063, se
+  strategies/common/crypto_data.py::build_baseline_basket).
+
+  Track strategins EGEN levererade equity-kurvas drawdown från ett
+  rullande högsta-vattenmärke, DAGLIGEN. Vid 100% exponering: om
+  drawdown <= -25%, skala ner till 25% exponering SAMMA DAG (75% i
+  kontanter, RF_ANNUAL=2%/år). Vid 25% exponering: om drawdown
+  återhämtat sig förbi -10% (från samma högsta-vattenmärke), återgå
+  till 100% exponering.
+
+  FRIKTION: halva Corwin-Schultz-spreaden (per coin, viktat efter
+  korgens egna vikter) + 0,15% exchange-avgift, på den notional-andel
+  som flyttas vid VARJE övergång (både nedskalning och återinträde) -
+  denna friktion saknades i diagnostiken (scripts/diagnostic_hyp061_followup_drawdown_trigger.py)
+  och läggs till här för det formella, låsta testet.
+
+  ANNUALISERING: 365 dagar/år - se HYP-060:s identiska notering.
+
+  JÄMFÖRELSEPUNKT: BASELINE_BASKET (Calmar 1,705 i diagnostiken - det
+  FORMELLA, friktionsjusterade talet beräknas om i denna körning för
+  exakt samma fönster som strategin, kan skilja sig marginellt).
+
+  PASS KRÄVER ALLA TRE (huvudperioden):
+  1. Sharpe >= 0,55.
+  2. Calmar > BASELINE_BASKET:s egen Calmar (slå att bara hålla korgen,
+     inte bara en absolut nivå).
+  3. Calmar > 1,5 (absolut golv).
+
+  FAIL om något villkor faller.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal triggningar/återinträden,
+  andel dagar i defensivt läge, exakta triggerdatum - för att synliggöra
+  reservation #2 (se header) konkret i resultatet, inte bara i texten
+  innan låsning.
+
+  Diagnostiskt syfte: testar om en SNABB, pris-drawdown-triggad
+  nedskalning (till skillnad från HYP-061:s långsamma 60-dagars
+  volsignal, som bara skavde 10,6pp MaxDD) kan förbättra på att bara
+  hålla korgen i Calmar-termer - explicit motiverad av CEO:s skepsis
+  mot att lita på absolut Sharpe/CAGR i en tillgångsklass med extrem
+  sekulär drift.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 62
+date_tested: '2026-08-11'
+result:
+  strategy: {sharpe: 1.5382, cagr: 1.0317, max_drawdown: -0.6127, calmar: 1.684, deflated_sharpe_ratio: 0.9960}
+  baseline_basket: {sharpe: 1.4762, cagr: 1.4992, max_drawdown: -0.8794, calmar: 1.705}
+  oos_2025: {strategy_sharpe: -0.1228, strategy_return: -0.0142, baseline_sharpe: -0.1228, baseline_return: -0.2479}
+  disclosure: {n_triggers: 4, pct_days_defensive: 0.815}
+  dsr_n_trials: 63
+result_summary: >
+  FAILED PÅ VILLKOR 2, RAKBLADSTUNT IGEN. Villkor 1 (Sharpe>=0,55) PASS
+  brett (1,538, till och med över baseline 1,476). Villkor 2 (Calmar >
+  baseline 1,705): FAIL men med en marginal på bara 0,021 (1,684 mot
+  1,705) - ANNU tunnare än HYP-061:s Sharpe-miss. Villkor 3 (Calmar >
+  1,5 absolut): PASS (1,684).
+
+  VARFÖR SÄMRE ÄN DIAGNOSTIKENS FRIKTIONSFRIA ESTIMAT (Calmar 2,463):
+  den tillagda transaktionsfriktionen (spread+avgift vid varje övergång,
+  saknades i diagnostiken) var i sig liten per händelse, men fick en
+  oproportionerligt stor effekt eftersom den sista återhämtningen mot
+  -10%-tröskeln (efter maj 2021-triggern) redan låg RAKBLADSTUNT vid
+  gränsen i diagnostikens friktionsfria körning (drawdown -9,79% vid
+  återinträdet 2024-12-01, se diagnostikens loggade händelser). Den
+  extra friktionsdragningen räckte för att FLYTTA denna gränshändelse
+  utanför huvudperiodens fönster helt - strategin slutar 2024-12-31
+  fortfarande i 25%-exponering (81,5% av alla dagar i defensivt läge
+  totalt), vilket sänkte CAGR (103,2% mot diagnostikens 120,6%) mer än
+  det förbättrade MaxDD (-61,27% mot diagnostikens -48,96%, faktiskt
+  SÄMRE trots lägre CAGR eftersom equity-kurvan aldrig hann återhämta
+  sig till en ny topp innan periodens slut).
+
+  BEKRÄFTAR BÅDA KÄNDA RESERVATIONERNA (se header, redovisade INNAN
+  lasning): en mekanism kalibrerad från ett prestanda-rutnät (reservation
+  #1) höll INTE ens sin egen diagnostiserade fördel när riktig friktion
+  lades till - och med bara 3-4 oberoende triggningar (reservation #2)
+  var resultatet extremt känsligt för EXAKT var den sista, gränsnära
+  återhämtningen hamnade i tiden. DSR 0,996 vid K=63 - extremt högt,
+  men irrelevant för slutsatsen eftersom det gating-avgörande villkoret
+  var Calmar-jämförelsen mot baseline, inte den absoluta Sharpe-golvet.
+
+  SLUTSATS FÖR HELA UPPFÖLJNINGSTRÅDEN (HYP-061 -> HYP-064): två
+  oberoende försök att slå BASELINE_BASKET:s egen riskjusterade profil
+  (Sharpe respektive Calmar) har nu BÅDA missat med extremt liten
+  marginal. Konsistent bild: i just detta historiska fönster (2015-2024,
+  flera sekulära crypto-bullcykler) är en enkel likaviktad buy-and-hold-
+  korg ovanligt svår att förbättra på med riskhanteringsoverlejer -
+  oavsett om målet är Sharpe eller Calmar. HYP-047 förblir referensen,
+  ingen ny crypto-referens motiverad av något i BATCH-003 eller denna
+  uppföljning.

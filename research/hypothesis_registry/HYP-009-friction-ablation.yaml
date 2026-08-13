@@ -1,0 +1,74 @@
+# Ren metodologisk ablation av HYP-008 - identisk kod, men friktionskostnader
+# neutraliserade till noll, for att isolera om HYP-008:s FAILED-resultat
+# berodde pa friktion eller pa signalen/universumet sjalvt.
+# universe/data_range identiskt med HYP-008 sedan ablationen per definition
+# anvander samma universum.
+
+id: HYP-009
+date_registered: '2026-07-28'
+title: v6-kärna på small-cap, friktion nollställd (ablation mot HYP-008)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008 (2011-2024)
+# LÅST 2026-07-28 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+pass_fail_criterion: >
+  Ren metodologisk ablation av HYP-008: identisk kod (v6-kärnan, beta-neutral
+  OLS pair trading, samma small-cap-universum $100M-$2B, EODHD All-World,
+  samma period 2011-2024) - men friktionskostnaderna neutraliserade till
+  noll. Implementation: borrow_cost() anropas med annual_rate=0.0;
+  Corwin-Schultz-spreaden beräknas och appliceras som vanligt men
+  multipliceras med 0 innan den räknas som kostnad. Båda friktionsfunktionerna
+  ska fortfarande importeras och anropas (bara med noll-effekt) - inte tas
+  bort ur koden - så att validate_friction_usage.py:s kontroll fortfarande
+  går igenom korrekt. Volymbaserad kapacitetsspärr förblir AKTIV (den mäter
+  handelsbarhet, inte kostnad).
+
+  Syfte: isolera om HYP-008:s FAILED-resultat berodde på friktion, eller om
+  signalen/universumet saknar edge redan före kostnader.
+
+  PASS/FAIL (diagnostiskt - inte ett godkännande för produktionsdrift):
+  PASS om Sharpe (utan friktion) >= 0.55 på minst kapitalnivå $100k - edge
+  existerar teoretiskt före kostnader; stärker underlaget för att pröva en
+  annan par-selektionsmetod (kandidat 5). FAIL om Sharpe (utan friktion)
+  fortfarande < 0.55 på ALLA tre kapitalnivåer - signalen/universumet
+  saknar edge oavsett kostnader; talar emot att bygga ut kandidat 5 innan
+  en mer grundläggande förändring (annan signal/urvalskriterium) övervägs.
+
+  Ett PASS här betyder INTE att strategin är lönsam att handla - bara att
+  den underliggande signalen har teoretisk edge före kostnader.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 8
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: -0.1809, calmar: -0.0033, sharpe_excl_best_trade: -0.2089, max_drawdown: -0.3369, win_rate: 0.5180, profit_factor: 1.1930, n_trades: 1027, deflated_sharpe_ratio: 0.0130}
+  1000000: {sharpe: -0.1707, calmar: 0.0002, sharpe_excl_best_trade: -0.1991, max_drawdown: -0.3242, win_rate: 0.5180, profit_factor: 1.1930, n_trades: 1027, deflated_sharpe_ratio: 0.0144}
+  10000000: {sharpe: -0.2131, calmar: 0.0086, sharpe_excl_best_trade: -0.2466, max_drawdown: -0.2480, win_rate: 0.5180, profit_factor: 1.1930, n_trades: 1027, deflated_sharpe_ratio: 0.0078}
+date_tested: 2026-07-29
+result_summary: >
+  FAILED på samtliga tre kapitalnivåer. Sharpe utan friktion (-0.18 till
+  -0.21) fortfarande djupt negativ, långt under 0.55-tröskeln - HYP-008:s
+  misslyckande berodde alltså INTE primärt på friktionskostnader (som bara
+  flyttade Sharpe fran -0.41/-0.45 till -0.17/-0.21). Diagnostik efter
+  testet (ej en del av kriteriet): trade-nivån visar faktiskt en svagt
+  POSITIV kant i isolation (profit factor 1.19, vinstandel 51.8%, 758
+  target-utgångar mot 269 stop-utgångar) - men arlig portföljavkastning
+  stannar pa +0.34% (under 2% riskfri ränta), sannolikt pa grund av lag
+  kapitalanvändning (~73 trades/år över upp till 12 platser) snarare an
+  att signalen saknar all prediktiv formaga. SPY-hedgen uteslöts separat
+  som orsak (Sharpe nästan identisk med/utan hedge: -0.181 vs -0.174).
+  Se strategies/HYP-009/diagnostics/ for hedge-ablationen.
+sharpe_raw:
+  100000: -0.1809
+  1000000: -0.1707
+  10000000: -0.2131
+# Beräknad mot K=9 (7 döda ejay-varianter + HYP-008 + HYP-009 sjalv), via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.0130
+  1000000: 0.0144
+  10000000: 0.0078
+ablation_of: HYP-008
+draft_notes_from_dashboard: null

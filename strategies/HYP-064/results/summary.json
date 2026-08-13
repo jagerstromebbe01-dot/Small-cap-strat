@@ -1,0 +1,69 @@
+{
+  "strategy": {
+    "sharpe": 1.5382423913196892,
+    "cagr": 1.0316508478451927,
+    "max_drawdown": -0.6126682184860384,
+    "calmar": 1.6838654539556506,
+    "dsr": 0.9959899617136218
+  },
+  "baseline_basket": {
+    "sharpe": 1.4762335927830719,
+    "cagr": 1.4991786701165801,
+    "max_drawdown": -0.8793559202246803,
+    "calmar": 1.7048599271766223
+  },
+  "oos_2025": {
+    "strategy_sharpe": -0.122761351610723,
+    "strategy_return": -0.014248170127534432,
+    "baseline_sharpe": -0.12276135161074746,
+    "baseline_return": -0.2479104905563274
+  },
+  "disclosure": {
+    "n_triggers": 4,
+    "pct_days_defensive": 0.8145560407569141,
+    "events": [
+      {
+        "type": "TRIGGER",
+        "date": "2016-08-01",
+        "drawdown": -0.2725
+      },
+      {
+        "type": "REENTRY",
+        "date": "2017-03-30",
+        "drawdown": -0.08
+      },
+      {
+        "type": "TRIGGER",
+        "date": "2017-07-10",
+        "drawdown": -0.2693
+      },
+      {
+        "type": "REENTRY",
+        "date": "2017-12-08",
+        "drawdown": -0.088
+      },
+      {
+        "type": "TRIGGER",
+        "date": "2018-01-15",
+        "drawdown": -0.2519
+      },
+      {
+        "type": "REENTRY",
+        "date": "2021-01-02",
+        "drawdown": -0.0979
+      },
+      {
+        "type": "TRIGGER",
+        "date": "2021-05-19",
+        "drawdown": -0.3868
+      }
+    ]
+  },
+  "dsr_n_trials": 63,
+  "pass_fail": {
+    "condition_1_sharpe_floor": true,
+    "condition_2_calmar_vs_baseline": false,
+    "condition_3_calmar_absolute": true,
+    "overall": "FAILED"
+  }
+}

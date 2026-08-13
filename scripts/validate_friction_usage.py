@@ -19,6 +19,21 @@ Bara import utan anrop (eller anrop av en lokal funktion med samma namn
 utan att ha importerat den riktiga) räknas INTE som godkänt - båda
 villkoren måste vara sanna.
 
+UTÖKAD 2026-08-13 (BATCH-004, accrual-varianterna HYP-097-100): dessa
+fyra delar EN gemensam motor (strategies/common/accrual_engine.py,
+samma delade-modul-princip som redan används av crypto_data.py för
+HYP-060-064/089/090) istället för att var och en kopierar in
+friktionsanropen direkt i sin egen backtest.py. Ett rent en-fil-AST-
+test missade därför friktionen helt trots att den faktiskt användes -
+inte ett hål att kringgå kontrollen, utan ett genuint gap i vad den
+kunde se. Kontrollen följer nu ETT steg av lokala modulimporter (endast
+filer inuti strategies/ i detta repo, aldrig tredjepartspaket) och slår
+ihop fynden - fortfarande "importerat OCH anropat", bara att båda
+villkoren nu får vara uppfyllda i endera filen, inte nödvändigtvis
+samma. Detta är en STÄRKNING av kontrollen (den kan nu se ett tidigare
+osynligt, men redan legitimt, mönster), inte en uppmjukning - ett
+anrop som INTE finns någonstans i kedjan flaggas fortfarande.
+
 Usage:
     python validate_friction_usage.py <path-till-strategifil.py>
 """
@@ -28,6 +43,7 @@ import sys
 from pathlib import Path
 
 REQUIRED_FRICTION_FUNCTIONS = ["corwin_schultz_spread", "borrow_cost"]
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def _find_imported_names(tree: ast.AST) -> set:
@@ -54,11 +70,45 @@ def _find_called_names(tree: ast.AST) -> set:
     return called
 
 
+def _find_local_module_imports(tree: ast.AST) -> set:
+    """Hittar 'import X' / 'import X as Y'-satser dar X sannolikt ar en
+    lokal modul i detta repo (INTE 'from X import Y' - de namnen fångas
+    redan av _find_imported_names). Returnerar de RÅA modulnamnen
+    (t.ex. 'accrual_engine'), inte alias."""
+    modules = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                modules.add(alias.name.split(".")[0])
+    return modules
+
+
+def _resolve_local_module(module_name: str) -> Path | None:
+    """Sok EN gang efter modulen bland de platser strategikoden
+    faktiskt anvander sys.path.insert mot (strategies/common/ och varje
+    strategies/HYP-*/ mapp) - inte ett generellt Python-importsystem,
+    bara de kanda, redan etablerade platserna i denna kodbas."""
+    candidates = [
+        REPO_ROOT / "strategies" / "common" / f"{module_name}.py",
+        REPO_ROOT / "scripts" / f"{module_name}.py",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    for hyp_dir in (REPO_ROOT / "strategies").glob("HYP-*"):
+        c = hyp_dir / f"{module_name}.py"
+        if c.is_file():
+            return c
+    return None
+
+
 def validate_friction_usage(strategy_file: Path) -> dict:
     """
     Returnerar {"ok": bool, "missing": [...], "found_imports": [...],
     "found_calls": [...]} eller {"ok": False, "error": "..."} om filen
-    saknas eller inte går att parsa.
+    saknas eller inte går att parsa. Följer ETT steg av lokala
+    modulimporter (se moduldocstringen, 2026-08-13-tillägget) - en
+    delad motor som backtest.py importerar räknas med.
     """
     strategy_file = Path(strategy_file)
     if not strategy_file.is_file():
@@ -72,6 +122,18 @@ def validate_friction_usage(strategy_file: Path) -> dict:
 
     imported = _find_imported_names(tree)
     called = _find_called_names(tree)
+
+    for module_name in _find_local_module_imports(tree):
+        resolved = _resolve_local_module(module_name)
+        if resolved is None:
+            continue
+        try:
+            sub_source = resolved.read_text(encoding="utf-8")
+            sub_tree = ast.parse(sub_source, filename=str(resolved))
+        except (OSError, SyntaxError):
+            continue
+        imported |= _find_imported_names(sub_tree)
+        called |= _find_called_names(sub_tree)
 
     missing = [
         fn for fn in REQUIRED_FRICTION_FUNCTIONS

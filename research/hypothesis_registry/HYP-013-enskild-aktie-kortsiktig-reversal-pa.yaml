@@ -1,0 +1,53 @@
+# LÅST 2026-07-29 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Del av en grupp om tre (HYP-012/013/014) -
+# pivot fran par-baserad handel (HYP-008/009/011, alla FAILED) till
+# klassiska, litteraturgrundade faktorer som inte kraver korrelerade par.
+# Se konversationen 2026-07-29 for full motivering och kallor.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-013
+date_registered: '2026-07-29'
+title: Enskild-aktie kortsiktig reversal pa small-cap (ingen partner-aktie)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008 (2011-2024)
+pass_fail_criterion: 'Samma universum/friktion/hedge som HYP-008. Signal: z-score av EGEN (ej par-relativ)
+  avkastning senaste 5 handelsdagarna mot aktiens egen trailing 63-dagars fordelning - kop de mest oversalda
+  (z < -1.5), INGEN partner-aktie eller korrelationskrav (till skillnad fran v6-karnan). Exit: konvergens
+  (|z| < 0.3) ELLER max hålltid 20 handelsdagar (kortare an v6:s implicita hålltid, eftersom reversal
+  ar en snabbare effekt per litteraturen - Lehmann 1990, Jegadeesh 1990). Samma kapacitetsspärr som HYP-008.
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer. FAIL om nagon nivå faller
+  under.
+
+  Diagnostiskt syfte: testar direkt om HYP-008/009/011:s problem (lag korrelation mellan small-cap-aktier
+  gor par-baserad reversal svag) loses genom att ta bort kravet pa en korrelerad partner helt.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 10
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: -0.3311, calmar: -0.0626, sharpe_excl_best_trade: -0.3616, max_drawdown: -0.5887, win_rate: 0.3893, profit_factor: 0.8496, n_trades: 3190, deflated_sharpe_ratio: 0.0017}
+  1000000: {sharpe: -0.3883, calmar: -0.0649, sharpe_excl_best_trade: -0.4180, max_drawdown: -0.6141, win_rate: 0.3913, profit_factor: 0.8468, n_trades: 3169, deflated_sharpe_ratio: 0.0009}
+  10000000: {sharpe: -0.4211, calmar: -0.0454, sharpe_excl_best_trade: -0.4294, max_drawdown: -0.3825, win_rate: 0.3894, profit_factor: 0.8407, n_trades: 3138, deflated_sharpe_ratio: 0.0005}
+date_tested: 2026-07-29
+result_summary: >
+  FAILED på samtliga tre kapitalnivåer (Sharpe -0.33/-0.39/-0.42),
+  sammantaget SÄMRE än både momentum (HYP-012) och ungefär lika dåligt
+  som ursprungliga par-baserade HYP-008. Att ta bort partnerkravet
+  (adresserar CEO:s egen teori om att låg korrelation gör par-baserad
+  reversal svag i small-cap) hjälpte INTE - enskild-aktie-reversal
+  fungerar inte bättre än par-baserad reversal på denna data, vilket
+  talar för att reversionsmekanismen i sig (inte parstrukturen) är svag
+  i detta universum.
+sharpe_raw:
+  100000: -0.3311
+  1000000: -0.3883
+  10000000: -0.4211
+# Beräknad mot K=13 (7 döda ejay-varianter + HYP-008/009/011 + HYP-012/013/014 själva), via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.0017
+  1000000: 0.0009
+  10000000: 0.0005

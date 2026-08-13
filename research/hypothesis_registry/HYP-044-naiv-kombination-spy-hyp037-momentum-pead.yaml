@@ -1,0 +1,247 @@
+# LÅST 2026-08-07 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# Foljer spec §5b:s regler for LEGITIM kombinationstestning, samma
+# disciplin som HYP-039/041/043:
+#   1. Korrelationsmatris FORE nagon vikt valdes - se
+#      scripts/diagnostic_hyp044_pead_and_issuance.py (2026-08-07,
+#      dagliga avkastningar, 3459 punkter): PEAD/SUE mot SPY -0.069,
+#      mot HYP-037 -0.019, mot MomentumLS 0.003, mot hela HYP-043-
+#      kombon -0.057. Dessutom en regimbetingad stresstest (INTE bara
+#      fullperiodskorrelation, se lardomen fran den avfardade lagvol-
+#      kandidaten samma dag): under HYP-043-kombons EGEN varsta
+#      drawdown-period (2020-02-13 till 2020-03-23, Covid-kraschen)
+#      levererade PEAD/SUE +3.25% - positiv precis nar resten av
+#      portfoljen blodde som mest. Rullande 252-dagars korrelation
+#      mot HYP-043-kombon holl sig mellan -0.31 och +0.16 GENOM HELA
+#      perioden, aldrig over 0.3 i nagot fonster.
+#   2. NAIV, likaviktad kombination (fyra fjardedelar) - INTE
+#      in-sample-optimerade vikter.
+#   3. Egen K-kostnad, separat fran SPY/HYP-037/momentum-svitens egna
+#      bidrag OCH fran HYP-039/041/043 (denna ar INTE en modifiering
+#      av nagon av dem - fyrdelad, inte tre- eller tvadelad).
+#
+# HARLEDNING (extern konsultation): PEAD/SUE-kandidaten togs fram fran
+# en 5-AI-brainstorm 2026-08-07 (se session samma datum) efter att
+# redan kanda dodlaget i registret (raw insiderkop = HYP-035 FAILED,
+# small-cap kortsiktig reversal = HYP-042 FAILED KATASTROFALT) hade
+# filtrerats bort fran forslagen. 6 andra kandidater samma dag (low-vol
+# L/S, kvalitet L/S, 52v-hogsta L/S, tva trendfoljningsvarianter,
+# bredare CTA-korg, nettoemission) testades ocksa diagnostiskt och
+# avfardades - se research/hypothesis_registry/_counter.yaml for
+# fullstandig lista.
+#
+# METODOLOGISK NOT: PEAD/SUE-sviten byggs med en KONSERVATIV
+# forenkling vid EPS-omrakningar (forsta/tidigast filade vardet per
+# fiskalt kvartal anvands, inte senare 10-Q/A-omraknade varden - detta
+# speglar vad som faktiskt var kant i realtid, overskattar INTE edgen).
+# Ingen split-justering av EPS gjordes - en kand, oppet redovisad risk
+# for enstaka tickers med aktiesplittar mellan jamforda kvartal.
+#
+# FRIKTIONSNOT (upptackt 2026-08-07 vid byggandet av denna hypotes):
+# HYP-043:s egen momentum L/S-svit saknar corwin_schultz_spread-
+# anvandning (bara borrow_cost), vilket INTE skulle klara
+# scripts/validate_friction_usage.py om det kordes idag - flaggat
+# separat for CEO, INTE tyst atgardat i HYP-043 i efterhand. HYP-044:s
+# PEAD/SUE-svit HAR bade borrow_cost OCH corwin_schultz_spread (halva
+# spreaden vid ombalanseringens entry, pa den nya decilens namn) -
+# verifierat med scripts/validate_friction_usage.py INNAN denna
+# backtest kordes.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-044
+date_registered: '2026-08-07'
+title: Naiv fyrdelad kombination (kvartalsvis ombalanserad) - SPY + HYP-037 + momentum L/S + PEAD/SUE
+universe: "N/A for SPY/HYP-037/momentum-L/S-benen (redan testade). PEAD/SUE-benet
+  byggs over SAMMA small-cap-universum ($100M-$2B) som HYP-037/HYP-043, ingen ny
+  universumdefinition."
+small_cap_definition: "small-cap, $100M - $2B börsvärde, EODHD All-World (galler
+  PEAD/SUE-benets universum, ateranvander HYP-037:s redan lasta definition)"
+data_range: "SPY-monster: adjusted_close 2010-2024 + genuin OOS-2025. PEAD/SUE:
+  byggd fran kvartals-EPS (data/cache/eps_by_ticker.jsonl) over samma small-cap-
+  universum och period, samma motorkrav (adjusted_close genomgaende, sarheten
+  mot konstant orimlig adjusted_close/close-kvot, bade borrow_cost och
+  corwin_schultz_spread)."
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja):
+
+  1. PEAD/SUE-SVITEN (det fjarde benet, byggs fran grunden har - INTE
+  en redan existerande serie): kvartalsvis (HYP-037:s egna snappade
+  datum), rangordna eligible small-cap-universumet efter sasongsjusterad
+  SUE (Standardized Unexpected Earnings, Bernard & Thomas 1989/1990-stil)
+  - overraskning = senaste rapporterade kvartals-EPS minus samma fiskala
+  kvartal foregaende ar (matchat pa fy/fp, inte kalenderdatum), standardiserad
+  med std av upp till 8 historiska kvartalsoverraskningar (kravs minst 4
+  for en stabil skattning). Vid omrakningar anvands FORSTA (tidigast
+  filade) vardet per fiskalt kvartal. LONG toppdecilen (storst positiv
+  overraskning), KORT bottendecilen, likaviktat inom vardera benet,
+  DOLLAR-NEUTRALT (50% notional long, 50% kort av sviten-benets EGEN
+  allokering). Daglig vardering mellan ombalanseringarna. Lanekostnad
+  pa kortbenet (BORROW_ANNUAL_RATE=3%) OCH halva Corwin-Schultz-spreaden
+  vid varje ombalanserings entry (pa den nya decilens namn, bade long-
+  och kortsidan) - se friktionsnoten ovan om varfor detta explicit
+  sarskiljs fran HYP-043:s egen svit.
+
+  2. KOMBINATION: 1/4 notional SPY + 1/4 notional HYP-037 (redan sparad
+  strategies/HYP-037/results/portfolio_value_<niva>.csv, ANVAND
+  OFORANDRAD) + 1/4 notional momentum L/S-sviten (redan sparad
+  strategies/HYP-043/results/momentum_ls_sleeve_pv.csv, ANVAND
+  OFORANDRAD) + 1/4 notional PEAD/SUE-sviten (punkt 1). Ombalanserad
+  till exakt fjardedelar VARJE KVARTAL pa HYP-037:s REDAN LASTA datum.
+  INGEN havstang utover sviten-benets egen interna 50/50 long/kort-
+  struktur.
+
+  PASS KRÄVER ALLA TRE, PA DEN AVGORANDE $100k-NIVAN (rapporteras for
+  alla tre nivåer, samma konvention som HYP-039/041/043):
+  1. Kombinerad Sharpe (2010-2024) >= 1.0.
+  2. Kombinerad Sharpe > HYP-043:s EGNA redan registrerade Sharpe vid
+     samma niva (1.0457/1.0498/0.9864) - HYP-043 ar den regerande
+     mastaren, inte HYP-039, eftersom HYP-044 ar en utmanare mot den
+     just nu starkaste referensen.
+  3. Kombinerad MaxDD BATTRE an HYP-043:s EGNA redan registrerade MaxDD
+     vid samma niva (-15.58%/-15.68%/-14.29%).
+
+  OOS-2025: kombinerad OOS-2025 Sharpe MASTE vara > HYP-039:s EGEN
+  OOS-2025 Sharpe vid samma niva (0.9185/0.8116/0.7932) - INTE mot
+  HYP-043:s egen OOS-2025 (1.6163/1.5639/1.5321). Motivering, diskuterad
+  och beslutad av CEO INNAN lasning: en enskild ars OOS-Sharpe-skattning
+  har ett standardfel i storleksordningen ±1.0 Sharpe-enheter (Lo 2002-
+  stil), sa en skillnad pa 0.2-0.3 mellan tva kombinationers OOS-Sharpe
+  fran SAMMA underliggande 2025-ar ar inte statistiskt sarskiljbar brus
+  - att krava seger mot HYP-043:s egna, redan sjalvt flaggade "spektakulara,
+  bor inte overtolkas"-OOS-varde vore att straffa kandidaten for att inte
+  slå en opalitlig punktskattning. HYP-039:s OOS-varde anvands istallet,
+  samma referens HYP-043 sjalvt matades mot.
+
+  FAIL om nagot villkor faller vid $100k-nivan.
+
+  Diagnostiskt syfte: testar om en EGENBYGGD (inte konsensusestimat-
+  baserad) sasongsjusterad resultatoverraskningssignal (PEAD/SUE) kan
+  hoja den kombinerade Sharpen OCH sanka MaxDD bortom vad HYP-043
+  (SPY+HYP-037+momentum L/S) redan uppnar - fjarde kombinationshypotesen
+  i registret, forsta som byggdes fran en systematisk extern multi-AI-
+  konsultation (5 oberoende AI-svar, se session 2026-08-07) snarare an
+  en CEO- eller Claude-genererad idé.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 42
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 1.0117, cagr: 0.0875, max_drawdown: -0.1092, calmar: 0.8011, oos_2025_sharpe: 1.3731, oos_2025_total_return: 0.2207, oos_2025_max_drawdown: -0.0587, deflated_sharpe_ratio: 0.9366}
+  1000000: {sharpe: 1.0135, cagr: 0.0865, max_drawdown: -0.1100, calmar: 0.7873, oos_2025_sharpe: 1.3203, oos_2025_total_return: 0.2119, oos_2025_max_drawdown: -0.0581, deflated_sharpe_ratio: 0.9366}
+  10000000: {sharpe: 0.9439, cagr: 0.0787, max_drawdown: -0.0995, calmar: 0.7906, oos_2025_sharpe: 1.2995, oos_2025_total_return: 0.2067, oos_2025_max_drawdown: -0.0604, deflated_sharpe_ratio: 0.8975}
+date_tested: '2026-08-07'
+result_summary: >
+  FAILED PA DEN AVGORANDE $100k-NIVAN, PA VILLKOR 2 SPECIFIKT - men
+  ett INFORMATIVT, inte katastrofalt, FAIL, och en viktig metodologisk
+  handelse under byggandet fortjanar att sta forst.
+
+  METODOLOGISK HANDELSE (INNAN resultaten): under byggandet av denna
+  hypotes upptacktes att HYP-043:s egen momentum L/S-svit ALDRIG
+  anropar corwin_schultz_spread (bara borrow_cost) - scripts/
+  validate_friction_usage.py skulle IDAG avvisa strategies/HYP-043/
+  backtest.py om den korde om gaten. HYP-044 byggdes med bade
+  borrow_cost OCH genuin Corwin-Schultz-spreadkostnad (halva spreaden
+  pa den nya decilens namn vid varje ombalansering), verifierat INNAN
+  backtesten kordes. Effekten av att lagga till den tidigare saknade
+  friktionen var STOR och gick i FORVANTAD (forsvagande) riktning: en
+  parallell diagnostik UTAN spreadkostnad (scripts/
+  diagnostic_hyp044_pead_4leg_combo.py, samma dag) visade Sharpe
+  1.085/1.088/1.022 - klart battre an HYP-043 pa alla tre nivaer. MED
+  genuin spreadkostnad blev Sharpe 1.012/1.014/0.944 - fortfarande
+  positivt men INTE langre battre an HYP-043. Detta ar en ren,
+  konkret illustration av spec §2 princip 3 ("friktion fran dag ett,
+  aldrig bultad pa efterat efter att ha sett bra resultat") - hade
+  spreadkostnaden hoppats over (som i HYP-043:s egen svit) hade detta
+  sett ut som en tydlig vinst. HYP-043:s EGNA redan lasta resultat
+  paverkas INTE retroaktivt av detta fynd (last historia andras inte
+  i efterhand) - men detta ar flaggat separat for CEO som en oppen
+  fraga om HYP-043 bor fa en dokumenterad robusthetsdiagnostik med
+  spreadkostnad tillagd (ingen K-kostnad, andrar inte status).
+
+  Villkor 1 (Sharpe >= 1.0 vid $100k): 1.0117 - PASS, marginellt over
+  malet (mot HYP-043:s egna 1.0457). $10M missar detta villkor
+  (0.9439) men $10M ar INTE den avgorande nivan per kriteriet.
+
+  Villkor 2 (Sharpe > HYP-043:s egna vid samma niva): FAIL PA ALLA TRE
+  NIVAER (1.0117 vs 1.0457 vid $100k, 1.0135 vs 1.0498 vid $1M, 0.9439
+  vs 0.9864 vid $10M) - konsekvent, inte en enskild niva-slump. Detta
+  ar det AVGORANDE misslyckade villkoret.
+
+  Villkor 3 (MaxDD battre an HYP-043:s egna): PASS PA ALLA TRE NIVAER,
+  och inte marginellt - -10.92%/-11.00%/-9.95% mot HYP-043:s
+  -15.58%/-15.68%/-14.29%, en forbattring pa 4.34-4.68 PROCENTENHETER.
+  Riskreduktionen ar genuin och konsekvent, aven om Sharpe-villkoret
+  faller.
+
+  OOS-2025 (villkor 4): PASS PA ALLA TRE NIVAER, tydligt - 1.3731/
+  1.3203/1.2995 mot HYP-039:s egna 0.9185/0.8116/0.7932. (Kriteriet
+  jamforde medvetet mot HYP-039, inte HYP-043, av den redan
+  dokumenterade enars-brus-anledningen - se kriterietexten. Mot
+  HYP-043:s egen OOS 1.6163/1.5639/1.5321 hade aven detta villkor
+  FAILAT, men det var uttryckligen INTE fragan kriteriet stallde.)
+
+  DSR vid K=43: 0.94/0.94/0.90 - fortsatt hogt, ingen indikation pa
+  att den positiva Sharpen sjalv ar en slumptrafff, bara att den inte
+  ar TILLRACKLIGT hog for att sla den redan starka referensen.
+
+  DIAGNOS: PEAD/SUE-sviten ar sannolikt en genuin, mattligt positiv,
+  genuint diversifierande komponent (regimbetingad stresstest INNAN
+  lasning visade positiv avkastning under HYP-043-kombons egen varsta
+  drawdown-period, rullande korrelation aldrig over 0.3) - men dess
+  EGNA riskjusterade kvalitet (isolerad Sharpe ~0.22, se diagnostik)
+  ar inte tillrackligt stark for att det fjarde benet ska hoja den
+  redan starka HYP-043-kombinationens Sharpe, aven med genuint bra
+  korrelationsegenskaper. Samma lardom som HYP-041:s TLT, fast mindre
+  extremt: korrelation ensam raddar inte ett ben vars egen kvalitet
+  inte racker for att bara sin vikt i Sharpe-termer, MEN den ger
+  fortfarande en genuin, konsekvent MaxDD-forbattring - en annan typ
+  av vardefullt bidrag an det kriteriet var lasrt att mata.
+
+  SLUTSATS: HYP-043 (SPY+HYP-037+momentum L/S) forblir referens-
+  implementationen. HYP-044 introducerar dock en genuint anvandbar,
+  lag-korrelerad byggsten (PEAD/SUE) som skulle kunna vara vardefull
+  i en ANNAN kombination eller vid en annan vikt - men det kraver en
+  egen, ny, separat last hypotes (t.ex. riskparitetsviktning eller
+  en 5:e-bens-kombination), inte en tyst efterhandsjustering av detta
+  redan lasta resultat.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (tre oberoende adversariella granskare - INTE
+# en ny hypotes/K-test, status/pass_fail_criterion/tested_capital_levels/
+# capital_level_results ovan ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: filed-datum-korrigerat universum (bade for PEAD/
+# SUE-svitens egen konstruktion har OCH for HYP-037-benet), close_adj
+# maskad mot orimlig kvot via delade data_hygiene.py::
+# mask_implausible_adjusted_close_ratio (tidigare inline har, oforandrad
+# tröskel), samt en NY 10bps portfoljniva-ombalanseringskostnad i
+# combine_quarters (fanns inte tidigare). Under samma korrigering hittades
+# och fixades ocksa en BLOCKERANDE bugg (HYP043_RESULTS anvandes utan att
+# vara definierad - se strategies/HYP-044/backtest.py:s kommentar och
+# huvudrapporten). momentum L/S-benet laser nu HYP-043:s (ocksa
+# korrigerade) resultat. Resultat i
+# strategies/HYP-044/results_corrected_2026-08-08/ (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024):
+#   Sharpe: 0.9525 / 0.9512 / 0.9144  (tidigare 1.0117 / 1.0135 / 0.9439)
+#   MaxDD: -10.86% / -10.62% / -9.44% (tidigare -10.92% / -11.00% / -9.95%)
+#   DSR (K=46, RF=2%/ar): 0.8975 / 0.8968 / 0.8703
+#
+# Villkor 1 (Sharpe >= 1.0): FAIL PA ALLA TRE, oforandrat (marginalen
+# okade nagot - 0.9525 mot tidigare 1.0117 vid $100k). Villkor 2 (Sharpe
+# > HYP-043:s ursprungliga 1.0457/1.0498/0.9864): FAIL PA ALLA TRE,
+# oforandrat. Villkor 3 (MaxDD battre an HYP-043:s ursprungliga -15.58%/
+# -15.68%/-14.29%): PASS TYDLIGT pa alla tre, oforandrat, nagot battre an
+# tidigare.
+#
+# SLUTSATS: HYP-044:s FAILED-slutsats star OFORANDRAD under den
+# fullstandigt korrigerade pipelinen. Notera: HYP-043:s egen, SEPARAT
+# dokumenterade friktionsbrist (saknad spreadkostnad i momentum L/S-
+# sviten, se HYP-043:s tilläggsnot DEL A) paverkar INTE denna jamforelse
+# direkt, eftersom HYP-044:s eget kriterium jamfor mot HYP-043:s
+# URSPRUNGLIGA, redan lasta siffror - inte mot den senare friktions-
+# korrigerade baslinjen som HYP-045/046/047 anvander.

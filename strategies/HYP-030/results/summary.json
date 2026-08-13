@@ -1,0 +1,53 @@
+[
+  {
+    "capital_level": 100000,
+    "cagr": -0.041358782047809295,
+    "sharpe": 0.016112587350011594,
+    "calmar": -0.048073677034772895,
+    "max_drawdown": -0.8603207534529438,
+    "trade_stats": {
+      "n": 9422,
+      "win_rate": 0.4933135215453195,
+      "avg_ret": 0.158503804713121,
+      "pf": 2.7537715120483566
+    },
+    "n_rebound_trigger_episodes": 80,
+    "correlation_with_hyp023": 0.23809207346934427,
+    "sharpe_excl_best": -0.014424532541121428,
+    "calmar_excl_best": -0.07298881403772453
+  },
+  {
+    "capital_level": 1000000,
+    "cagr": -0.02888869116018067,
+    "sharpe": 0.04018768864484463,
+    "calmar": -0.03480300627503808,
+    "max_drawdown": -0.8300630966153242,
+    "trade_stats": {
+      "n": 9422,
+      "win_rate": 0.4929951178093823,
+      "avg_ret": 0.15850380471312095,
+      "pf": 2.753771512048356
+    },
+    "n_rebound_trigger_episodes": 80,
+    "correlation_with_hyp023": 0.2295410587414988,
+    "sharpe_excl_best": 0.014847590390174185,
+    "calmar_excl_best": -0.055329852777681335
+  },
+  {
+    "capital_level": 10000000,
+    "cagr": -0.04833076457069829,
+    "sharpe": -0.2001051745444169,
+    "calmar": -0.0651308331817372,
+    "max_drawdown": -0.7420565991508048,
+    "trade_stats": {
+      "n": 9422,
+      "win_rate": 0.4929951178093823,
+      "avg_ret": 0.158503804713121,
+      "pf": 2.753771512048357
+    },
+    "n_rebound_trigger_episodes": 80,
+    "correlation_with_hyp023": 0.46362087423834536,
+    "sharpe_excl_best": -0.20280342992522019,
+    "calmar_excl_best": -0.06734258677249123
+  }
+]

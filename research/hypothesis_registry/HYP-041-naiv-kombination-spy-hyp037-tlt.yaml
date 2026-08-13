@@ -1,0 +1,182 @@
+# LÅST 2026-08-06 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# Foljer spec §5b:s regler for LEGITIM kombinationstestning, samma
+# disciplin som HYP-039:
+#   1. Korrelationsmatris FORE nagon vikt valdes: SPY/TLT/HYP-037
+#      dagliga avkastningar, overlappande period 2010-10-01 till
+#      2024-12-31 (3586 dagar) - berknad INNAN detta kriterium las.
+#      SPY-TLT: -0.3019, TLT-HYP037: -0.0214, SPY-HYP037: -0.0045.
+#   2. NAIV, likaviktad kombination (lika tredjedelar) - INTE in-sample-
+#      optimerade vikter.
+#   3. Egen K-kostnad, separat fran SPY/HYP-037/TLT:s egna bidrag OCH
+#      fran HYP-039 (denna ar INTE en modifiering av HYP-039, det ar en
+#      helt egen, ny kombinationsmetod - tredelad, inte tvadelad).
+#
+# VIKTIG, OPPET REDOVISAD RESERVATION INNAN LASNING: TLT:s EGEN Sharpe
+# over samma period ar bara 0.038 (i praktiken noll), CAGR 1.46%/ar,
+# MaxDD -48.3% (samre an SPY:s egna -33.7%) - 2010-2024 var en tuff
+# period for langa obligationer (flerarig bull-marknad som slutade,
+# sedan 2022 rantechocken). Korrelationsegenskaperna ar goda, men TLT:s
+# egen riskjusterade profil ar svag under just detta fonster - CEO och
+# Claude diskuterade detta explicit innan lasning; kriteriet lases anda
+# eftersom den KOMBINERADE matematiken ar en empirisk fraga, inte nagot
+# som kan avgoras fran korrelationen ensam.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-041
+date_registered: '2026-08-06'
+title: Naiv tredelad kombination (kvartalsvis ombalanserad) - SPY + HYP-037 + TLT
+universe: "N/A - portfoljniva-kombination av tre redan existerande, oberoende testade
+  avkastningsserier (SPY och TLT som tillgangsklasser, HYP-037 som redan godkand
+  small-cap-strategi). tested_capital_levels nedan galler HYP-037-benets redan
+  testade kapitalnivaer."
+small_cap_definition: "N/A for denna hypotes - se universe-faltet."
+data_range: "SPY/TLT adjusted_close + HYP-037:s redan berknade portfoljvardesserier,
+  2010-2024 + genuin OOS-2025 (aterananvander paper_trading/HYP-037/oos_2025_results/,
+  ingen ny OOS-korning byggs for denna hypotes)"
+pass_fail_criterion: >
+  Ren PORTFOLJMATEMATIK pa tre redan kanda, redan individuellt testade
+  avkastningsserier - INGEN ny backtest-motor, INGEN ny signal, INGEN nytt
+  kostnads-/hedgepalagg utover vad de tre delserierna redan sjalva
+  inkluderar. Kombinerad portfoljvarde-serie = 33.33% notional i SPY
+  (adjusted_close) + 33.33% i TLT (adjusted_close) + 33.33% i HYP-037
+  (redan sparad strategies/HYP-037/results/portfolio_value_<niva>.csv,
+  ANVAND OFORANDRAD), ombalanserad till EXAKT tredjedelar VARJE KVARTAL
+  pa HYP-037:s REDAN LASTA ombalanseringsdatum (ateranvander en befintlig
+  frekvens, valjer INGEN ny fri parameter). INGEN havstang. Testas separat
+  vid alla tre av HYP-037:s redan testade kapitalnivaer (100k/1M/10M) for
+  HYP-037-benet - SPY/TLT-benen skalar trivialt.
+
+  PASS kraver ALLA TRE, PA MINST kapitalnivan $100k (rapporteras for alla
+  tre, men $100k ar den avgorande nivan, samma konvention som HYP-039):
+  1. Kombinerad Sharpe (2010-2024) >= 1.0 - samma mal som HYP-039.
+  2. Kombinerad Sharpe > HYP-039:s EGNA redan registrerade Sharpe vid
+     samma niva (1.019/1.030/0.988 vid 100k/1M/10M) - bevisar att
+     TLT-benet FAKTISKT tillfor nagot utover den redan godkanda
+     tvadelade kombinationen, inte bara spar ut den med brus.
+  3. Kombinerad MaxDD BATTRE (mindre negativ) an HYP-039:s EGNA redan
+     registrerade MaxDD vid samma niva (-22.0%/-22.2%/-20.0%) - bevisar
+     genuin riskreduktion utover det HYP-039 redan uppnar.
+
+  OOS-2025: kombinerad OOS-2025 Sharpe (aterananvander HYP-037:s redan
+  byggda OOS-2025-serie + SPY/TLT:s egna 2025-avkastningar, SAMMA
+  tredjedelskombination) MASTE vara > HYP-039:s EGEN OOS-2025 Sharpe
+  vid samma niva (0.919/0.812/0.793) - samma "bevisa additivt varde"-
+  princip som huvudvillkoren.
+
+  FAIL om nagot villkor faller vid $100k-nivan.
+
+  Diagnostiskt syfte: testar CEO:s egen hypotes att en TREDJE, genuint
+  okorrelerad tillgang (har: langa statsobligationer) kan hoja den
+  kombinerade Sharpen bortom vad tva-dels-kombinationen (HYP-039) redan
+  uppnar - portfoljteorins diversifieringslogik tillampad pa en ny
+  tillgangsklass, INTE en ny small-cap-signal.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 39
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 0.9981, cagr: 0.0994, max_drawdown: -0.2273, calmar: 0.4374, oos_2025_sharpe: 0.8794, oos_2025_total_return: 0.0955, oos_2025_max_drawdown: -0.0963, deflated_sharpe_ratio: 0.9407}
+  1000000: {sharpe: 1.0056, cagr: 0.0982, max_drawdown: -0.2304, calmar: 0.4262, oos_2025_sharpe: 0.7837, oos_2025_total_return: 0.0841, oos_2025_max_drawdown: -0.0925, deflated_sharpe_ratio: 0.9429}
+  10000000: {sharpe: 0.9498, cagr: 0.0884, max_drawdown: -0.2157, calmar: 0.4097, oos_2025_sharpe: 0.7578, oos_2025_total_return: 0.0780, oos_2025_max_drawdown: -0.0733, deflated_sharpe_ratio: 0.9147}
+date_tested: '2026-08-06'
+result_summary: >
+  FAILED PA DEN AVGORANDE $100k-NIVAN, PA SAMTLIGA VILLKOR - ett tydligt,
+  om an inte extremt, misslyckande. Till skillnad fran HYP-040 ar detta
+  INTE en katastrof - Sharpe 0.998 ligger bara 0.002 fran 1.0-malet -
+  men VARJE enskilt mått ar konsekvent SAMRE an den redan godkanda
+  tvadelade kombinationen (HYP-039), inte bara en enstaka gransfall-siffra.
+
+  Villkor 1 (Sharpe >= 1.0 vid $100k): 0.9981 - FAIL, marginellt under
+  malet (0.9981 vs 1.0000). $1M klarade tekniskt (1.0056) men $100k ar
+  den avgorande nivan per kriteriet.
+
+  Villkor 2 (Sharpe > HYP-039:s egna vid samma niva): FAIL PA ALLA TRE
+  nivaer (0.9981 vs 1.0191, 1.0056 vs 1.0300, 0.9498 vs 0.9879) -
+  konsekvent SAMRE, inte battre, an den redan godkanda kombinationen.
+
+  Villkor 3 (MaxDD battre an HYP-039:s egna): FAIL PA ALLA TRE nivaer
+  (-22.73% vs -22.03%, -23.04% vs -22.16%, -21.57% vs -20.03%) - TLT-
+  benet FORSAMRADE riskbilden istallet for att forbattra den, trots den
+  goda korrelationen mot SPY.
+
+  OOS-2025 (villkor 4): FAIL PA ALLA TRE nivaer (0.8794 vs 0.9185, 0.7837
+  vs 0.8116, 0.7578 vs 0.7932) - samma monster haller aven i den genuina
+  blinda perioden.
+
+  DSR vid K=40: 0.94/0.94/0.91 - HOGT, vilket bara bekraftar att
+  HYP-041 SJALV troligen ar en genuin (inte slumpmassig) positiv-Sharpe-
+  portfolj i absoluta tal - men det ar INTE fragan kriteriet stallde.
+  Kriteriet kravde att den ska vara BATTRE an HYP-039, inte bara "en
+  okej portfolj pa egen hand" - och pa den fragan ar svaret entydigt nej.
+
+  DIAGNOS: bekraftar exakt den reservation som redovisades INNAN
+  lasning (se kommentaren hogst upp i denna fil). TLT:s goda
+  korrelationsegenskaper (-0.30 mot SPY, -0.02 mot HYP-037) rackte INTE
+  for att kompensera dess svaga egna riskjusterade profil under just
+  2010-2024 (egen Sharpe 0.038, egen MaxDD -48.3% - varre an SPY:s
+  egna -33.7%). Diversifiering hjalper mest nar ALLA komponenter har
+  egen edge - en tredje, i praktiken avkastningslos men hogriskfylld
+  komponent kan spa ut mer an den hjalper, aven med gynnsam korrelation.
+  Detta ar en genuint informativ, forvantad-i-efterhand men INTE
+  forutsagbar-i-forvag (darfor vart att testa) slutsats.
+
+  SLUTSATS: HYP-039 (SPY+HYP-037, tvadelad) forblir den ENDA
+  kombinationshypotesen som passerat sitt eget kriterium. Ett tredje ben
+  ar INTE automatiskt battre bara for att korrelationen ser bra ut -
+  komponentens EGEN riskjusterade kvalitet spelar minst lika stor roll.
+  En annan tillgang (t.ex. trend-following/managed futures, redan
+  diskuterad som CEO:s alternativ #1) kraver en egen, separat lasning -
+  ingen automatisk fortsattning fran detta resultat.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/redan
+# rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR i capital_level_results ovan star kvar fran ursprungstestet vid
+# K=41 - aldrig omraknad, trots agents/overfitting_detector/ROLE.md:s
+# krav. HYP-041 ar redan FAILED, sa detta paverkar ingen aktiv
+# jamforelsepunkt, men dokumenteras for fullstandighet.
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade kombinerade serie, RF=2%/ar avdraget):
+#   $100k:   DSR 0.9407 -> 0.9341
+#   $1M:     DSR 0.9429 -> 0.9365
+#   $10M:    DSR 0.9147 -> 0.9060
+#
+# Liten forandring, ingen paverkan pa FAILED-slutsatsen (som redan
+# vilade pa villkor 1/2, inte pa DSR).
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08, DEL 2 (samma dag, SEPARAT fran DSR-omrakningen
+# ovan - INTE en ny hypotes/K-test, status/kriterium ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: HYP-037-benet korrigerat (filed-datum-universum
+# + maskad adjusted_close-kvot) + 10bps portfoljniva-ombalanserings-
+# kostnad tillagd (strategies/HYP-041/backtest.py::REBALANCE_COST_BPS).
+# Jamforelsepunkten (HYP-039) star KVAR pa dess ursprungliga, redan
+# lasta varden (1.0191/1.0300/0.9879, -22.03%/-22.16%/-20.03%) - det ar
+# de siffrorna det ursprungliga kriteriet faktiskt lastes mot, INTE
+# HYP-039:s egen senare omraknade version.
+#
+# NYA SIFFROR (huvudperiod 2010-2024):
+#   Sharpe: 0.9877 / 0.9912 / 0.9742  (tidigare 0.9981 / 1.0056 / 0.9498)
+#   MaxDD: -23.46% / -23.45% / -21.21% (tidigare -22.73% / -23.04% / -21.57%)
+#   DSR (K=46, RF=2%/ar): 0.9280 / 0.9297 / 0.9202
+#
+# Villkor 1 (Sharpe >= 1.0): FAIL PA ALLA TRE nivaer, oforandrat ($1M
+# gick fran ett tekniskt PASS 1.0056 till FAIL 0.9912 under den nya
+# kostnaden - men $100k var alltid den avgorande nivan och var redan
+# FAIL). Villkor 2 (slå HYP-039): FAIL PA ALLA TRE, oforandrat. Villkor
+# 3 (MaxDD battre an HYP-039): FAIL PA ALLA TRE, oforandrat (blev
+# faktiskt nagot samre pa tva av tre nivaer).
+#
+# SLUTSATS: HYP-041:s FAILED-slutsats star OFORANDRAD under den
+# fullstandigt korrigerade pipelinen - inget villkor flippar i nagon
+# riktning. HYP-039 forblir den enda kombinationshypotesen som klarar
+# just denna jamforelsepunkt.

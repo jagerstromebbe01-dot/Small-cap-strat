@@ -1,0 +1,149 @@
+# LÅST 2026-08-01 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Fanns oberoende i BADE denna sessions eget
+# minne (5-AI-brainstorm 2026-07-31, deprioriterad da) OCH i en ny
+# extern 5-AI-genomgang samma dag (2026-08-01) - tva oberoende AI:er i
+# den nya genomgangen foreslog den som forsta prioritet. Fick NY,
+# konkret tyngd av attributionsverktyget (scripts/attribution.py,
+# byggt 2026-08-01 samma session): HYP-023 har 5.6x overexponering mot
+# statliga affarsbanker (SIC 60) mot basuniversumet, och HYP-008 (den
+# forsta strategin i projektet) hade 9.0x - INTE langre en teoretisk
+# oro utan ett uppmatt, upprepat monster.
+#
+# Byggd PA HYP-023 (nuvarande referensimplementation) - SPY-krasch-
+# overlay och sektorspecifik bank-/finans-krasch-trigger BADA
+# OFORANDRADE. Enda andringen: rankningssteget bytt fran globalt till
+# sektorneutralt. Detta ar ett MEDVETET isolerat test av EN variabel -
+# huruvida sektorneutral rankning i sig loser/mildrar
+# koncentrationsproblemet ovanpa den befintliga overlay-arkitekturen,
+# INTE en fraga om overlayn/triggern blir overflodig (det skulle krava
+# ett eget, separat test).
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-036
+date_registered: '2026-08-01'
+title: Sektorneutral idiosynkratisk-volatilitets-rankning pa HYP-023
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023/034 (2010-2024)
+pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD, sektor-krasch-trigger pa bank-/finanskomposit
+  OFORANDRAD - samma friktion/hedge/kapacitetsspärr, samma tre motorfixar). Enda tillagget:
+  RANKNINGSSTEGET byts fran GLOBALT till SEKTORNEUTRALT.
+
+  Mekanism, exakt specificerad (INTE fri, INTE anpassad efter resultat - vald INNAN nagon
+  backtest kors):
+  - Vid varje kvartalsvis ombalansering: gruppera eligible-kandidater (samma eligible-lista
+    som HYP-023, oforandrad) efter SIC-huvudgrupp (forsta 2 siffrorna av SIC-koden fran
+    data/cache/sic_classification.jsonl, SAMMA klassificering som scripts/attribution.py
+    redan anvander for sin sektordiagnostik). Tickers utan kand SIC-kod far en egen
+    "XX"-hink (okand/ej klassificerad) - EXKLUDERAS INTE, behandlas som sin egen sektor.
+  - INOM VARJE sektor-hink: sortera kandidaterna pa idio-vol (identisk berakning som
+    HYP-023, oforandrad - bara rankningens SCOPE andras, inte signalen), ta samma
+    DECILE_FRACTION=0.10 av just DEN sektorns kandidater, max(1, int(len(sektor-kandidater)
+    * 0.10)) - SAMMA formel som HYP-023:s globala n_top redan anvander, bara ateranvand per
+    sektor istallet for en gang globalt.
+  - Slutlig malportfolj = UNIONEN av alla sektorers delval.
+  - KAND, ACCEPTERAD KONSEKVENS AV MEKANIKEN (redovisas, INTE fixad i efterhand): eftersom
+    varje narvarande sektor bidrar med MINST 1 namn (max(1, ...)) blir det totala antalet
+    innehav sannolikt STORRE an HYP-023:s globala decil (~60-67 namn historiskt) - det ar
+    SYFTET (bredare spridning over sektorer, mindre koncentration i de "vassaste" globala
+    namnen som rakar klustra i en sektor), INTE en oavsiktlig bieffekt som ska kompenseras
+    bort.
+
+  MOTORKRAV (samma som HYP-015/017/022/023): snappade ombalanseringsdatum, adjusted_close
+  genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer - samma golv som hela
+     projektet.
+  2. Maxdrawdown INTE samre (inte mer negativ) an HYP-023:s EGET redan uppnadda resultat pa
+     SAMMA kapitalniva (100k: -25.46%, 1M: -19.29%, 10M: -13.16%) - samma "far inte skada"-
+     standard som HYP-025/031/034 hölls till.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  OBLIGATORISK DIAGNOSTIK (kors via scripts/attribution.py, rapporteras ALLTID, GATAR INTE
+  PASS/FAIL): sektorexponering FORE (HYP-023:s befintliga 5.6x bankoverrepresentation) mot
+  EFTER denna andring. Om Sharpe/MaxDD klarar villkoren MEN bankkoncentrationen INTE minskar
+  materiellt, har mekanismen INTE uppnatt sitt uttalade syfte aven vid ett tekniskt PASS -
+  detta ska flaggas explicit i resultatet, inte doljas bakom ett godkant huvudresultat.
+
+  Diagnostiskt syfte: testar om sektorneutral rankning - en mekanism motiverad av ett
+  NYUPPTACKT, KVANTIFIERAT fynd (attributionsverktygets 5.6x/9.0x-mönster), inte bara en
+  generisk hypotes - minskar branschkoncentrationen utan att skada den underliggande
+  riskjusterade avkastningen.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 34
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.0982, sharpe: 0.5124, calmar: 0.3442, sharpe_excl_best_trade: 0.5042, max_drawdown: -0.2854, win_rate: 0.4604, profit_factor: 1.0128, n_trades: 2991, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.1082, deflated_sharpe_ratio: 0.4191, sic60_overrepresentation_ratio: 1.3}
+  1000000: {cagr: 0.1026, sharpe: 0.5429, calmar: 0.3600, sharpe_excl_best_trade: 0.5343, max_drawdown: -0.2850, win_rate: 0.4597, profit_factor: 1.0128, n_trades: 2991, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0949, deflated_sharpe_ratio: 0.4646, sic60_overrepresentation_ratio: 1.2}
+  10000000: {cagr: 0.0960, sharpe: 0.5499, calmar: 0.3595, sharpe_excl_best_trade: 0.5468, max_drawdown: -0.2671, win_rate: 0.4604, profit_factor: 1.0128, n_trades: 2991, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0683, deflated_sharpe_ratio: 0.4751, sic60_overrepresentation_ratio: 0.8}
+date_tested: '2026-08-01'
+result_summary: >
+  FAILED - PA BADA villkoren, PA ALLA TRE nivaer.
+
+  Villkor 1 (Sharpe >= 0.55): 0.51/0.54/0.55 - MISSAR golvet pa alla tre
+  nivaer (aven $10M, 0.5499, missar med en hars bredd). Klart svagare an
+  HYP-023:s egna 0.72/0.75/0.72.
+
+  Villkor 2 (MaxDD inte samre an HYP-023:s -25.46%/-19.29%/-13.16%):
+  FAIL PA ALLA TRE NIVAER, och forsamringen VAXER dramatiskt med
+  kapitalniva: -28.54% (100k, 3.08pp samre), -28.50% (1M, 9.21pp
+  samre), -26.71% (10M, 13.55pp samre - MER AN DUBBELT sa daligt som
+  HYP-023:s egna -13.16%). Detta ar motsatt monster mot vad
+  motiveringen (mildra kapitalnivaberoende risk) hoppades pa.
+
+  OBLIGATORISK DIAGNOSTIK (scripts/attribution.py HYP-036) - mekanismen
+  GJORDE vad den var avsedd att gora: SIC 60-overexponeringen (statliga
+  affarsbanker) foll fran HYP-023:s 5.6x till 1.3x/1.2x/0.8x -
+  koncentrationen ar I PRAKTIKEN ELIMINERAD (till och med underrepresenterad
+  vid $10M). MEN detta loste INTE huvudproblemet - Sharpe/MaxDD blev
+  SAMRE, inte battre. Detta ar ett viktigt, tydligt EXEMPEL pa
+  attributionsverktygets egna varningsklausul (se kriteriet): ett
+  tekniskt uppnatt diagnostiskt mal (mindre koncentration) garanterar
+  INTE ett battre resultat.
+
+  DIAGNOS (varfor mekanismen gjorde det VARRE, inte battre): samma
+  lardom som redan visad av HYP-022 (statiskt bank-tak, FAILED med
+  SAMRE MaxDD an baslinjen) - bankexponeringen fyllde en STABILISERANDE
+  roll i HYP-023, inte bara en riskkalla. Genom att tvinga fram minst 1
+  namn per narvarande SIC-sektor (aven tunna/volatila sektorer) okade
+  sektorneutral rankning antalet innehav kraftigt (2991 trades mot
+  HYP-023:s 2253) och forskot exponeringen mot fler lakemedels-/
+  mjukvaru-/halvledarenamn - sektorer med sannolikt HOGRE egen
+  volatilitet an de globalt "vassaste" lagvol-namnen HYP-023 annars
+  valde. Faktorregressionen bekraftar en STRUKTURELL forandring:
+  MOM-loadingen blev STARKT SIGNIFIKANT NEGATIV (t=-5.2 till -6.1, mot
+  HYP-023:s ej signifikanta t=-0.86 till -1.77) - denna variant fangar
+  omedvetet mer forlorar-momentum-exponering, en riskfaktor detta
+  projekt redan visat vara farlig (HYP-012/016/030, tre oberoende
+  momentum-misslyckanden). Friktionsdraget okade ocksa markant (0.42pp/
+  trade mot HYP-023:s 0.34pp) - fler, mindre positioner kostar mer i
+  aggregat.
+
+  ROBUSTHET: Alfat forblir faktiskt SIGNIFIKANT (13.3%/13.6%/12.1% arligt,
+  t=3.07-3.20, R²=0.22) - sharpe_excl_best_trade ligger nara headline-
+  Sharpen (0.50/0.53/0.55) sa resultatet ar INTE en enskild-trade-artefakt.
+  DSR vid K=35: 0.42/0.46/0.48 - svagt, konsistent med FAIL men inte
+  ren brus.
+
+  SLUTSATS: HYP-023 forblir referensimplementationen OFORANDRAD.
+  Sektorneutral rankning skapade PRECIS den minskade branschkoncentration
+  den var avsedd att skapa - men avslojade darmed att koncentrationen
+  sjalv INTE var den huvudsakliga orsaken till HYP-023:s OOS-svaghet.
+  Bankexponeringen ar en FEATURE, inte en BUG, i just denna strategi -
+  tredje oberoende bekraftelsen av detta (HYP-022 statiskt tak, HYP-023:s
+  egen sektor-krasch-trigger som MEDVETET behaller bankexponering under
+  lugna perioder, och nu detta). Framtida forsok att "lösa" bank-
+  koncentrationen bor granska denna slutsats noga innan de foreslas.
+sharpe_raw:
+  100000: 0.5124
+  1000000: 0.5429
+  10000000: 0.5499
+deflated_sharpe_ratio:
+  100000: 0.4191
+  1000000: 0.4646
+  10000000: 0.4751

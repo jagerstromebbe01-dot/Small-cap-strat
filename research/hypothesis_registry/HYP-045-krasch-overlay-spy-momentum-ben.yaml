@@ -1,0 +1,211 @@
+# LÅST 2026-08-07 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller någon backtest körs.
+#
+# Foljer spec §5b, femte kombinationshypotesen i registret - denna gang
+# INTE ett nytt 4:e ben utan en MODIFIERING av hur tva av tre redan
+# befintliga ben beter sig under marknadsstress.
+#
+# HARLEDNING (empirisk, INTE hindsight-vald idag): en attributionsanalys
+# 2026-08-07 (samma dag, se chattsession) mot de 5 krisepisoder som
+# REDAN ar etablerade i registret sedan tidigare (scripts/
+# diagnostic_hyp017_leave_one_crisis_out.py och
+# diagnostic_hyp037_leave_one_crisis_out.py, byggda for ett annat syfte
+# manader innan denna hypotes): 2011-08-04 (skuldtak), 2015-08-24
+# (Black Monday), 2018-12-24 (julafton-massakern), 2020-02-27 till
+# 2020-03-16 (covid), 2022-06-16/2022-09-26 (bjornmarknad). Dessa 5
+# episoder, +-varierande fonster runt varje datum, motsvarar 276 av
+# HYP-043-kombons 3459 dagar (8.0%) men star for -26.76% kumulativ
+# avkastning, medan de ovriga 92% av dagarna gav +463.58%.
+#
+# VIKTIG METODOLOGISK GRANS (diskuterad explicit med CEO INNAN lasning):
+# CEO:s ursprungliga ide var att identifiera krisperioder genom att
+# LASA NYHETER fran perioden - detta AVVISADES uttryckligen har som
+# for riskabelt (hindsight-urval av VILKA perioder som "raknas" baserat
+# pa att redan ha sett att de kostade pengar i backtesten, exakt samma
+# fallgrop som dodade de 7 ursprungliga Ejay-varianterna). Denna
+# hypotes anvander ISTALLET en REN PRISBASERAD, redan I FORVAG (manader
+# innan denna session) etablerad trigger fran HYP-017/023/037 - samma
+# mekanism skulle ha triggat pa VILKEN FRAMTIDA kris som helst, inte
+# bara de vi redan kanner till.
+#
+# STATUS PA HYP-043:s EGNA SIFFROR (viktigt sammanhang): en separat
+# robusthetsdiagnostik samma dag (scripts/diagnostic_hyp043_friction_
+# robustness.py) visade att HYP-043:s redan LASTA resultat (Sharpe
+# 1.0457/1.0498/0.9864) byggde pa en OFULLSTANDIG friktionsmodell
+# (momentum L/S-sviten anropade aldrig corwin_schultz_spread). Med
+# genuin spreadkostnad tillagd blir HYP-043:s Sharpe 0.8926/0.8940/
+# 0.8217 - klarar INTE langre sitt eget ursprungliga kriterium (varken
+# >=1.0 eller att sla HYP-039). Detta har INTE andrat HYP-043:s redan
+# lasta registerpost (last historia andras inte i efterhand) men denna
+# hypotes jamfor mot den FRIKTIONSKORRIGERADE baslinjen, inte den
+# ursprungligen lasta, eftersom den senare byggde pa en kand
+# ofullstandighet.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-045
+date_registered: '2026-08-07'
+title: Krasch-overlay (aterananvander HYP-037:s redan lasta trigger) pa SPY- och momentum L/S-benen
+universe: "N/A for SPY/HYP-037-benen (redan testade, HYP-037 orort). Momentum L/S-benet
+  byggs over SAMMA small-cap-universum ($100M-$2B) som HYP-037/HYP-043/HYP-044."
+small_cap_definition: "small-cap, $100M - $2B börsvärde, EODHD All-World (galler
+  momentum L/S-benets universum, ateranvander HYP-037:s redan lasta definition)"
+data_range: "SPY-monster: adjusted_close 2010-2024 + genuin OOS-2025 (innehaller en
+  akta SPY-krasch, -18.8% MaxDD april 2025 - genuint forsta-gangen-test av
+  mekanismen). Momentum L/S: byggd med bade borrow_cost och corwin_schultz_spread
+  fran start, samma motorkrav som HYP-044."
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja - samtliga
+  triggerparametrar återanvända OFÖRÄNDRADE från HYP-037:s redan
+  låsta overlay, inte en ny sökning):
+
+  1. GEMENSAM TRIGGER (identisk med HYP-037:s egen, ren SPY-prisdata):
+  SPY:s 10-dagars kumulativa avkastning < -10% (CRASH_LOOKBACK_DAYS=10,
+  CRASH_TRIGGER_RET=-0.10). Vid trigger: skär ner till 40% av
+  positionsvärdet (CRASH_HAIRCUT_FRACTION=0.40). Återinträde till full
+  position först när SPY återhämtat minst 50% av det utlösande fallet
+  (RECOVERY_FRACTION=0.50). DOKUMENTERAD FÖRENKLING (nödvändig
+  anpassning, se moduldocstring i strategies/HYP-045/backtest.py):
+  ingen separat "vänta till nästa ordinarie ombalansering"-fördröjning
+  och ingen likviditetsnormaliseringsgrind (båda saknar naturlig
+  motsvarighet för en enskild ETF/aggregerad svit) - återbyggnad sker
+  omedelbart när prisåterhämtningsvillkoret uppfylls.
+
+  2. TILLÄMPNING PÅ DE TVÅ IDAG OSKYDDADE BENEN:
+  a. SPY-benet: haircut/återuppbyggnad enligt punkt 1, frigjort kapital
+  till riskfri ränta.
+  b. Momentum L/S-benet (byggd MED både borrow_cost och genuin
+  corwin_schultz_spread-kostnad): haircut/återuppbyggnad enligt punkt 1
+  på HELA sviten, förblir dollarneutral på den mindre nivån.
+  c. HYP-037-benet: OFÖRÄNDRAT - redan sparad serie, har redan sin EGEN
+  separata krasch-overlay, rörs inte.
+
+  3. KOMBINATION: likaviktade tredjedelar (SPY-med-overlay + HYP-037-
+  oförändrad + MomentumLS-med-overlay), kvartalsvis ombalansering,
+  samma snappade datum som HYP-037/039/043/044.
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre nivåer):
+  1. Kombinerad Sharpe (2010-2024, friktionskorrekt) >= 1.0.
+  2. Kombinerad Sharpe > FRIKTIONSKORRIGERAD HYP-043-baslinje vid samma
+  nivå (0.8926/0.8940/0.8217 - INTE de ursprungligen låsta 1.0457/
+  1.0498/0.9864, se motivering i registerpostens header).
+  3. Kombinerad MaxDD BÄTTRE än samma friktionskorrigerade baslinje
+  (-15.58%/-15.68%/-14.29%).
+
+  OOS-2025: kombinerad OOS-Sharpe > HYP-039:s EGEN OOS-Sharpe
+  (0.9185/0.8116/0.7932) - samma enårsbrus-motivering som HYP-044.
+  Särskilt relevant här: OOS-2025 innehåller en genuin SPY-krasch
+  (-18.8% MaxDD, april 2025) - detta ger mekanismen ett äkta, aldrig
+  tidigare sett test av EXAKT det den är byggd för att hantera.
+
+  FAIL om något villkor faller vid $100k-nivån.
+
+  Diagnostiskt syfte: testar om HYP-037:s redan bevisade (3/3 PASSED
+  i registret: HYP-017/023/037) exponeringstimingsmekanism, tillämpad
+  på de två benen som idag saknar den, kan återställa och överträffa
+  den friktionskorrekta Sharpe-nivån samtidigt som redan god MaxDD
+  bibehålls eller förbättras.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 43
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 0.9941, cagr: 0.0983, max_drawdown: -0.1456, calmar: 0.6752, oos_2025_sharpe: 1.5961, oos_2025_total_return: 0.3212, oos_2025_max_drawdown: -0.0988, deflated_sharpe_ratio: 0.9280}
+  1000000: {sharpe: 0.9989, cagr: 0.0971, max_drawdown: -0.1383, calmar: 0.7020, oos_2025_sharpe: 1.5427, oos_2025_total_return: 0.3083, oos_2025_max_drawdown: -0.1058, deflated_sharpe_ratio: 0.9292}
+  10000000: {sharpe: 0.9287, cagr: 0.0869, max_drawdown: -0.1217, calmar: 0.7150, oos_2025_sharpe: 1.5079, oos_2025_total_return: 0.3005, oos_2025_max_drawdown: -0.1113, deflated_sharpe_ratio: 0.8860}
+date_tested: '2026-08-07'
+result_summary: >
+  FAILED PA DEN AVGORANDE $100k-NIVAN, PA VILLKOR 1 SPECIFIKT (Sharpe
+  >= 1.0) - men ett RAKBLADSTUNT missat mal, inte ett tydligt
+  misslyckande, och mekanismen fungerade uppenbart som avsett pa alla
+  andra matt.
+
+  Villkor 1 (Sharpe >= 1.0 vid $100k): 0.9941 - FAIL, men med en
+  marginal pa bara 0.0059 (0.6% under malet). $1M kom annu narmare
+  (0.9989, 0.0011 under). Bada dessa ar valdigt nara, i motsats till
+  ett strukturellt/tydligt misslyckande.
+
+  Villkor 2 (Sharpe > friktionskorrigerad HYP-043-baslinje): PASS PA
+  ALLA TRE NIVAER, och tydligt - 0.9941/0.9989/0.9287 mot 0.8926/
+  0.8940/0.8217, en forbattring pa 0.09-0.11 Sharpe-enheter. Overlayn
+  hojde alltsa den friktionskorrekta Sharpen betydligt, precis som
+  avsett - bara inte tillrackligt for att korsa 1.0-troskeln.
+
+  Villkor 3 (MaxDD battre an friktionskorrigerad HYP-043-baslinje):
+  PASS PA ALLA TRE NIVAER - -14.56%/-13.83%/-12.17% mot -15.58%/
+  -15.68%/-14.29%, en forbattring pa 1.0-2.1 procentenheter. Mindre
+  dramatisk forbattring an HYP-043 sjalv gav over HYP-039 (dar
+  forbattringen var 6+pp), men konsekvent i ratt riktning pa alla tre
+  nivaer.
+
+  OOS-2025 (villkor 4): PASS PA ALLA TRE NIVAER, mycket starkt -
+  1.596/1.543/1.508 mot HYP-039:s 0.919/0.812/0.793. Sarskilt
+  informativt: OOS-2025 innehaller en AKTA SPY-krasch (-18.8% MaxDD,
+  april 2025) - detta var mekanismens forsta genuina, aldrig tidigare
+  sedda test av precis det den ar byggd for att hantera, och den
+  klarade det med god marginal (OOS-avkastning +30-32%, battre an
+  bade HYP-043:s och HYP-044:s egna OOS-avkastningar).
+
+  MEKANISMENS EGEN AKTIVITET: overlayn triggade 3.3% av dagarna (134
+  av 4024) - betydligt smalare an den bredare 8.0%-krisfonster-
+  attributionen som motiverade hypotesen (striktare tröskel: SPY:s
+  10-dagars avkastning under -10%, inte breda kalenderfonster runt
+  kanda krisdatum). Mekanismen exercerades genuint, inte en no-op.
+
+  DSR vid K=44: 0.93/0.93/0.89 - fortsatt hogt.
+
+  DIAGNOS: overlayn levererar precis den typ av forbattring den
+  designades for (hojer Sharpe, sanker MaxDD, jamfort med den
+  friktionskorrekta baslinjen) - men den friktionskorrigerade
+  baslinjen (0.89) lag langre under 1.0-malet an vad en enda,
+  redan bevisad timing-mekanism kunde ta igen helt. Detta ar INTE
+  samma dodsmonster som HYP-041/044 (dar sviten-benets EGEN kvalitet
+  inte rackte) - har fungerade mekanismen, marginalen var bara for
+  liten. Konsistent med registrets etablerade monster:
+  exponeringstimingsmekanismer (HYP-017/023/037, och nu denna,
+  om an som FAIL) fortsatter leverera genuina forbattringar var gang
+  de testas, till skillnad fran urvals-/viktningsforsok.
+
+  SLUTSATS: HYP-043 forblir referensimplementationen (dess egna,
+  redan lasta siffror star oforandrade i registret, se separat oppen
+  fraga om en formell friktionskorrigering av HYP-043:s post). Denna
+  hypotes visar att en YTTERLIGARE forbattring fran samma redan
+  bevisade timing-familj ar mojlig men INTE tillrackligt stor for att
+  ensam lyfta den friktionskorrekta bilden over 1.0-troskeln - en
+  framtida kombination av BADE denna overlay OCH ett genuint nytt,
+  starkt 4:e ben (ingen av de hittills testade kandidaterna har
+  rackt) skulle kravas for att na dit, inte endera separat.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (tre oberoende adversariella granskare - INTE
+# en ny hypotes/K-test, status/pass_fail_criterion/tested_capital_levels/
+# capital_level_results ovan ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: filed-datum-korrigerat universum (momentum L/S-
+# svitens egen konstruktion + HYP-037-benet), close_adj maskad mot
+# orimlig kvot via delade data_hygiene.py::mask_implausible_adjusted_close_ratio
+# (tidigare inline har), samt en NY 10bps portfoljniva-ombalanserings-
+# kostnad i combine_thirds (fanns inte tidigare - denna hypotes hade
+# redan spreadkostnad INOM momentum L/S-sviten, se moduldocstring, men
+# INTE mellan de tre benen vid kvartalsvis vikt-aterstallning). Resultat
+# i strategies/HYP-045/results_corrected_2026-08-08/ (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024):
+#   Sharpe: 0.9845 / 0.9846 / 0.9546  (tidigare 0.9941 / 0.9989 / 0.9287)
+#   MaxDD: -14.08% / -13.76% / -11.83% (tidigare -14.56% / -13.83% / -12.17%)
+#   DSR (K=46, RF=2%/ar): 0.9184 / 0.9186 / 0.9000
+#
+# Villkor 1 (Sharpe >= 1.0 vid $100k): FAIL, oforandrat - fortfarande ett
+# rakbladstunt nara-miss (0.9845, 0.0155 under malet, tidigare 0.9941,
+# 0.0059 under - marginalen VIDGADES nagot av den nya kostnaden men
+# slutsatsen ar densamma: naraliggande men INTE PASS). Villkor 2 (sla
+# friktionskorrigerad HYP-043-baslinje 0.8926/0.8940/0.8217): PASS
+# TYDLIGT pa alla tre, oforandrat. Villkor 3 (MaxDD battre an samma
+# baslinje): PASS PA ALLA TRE, oforandrat, nagot battre an tidigare.
+#
+# SLUTSATS: HYP-045:s FAILED-slutsats (rakbladstunt nara-miss pa villkor
+# 1) star OFORANDRAD under den fullstandigt korrigerade pipelinen -
+# samma kvalitativa bild som tidigare, ingen flip i nagon riktning.

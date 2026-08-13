@@ -1,0 +1,100 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås kör"), tillsammans med HYP-068 -
+# batch (2 kandidater, se HYP-068:s registerpost for samma batch-header).
+# k_total hoppar 65->67 vid lasningstillfallet.
+#
+# URSPRUNG: uppfoljning pa HYP-066:s FAILADE resultat (ra aterkopssignal,
+# bra CAGR men MaxDD -66.85% till -72.64% drog ner Sharpen under golvet).
+# En diagnostik SAMMA DAG (ingen K-kostnad) visade att varsta drawdownen
+# (aug 2018 - mars 2020) skedde MEDAN SPY samma period bara foll -11.89%
+# - riskkallan ar INTE marknadskrasch-driven utan sannolikt idiosynkratisk/
+# decilspecifik. En SPY-krasch-triggad overlay (HYP-017/037:s
+# standardmonster) bedomdes darfor sannolikt INTE traffsaker har - en
+# per-position stop-loss (denna hypotes) och en portfoljbred
+# volatilitetsmalsattning (HYP-068) valdes istallet, eftersom bada
+# reagerar oavsett riskens KALLA (marknadsbred eller idiosynkratisk).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-067
+date_registered: '2026-08-11'
+title: "Per-position stop-loss -30% på HYP-066:s återköpsintensitet-decil"
+universe: "small-cap, $100M - $2B börsvärde, EODHD All-World - identisk
+  med HYP-066:s redan lasta definition, oforandrad."
+small_cap_definition: "small-cap, $100M - $2B börsvärde, EODHD All-World."
+data_range: "Samma period som HYP-066 (2010-01-01 till 2024-12-31
+  huvudperiod + genuin OOS-2025)."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja - IDENTISK
+  stop-loss-konvention som HYP-025 i BATCH-001, tillämpad på HYP-066:s
+  motor/signal istället för HYP-023:s):
+
+  Identisk bas som HYP-066 (återköpsintensitet-signal, toppdecil,
+  kvartalsvis ombalansering, SPY-beta-hedge OFÖRÄNDRAD, samma friktion/
+  kapacitetsspärr, ingen bank-/finansexklusion). Enda tillägget: ett
+  ANDRA lager, ett DAGLIGT per-position stop-loss - EFTER SPY-beta-
+  hedgen i samma loop-iteration.
+
+  Stop-loss: kontrolleras VARJE handelsdag. Trigger: en enskild positions
+  avkastning sedan köptillfället (på adjusted_close) faller under -30% -
+  EN ENDA DAGS observation räcker (ingen flerdagarsbekräftelse). Vid
+  trigger: STÄNG HELA positionen, halva Corwin-Schultz-spreaden som
+  utträdeskostnad. Återköp sker INTE automatiskt - först vid nästa
+  ordinarie kvartalsvisa ombalansering.
+
+  PASS KRÄVER BÅDA, PÅ ALLA TRE KAPITALNIVÅER:
+  1. Sharpe (friktionskorrekt) >= 0,55.
+  2. MaxDD STRIKT BÄTTRE (mindre negativ) än HYP-066:s EGET redan
+     uppnådda resultat på SAMMA kapitalnivå (100k: bättre än -66,85%,
+     1M: bättre än -70,90%, 10M: bättre än -72,64%).
+
+  FAIL om någon nivå faller under något villkor.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  Diagnostiskt syfte: testar om en djup stop-loss-tröskel (-30%, samma
+  redan etablerade nivå som HYP-025) fångar de idiosynkratiska
+  enskilda-position-blowups som diagnostiken pekade ut som HYP-066:s
+  huvudsakliga riskkälla - en direkt, mekaniskt riktad åtgärd mot just
+  den diagnostiserade orsaken, till skillnad från en marknadsbred
+  SPY-krasch-trigger som bedömdes mindre träffsäker här.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 65
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1890, sharpe: 0.2948, calmar: 0.315, max_drawdown: -0.5995, n_trades: 823, n_stop_loss_exits: 393, oos_2025_sharpe: 0.3617, oos_2025_max_drawdown: -0.3915, oos_2025_total_return: 0.0799}
+  1000000: {cagr: 0.1867, sharpe: 0.2928, calmar: 0.308, max_drawdown: -0.6065, n_trades: 823, n_stop_loss_exits: 393, oos_2025_sharpe: 0.8496, oos_2025_max_drawdown: -0.2353, oos_2025_total_return: 0.2371}
+  10000000: {cagr: 0.1067, sharpe: 0.3183, calmar: 0.173, max_drawdown: -0.6175, n_trades: 823, n_stop_loss_exits: 393, oos_2025_sharpe: 0.5650, oos_2025_max_drawdown: -0.1367, oos_2025_total_return: 0.1249}
+date_tested: '2026-08-11'
+result_summary: >
+  FAILED PA VILLKOR 1 (Sharpe>=0,55) PA ALLA TRE NIVAER: 0,2948/0,2928/
+  0,3183 - i praktiken OFORANDRAT eller marginellt SAMRE an HYP-066:s
+  egna 0,3072/0,3079/0,3393. Villkor 2 (MaxDD battre an HYP-066) PASSADE
+  DOCK TYDLIGT pa alla tre: -59,95%/-60,65%/-61,75% mot HYP-066:s
+  -66,85%/-70,90%/-72,64% (5,2-10,9pp forbattring).
+
+  MEKANISMEN EXERCERADES GENUINT: 393 av 823 totala trades (47,8%) var
+  stop-loss-utloningar - INTE ett sallsynt undantagsfall utan en
+  regelbunden, ofta triggad mekanism.
+
+  DIAGNOS: samma monster som HELA BATCH-001 (HYP-025-029, alla FAILED pa
+  HYP-023) - en djup stop-loss FANGAR genuint de varsta enskilda
+  blow-uppen (MaxDD forbattras tydligt, bekraftar att riskkallan var
+  ratt diagnostiserad som idiosynkratisk), MEN kapar OCKSA manga
+  NORMALA tillfalliga nedgangar som annars hade aterhamtat sig -
+  forlorad framtida uppsida vager i aggregat upp den vunna
+  nedsideskyddet, sa Sharpen forbattras inte trots battre MaxDD. Sjatte
+  raka misslyckandet for denna mekanismfamilj (efter HYP-018 samt
+  BATCH-001:s fem), nu pa en helt annan underliggande signal.
+
+  OOS-2025 var faktiskt starkt (Sharpe 0,36-0,85, positiv avkastning pa
+  alla tre) - men eftersom huvudperiodens villkor 1 redan FAILAR entydigt
+  ar detta INTE gating och andrar inte utfallet.
+
+  HYP-047/056 forblir referensen. Se HYP-068 (samma batch) for det
+  parallella resultatet pa volatilitetsmalsattning - BADA
+  BATCH-004-kandidaterna FAILADE, av tva olika skal (denna: Sharpe
+  oforandrad trots battre MaxDD; HYP-068: Sharpe forsamrades trots
+  battre MaxDD).

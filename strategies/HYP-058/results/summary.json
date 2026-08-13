@@ -1,0 +1,102 @@
+{
+  "100000": {
+    "main": {
+      "sharpe": 0.3048666315522085,
+      "cagr": 0.06525664773080364,
+      "max_drawdown": -0.526853601415387,
+      "calmar": 0.12386106416562838,
+      "n_days": 3461
+    },
+    "oos_2025": {
+      "sharpe": -0.15221174297617995,
+      "max_drawdown": -0.7730869233880218,
+      "total_return": -0.4219530217500116,
+      "n_days": 250
+    },
+    "condition_1_sharpe_pass": false,
+    "deflated_sharpe_ratio": 0.11572742513110146,
+    "dsr_skewness": 0.04671676514664068,
+    "dsr_kurtosis": 10.099584658486872,
+    "dsr_n_obs": 3460,
+    "dsr_n_trials": 57,
+    "stats": {
+      "n_cohorts_entered": 46,
+      "n_total_tickers_entered": 7155,
+      "n_cohorts_skipped_too_small": 14,
+      "avg_open_positions_per_day": 0.7642144974400431,
+      "max_open_positions": 1
+    }
+  },
+  "1000000": {
+    "main": {
+      "sharpe": 0.3048666315522086,
+      "cagr": 0.06525664773080364,
+      "max_drawdown": -0.5268536014153872,
+      "calmar": 0.12386106416562832,
+      "n_days": 3461
+    },
+    "oos_2025": {
+      "sharpe": 0.19441317091338445,
+      "max_drawdown": -0.47262118710733475,
+      "total_return": -0.011345018183234412,
+      "n_days": 250
+    },
+    "condition_1_sharpe_pass": false,
+    "deflated_sharpe_ratio": 0.11572742513110146,
+    "dsr_skewness": 0.04671676514664173,
+    "dsr_kurtosis": 10.099584658486867,
+    "dsr_n_obs": 3460,
+    "dsr_n_trials": 57,
+    "stats": {
+      "n_cohorts_entered": 46,
+      "n_total_tickers_entered": 7155,
+      "n_cohorts_skipped_too_small": 14,
+      "avg_open_positions_per_day": 0.7642144974400431,
+      "max_open_positions": 1
+    }
+  },
+  "10000000": {
+    "main": {
+      "sharpe": 0.3066722784019824,
+      "cagr": 0.06561110213471877,
+      "max_drawdown": -0.5268536014153866,
+      "calmar": 0.12453384006193606,
+      "n_days": 3461
+    },
+    "oos_2025": {
+      "sharpe": 0.890217602337163,
+      "max_drawdown": -0.27577743470882776,
+      "total_return": 0.23214027356446598,
+      "n_days": 250
+    },
+    "condition_1_sharpe_pass": false,
+    "deflated_sharpe_ratio": 0.11708534747627858,
+    "dsr_skewness": 0.025171364720291682,
+    "dsr_kurtosis": 10.019575047270008,
+    "dsr_n_obs": 3460,
+    "dsr_n_trials": 57,
+    "stats": {
+      "n_cohorts_entered": 46,
+      "n_total_tickers_entered": 7155,
+      "n_cohorts_skipped_too_small": 14,
+      "avg_open_positions_per_day": 0.7642144974400431,
+      "max_open_positions": 1
+    }
+  },
+  "mechanism_diagnostics": {
+    "n_months_evaluated": 189,
+    "n_quarters_with_data": 63,
+    "avg_raw_graduating_per_quarter": 214.20634920634922,
+    "std_raw_graduating_per_quarter": 123.85579924778101,
+    "avg_filtered_graduating_per_quarter": 137.11111111111111,
+    "std_filtered_graduating_per_quarter": 94.20664740996651,
+    "avg_raw_graduating_frac_of_universe": 0.11024793124235324,
+    "avg_filtered_graduating_frac_of_universe": 0.0635103223433086,
+    "total_raw_graduating_events": 13495,
+    "total_filtered_graduating_events": 8638,
+    "n_skipped_no_future_quarter": 2,
+    "n_skipped_no_price_data": 0,
+    "n_entry_dates": 60,
+    "n_total_ticker_entries": 8512
+  }
+}

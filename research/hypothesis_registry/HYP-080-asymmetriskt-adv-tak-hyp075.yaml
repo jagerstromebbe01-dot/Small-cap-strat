@@ -1,0 +1,108 @@
+# LÅST 2026-08-12 av CEO i chatt ("ja"). Del av samma 2-kandidat-batch
+# som HYP-079 (k_total 75 -> 77 vid låsningstillfället). Konvergent
+# förslag: Grok och Gemini föreslog oberoende ett striktare, hårt
+# ADV-baserat kapacitetstak (Grok: asymmetriskt 5%/3% long/short; Gemini:
+# 5% symmetriskt) som direkt svar på att HYP-075:s Sharpe faller med
+# kapitalnivå (0,81 -> 0,71 -> 0,64). ChatGPT föreslog istället en
+# kontinuerlig sqrt(ADV)-viktning utan hard cutoff - en strukturellt
+# annan mekanism, medvetet INTE vald här (den hårda, konvergerande
+# tvåkälls-varianten föredras för denna låsning; sqrt-viktningen kan bli
+# en egen, separat framtida hypotes om denna inte räcker).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-080
+date_registered: '2026-08-12'
+title: "Asymmetriskt ADV-kapacitetstak (5% long / 3% short) på HYP-075"
+universe: "N/A - samma engine/signal som HYP-075, oförändrad."
+small_cap_definition: "N/A - se HYP-072:s redan låsta definition, oförändrad."
+data_range: "Samma period som HYP-075 (2010-01-01 till 2024-12-31
+  huvudperiod + genuin OOS-2025), samma SEC filings-index. Ingen ny
+  data - ren OHLCV-baserad regel."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Bygger direkt på HYP-075:s redan låsta signal, klassificering och
+  positionstak (3x-trimning). ENDA ÄNDRINGEN: ersätt HYP-075:s
+  befintliga, symmetriska ADV-kapacitetsspärr (MAX_ADV_PCT=10% för båda
+  benen) med en STRIKTARE, ASYMMETRISK spärr:
+    - LONG-benet: maximal positionsstorlek = min(likaviktad målsumma,
+      5% av 20-dagars genomsnittlig dollarvolym).
+    - KORT-benet: maximal positionsstorlek = min(likaviktad målsumma,
+      3% av 20-dagars genomsnittlig dollarvolym) - striktare, motiverat
+      av att blankning i small-cap är mer kapacitetskänsligt
+      (lånekostnad, recall-risk, squeeze-risk - se D'Avolio 2002,
+      redan citerad i candidate_ideas.md).
+  Tillämpas identiskt vid varje månatlig ombalansering OCH vid varje
+  daglig trimningsexekvering (positionstaket kan aldrig trimma UPP till
+  en storlek som redan bryter mot detta kapacitetstak - trimningen
+  klipper alltid NER, aldrig upp, så detta villkor kan i praktiken bara
+  bli bindande vid NYA entries, inte vid trimningar, men nämns här för
+  fullständighet).
+
+  Ingen annan förändring av signal, entry/exit, hållperiod eller
+  branschregler.
+
+  MOTORKRAV: identiska med HYP-075.
+
+  PASS KRÄVER ALLA FYRA, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre kapitalnivåer), DÖMT MOT HYP-075:S EGNA REDAN UPPMÄTTA TAL:
+  1. Sharpe (huvudperiod) >= 0,8065 (HYP-075:s egen Sharpe vid $100k).
+  2. MaxDD INTE sämre än -6,05% (HYP-075:s egen MaxDD).
+  3. Sharpe med HELA kalenderåret 2020 exkluderat >= 0,7737.
+  4. Kurtosis för den dagliga avkastningsserien (hela huvudperioden,
+     $100k) < 9,24 (samma 20%-tolerans som HYP-079, låst i förväg).
+
+  UTÖVER DE FYRA STANDARDVILLKOREN, ETT FEMTE, RIKTAT VILLKOR (denna
+  hypotes eget syfte - kapacitetsnedgången):
+  5. Kvoten Sharpe($10M) / Sharpe($100k) MÅSTE VARA STÖRRE än HYP-075:s
+     egen uppmätta kvot (0,6408 / 0,8065 = 0,7945) - dvs. Sharpen ska
+     falla PROPORTIONELLT MINDRE med stigande kapital än i HYP-075.
+
+  FAIL om något av de fem villkoren faller.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): andel av nya entries per ben
+  som faktiskt begränsades av det nya, striktare taket (jämfört med hur
+  många som skulle begränsats av HYP-075:s gamla 10%-tak).
+
+  Diagnostiskt syfte: testar direkt om HYP-075:s fallande Sharpe med
+  kapitalnivå är en likviditets-/kapacitetseffekt som kan dämpas med en
+  striktare, asymmetrisk (kortbens-fokuserad) handelsstorleksregel -
+  inte en signal- eller riskkoncentrationsfråga (det är HYP-079:s
+  syfte).
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 75
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.7712, cagr: 0.0578, max_drawdown: -0.0594, sharpe_ex2020: 0.7350, kurtosis: 7.9}
+  1000000: {sharpe: 0.6709, cagr: 0.0528, max_drawdown: -0.0624, sharpe_ex2020: 0.6786, kurtosis: 11.3}
+  10000000: {sharpe: 0.6150, cagr: 0.0492, max_drawdown: -0.0804, sharpe_ex2020: 0.6589, kurtosis: 6.3}
+  capacity_ratio_10m_over_100k: 0.7975
+result_summary: >
+  FAILED PA VILLKOR 1 OCH 3 AV FEM PA DEN AVGORANDE $100k-NIVAN, TROTS
+  ATT DET RIKTADE VILLKOR 5 (kapacitetskvoten) FAKTISKT PASSERADE
+  (0,7975 mot kravet >0,7945 - en marginell forbattring). Sharpe 0,7712
+  (mot kravet >=0,8065), Sharpe ex-2020 0,7350 (mot kravet >=0,7737).
+  MaxDD och kurtosis PASSERADE bada (-5,94% respektive 7,9).
+
+  DIAGNOS: det striktare taket (5%/3% mot HYP-075:s 10%/10%) band redan
+  vid $100k - 39 av 8582 long-entries och (mer betydande) 69 av 3849
+  short-entries begransades av det NYA, striktare taket vid just denna
+  lagsta kapitalniva, dar den GAMLA 10%-spärren knappt nagonsin band.
+  Detta kostade avkastning vid $100k utan att ge en tillrackligt stor
+  kapacitetsforbattring vid $10M for att kompensera - kvoten forbattrades
+  bara marginellt (0,7945 -> 0,7975).
+
+  SLUTSATS: hypotesen att "kapacitetsnedgangen kan losas med en
+  striktare hard ADV-sparr" var FEL, atminstone vid dessa lasta
+  trosklar (5%/3%) - regeln var for aggressiv redan vid den lagsta
+  kapitalnivan, dar problemet den var avsedd att losa (kapacitetsforlust
+  vid HOG kapitalniva) knappt existerar an. Detta stodjer indirekt
+  ChatGPT:s alternativa forslag i samma brainstormrunda (kontinuerlig
+  sqrt(ADV)-viktning istallet for en hard cutoff) som en mer lovande,
+  men annu otestad, riktning for just kapacitetsfragan - ej byggd har,
+  skulle krava en egen, ny lasning.

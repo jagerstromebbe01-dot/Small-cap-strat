@@ -1,0 +1,133 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Del av BATCH-001 (5 kandidater, HYP-025 till
+# HYP-029) - se CLAUDE.md, avsnitt "Batch Hypothesis Generation" for de
+# procedurregler som galler: alla 5 skrevs i EN omgang, INGEN backtest
+# kord och INGA resultat sedda mellan kandidaterna, hela batchen las av
+# CEO samtidigt, k_total okar med 5 vid lasningstillfallet.
+#
+# MALFALL: HYP-018 (per-position stop-loss pa krasch-overlay, FAILED,
+# K=17) - mekanismen fungerade EXAKT som diagnostiserat for malfallet
+# (BHLB/EBSB/HTBK/GWB/BRKL_old stoppades ut tidigare an kvartalsutgangen)
+# men -20%-trosklen var for los i aggregat: 282 stop-loss-exits over 13
+# ar, snittavkastning -25%, kapade manga NORMALA tillfalliga nedgangar
+# som annars hade aterhamtat sig. HYP-018:s eget postmortem flaggade
+# explicit att en annan troskel skulle behova "sin egen, oberoende
+# motivering och lasta kriterium" - detta ar den uppfoljningen.
+#
+# Byggd PA HYP-023 (nuvarande referensimplementation), INTE HYP-017/018 -
+# stop-loss laggs pa som ETT TREDJE lager, EFTER bade SPY-overlayen och
+# sektor-krasch-triggern, samma ordning som HYP-018 anvande (portfoljbrett
+# forst, sedan per-position).
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-025
+date_registered: '2026-07-31'
+title: Per-position stop-loss -30% pa HYP-023 (BATCH-001, kandidat 1/5)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD, sektor-krasch-trigger pa bank-/finanskomposit
+  OFORANDRAD - samma friktion/hedge/kapacitetsspärr, samma tre motorfixar). Enda tillagget: ett
+  TREDJE lager, ett DAGLIGT per-position stop-loss - EFTER bade SPY-overlayen och sektor-triggern i
+  samma loop-iteration (samma ordning som HYP-018).
+
+  Stop-loss, exakt specificerad (INTE fri, INTE anpassad efter denna eller nagon annan kandidats
+  resultat - vald INNAN nagon backtest i BATCH-001 kors):
+  - Kontrolleras VARJE handelsdag.
+  - Trigger: en enskild positions avkastning sedan koptillfallet (pa adjusted_close) faller under
+    -30% - EN ENDA DAGS observation racker (ingen flerdagarsbekraftelse, till skillnad fran
+    HYP-028 i samma batch).
+  - Vid trigger: STANG HELA positionen (samma mekanik som HYP-018).
+  - Aterkop sker INTE automatiskt - forst vid nasta ordinarie kvartalsvisa ombalansering.
+  - Ordning: SPY-overlay -> sektor-trigger -> stop-loss-kontroll, i den ordningen, samma dag.
+
+  MOTORKRAV (samma som HYP-015/017/022/023): snappade ombalanseringsdatum, adjusted_close
+  genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer - samma golv som hela projektet.
+  2. Maxdrawdown STRIKT BATTRE (mindre negativ) an HYP-023:s EGET redan uppnadda resultat pa SAMMA
+     kapitalniva (100k: battre an -25.46%, 1M: battre an -19.29%, 10M: battre an -13.16%) - samma
+     "maste tillfora nagot, inte bara matcha"-standard som HYP-018 hölls till.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte: testar om en DJUPARE stop-loss-troskel (-30% mot HYP-018:s -20%) minskar
+  antalet falska larm fran normala tillfalliga nedgangar tillrackligt for att den kvarvarande
+  skyddseffekten mot genuina blow-ups ska väga tyngre i aggregat, byggt pa HYP-023 (som redan loste
+  branschkoncentrationen HYP-017 hade) i stallet for HYP-017.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 23
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1145, sharpe: 0.6997, calmar: 0.4731, sharpe_excl_best_trade: 0.6534, max_drawdown: -0.2419, win_rate: 0.5092, profit_factor: 1.4683, n_trades: 2217, march_2023_episode_return: -0.1363, deflated_sharpe_ratio: 0.7268}
+  1000000: {cagr: 0.1162, sharpe: 0.7231, calmar: 0.5831, sharpe_excl_best_trade: 0.6752, max_drawdown: -0.1992, win_rate: 0.5097, profit_factor: 1.4683, n_trades: 2217, march_2023_episode_return: -0.0821, deflated_sharpe_ratio: 0.7564}
+  10000000: {cagr: 0.0916, sharpe: 0.6878, calmar: 0.7011, sharpe_excl_best_trade: 0.6795, max_drawdown: -0.1306, win_rate: 0.5101, profit_factor: 1.4683, n_trades: 2217, march_2023_episode_return: -0.0235, deflated_sharpe_ratio: 0.7091}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED. Sharpe 0.70/0.72/0.69 klarar 0.55-golvet pa alla tre nivaer,
+  MEN villkor 2 (MaxDD STRIKT BATTRE an HYP-023:s -25.46%/-19.29%/-13.16%)
+  haller BARA vid $100k (-24.19%, en verklig forbattring) - vid $1M blir
+  MaxDD SVAGT SAMRE (-19.92% mot -19.29%), och vid $10M SVAGT BATTRE men
+  marginellt (-13.06% mot -13.16%, 0.10pp).
+
+  BATCH-001 HELHETSBILD (alla 5 kandidater kora och rapporterade
+  tillsammans, per CLAUDE.md:s battrules for batchen - ingen kandidat
+  valdes ut i efterhand):
+
+  | Kandidat | Troskel | MaxDD 100k | MaxDD 1M | MaxDD 10M | Resultat |
+  |----------|---------|-----------|----------|-----------|----------|
+  | HYP-025  | -30%, 1d | -24.19% (battre) | -19.92% (SAMRE) | -13.06% (battre) | FAILED |
+  | HYP-026  | -35%, 1d | -24.07% (battre) | -19.91% (SAMRE) | -13.21% (SAMRE) | FAILED |
+  | HYP-027  | -25%, 1d | -23.25% (battre) | -20.15% (SAMRE) | -13.30% (SAMRE) | FAILED |
+  | HYP-028  | -20%, 3d | -24.00% (battre) | -20.11% (SAMRE) | -13.16% (oforandrat) | FAILED |
+  | HYP-029  | -15%, 1d | -21.99% (battre) | -19.35% (SAMRE) | -13.02% (battre) | FAILED |
+  (HYP-023 referens: -25.46% / -19.29% / -13.16%)
+
+  ALLA FEM MISSLYCKAS, OCH PA EXAKT SAMMA SATT: samtliga fem kandidater
+  FORBATTRAR MaxDD vid $100k (ibland rejalt - HYP-029:s -15%-troskel gav
+  -21.99% mot -25.46%, en 3.5pp-forbattring), men INGEN klarar $1M -
+  samtliga fem blir DAR svagt samre an HYP-023:s egna -19.29%, med
+  marginaler pa bara 0.06-0.86pp. $10M ar blandat (3 av 5 nagot battre,
+  2 nagot samre), aldrig en tydlig vinst eller forlust.
+
+  TOLKNING: detta ar INTE brus fran en enskild oturlig trosklevalue -
+  det ar ett STRUKTURELLT monster oberoende av bade trosklens djup
+  (-15% till -35%, en bred spridning) och bekraftelsekravet (1 dag vs
+  3 dagar). Stop-loss-mekanismen tycks konsekvent hjalpa vid LAG
+  kapitalniva (dar kapacitetsspärren tillater koncentrerade, mer
+  volatila small-cap-namn dar enskilda blow-ups vager tyngre) och vara
+  ungefar neutral-till-svagt-skadlig vid HOG kapitalniva (dar
+  kapacitetsspärren redan tvingar in mer likvida, mindre extrema namn -
+  stop-lossen har mindre genuint att skydda mot dar, och kostnaden av
+  falska larm vager relativt tyngre). Detta ar en ANNAN, mer
+  finkornig variant av samma grundinsikt som HYP-018 och HYP-022 redan
+  visade var och en pa sitt satt: ett riskverktyg som hjalper i ETT
+  scenario (har: koncentrerad lag-kapital-portfolj) kan kosta i ett
+  annat (har: redan diversifierad hog-kapital-portfolj) - "battre
+  overallt" ar ovanligt, INTE default.
+
+  ROBUSTHET: sharpe_excl_best_trade forblir 0.65/0.68/0.68 - fortfarande
+  klart over 0.55-golvet, sa den svaga MaxDD-marginalen vid $1M ar INTE
+  en enskild-trade-artefakt.
+
+  SLUTSATS: HYP-023 forblir referensimplementationen OFORANDRAD. Ingen
+  av de fem stop-loss-varianterna motiverar en andring. Den kapital-
+  nivaberoende avvagningen (hjalper lag kapital, neutral/skadlig hog
+  kapital) ar den mest anvandbara lardomen fran denna batch - en FRAMTIDA
+  hypotes som villkorar stop-lossen pa nagot kapacitetsrelaterat matt
+  (snarare an ett fast dollarbelopp) skulle kunna vara vard att testa,
+  men det kraver sin egen, oberoende motiverade och lasta hypotes -
+  INTE nagot BATCH-001 sjalv fick testa (utanfor den godkanda,
+  snava sokrymden: parametervarianter, inte nya mekanismer).
+sharpe_raw:
+  100000: 0.6997
+  1000000: 0.7231
+  10000000: 0.6878
+deflated_sharpe_ratio:
+  100000: 0.7268
+  1000000: 0.7564
+  10000000: 0.7091

@@ -1,0 +1,62 @@
+[
+  {
+    "capital_level": 100000,
+    "cagr": 0.12117305323319982,
+    "sharpe": 0.7154766427144325,
+    "calmar": 0.3753584403828659,
+    "max_drawdown": -0.32281957776040204,
+    "trade_stats": {
+      "n": 2149,
+      "win_rate": 0.49139134481154023,
+      "avg_ret": 0.02171055802121915,
+      "pf": 1.261164732708862
+    },
+    "n_sector_trigger_episodes": 8,
+    "march_2023_episode_return": -0.15956002420402726,
+    "avg_stale_excluded_per_rebal": 34.327586206896555,
+    "avg_n_top_post_filter": 63.39655172413793,
+    "avg_n_pre_filter": 672.3620689655172,
+    "sharpe_excl_best": 0.6664380226199053,
+    "calmar_excl_best": 0.35652876518279325
+  },
+  {
+    "capital_level": 1000000,
+    "cagr": 0.12263687855063066,
+    "sharpe": 0.7414702925728113,
+    "calmar": 0.46145023432575566,
+    "max_drawdown": -0.265764040037428,
+    "trade_stats": {
+      "n": 2149,
+      "win_rate": 0.49139134481154023,
+      "avg_ret": 0.021710558021219142,
+      "pf": 1.261164732708862
+    },
+    "n_sector_trigger_episodes": 8,
+    "march_2023_episode_return": -0.0886057318868877,
+    "avg_stale_excluded_per_rebal": 34.327586206896555,
+    "avg_n_top_post_filter": 63.39655172413793,
+    "avg_n_pre_filter": 672.3620689655172,
+    "sharpe_excl_best": 0.6898641086207258,
+    "calmar_excl_best": 0.4383715341144666
+  },
+  {
+    "capital_level": 10000000,
+    "cagr": 0.09669134496717602,
+    "sharpe": 0.7216511757862939,
+    "calmar": 0.7117354469261954,
+    "max_drawdown": -0.1358529287599225,
+    "trade_stats": {
+      "n": 2149,
+      "win_rate": 0.49139134481154023,
+      "avg_ret": 0.02171055802121915,
+      "pf": 1.2611647327088622
+    },
+    "n_sector_trigger_episodes": 8,
+    "march_2023_episode_return": -0.023612312889715437,
+    "avg_stale_excluded_per_rebal": 34.327586206896555,
+    "avg_n_top_post_filter": 63.39655172413793,
+    "avg_n_pre_filter": 672.3620689655172,
+    "sharpe_excl_best": 0.7136584244751851,
+    "calmar_excl_best": 0.7063617259454728
+  }
+]

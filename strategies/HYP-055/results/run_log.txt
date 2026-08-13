@@ -1,0 +1,43 @@
+Laddar universum (huvudserie + 2025-utokning, sammanslaget)...
+  4829 unika tickers.
+
+Laddar prismatriser (open/close/adjusted_close/high/low/volume)...
+  (4024, 4829)
+
+Sanerar prisdata (clean_price_matrix)...
+Maskar oaterhamtade prisbrott (mask_unrecovered_price_breaks)...
+Flaggar leverantors-datafel (flag_implausible_liquidity)...
+Maskar orimlig (konstant) adjusted_close/close-kvot...
+Beraknar Corwin-Schultz-spread-matris...
+Laddar SIC-huvudgruppsklassificering (strategies/common/sector.py)...
+  4585/4829 tickers har kand SIC-huvudgrupp (68 distinkta grupper inkl. XX).
+
+Beraknar 60-dagars genomsnittlig dollarvolym (adjusted_close x volume, ledare/foljare-rankning)...
+Beraknar 20-dagars ADV-kapacitetstak (close x volume x 10%, samma konvention som HYP-037/050)...
+Bygger veckovisa branschsignaler (ledare/foljare + 504-dagars regimkvintil)...
+  Veckor utvarderade: 822
+  Veckor med >=1 kvalificerande bransch (>=6 eligible): 804 (97.8%)
+  Genomsnittligt antal kvalificerande branscher/vecka: 21.04
+  Distinkta branscher sedda totalt: 47
+  Veckor med >=1 TRIGGER (kop eller sälj): 668 (81.3%)
+  Triggers totalt: 5664 (long=2886, short=2778)
+
+--- Kapitalniva: $100,000 ---
+  Sharpe (2010-2024) = -2.9690 (FAIL mot >= 0.55)  MaxDD=-99.99% (FAIL mot tak -50%)  CAGR=-50.92%  Calmar=-0.509
+  DSR (K=54) = 0.0000  (skew=-1.91, kurt=33.45, n_obs=3115)
+  OOS-2025 (informativt): Sharpe=-1.6014  MaxDD=-37.83%  Avkastning=-37.68%
+  Nya positioner: 3926  Veckor med entry-batch: 666  Snitt oppna positioner/dag: 5.83  Max samtidiga: 26  Signaler hoppade (redan oppen): 321  Signaler hoppade (for sma/ADV-tak): 1417
+
+--- Kapitalniva: $1,000,000 ---
+  Sharpe (2010-2024) = -2.9980 (FAIL mot >= 0.55)  MaxDD=-99.99% (FAIL mot tak -50%)  CAGR=-51.12%  Calmar=-0.511
+  DSR (K=54) = 0.0000  (skew=-1.92, kurt=33.89, n_obs=3115)
+  OOS-2025 (informativt): Sharpe=-1.3669  MaxDD=-32.83%  Avkastning=-32.53%
+  Nya positioner: 3966  Veckor med entry-batch: 666  Snitt oppna positioner/dag: 5.89  Max samtidiga: 26  Signaler hoppade (redan oppen): 320  Signaler hoppade (for sma/ADV-tak): 1378
+
+--- Kapitalniva: $10,000,000 ---
+  Sharpe (2010-2024) = -2.7388 (FAIL mot >= 0.55)  MaxDD=-99.98% (FAIL mot tak -50%)  CAGR=-49.87%  Calmar=-0.499
+  DSR (K=54) = 0.0000  (skew=-1.99, kurt=32.27, n_obs=3115)
+  OOS-2025 (informativt): Sharpe=-1.9013  MaxDD=-52.41%  Avkastning=-51.01%
+  Nya positioner: 4652  Veckor med entry-batch: 665  Snitt oppna positioner/dag: 6.91  Max samtidiga: 26  Signaler hoppade (redan oppen): 365  Signaler hoppade (for sma/ADV-tak): 647
+
+KLART. Sammanfattning sparad till C:\Users\ebbej\Downloads\strategi_smallcap\strategies\HYP-055\results\summary.json

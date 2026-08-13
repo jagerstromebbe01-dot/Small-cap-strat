@@ -1,0 +1,129 @@
+# LÅST 2026-08-09 av CEO i chatt. Del av BATCH-002 (7 kandidater,
+# HYP-048 till HYP-054) - se HYP-048:s registerpost för fullständig
+# batch-motivering och procedurregler (samma text gäller alla sju).
+#
+# KONVERGENSURVAL: föreslogs OBEROENDE av TRE av fyra externa AI-källor
+# (ChatGPT #2, en separat Claude-session #5, Gemini #3).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-049
+date_registered: '2026-08-09'
+title: Övernatt- vs. intradagsavkastning som mikrostruktursignal
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma huvudperiod (2010-2024) + genuin blind OOS-2025,
+  samma motorkrav som resten av registret (filed-datum-universum, maskad
+  adjusted_close-kvot)
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar):
+
+  Dela varje akties dagliga avkastning (på adjusted_close) i två delar:
+  ÖVERNATT = dagens open / föregående dags close - 1, INTRADAG = dagens
+  close / dagens open - 1. Beräkna rullande 20-handelsdagars kumulativ
+  övernattavkastning minus kumulativ intradagsavkastning per aktie.
+
+  Kvartalsvis ombalansering (samma snappade datum som resten av
+  registret): rangordna eligible-universumet efter detta mått. LONG
+  toppdecilen (övernatt dominerar kraftigt över intradag), KORT
+  bottendecilen (intradag dominerar kraftigt över övernatt),
+  likaviktat inom vardera benet, dollarneutralt (50/50 long/kort av
+  benets egen allokering).
+
+  MOTORKRAV: adjusted_close genomgående, filed-datum-korrigerat
+  universum, maskad adjusted_close/close-kvot (samma tre fixar som
+  redan portade till hela registret 2026-08-08), flag_implausible_liquidity(),
+  Corwin-Schultz-spread + borrow_cost på kortbenet (samma 3%/år som
+  resten av registret) - friktion inbyggd FRÅN START, inte tillagd i
+  efterhand (lärdomen från HYP-043:s DEL A-fynd).
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  Sharpe (efter friktion) >= 0.55 - samma standardgolv som projektets
+  övriga fristående signaltest (HYP-015/017 osv).
+
+  FAIL om golvet inte nås vid $100k.
+
+  Diagnostiskt syfte: testar om institutionell/informerad handel lämnar
+  ett mätbart spår i VAR PÅ DYGNET en akties avkastning uppstår
+  (mikrostrukturlitteratur, Lou/Polk m.fl.) - en helt annan dimension
+  än pris-nivå-momentum eller reversal, aldrig testad i detta register.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 47
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: -0.6408, cagr: -0.0664, max_drawdown: -0.6532, calmar: -0.1016, oos_2025_sharpe: -0.2119, oos_2025_max_drawdown: -0.5009, oos_2025_total_return: -0.2078, deflated_sharpe_ratio: 0.0000011}
+  1000000: {sharpe: -0.5611, cagr: -0.0487, max_drawdown: -0.5426, calmar: -0.0897, oos_2025_sharpe: -0.2877, oos_2025_max_drawdown: -0.5019, oos_2025_total_return: -0.2261, deflated_sharpe_ratio: 0.0000050}
+  10000000: {sharpe: -0.4064, cagr: -0.0223, max_drawdown: -0.5016, calmar: -0.0445, oos_2025_sharpe: -1.1061, oos_2025_max_drawdown: -0.2698, oos_2025_total_return: -0.2127, deflated_sharpe_ratio: 0.0000746}
+date_tested: '2026-08-09'
+result_summary: >
+  DATABUGG-UTREDNING (utford INNAN status lastes, per CEO-instruktion -
+  se ovan): den ursprungliga korningen (fore denna utredning) visade
+  Sharpe 0.26/0.26/0.25 (redan under 0.55-golvet) MEN en orimligt hog
+  CAGR (43.7%/40.2%/20.4%) kombinerat med djup MaxDD (-58%/-41%/-41%) -
+  exakt samma signatur (extrem CAGR + lag Sharpe + djup MaxDD) som redan
+  kanda databuggar i registret (ABWND/HYP-042, ARDMQ/HYP-012,
+  ESSA/HYP-014, COL-splitfallet/HYP-037).
+
+  ROTORSAK HITTAD: ett enskilt dygns portfoljvarde (2017-11-27, $100k-
+  nivan) visade en falsk +35354% avkastning. Sparning till enskild rad/
+  ticker (samma disciplin som HYP-042) visade att ETT LONG-innehav,
+  tickern SSN, var ansvarig - INTE en overnatt/open-prisbugg som
+  ursprungligen misstankt (open sanerades faktiskt redan lika strikt
+  som close via mask_extreme_intraday_split(), som redan fanns i filen
+  fore denna utredning), utan ett djupare fel i den DELADE
+  saneringspipelinen: SSN:s radata (open/high/low/close/adjusted_close
+  SAMTIDIGT) hoppade ~54600x den 2017-11-17 (leverantors-datafel/
+  tickerkollision, samma kategori som redan dokumenterade ESSA-fallet)
+  och ATERHAMTADE SIG ALDRIG under resten av dess registrerade historik
+  (till 2020-10-08, sista dagen i cachen). Tva befintliga skydd hade bada
+  en tidsfordrojning som slappte igenom just den kritiska dagen: (1)
+  clean_price_matrix()s iterativa dag-till-dag-filter ar konstruerat for
+  KORTLIVADE trasiga svitar - det maskar exakt EN ny dag per pass och
+  gav upp efter sitt hardkodade tak pa 5 pass, medan SSN:s trasiga svit
+  varade i ar; (2) flag_implausible_liquidity()s rullande 20-dagars-
+  fonster kraver ~20 SAMMANHANGANDE giltiga (redan-maskade-fria) dagar
+  innan det nagonsin kan flagga - en "kallstart"-fordrojning som
+  tillsammans med (1) slappte igenom cirka de forsta 24 handelsdagarna
+  av den trasiga regimen, inklusive exakt den dag en HYP-049-kvartals-
+  ombalansering rakade halla SSN.
+
+  FIX: ny, DELAD, ADDITIV funktion mask_unrecovered_price_breaks()
+  byggd i strategies/common/data_hygiene.py (andrar INTE
+  clean_price_matrix()s eller flag_implausible_liquidity()s befintliga
+  beteende eller default-anrop - ingen redan last hypotes paverkas
+  retroaktivt). Anvander EXAKT samma MIN_DAILY_RETURN/MAX_DAILY_RETURN-
+  tröskar som redan etablerade (ingen ny godtycklig grans): vid ett steg
+  utanfor detta band, sok FRAMAT i seriens aterstaende historik efter
+  aterhamtning mot SAMMA referens - hittas ingen, maska allt fran
+  brottpunkten till seriens slut. Verifierad mot SAMTLIGA redan kanda
+  testfall i data_hygiene.py::__main__ (HEC/IDTYD/ESSA-monstren) plus
+  ett nytt syntetiskt SSN-monster (permanent, aldrig aterhamtad
+  regimforandring) - alla ger forvantat resultat.
+
+  EFTER FIXEN: resultatet ar KVALITATIVT ANNORLUNDA, inte bara
+  kvantitativt justerat - Sharpe blev NEGATIV pa alla tre nivaer
+  (-0.6408/-0.5611/-0.4064, mot 0.55-golvet - tydligt FAIL), CAGR
+  negativ (-6.6%/-4.9%/-2.2%, mot tidigare +43.7%/+40.2%/+20.4% som helt
+  och hallet var den fiktiva SSN-vinsten), och MaxDD forvarrades
+  (-65.3%/-54.3%/-50.2%, mot -58.2%/-41.4%/-40.6% - den tidigare
+  siffran var artificiellt DAMPAD av att SSN-vinsten lag mitt i
+  perioden och holl uppe portfoljvardet fram till dess). Topp-10-listan
+  over enskilda dagars avkastning pa ALLA tre nivaer visar nu inga
+  kvarvarande orimliga varden (storsta enskilda dagsrorelsen ar 23.9%
+  vid $100k, 2025-10-16 - sparad till enskilda innehav (EOSEW-warrant
+  -36.8%, BITF -18.4%, CIFRW -15.9%, samtliga rimliga dollarprisnivaer)
+  i en tunn 16-namns decil under en genuint volatil OOS-2025-period,
+  INTE ett datafel).
+
+  DSR (K=48, RF=2%/ar) = 0.0000011/0.0000050/0.0000746 - i praktiken
+  noll, helt konsistent med en negativ ra Sharpe.
+
+  SLUTSATS: mekanismen (rullande 20-dagars overnatt-minus-intradag-
+  dekomponering) FAILAR PA DEN AVGORANDE $100k-NIVAN, och detta ar nu
+  ett GENUINT resultat, inte ett databuggpaverkat sadant - mikrostruktur-
+  signalen sjalv visar ingen matbar edge i denna small-cap-provperiod,
+  aven med en fullstandigt sanerad prisserie. HYP-047 forblir
+  referensimplementationen, oforandrad.

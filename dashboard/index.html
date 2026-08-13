@@ -75,12 +75,47 @@
   .badge.failed { background: var(--bad-bg); color: var(--bad); }
   .badge.other { background: var(--surface-2); color: var(--muted); }
   .badge.archived { background: var(--surface-2); color: var(--muted); }
+  .badge.unviewed { background: var(--accent); color: #1a1206; }
+
+  a.dl-link { font-family: inherit; font-size: 12.5px; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--hairline); background: var(--surface-2); color: var(--ink); text-decoration: none; display: inline-block; }
+  a.dl-link:hover { border-color: var(--accent); }
+
+  .list-controls { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-dim); }
+  .list-controls input { cursor: pointer; }
+
+  .pipeline-active { font-size: 12.5px; color: var(--ink-dim); margin-bottom: 2px; }
+  .pipeline-active b { color: var(--ink); }
+  .pipeline-flow { display: flex; align-items: stretch; flex-wrap: wrap; gap: 0; }
+  .pipeline-stage {
+    display: flex; flex-direction: column; gap: 3px; justify-content: center;
+    min-width: 118px; padding: 10px 12px; border-radius: 8px;
+    border: 1.5px solid var(--hairline); background: var(--surface);
+    font-size: 12px; text-align: center;
+  }
+  .pipeline-stage .stage-name { font-weight: 600; }
+  .pipeline-stage .stage-sub { font-size: 10.5px; color: var(--muted); }
+  .pipeline-arrow { display: flex; align-items: center; padding: 0 6px; color: var(--muted); font-size: 16px; }
+  .pipeline-stage.manual { border-style: dashed; opacity: .75; }
+  .pipeline-stage.done { border-color: var(--good); background: var(--good-bg); }
+  .pipeline-stage.done .stage-name { color: var(--good); }
+  .pipeline-stage.current { border-color: var(--warn); background: var(--warn-bg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 20%, transparent); }
+  .pipeline-stage.current .stage-name { color: var(--warn); }
+  .pipeline-stage.error { border-color: var(--bad); background: var(--bad-bg); }
+  .pipeline-stage.error .stage-name { color: var(--bad); }
 
   .kv { font-size: 13px; color: var(--ink-dim); display: flex; flex-direction: column; gap: 3px; }
   .kv b { color: var(--ink); }
   details.criterion { font-size: 12.5px; color: var(--ink-dim); }
   details.criterion summary { cursor: pointer; color: var(--accent); font-size: 12.5px; }
   details.criterion pre { white-space: pre-wrap; font-family: inherit; background: var(--surface-2); border-radius: 6px; padding: 10px 12px; margin: 6px 0 0; }
+
+  details.attribution { font-size: 12.5px; color: var(--ink-dim); }
+  details.attribution summary { cursor: pointer; color: var(--accent); font-size: 12.5px; }
+  .attr-level { background: var(--surface-2); border-radius: 6px; padding: 10px 12px; margin: 6px 0 0; }
+  .attr-level b { color: var(--ink); }
+  .attr-row { display: flex; justify-content: space-between; gap: 8px; font-family: "SF Mono", Consolas, monospace; font-size: 11.5px; padding: 2px 0; }
+  .attr-row.over { color: var(--bad); }
+  .attr-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
   .notes-list { display: flex; flex-direction: column; gap: 6px; }
   .note-item { font-size: 12.5px; background: var(--surface-2); border-radius: 6px; padding: 8px 10px; }
@@ -136,8 +171,18 @@
   <div class="stats" id="stats"></div>
 
   <section>
+    <h2>Agent-pipeline</h2>
+    <div class="note-hint">Visar hela flödet (spec-dokumentet avsnitt 5) - fyllda steg är automatiserade och spåras live via <code>chain_status.json</code>, streckade steg är manuella och görs utanför dashboarden.</div>
+    <div id="pipelineMap"></div>
+  </section>
+
+  <section>
     <h2>Hypotesregister</h2>
     <div class="note-hint">Ingen knapp här kan godkänna en hypotes eller köra ett test — det sker uteslutande genom att du redigerar YAML-filen manuellt efter att kriteriet låsts i chatt.</div>
+    <div class="list-controls">
+      <label><input type="checkbox" id="passedOnly" checked onchange="refresh()"> Visa bara godkända (passed)</label>
+      <span id="hiddenCount"></span>
+    </div>
     <div id="hypotheses"></div>
   </section>
 
@@ -151,13 +196,20 @@
 
   <section>
     <h2>Kandidatidéer <span class="note-hint">(icke-bindande, från Hypothesis Miner)</span></h2>
+    <div class="list-controls">
+      <label><input type="checkbox" id="unviewedOnly" onchange="refresh()"> Visa bara ej granskade</label>
+      <span id="unviewedCount"></span>
+    </div>
     <div id="candidates"></div>
   </section>
 
   <footer>
     Serverad lokalt från <code>dashboard/server.py</code> — läser om samtliga filer vid varje anrop, ingen cachning.
-    Två skrivbara endpoints existerar: arkivera kandidat, och lägg till en fri anteckning i en separat notes-fil.
-    Ingen endpoint kan ändra <code>pass_fail_criterion</code>, <code>status</code>, kapitalnivåer, eller <code>small_cap_definition</code>.
+    Fem skrivbara endpoints existerar: arkivera kandidat ("Släng"), tagga kandidat som komponent ("Komponent"),
+    lägg till en fri anteckning, sätt en redan kriterie-låst hypotes till pre-registered, och skapa ett
+    hypotesutkast från en kandidatidé ("Godkänn").
+    Ingen endpoint kan ändra <code>pass_fail_criterion</code>, <code>status</code>, kapitalnivåer, eller <code>small_cap_definition</code>
+    på en redan existerande hypotes — och utkast som skapas från en kandidatidé får alltid tomt kriterium och status <code>draft</code>.
   </footer>
 
 </div>
@@ -237,6 +289,24 @@ function renderNotesList(notes) {
   `).join('')}</div>`;
 }
 
+// "Granskad"-status hålls ENDAST i webbläsarens localStorage - ingen
+// server-endpoint för detta, eftersom server.py:s hårda regel bara
+// tillåter tre skrivbara endpoints (arkivera/anteckning/pre-registered).
+// Detta är rent lokalt UX-state för CEO, ingen del av registret på disk.
+const VIEWED_CANDIDATES_KEY = 'viewedCandidates';
+
+function getViewedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem(VIEWED_CANDIDATES_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+
+function markViewed(id) {
+  const s = getViewedSet();
+  s.add(String(id));
+  localStorage.setItem(VIEWED_CANDIDATES_KEY, JSON.stringify([...s]));
+  refresh();
+}
+
 function statusBadgeClass(status) {
   return ['pre-registered', 'passed', 'failed'].includes(status) ? status : 'other';
 }
@@ -263,11 +333,96 @@ function chainBadge(chain) {
   return `<span class="badge ${cls}" title="${esc(title)}">${esc(label)}</span>`;
 }
 
+// Hela agent-pipelinen per CLAUDE.md/spec-dokumentet avsnitt 5. "match"
+// kollar mot chain_status.json:s "step"-strang (t.ex. "coder_a (forsok 2)")
+// for de steg som faktiskt sparas automatiskt av scripts/run_chain.py -
+// manuella steg (Miner, CEO-las, Overfitting Detector osv) har ingen
+// match och visas alltid som "manual", aldrig som klara/pagaende, eftersom
+// inget i repot spar dem live idag.
+const PIPELINE_STAGES = [
+  { name: 'Hypothesis Miner', sub: 'schemalagt/manuellt', manual: true },
+  { name: 'CEO låser kriterium', sub: 'i chatt, aldrig i kod', manual: true },
+  { name: 'Strategy Builder', match: s => s.startsWith('strategy_builder') },
+  { name: 'Coder-A', match: s => s.startsWith('coder_a') },
+  { name: 'Coder-B', sub: '+ kodgranskning', match: s => s.startsWith('coder_b') },
+  { name: 'Friktionsvalidering', match: s => s === 'validate_friction_usage' },
+  { name: 'Kriterievalidering', match: s => s === 'validate_hypothesis' },
+  { name: 'Backtester', match: s => s === 'backtester' },
+  { name: 'Overfitting Detector', sub: 'DSR, K-räknare', manual: true },
+  { name: 'Performance/Risk', sub: 'Sharpe, Calmar, friktion', manual: true },
+  { name: 'Reporting', manual: true },
+];
+
+function pickActiveChainHyp(state) {
+  const withChain = (state.hypotheses || []).filter(h => h.chain && h.chain.step);
+  if (!withChain.length) return null;
+  const running = withChain.find(h => h.chain.status === 'running');
+  if (running) return running;
+  // Ingen kör just nu - visa den senast uppdaterade (klar eller fel).
+  return withChain.slice().sort((a, b) => (b.chain.updated_at || '').localeCompare(a.chain.updated_at || ''))[0];
+}
+
+function renderPipelineMap(state) {
+  const el = document.getElementById('pipelineMap');
+  const active = pickActiveChainHyp(state);
+
+  if (!active) {
+    el.innerHTML = `<div class="empty-state">Ingen kedja har körts än - pipelinen nedan visar bara den statiska strukturen.</div>` +
+      renderPipelineFlow(null, '');
+    return;
+  }
+
+  const chain = active.chain;
+  const label = chain.status === 'running' ? 'kör just nu' : chain.status === 'done' ? 'senast klar' : 'senast avslutad med fel';
+  el.innerHTML = `
+    <div class="pipeline-active"><b>${esc(active.id)}</b> — ${esc(label)}${chain.message ? ` (${esc(chain.message.slice(0, 160))})` : ''}</div>
+  ` + renderPipelineFlow(chain, chain.step || '');
+}
+
+function renderPipelineFlow(chain, currentStep) {
+  let reachedCurrent = false;
+  const isChainDone = chain && chain.status === 'done';
+  const isChainError = chain && chain.status === 'error';
+
+  const stageHtml = PIPELINE_STAGES.map((stage, i) => {
+    let cls = stage.manual ? 'manual' : '';
+    if (!stage.manual && chain) {
+      const isCurrentStage = stage.match(currentStep);
+      if (isCurrentStage) {
+        cls = isChainError ? 'error' : (isChainDone ? 'done' : 'current');
+        reachedCurrent = true;
+      } else if (!reachedCurrent) {
+        cls = 'done';  // steg fore det aktuella - redan avklarat
+      }
+      // annars: steg efter det aktuella, inte natt dit an - forvald (grabone) stil
+    }
+    return `
+      <div class="pipeline-stage ${cls}">
+        <span class="stage-name">${esc(stage.name)}</span>
+        ${stage.sub ? `<span class="stage-sub">${esc(stage.sub)}</span>` : ''}
+      </div>
+      ${i < PIPELINE_STAGES.length - 1 ? '<div class="pipeline-arrow">→</div>' : ''}
+    `;
+  }).join('');
+
+  return `<div class="pipeline-flow">${stageHtml}</div>`;
+}
+
 function renderHypotheses(state) {
   const el = document.getElementById('hypotheses');
-  const hyps = state.hypotheses || [];
-  if (!hyps.length) {
+  const allHyps = state.hypotheses || [];
+  const onlyPassed = document.getElementById('passedOnly').checked;
+  const hyps = onlyPassed ? allHyps.filter(h => h.status === 'passed') : allHyps;
+  const hiddenCountEl = document.getElementById('hiddenCount');
+  const hiddenCount = allHyps.length - hyps.length;
+  hiddenCountEl.textContent = hiddenCount ? `(${hiddenCount} dolda - status inte "passed")` : '';
+
+  if (!allHyps.length) {
     el.innerHTML = `<div class="empty-state">Inga hypoteser i registret ännu.</div>`;
+    return;
+  }
+  if (!hyps.length) {
+    el.innerHTML = `<div class="empty-state">Inga hypoteser med status "passed" ännu — avmarkera filtret ovan för att se alla ${allHyps.length}.</div>`;
     return;
   }
   el.innerHTML = hyps.map(h => {
@@ -296,6 +451,7 @@ function renderHypotheses(state) {
         <pre>${esc(h.pass_fail_criterion)}</pre>
       </details>
       ${h.yaml_notes ? `<div class="kv"><b>Anteckning i YAML:</b> ${esc(h.yaml_notes)}</div>` : ''}
+      ${renderAttribution(h.attribution)}
       ${renderNotesList(notes)}
       ${renderNoteForm('hypothesis', h.id)}
     </div>
@@ -303,22 +459,83 @@ function renderHypotheses(state) {
   }).join('');
 }
 
+// Visar scripts/attribution.py:s rapport (om den finns) för en hypotes -
+// faktorregression, sektorexponering mot basuniversumet, friktionsdrag.
+// Rent visande, ingen skrivbar yta - matchar samma "läs bara JSON från
+// disk"-princip som resten av dashboarden.
+function renderAttribution(attribution) {
+  if (!attribution || !attribution.length) return '';
+  const levels = attribution.filter(a => !a.error).map(levelReport => {
+    const level = levelReport.capital_level;
+    const fr = levelReport.factor_regression || {};
+    const fd = levelReport.friction_drag || {};
+    const se = levelReport.sector_exposure || {};
+
+    const frHtml = fr.error
+      ? `<div class="attr-sub">Faktorregression: ${esc(fr.error)}</div>`
+      : `<div class="attr-row"><span>Alfa (FF5+MOM)</span><span>${(fr.alpha_annual * 100).toFixed(1)}%/år (t=${fr.alpha_t_stat.toFixed(2)}${fr.alpha_significant ? ', signifikant' : ''}), R²=${fr.r_squared.toFixed(2)}</span></div>`;
+
+    const fdHtml = fd.error
+      ? `<div class="attr-sub">Friktionsdrag: ${esc(fd.error)}</div>`
+      : `<div class="attr-row"><span>Friktionsdrag</span><span>${fd.mean_drag_pp >= 0 ? '+' : ''}${fd.mean_drag_pp.toFixed(2)}pp/trade (${fd.n_trades} trades)</span></div>`;
+
+    const sectorRows = se.error
+      ? `<div class="attr-sub">Sektorexponering: ${esc(se.error)}</div>`
+      : (se.sectors || []).slice(0, 3).map(row => {
+          const over = row.overrepresentation_ratio && row.overrepresentation_ratio > 1.5;
+          const ratio = row.overrepresentation_ratio ? `${row.overrepresentation_ratio.toFixed(1)}x` : 'n/a';
+          return `<div class="attr-row ${over ? 'over' : ''}"><span>SIC ${esc(row.sic_major_group)} ${esc((row.label || '').slice(0, 28))}</span><span>${(row.pct_of_portfolio * 100).toFixed(0)}% (universum ${(row.pct_of_base_universe * 100).toFixed(0)}%, ${ratio})</span></div>`;
+        }).join('');
+
+    return `<div class="attr-level"><b>$${Number(level).toLocaleString('sv-SE')}</b>${frHtml}${fdHtml}${sectorRows}</div>`;
+  }).join('');
+
+  if (!levels) return '';
+  return `
+    <details class="attribution">
+      <summary>Visa attributionsrapport (alfa vs. sektor/friktion, scripts/attribution.py)</summary>
+      ${levels}
+    </details>
+  `;
+}
+
+function candidateTriageRow(c, hasNotes) {
+  if (c.archived) return `<span class="badge archived">Släng (arkiverad)</span>`;
+  if (c.component) return `<span class="badge other">Komponent</span>`;
+  if (c.draft_hypothesis_id) return `<span class="badge pre-registered">Godkänd → ${esc(c.draft_hypothesis_id)} (utkast)</span>`;
+  if (!hasNotes) return `<span class="note-hint">Skriv en anteckning ovan för att kunna kategorisera denna kandidat.</span>`;
+  return `
+    <button onclick="markComponent('${esc(c.id)}')">Komponent</button>
+    <button class="primary" onclick="draftHypothesis('${esc(c.id)}')">Godkänn</button>
+    <button onclick="archiveCandidate('${esc(c.id)}')">Släng</button>
+  `;
+}
+
 function renderCandidates(state) {
   const el = document.getElementById('candidates');
-  const cands = state.candidates || [];
+  const countEl = document.getElementById('unviewedCount');
+  const allCands = state.candidates || [];
+  const viewed = getViewedSet();
+  const unviewedTotal = allCands.filter(c => !viewed.has(String(c.id))).length;
+  countEl.textContent = unviewedTotal ? `(${unviewedTotal} ej granskade)` : '';
+
+  const onlyUnviewed = document.getElementById('unviewedOnly').checked;
+  const cands = onlyUnviewed ? allCands.filter(c => !viewed.has(String(c.id))) : allCands;
+
   if (!cands.length) {
-    el.innerHTML = `<div class="empty-state">Inga kandidatidéer ännu — Hypothesis Miner har inte lagt till något i candidate_ideas.md.</div>`;
+    el.innerHTML = `<div class="empty-state">${onlyUnviewed ? 'Inga ogranskade kandidatidéer — allt granskat.' : 'Inga kandidatidéer ännu — Hypothesis Miner har inte lagt till något i candidate_ideas.md.'}</div>`;
     return;
   }
   el.innerHTML = cands.map(c => {
     const notes = notesFor(state, 'candidate', c.id);
+    const isUnviewed = !viewed.has(String(c.id));
     return `
     <div class="card">
       <div class="card-head">
         <div class="card-title">${esc(c.header || ('Kandidat ' + c.id))}</div>
-        ${c.archived
-          ? '<span class="badge archived">Arkiverad</span>'
-          : `<button onclick="archiveCandidate('${esc(c.id)}')">Arkivera</button>`}
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap: wrap;">
+          ${isUnviewed ? `<span class="badge unviewed">Ny</span>` : ''}
+        </div>
       </div>
       <div class="kv">
         <div><b>Källa:</b> ${esc(c.source || '—')}</div>
@@ -327,6 +544,15 @@ function renderCandidates(state) {
       </div>
       ${renderNotesList(notes)}
       ${renderNoteForm('candidate', c.id)}
+      <div style="display:flex; gap:8px; flex-wrap: wrap; align-items:center;">
+        <a class="dl-link" href="/api/candidate/${encodeURIComponent(c.id)}/download" download>Ladda ner</a>
+        ${isUnviewed
+          ? `<button onclick="markViewed('${esc(c.id)}')">Markera som granskad</button>`
+          : `<button disabled>Granskad ✓</button>`}
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap: wrap; align-items:center; border-top: 1px solid var(--hairline); padding-top: 10px;">
+        ${candidateTriageRow(c, notes.length > 0)}
+      </div>
     </div>
   `;
   }).join('');
@@ -383,6 +609,7 @@ async function refresh() {
     document.getElementById('conn').classList.remove('down');
     document.getElementById('generatedAt').textContent = state.generated_at ? state.generated_at.replace('T', ' ').slice(0, 19) + ' UTC' : '—';
     renderStats(state);
+    renderPipelineMap(state);
     renderHypotheses(state);
     renderCandidates(state);
     renderChart(state);
@@ -394,6 +621,22 @@ async function refresh() {
 
 async function archiveCandidate(id) {
   await fetch(`/api/candidate/${encodeURIComponent(id)}/archive`, { method: 'POST' });
+  refresh();
+}
+
+async function markComponent(id) {
+  await fetch(`/api/candidate/${encodeURIComponent(id)}/mark-component`, { method: 'POST' });
+  refresh();
+}
+
+async function draftHypothesis(id) {
+  const res = await fetch(`/api/candidate/${encodeURIComponent(id)}/draft-hypothesis`, { method: 'POST' });
+  const data = await res.json();
+  if (!data.ok) {
+    alert('Kunde inte skapa utkast:\n' + data.message);
+  } else {
+    alert(`Utkast skapat: ${data.id} (${data.file}).\nÖppna filen i research/hypothesis_registry/ och skriv in universe + pass_fail_criterion själv innan den kan sättas pre-registered.`);
+  }
   refresh();
 }
 

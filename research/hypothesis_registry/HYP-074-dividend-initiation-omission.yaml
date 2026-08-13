@@ -1,0 +1,133 @@
+# LÅST 2026-08-12 av CEO i chatt ("gör det sen välje och skriv 2-3
+# kandidater", efter en cross-AI-konvergensanalys samma dag - se
+# research/candidate_ideas.md, posten daterad 2026-08-12). Del av samma
+# 3-kandidat-batch som HYP-072/HYP-073 (k_total 68 -> 71 vid
+# låsningstillfället, samtliga tre låsta samtidigt).
+#
+# KONVERGENSURVAL: en extern AI-källa föreslog denna direkt (kapital-
+# allokeringspolicy-chock, INTE som en yield-/värdesignal) + Claudes egen
+# avbrutna riktning, oberoende av varandra.
+#
+# FEASIBILITY: KRÄVER INGEN NY EXTERN DATAKÄLLA - byggs helt på den redan
+# existerande, redan verifierade adjusted_close/close-kvot-pipelinen (samma
+# fält som redan används för utdelnings-/split-sanering i data_hygiene.py).
+# Detta är den billigaste av de tre kandidaterna i denna batch.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-074
+date_registered: '2026-08-12'
+title: "Utdelningsinitiering/-indragning - kapitalallokeringspolicy-chock"
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla (HYP-008:s
+  redan låsta definition, filed-datum-korrigerat universum)
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, 2010-01-01 till 2024-12-31 (huvudperiod) + genuin
+  blind OOS-2025. Ingen ny extern datakälla - se feasibility-notering ovan.
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  UTDELNINGSHÄNDELSE-DETEKTERING (per ticker, daglig kontroll av den redan
+  beräknade adjusted_close/close-kvoten): en dag klassificeras som en
+  UTDELNINGSJUSTERING om dag-till-dag-förändringen i kvoten ligger strikt
+  mellan -3.0% och -0.01% (särskiljer den från splittar, som typiskt ger
+  betydligt större, ofta rundtals-fraktionerade steg som redan hanteras av
+  den befintliga split-sanerings-logiken) OCH dagen inte redan är maskad av
+  flag_implausible_liquidity() eller mask_unrecovered_price_breaks().
+
+  INITIERING: en ticker med NOLL utdelningsjusteringsdagar under sina
+  tillgängliga föregående 36 kalendermånader, följt av dess FÖRSTA
+  utdelningsjusteringsdag → LONG-entry nästa handelsdag.
+
+  INDRAGNING: en ticker med utdelningsjusteringsdagar i minst 3 av sina
+  senaste 4 kalenderkvartal (etablerad regelbunden betalare), följt av ETT
+  FULLT kvartal (63 handelsdagar) UTAN någon utdelningsjusteringsdag, räknat
+  från slutet av det senast observerade utdelningskvartalet → SHORT-entry
+  nästa handelsdag efter att detta 63-dagarsfönster utan händelse löpt ut.
+
+  HÅLLPERIOD: FAST 120 handelsdagar för båda benen (låst - motiverat av att
+  den underliggande akademiska evidensen för post-eventdrift efter
+  utdelningspolicy-förändringar specifikt gäller LÅNGA horisonter, till
+  skillnad från de kortare fönster som redan testats för andra
+  eventsignaler i registret). Likaviktat inom vardera benet. INGEN
+  tvingad dollarneutralitet mellan benen (asymmetriskt antal händelser
+  förväntas - exponeringsobalansen redovisas som disclosure, inte gated).
+
+  MINIMUM-N-SPÄRR (adresserar att detta börsvärdesband innehåller många
+  bolag utan utdelning alls): om FÄRRE ÄN 30 initieringshändelser
+  INTRÄFFAR över hela 2010-2024-perioden, exkluderas LONG-benet från
+  PASS/FAIL-bedömningen och redovisas i stället som
+  otillräckligt-N-resultat. Samma regel, samma tröskel (30), gäller
+  oberoende för SHORT-benet (indragningar). Om BÅDA benen är
+  otillräckligt-N: hela hypotesen avbryts som FEASIBILITY-FAIL, inget
+  PASS/FAIL-resultat görs anspråk på.
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, flag_implausible_liquidity()) samt
+  mask_unrecovered_price_breaks() (byggd 2026-08-09). borrow_cost 3%/år samt
+  Corwin-Schultz-spread på entry/exit för SHORT-benet.
+
+  PASS KRÄVER, FÖR VARJE BEN MED TILLRÄCKLIGT N (var för sig, på den
+  avgörande $100k-nivån, rapporterat för alla tre kapitalnivåer):
+  1. Sharpe (efter friktion) >= 0.55.
+  2. MaxDD INTE sämre än -50%.
+
+  FAIL för ett givet ben om något villkor faller vid $100k för det benet.
+  Om ENDAST ett ben har tillräckligt N, avgör det benet ensamt hypotesens
+  PASS/FAIL-status (redovisas explicit som ett enbens-resultat, inte
+  jämförbart rakt av med tvåbens-hypoteser i registret).
+
+  OBLIGATORISK DISCLOSURE (icke-gating): totalt antal initierings- respektive
+  indragningshändelser funna, samt avkastning per enskilt kalenderår för
+  vardera benet (samma kontroll som HYP-053 fick, för att verifiera att
+  inget enskilt år eller enskild position dominerar resultatet).
+
+  Diagnostiskt syfte: testar om en FÖRÄNDRING i ledningens
+  kapitalallokeringspolicy (inte utdelningsNIVÅN eller -avkastningen, som
+  redan är en känd, väl utforskad värde-/carry-signal) är en distinkt
+  händelsedriven mekanism - ett "commitment device" som är kostsamt att
+  fejka, vilket skiljer den från prisbaserad momentum/trend/vol och från de
+  redan FAILADE redovisningsfaktorerna (book-to-market, rörelselönsamhet,
+  PEAD/SUE).
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 68
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  initiation_long_n_events: 9
+  omission_short_n_events: 16
+  min_n_required: 30
+result_summary: >
+  FEASIBILITY-FAIL, INGEN PASS/FAIL-BEDOMNING GJORD (per kriteriets egen
+  minimum-N-sparr - se ovan). Bada benen föll under det lasta N-golvet pa
+  30 handelser over hela 2010-2024-perioden: LONG (initiering) gav bara 9
+  giltiga handelser (efter universums-/prisfilter, av 104 rakandelar
+  innan filter), SHORT (indragning) gav 16 (av 171 rakandelar innan
+  filter). Det stora bortfallet mellan "rakandelar" och "giltiga
+  handelser" beror pa 36-manaders-historik-kravet for LONG-benet
+  (eliminerar det mesta av universumet, som saknar sa lang sammanhangande
+  prishistorik i cachen) och universums-/prisfilter for BADA benen.
+
+  KODBUGG UPPTACKT OCH FIXAD 2026-08-12 (fore denna siffra faststalldes):
+  SHORT-benets positionsstorlekssattning anvande ursprungligen `cash`
+  (som obegransat vaxer av blankningslikvider utan att motsvarande
+  skuld dras av) som bas for nya positioners storlek - samma bugg som
+  gav HYP-073 en -752% MaxDD innan fix. Fixad till att storleksatta mot
+  AVSTAENDE kapacitet av capital_level (redan hallna positioners varde
+  subtraherat forst). SIFFRORNA NEDAN AR EFTER FIXEN.
+
+  Diagnostiskt (icke-gating, disclosure): rapporterade Sharpe/MaxDD-tal
+  ($100k: LONG Sharpe -0.089, MaxDD -98.6%; SHORT Sharpe +0.023, MaxDD
+  -69.2%) ar INTE tillforlitliga signaler i endera riktning givet
+  N<<30 - en enda position dominerar sannolikt resultatet vid dessa
+  urvalsstorlekar (SHORT-benets MaxDD naste -100% ar matematiskt mojligt
+  for en blankad position, se blankningens obegransade nedsida, men med
+  bara 16 handelser totalt kan INTE detta skiljas fran brus). Ingen
+  slutsats dras om mekanismens egentliga edge - detta ar ett datavolym-
+  problem (for fa small-cap-bolag i $100M-$2B-bandet med tillrackligt
+  lang, ren utdelningshistorik i universumet), inte ett testat-och-
+  underkant resultat. Skulle kunna aterupptas med en langre datahistorik
+  eller ett bredare bolagsvarde-band om en framtida hypotes vill
+  undersoka samma mekanism, men kraver da en ny, separat lasning.

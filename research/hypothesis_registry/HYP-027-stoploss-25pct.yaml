@@ -1,0 +1,82 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Del av BATCH-001 (5 kandidater, HYP-025 till
+# HYP-029) - se CLAUDE.md, avsnitt "Batch Hypothesis Generation" for de
+# procedurregler som galler: alla 5 skrevs i EN omgang, INGEN backtest
+# kord och INGA resultat sedda mellan kandidaterna, hela batchen las av
+# CEO samtidigt, k_total okar med 5 vid lasningstillfallet.
+#
+# MALFALL: samma som HYP-025 (se den filen for full bakgrund om HYP-018:s
+# misslyckande) - denna kandidat ar batchens MITTPUNKT mellan HYP-018:s
+# -20% och HYP-025/026:s djupare trosklar.
+#
+# Byggd PA HYP-023 (nuvarande referensimplementation), stop-loss som
+# TREDJE lager efter SPY-overlay och sektor-trigger.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-027
+date_registered: '2026-07-31'
+title: Per-position stop-loss -25% pa HYP-023 (BATCH-001, kandidat 3/5)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD, sektor-krasch-trigger pa bank-/finanskomposit
+  OFORANDRAD - samma friktion/hedge/kapacitetsspärr, samma tre motorfixar). Enda tillagget: ett
+  TREDJE lager, ett DAGLIGT per-position stop-loss - EFTER bade SPY-overlayen och sektor-triggern i
+  samma loop-iteration (samma ordning som HYP-018).
+
+  Stop-loss, exakt specificerad (INTE fri, INTE anpassad efter denna eller nagon annan kandidats
+  resultat - vald INNAN nagon backtest i BATCH-001 kors):
+  - Kontrolleras VARJE handelsdag.
+  - Trigger: en enskild positions avkastning sedan koptillfallet (pa adjusted_close) faller under
+    -25% - EN ENDA DAGS observation racker (ingen flerdagarsbekraftelse).
+  - Vid trigger: STANG HELA positionen (samma mekanik som HYP-018).
+  - Aterkop sker INTE automatiskt - forst vid nasta ordinarie kvartalsvisa ombalansering.
+  - Ordning: SPY-overlay -> sektor-trigger -> stop-loss-kontroll, i den ordningen, samma dag.
+
+  MOTORKRAV (samma som HYP-015/017/022/023): snappade ombalanseringsdatum, adjusted_close
+  genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer.
+  2. Maxdrawdown STRIKT BATTRE an HYP-023:s EGET resultat pa SAMMA kapitalniva (100k: battre an
+     -25.46%, 1M: battre an -19.29%, 10M: battre an -13.16%).
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte: testar mittpunkten mellan HYP-018:s misslyckade -20% och batchens djupare
+  varianter (-30%/-35%) - ger en tredje datapunkt for att se om forbattringen (om nagon) ar
+  monoton i trosklens djup eller om det finns en icke-linjar brytpunkt.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 23
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1135, sharpe: 0.6989, calmar: 0.4883, sharpe_excl_best_trade: 0.6544, max_drawdown: -0.2325, win_rate: 0.5230, profit_factor: 1.6268, n_trades: 2193, march_2023_episode_return: -0.1388, deflated_sharpe_ratio: 0.7257}
+  1000000: {cagr: 0.1149, sharpe: 0.7214, calmar: 0.5701, sharpe_excl_best_trade: 0.6753, max_drawdown: -0.2015, win_rate: 0.5230, profit_factor: 1.6268, n_trades: 2193, march_2023_episode_return: -0.0839, deflated_sharpe_ratio: 0.7541}
+  10000000: {cagr: 0.0909, sharpe: 0.6865, calmar: 0.6837, sharpe_excl_best_trade: 0.6781, max_drawdown: -0.1330, win_rate: 0.5235, profit_factor: 1.6268, n_trades: 2193, march_2023_episode_return: -0.0237, deflated_sharpe_ratio: 0.7073}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED. Sharpe 0.70/0.72/0.69 klarar 0.55-golvet, MEN MaxDD-villkoret
+  haller BARA vid $100k (-23.25% mot HYP-023:s -25.46%, den storsta
+  100k-forbattringen bland de tre enda-dags-djup-varianterna). Vid $1M
+  blir MaxDD samre (-20.15% mot -19.29%, batchens storsta 1M-forsamring),
+  och vid $10M ocksa samre (-13.30% mot -13.16%).
+
+  Se HYP-025 (samma batch, kandidat 1/5) for den fullstandiga
+  BATCH-001-jamforelsetabellen och den delade tolkningen: samtliga fem
+  misslyckas pa samma satt oavsett trosklens djup.
+
+  ROBUSTHET: sharpe_excl_best_trade forblir 0.65/0.68/0.68 - fortfarande
+  over 0.55-golvet, ingen enskild-trade-artefakt.
+
+  SLUTSATS: HYP-023 forblir referensimplementationen OFORANDRAD.
+sharpe_raw:
+  100000: 0.6989
+  1000000: 0.7214
+  10000000: 0.6865
+deflated_sharpe_ratio:
+  100000: 0.7257
+  1000000: 0.7541
+  10000000: 0.7073

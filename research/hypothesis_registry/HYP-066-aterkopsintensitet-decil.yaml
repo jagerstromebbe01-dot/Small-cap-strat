@@ -1,0 +1,116 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås kör"), innan denna hypotes sätts
+# pre-registered eller någon backtest körs.
+#
+# URSPRUNG: andra riktningen i "bredda alfa-sökrymden inom aktier"-
+# diskussionen samma dag (den första, textsentiment fran 10-K/10-Q,
+# sparades till en senare, storre session pga betydligt tyngre bygge).
+# Genuint NY mekanismtyp - aterkop har aldrig testats i registret
+# tidigare (skiljer sig fran insiderkop/HYP-035, som ar en HELT annan
+# signal - insiders egna kop, inte bolagets eget aterkop av aktier).
+#
+# FEASIBILITY (verifierad 2026-08-11, INNAN lasning): SEC EDGAR XBRL har
+# strukturerade taggar for aterkop (PaymentsForRepurchaseOfCommonStock +
+# tva reservtaggar), verifierat direkt mot API:et. data/fetch_buyback_history.py
+# kord mot hela small-cap-universumet (5162 tickers): 45.3% har rapporterat
+# minst ett aterkop, 43.7% har giltig data men aldrig aterkopt (ett
+# GILTIGT nej-svar, inte saknad data), 11.0% saknar tillrackligt data.
+# Stickprovskoll av manatliga aktiva positiv-aterkops-pooler (2011-2024):
+# 117-434 kvalificerande namn per ar - langt ifran HYP-033:s katastrofala
+# 1-6 namn (samma B/M-vardefaktor-motor, men den taggen hade bara 9%
+# tackning).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-066
+date_registered: '2026-08-11'
+title: "Återköpsintensitet ($ återköpt / marknadsvärde), toppdecilen, rå signal"
+universe: "$100M-$2B börsvärde, EODHD All-World, samma small-cap-universum
+  som resten av registret (HYP-008:s ursprungliga definition, oförändrad)."
+small_cap_definition: "small-cap, $100M-$2B börsvärde, EODHD All-World -
+  identisk med HYP-017/023/037:s redan låsta definition."
+data_range: "2010-01-01 till 2024-12-31 huvudperiod + genuin OOS-2025."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Motor: HYP-024:s redan validerade backtest-motor (data-sanering,
+  adjusted_close, flag_implausible_liquidity, snap_rebalance_dates,
+  SPY-beta-hedge, friktion via corwin_schultz_spread + borrow_cost,
+  kapacitetsspärr ADV*10%) - INGEN ny motor byggd, ren signalersättning.
+
+  SIGNAL: buyback_intensity(ticker, datum) = senaste FILADE 10-K:s
+  årliga $ återköpt (PaymentsForRepurchaseOfCommonStock, två reservtaggar
+  vid saknad primärtagg) / aktuellt marknadsvärde vid ombalanserings-
+  datumet (pris × senast filade aktieantal, forward-fyllt). Bara namn med
+  STRIKT POSITIVT värde (dvs faktiskt genomfört återköp) är kvalificerade
+  för decilen - namn utan återköpsdata eller med värde <=0 exkluderas
+  helt från urvalet den perioden (inte tvingas in med värde 0).
+
+  Kvartalsvis ombalansering (samma snappade datum som resten av
+  registret). Toppdecilen (10%) av kvalificerande namn, likaviktat.
+
+  INGEN bank-/finansexklusion (till skillnad från HYP-024, vars
+  operating-margin-signal inte var jämförbar för banker/REITs - $
+  återköpt/marknadsvärde ÄR en jämförbar kvot oavsett sektor, en
+  medveten skillnad mot HYP-024:s motor, redovisad här explicit).
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (huvudperioden 2010-2024,
+  friktionskorrekt):
+  1. Sharpe >= 0,55.
+
+  FAIL om villkoret faller vid $100k-nivån.
+
+  MaxDD rapporteras INFORMATIVT (icke-gating, samma konvention som
+  HYP-024/033). Alla tre kapitalnivåer testas och rapporteras. OOS-2025
+  körs och rapporteras.
+
+  Diagnostiskt syfte: testar en genuint ny mekanismtyp (bolagets eget
+  kapitalallokeringsbeslut, INTE insiderköp/HYP-035 eller någon redan
+  testad prisbaserad/redovisningsbaserad signal) - well-dokumenterad
+  akademisk anomali (open market repurchase-litteraturen, Ikenberry/
+  Lakonishok/Vermaelen-traditionen) aldrig testad i detta universum.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 64
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1645, sharpe: 0.3072, calmar: 0.246, max_drawdown: -0.6685, n_trades: 531, oos_2025_sharpe: -0.2869, oos_2025_max_drawdown: -0.7013, oos_2025_total_return: -0.4847}
+  1000000: {cagr: 0.1672, sharpe: 0.3079, calmar: 0.236, max_drawdown: -0.7090, n_trades: 531, oos_2025_sharpe: 0.1780, oos_2025_max_drawdown: -0.3160, oos_2025_total_return: 0.0175}
+  10000000: {cagr: 0.0769, sharpe: 0.3393, calmar: 0.106, max_drawdown: -0.7264, n_trades: 531, oos_2025_sharpe: 0.0830, oos_2025_max_drawdown: -0.2697, oos_2025_total_return: -0.0002}
+date_tested: '2026-08-11'
+result_summary: >
+  FAILED RENT PA DEN AVGORANDE $100k-NIVAN (enda gating-villkoret,
+  Sharpe>=0,55): 0,3072, klart under golvet (inte ett gransfall). Samma
+  Sharpe-mönster på alla tre nivåer (0,31-0,34) - ingen kapacitetsspärr-
+  räddning som i vissa tidigare hypoteser.
+
+  DIAGNOS: CAGR ar faktiskt hyfsad vid lagre kapitalnivaer (16,45%/16,72%
+  vid $100k/$1M) men Sharpen dras ner av en MYCKET hog volatilitet/MaxDD
+  (-66,85% till -72,64% pa alla tre nivaer, informativt men allvarligt) -
+  Calmar bara 0,11-0,25. $10M-nivan visar tydlig kapacitetsdegradering pa
+  CAGR (7,69% mot $100k/$1M:s ~16,5%) utan att Sharpen forbattras
+  (fortfarande 0,34) eftersom bade avkastning och risk faller ungefar
+  proportionellt.
+
+  531 avslutade positioner over 64 kvartal (16 ar) - lagre omsattning an
+  manga andra registerhypoteser, konsistent med att signalen ar ARSVIS
+  (10-K-baserad, forward-fylld ett helt ar) snarare an kvartalsvis
+  uppdaterad, sa decilens sammansattning ar relativt trog/sticky mellan
+  kvartal - INTE ett tecken pa ett trasigt/tomt urval (feasibility-
+  kollen fore lasning visade 117-434 kvalificerande namn/ar).
+
+  OOS-2025: blandat och svagt - negativt vid $100k (-48,47%, varsta
+  MaxDD i hela testet -70,13%), nastan noll vid $1M/$10M (+1,75%/-0,02%).
+  Ingen kapitalnivakonsistens i OOS heller.
+
+  SLUTSATS: aterkopsintensitet som RA, ohedgeAD signal ger inte
+  tillrackligt riskjusterad avkastning i detta small-cap-universum - hog
+  volatilitet/MaxDD ater upp en annars respektabel CAGR. Konsistent med
+  ett annat monster an de flesta tidigare FAIL i registret (dar Sharpen
+  oftast var lag pga svag/negativ RA avkastning) - har ar bruttoresultatet
+  faktiskt högt, men riskprofilen for hog for att kvalificera. HYP-047/056
+  forblir referensen, oforandrad. Ingen krasch-overlay eller riskverktyg
+  testades har (samma "ra signal forst"-monster som HYP-015/017,
+  HYP-024/HYP-017 osv) - om aterkop ska tas vidare kraver det en egen,
+  separat last overlay-hypotes, inte en automatisk fortsattning.

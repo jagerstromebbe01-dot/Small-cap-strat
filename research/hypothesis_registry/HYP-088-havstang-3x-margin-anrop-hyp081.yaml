@@ -1,0 +1,185 @@
+# LÅST 2026-08-13 av CEO i chatt ("kör dsr sen 1" - punkt 1 var att
+# formalisera hävstångsuppföljningen). HYP-087:s 3,0x-DISCLOSURE
+# ($100k: Sharpe 1,1387, CAGR 16,44%, MaxDD -14,06%, NOLL marginalanrop)
+# var slående nog för att motivera en EGEN, dedikerad låsning - samma
+# procedur som redan etablerad i registret (HYP-059:s diagnostik valde
+# HYP-065:s nivå INNAN låsning, ingen K-kostnad för själva diagnostiken/
+# disclosuren - K betalas här, vid den faktiska låsningen och körningen
+# av HYP-088 som sitt eget test).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-088
+date_registered: '2026-08-13'
+title: "Hävstång (3,0x, gating) med marginalanrop/tvingad nedskalning som overlay på HYP-081"
+universe: "N/A - portföljnivå-hävstång på HYP-081:s redan existerande,
+  färdigberäknade kombinerade portfölj. Ingen ny small-cap-signal, inget
+  nytt handelsuniversum, ingen ny prismatris, ingen ny backtest-motor."
+small_cap_definition: "N/A - se HYP-059/065/087:s identiska motivering."
+data_range: "Samma period som HYP-081/087 (2010-2024 huvudperiod +
+  genuin OOS-2025), återanvänder HYP-081:s redan beräknade
+  portföljvärdesserier oförändrade."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja - IDENTISK
+  marginalanrops-mekanism som HYP-059/065/087, ENDA skillnaden är
+  hävstångsNIVÅN, 3,0x istället för 2,5x):
+
+  Hävstång FAST vid 3,0x (GATING) på HYP-081:s redan kombinerade
+  portföljvärdesserie, FAKTISK daglig compoundering. Lånekostnad på det
+  lånade kapitalet: RF (2%/år) + KONSERVATIV spread (1,5%/år) = 3,5%/år
+  totalt (gating-antagande). Stressad spread (3,0%/år, 4,5%/år totalt)
+  samt hävstångsnivåerna 1,5x/2,0x/2,5x rapporteras för ALLA tre
+  kapitalnivåer som OBLIGATORISK, ICKE-GATING disclosure.
+
+  MARGINALANROP (identiskt med HYP-059/065/087): om portföljens EGEN
+  levererade drawdown från sitt rullande högsta-vattenmärke når -15%,
+  tvingas hävstången SAMMA dag ner till 1,0x + 0,5% forced-sale-
+  slippage på den nedskalade notionalen. Återlåning GRADVIS
+  (+0,05x/handelsvecka), ENDAST när drawdown återhämtat sig förbi -5%.
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN (huvudperioden
+  2010-2024, konservativ spread):
+  1. Sharpe (marginalanrops-justerad) >= 1,0.
+  2. CAGR > HYP-081:s EGEN redan uppmätta CAGR vid $100k (7,87%) med
+     minst +5,0 procentenheter marginal, dvs > 12,87% (SAMMA
+     jämförelsepunkt som HYP-087 använde - inte en flyttad måltavla).
+  3. MaxDD inte sämre än -20%.
+
+  FAIL om något villkor faller vid $100k-nivån under gating-antagandet.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal marginalanrop, andel
+  dagar under målhävstången, per nivå och spread-antagande, samt
+  jämförelse rad för rad mot HYP-087:s egna redan rapporterade 2,5x-tal
+  (för att kvantifiera den faktiska avvägningen mellan de två
+  hävstångsnivåerna, inte bara konstatera att båda "passerar").
+
+  Diagnostiskt syfte: testar om 3,0x-nivån - som redan visats i HYP-087:s
+  disclosure ge CAGR tydligt över 16% utan marginalanrop - håller för en
+  formell, dedikerad låsning och därmed kan bli den nya
+  hävstångsstandarden istället för 2,5x.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 84
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-13'
+result:
+  100000: {sharpe: 1.1387, cagr: 0.1644, max_drawdown: -0.1406, calmar: 1.170, deflated_sharpe_ratio: 0.9587, n_margin_calls: 0, oos_2025_sharpe: 1.4636}
+  1000000: {sharpe: 1.1095, cagr: 0.1601, max_drawdown: -0.1405, calmar: 1.139, deflated_sharpe_ratio: 0.9485, n_margin_calls: 0, oos_2025_sharpe: 1.5138}
+  10000000: {sharpe: 1.0591, cagr: 0.1466, max_drawdown: -0.1370, calmar: 1.070, deflated_sharpe_ratio: 0.9252, n_margin_calls: 0, oos_2025_sharpe: 1.6434}
+result_summary: >
+  PASSADE PA ALLA TRE VILLKOREN, PA ALLA TRE KAPITALNIVAER, MED ZERO
+  MARGINALANROP - identiska tal som HYP-087:s disclosure (samma
+  deterministiska berkning), nu formellt lasta och testade som eget
+  villkor. Sharpe 1,1387/1,1095/1,0591 (marginal mot 1,0-golvet: +0,14/
+  +0,11/+0,06). CAGR 16,44%/16,01%/14,66%. MaxDD -14,06%/-14,05%/-13,70%.
+  DSR (K=85) 0,93-0,96 - fortfarande mycket hogt trots hogre havstang.
+
+  JAMFORELSE MOT HYP-087:s 2,5x ($100k): Sharpe 1,1387 mot 1,1631 (2,5x
+  nagot hogre marginal mot 1,0-golvet), CAGR 16,44% mot 14,31% (3,0x
+  ger +2,13pp mer avkastning), MaxDD -14,06% mot -11,59% (3,0x ger
+  2,47pp djupare drawdown). En AKTA avvagning, inte en entydig seger for
+  nagondera nivan - 3,0x byter en liten bit Sharpe-marginal och nagot
+  djupare drawdown mot betydligt hogre CAGR, fortfarande inom det lasta
+  -20%-taket med god marginal.
+
+  Diagnostiskt: bade 2,5x (HYP-087) och 3,0x (HYP-088) haller nu som
+  formellt lasta, testade havstangsnivaer pa HYP-081-basen, bada UTAN
+  ett enda marginalanrop over hela 15-arsperioden - en kvalitativt
+  annan situation an HYP-059/065:s tidigare, mer anstrangda resultat.
+  Valet mellan dem (eller ett mellanlage) ar en explicit CEO-avvagning
+  mellan Sharpe-marginal och CAGR-hojd, inte ett teknisk sporsmal -
+  inget automatiskt val gors har.
+
+# CEO-BESLUT 2026-08-13: 3,0x (HYP-088, denna hypotes) VALD som den
+# faktiska hävstångsstandarden ovanpå HYP-081, inte 2,5x (HYP-087).
+# Fullständig referensimplementation är därmed: HYP-081 (obelånad
+# femte-bens-kombination) + HYP-088 (3,0x hävstång med marginalanrop).
+# HYP-087 kvarstår PASSED, oförändrad, som ett dokumenterat, testat
+# alternativ - inte längre den valda nivån.
+#
+# TILLÄGG 2026-08-13 (syntetiskt stresstest, CEO-begärt, INGEN K-kostnad,
+# ändrar INGET låst resultat - scripts/diagnostic_hyp088_synthetic_stress_test.py,
+# kör den EXAKTA, redan låsta simulate_leverage_with_margin_calls-funktionen
+# oförändrad mot konstruerade syntetiska serier, ingen omimplementation):
+# motiverat av att marginalanropsmekanismen ALDRIG faktiskt triggat över
+# de 15 riktiga historiska åren (0 anrop på alla nivåer, se result ovan) -
+# ett overifierat skyddsnät i praktiken.
+#
+# FYND 1 (bekräftat korrekt): trigger-, slippage- och återlåningslogiken
+# fungerar exakt som låst - verifierat mot en manuell, oberoende
+# parallellberäkning (scenario 1) och ett exakt +0,05x/vecka-schema
+# (scenario 3).
+#
+# FYND 2 (VIKTIGT, tidigare okänt): en DELVIS återhämtning som inte
+# tydligt passerar RELEVER_GATE (-5%) kan lämna strategin FAST vid låg
+# hävstång (nära 1,0x) på obestämd tid, även under en lugn/flat marknad
+# därefter (scenario 2a - 220 extra flata dagar ändrade ingenting).
+# Hävstången återställs INTE automatiskt bara för att tiden går, bara
+# när drawdown genuint förbättras förbi tröskeln. Detta är en verklig,
+# hittills odokumenterad egenskap hos mekanismen - inte ett fel, men ett
+# skäl till att portföljens FAKTISKA hävstång kan avvika länge från
+# målnivån 3,0x efter en händelse, vilket i sin tur kan sänka realiserad
+# avkastning under en efterföljande återhämtningsperiod jämfört med vad
+# backtesten (som aldrig upplevde detta scenario) antyder.
+#
+# FYND 3 (VIKTIGAST, riskrelevant): i ett scenario tydligt VÄRRE än
+# något i 2010-2025 (-35% underliggande nedgång utan omedelbar studs)
+# når den levererade drawdownen -43,35% - LÅNGT UTANFÖR HYP-088:s egna
+# -20%-tak. -20%-villkoret höll i backtesten bara för att inget så
+# extremt någonsin inträffade under just den perioden - det är INTE en
+# garanti mot framtida extremfall, bara en observation om vad som
+# faktiskt hänt hittills. Skyddsnätet hjälper dock kraftigt (-43% mot
+# -73% UTAN marginalanrop i samma scenario, en 30 procentenheters
+# förbättring) - skillnaden mellan allvarlig skada och praktiskt taget
+# total förlust, men INTE ett hårt golv vid -20%.
+#
+# SLUTSATS: mekanismens KOD är korrekt och gör vad den är designad för
+# att göra. Men den historiska backtestens "0 marginalanrop, MaxDD aldrig
+# sämre än -14%"-resultat ger en falsk trygghetskänsla om att -20%-taket
+# alltid håller - det höll bara för att det aldrig prövades på riktigt.
+# Verklig kapitalinsats med denna hävstång bör ske med medvetenhet om
+# båda dessa fynd, inte bara backtestens redan kända, goda tal.
+#
+# TILLÄGG 2026-08-13, DEL 2 (CEO uttryckte oro efter FYND 3 ovan -
+# scripts/diagnostic_hyp088_stress_test_all_levels.py, samma scenarier
+# körda över HELA den redan testade hävstångsskalan 1,5x/2,0x/2,5x/3,0x,
+# ingen K-kostnad, ingen omimplementation):
+#
+#   Scenario 1 (~-20% underliggande): Värsta DD 1,5x=-24,86%
+#   2,0x=-28,03% 2,5x=-28,34% 3,0x=-30,83%.
+#   Scenario 4 (-35% underliggande, värre än 2010-2025): Värsta DD
+#   1,5x=-38,94% 2,0x=-40,45% 2,5x=-41,27% 3,0x=-43,35%.
+#
+# VIKTIGT, OVÄNTAT FYND: hävstångsNIVÅN (inom det testade intervallet)
+# gör förvånansvärt LITEN skillnad i det extrema scenariot - även 1,5x
+# ger -38,94%, bara ~4,4pp bättre än 3,0x:s -43,35%. FÖRKLARING: när ett
+# tillräckligt djupt, LÅNGVARIGT underliggande fall (20 dagar) inträffar
+# triggar marginalanropet snabbt vid VILKEN som helst av de testade
+# nivåerna (eftersom -15%-tröskeln nås fort oavsett hävstång), varefter
+# ALLA nivåer deleveras till SAMMA golv (1,0x - inte 0x, inget kontant-
+# skydd) och rider ut RESTEN av den långa nedgången identiskt. Den
+# valda hävstångsGRADEN avgör mest hur mycket skada som sker INNAN
+# triggern löser ut (litet, eftersom -15% nås snabbt) - inte hur mycket
+# skada som sker EFTER (stort, eftersom golvet alltid är 1,0x oavsett
+# vald målnivå).
+#
+# KONSEKVENS FÖR BESLUTET: valet mellan 1,5x och 3,0x skyddar allts INTE
+# särskilt mycket mot just DEN HÄR typen av extremscenario (en lång,
+# djup, odämpad nedgång i själva HYP-081-signalen, som ALDRIG inträffat
+# historiskt - HYP-081:s egen värsta uppmätta MaxDD är -4,2%). Genuint
+# lägre svansrisk skulle kräva antingen INGEN hävstång alls (0x extra),
+# eller en OMKONSTRUERAD mekanism som kan deleverera UNDER 1,0x (delvis
+# kontantväxling, inte bara tillbaka till målets golv) - ingetdera testat
+# här, skulle kräva en egen, ny, separat låsning. Detta är alltså inte
+# primärt en "vilken nivå"-fråga utan en "hävstång eller inte, given
+# denna mekanismdesign"-fråga.
+#
+# CEO-BESLUT 2026-08-13 (SLUTGILTIGT): given ovanstående, INGEN hävstång
+# adopteras. HYP-088 (denna hypotes) kvarstår PASSED, oförändrad, som
+# dokumenterat, testat, men EJ adopterat alternativ - inte längre en
+# del av den faktiska referensimplementationen. Se HYP-081:s egen
+# registerpost, tillägg, för det fullständiga beslutet och motiveringen.

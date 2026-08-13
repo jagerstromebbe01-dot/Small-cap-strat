@@ -1,0 +1,116 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås kör"), innan denna hypotes sätts
+# pre-registered eller någon backtest körs.
+#
+# URSPRUNG: tredje AI-brainstormens kandidat (Claude, separat session) -
+# nettoemissionsflöde som kapacitetsbegränsningssignal, en av tre
+# kandidater CEO valde att gå vidare med samma dag (de andra två:
+# HY-spread-overlägg BLOCKERAD av en FRED-licensändring april 2026 som
+# begränsade fri distribution till ett rullande 3-årsfönster, verifierat
+# konkret innan lasning - INTE testad; riskfaktor-textdrift PARKERAD
+# till en egen, ostressad session pga overifierad textextraktions-
+# robusthet, INTE testad).
+#
+# FEASIBILITY (verifierad 2026-08-11, INNAN lasning): SEC EDGAR XBRL-
+# taggen ProceedsFromIssuanceOfCommonStock finns och har rimlig
+# tackning - stickprov 60 tickers gav 65% (39/60), battre an
+# aterkopssignalens 45%. Aterananvander redan hamtad aktieantalsdata
+# fran buyback_by_ticker.jsonl for marknadsvarde.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-071
+date_registered: '2026-08-11'
+title: "Nettoemissionsflöde (nyemission minus återköp / marknadsvärde) som exponeringsöverlägg på HYP-056"
+universe: "N/A för själva overlayn (portföljnivå på HYP-056:s redan
+  existerande portfölj). Signalen beräknas dock som ett AGGREGAT över
+  hela small-cap-universumet ($100M-$2B, EODHD All-World, HYP-008:s
+  redan låsta definition) - en marknadsbreddssignal, inte en per-aktie-
+  signal."
+small_cap_definition: "N/A för overlayn själv - se HYP-056:s identiska
+  motivering (ingen ny backtest-motor, ren portföljnivå-exponerings-
+  skalning). Signalens UNDERLIGGANDE aggregat byggs dock över HYP-008:s
+  small-cap-definition, se universe-fältet."
+data_range: "Signalen: 2010-01-01 till 2024-12-31 (kvartalsvis, samma
+  snappade datum som resten av registret) + genuin OOS-2025. Basen:
+  HYP-056:s redan beräknade portföljvärdesserier, oförändrade."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  SIGNAL (aggregat, kvartalsvis): för varje kvartalsslut, summera över
+  HELA small-cap-universumet den månaden: (senaste FILADE FY-nyemission
+  via ProceedsFromIssuanceOfCommonStock, forward-fylld) MINUS (senaste
+  FILADE FY-återköp, forward-fylld, redan hämtad data). Dividera med
+  aggregerat marknadsvärde (pris × senast filade aktieantal) för samma
+  universum samma kvartal. Ger en enda tidsserie: netto_flöde_kvot(t).
+
+  TRIGGER: jämför netto_flöde_kvot(t) mot dess EGEN rullande 12-
+  kvartals (3-års) historik (expanderande fönster tills 12 kvartal
+  finns, därefter rullande). Om dagens värde ligger i DEN ÖVRE
+  TERCILEN (>66,7:e percentilen) av detta fönster (hög nettoemission,
+  kapital flödar in) → HAIRCUT till 40% exponering (samma haircut-nivå
+  som redan etablerad i HYP-037/045). ANNARS (mellersta/nedre tercilen,
+  nettoåterköp dominerar eller neutralt) → 100% exponering. Ingen
+  separat återinträdeslogik - tercilstatus omprövas VARJE kvartal
+  (mean-reverting regel, ingen sticky state machine).
+
+  Applicerat på HYP-056:s redan kombinerade, volatilitetsmålsatta
+  portföljvärdesserie (per kapitalnivå, oförändrad).
+
+  PASS KRÄVER ALLA TRE, PÅ ALLA TRE KAPITALNIVÅER:
+  1. Sharpe (med overlay) >= HYP-056:s egen Sharpe (1,2228/1,2177/1,1923).
+  2. MaxDD (med overlay) bättre än HYP-056:s egen (-5,92%/-6,02%/-5,64%).
+  3. OOS-2025 Sharpe (med overlay) > HYP-056:s egen OOS-2025 Sharpe
+     (1,7585/1,7379/1,7579).
+
+  FAIL om något villkor faller på någon nivå.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): andel kvartal i haircut-läge,
+  aggregerad täckningsgrad (andel av universumets marknadsvärde som
+  faktiskt har emissions- OCH/ELLER återköpsdata varje kvartal).
+
+  Diagnostiskt syfte: testar om aggregerat kapitalallokeringsbeteende
+  över HELA small-cap-segmentet (inte en enskild akties eget beteende,
+  till skillnad från den redan FAILADE återköpsintensitets-decilen) är
+  en genuin kapacitetsbegränsnings-proxy - direkt kopplad till
+  projektets kärntes, i "WHEN"-kategorin (exponeringstiming) som
+  historiskt presterat bäst i detta register.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 67
+date_tested: '2026-08-11'
+result:
+  100000: {sharpe: 1.1869, cagr: 0.0691, max_drawdown: -0.0486, oos_2025_sharpe: 1.7340}
+  1000000: {sharpe: 1.1929, cagr: 0.0692, max_drawdown: -0.0491, oos_2025_sharpe: 1.6776}
+  10000000: {sharpe: 1.1703, cagr: 0.0653, max_drawdown: -0.0458, oos_2025_sharpe: 1.6373}
+  pct_quarters_haircut: 0.374
+result_summary: >
+  FAILED PA VILLKOR 1 OCH 3 PA ALLA TRE NIVAER, MEN NARA. Villkor 1
+  (Sharpe >= HYP-056:s 1,2228/1,2177/1,1923): FAIL med liten marginal
+  (1,1869/1,1929/1,1703 - 0,02-0,036 under). Villkor 2 (MaxDD battre an
+  HYP-056:s -5,92%/-6,02%/-5,64%): PASS TYDLIGT pa alla tre
+  (-4,86%/-4,91%/-4,58%, cirka 1-1,1pp forbattring). Villkor 3
+  (OOS-2025-Sharpe > HYP-056:s 1,7585/1,7379/1,7579): FAIL med liten
+  marginal (1,7340/1,6776/1,6373).
+
+  MEKANISMEN EXERCERADES GENUINT: 37,4% av kvartalen i haircut-lage
+  (40% exponering) - regelbunden, inte ett sallsynt undantag.
+
+  DIAGNOS: samma monster som flera tidigare "nara men inte helt"-
+  resultat denna session (HYP-061, HYP-064) - overlayn forbattrar
+  genuint MaxDD (tydligt, konsekvent) men offrar for mycket avkastning
+  for att aven Sharpen ska forbattras. Till skillnad fran HYP-056:s
+  egen framgang mot HYP-047 (som forbattrade BADA matten samtidigt) racker
+  inte denna aggregerade kapacitetsbegransningssignal for att sla en
+  redan mycket stark referens (HYP-056) pa alla tre lasta villkor.
+
+  POSITIVT ATT NOTERA: signalen ar genuint en marknadsbreddssignal
+  (aggregerad over hela universumet), inte en per-aktie-signal som den
+  redan FAILADE aterkopsintensitets-decilen (HYP-066) - MaxDD-
+  forbattringen antyder att kapacitetsbegransningstesen har nagot
+  reellt i sig, bara inte tillrackligt starkt for att sla en redan
+  hog ribba.
+
+  HYP-056 forblir referensen, oforandrad. Av de tre AI-brainstormade
+  kandidaterna denna session (HY-spread BLOCKERAD, textdrift PARKERAD,
+  nettoemission testad har) blev nettoemission den enda som gick hela
+  vagen till backtest - och FAILADE, om an narmare an manga tidigare
+  forsok.

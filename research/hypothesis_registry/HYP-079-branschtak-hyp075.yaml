@@ -1,0 +1,131 @@
+# LÅST 2026-08-12 av CEO i chatt ("ja", efter en tre-AI-konvergensanalys
+# samma dag - Grok, ChatGPT, Gemini föreslog OBEROENDE alla ett
+# branschkoncentrationstak som nästa steg för HYP-075, se
+# research/CANDIDATE_BRAINSTORM_PROMPT_HYP075_UTVECKLING_2026-08-12.md).
+# Del av en 2-kandidat-batch (HYP-079/HYP-080, k_total 75 -> 77 vid
+# låsningstillfället, båda valda från samma konvergerande brainstorm,
+# ingen av dem körd innan bägge las).
+#
+# GRATIS ROBUSTHETSKONTROLL FÖRE LÅSNING (2026-08-12, samma
+# konvergensrunda föreslog detta oberoende, ingen K-kostnad): HYP-075:s
+# trade_log analyserad efter SIC-2-siffergrupp - den mest bidragande
+# branschen (SIC 60, "State Commercial Banks", 803 av 12219 trades,
+# summerad avkastning +40,2, median enskild trade +1,1%, 55% andel
+# positiva trades) är BRED, inte en enskild-namn-artefakt. Se
+# scripts/diagnostic_hyp075_exclude_top_sector.py för fullständig
+# körning och resultat (dokumenterat i denna fils result_summary efter
+# testning).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-079
+date_registered: '2026-08-12'
+title: "Branschkoncentrationstak (25%, SIC-2) på HYP-075"
+universe: "N/A - samma engine/signal som HYP-075, oförändrad. Ingen ny
+  small-cap-signal, inget nytt universum."
+small_cap_definition: "N/A - se HYP-072:s redan låsta definition, oförändrad."
+data_range: "Samma period som HYP-075 (2010-01-01 till 2024-12-31
+  huvudperiod + genuin OOS-2025), samma SEC filings-index. Ny
+  klassificeringsdata: data/cache/sic_classification.jsonl (redan
+  hämtad 2026-07-31, ingen ny hämtning krävs)."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Bygger direkt på HYP-075:s redan låsta signal, klassificering och
+  positionstak (3x-trimning). NY REGEL, tillämpad VID VARJE MÅNATLIG
+  OMBALANSERING, separat för long- och kortbenet:
+
+  1. Gruppera respektive bens namn efter SIC-2-siffergrupp (SEC:s
+     tvåsiffriga branschkod, samma källa som redan använts för
+     kvalitetskontroll 2026-07-31).
+  2. Om en SIC-2-grupps andel av benets totala namnantal överstiger 25%,
+     tilldela den gruppen EXAKT 25% av benets kapitalpool (likaviktat
+     inom gruppen), och fördela resterande 75% likaviktat över benets
+     ÖVRIGA namn.
+  3. Om detta enda steg skulle göra att en ANNAN grupp nu överstiger 25%
+     av den DÅ återstående, ej redan hardcapped poolen, upprepa steg 2
+     iterativt (samma princip, tillämpad på den krympande återstående
+     poolen) tills ingen grupp överstiger 25% av sin då tillgängliga
+     andel.
+  4. Om inget SIC-2 överstiger 25% alls: identiskt med HYP-075:s
+     befintliga likaviktade fördelning, oförändrad.
+
+  Positionstaket (3x-trimning, dagligen) körs OFÖRÄNDRAT efter denna
+  justering. Ingen annan förändring av signal, entry/exit eller
+  hållperiod.
+
+  MOTORKRAV: identiska med HYP-075.
+
+  PASS KRÄVER ALLA FYRA, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre kapitalnivåer), DÖMT MOT HYP-075:S EGNA REDAN UPPMÄTTA TAL
+  (samma jämförande konvention som HYP-075/076/077 använde mot HYP-072):
+  1. Sharpe (huvudperiod) >= 0,8065 (HYP-075:s egen Sharpe).
+  2. MaxDD INTE sämre än -6,05% (HYP-075:s egen MaxDD).
+  3. Sharpe med HELA kalenderåret 2020 exkluderat >= 0,7737 (HYP-075:s
+     egen ex-2020-Sharpe).
+  4. Kurtosis för den dagliga avkastningsserien (hela huvudperioden,
+     $100k) < 9,24 (20% tolerans ovanför HYP-075:s egen redan mycket
+     låga kurtosis på 7,7 - en strikt "måste bli ännu lägre"-tröskel
+     vore orimligt hård på en redan nära-normalfördelad serie; toleransen
+     är låst här, i förväg, inte tillagd efter att ha sett resultatet).
+
+  FAIL om något villkor faller vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): andel av namnen per ben som
+  faktiskt träffade 25%-taket per månad, samt antal iterativa
+  omfördelningsrundor (steg 3) som någonsin krävdes.
+
+  Diagnostiskt syfte: testar om HYP-075:s redan låga kurtosis (7,7,
+  redan nära normalfördelningsnivå) ändå döljer en kvarvarande,
+  bransch-koncentrerad svansrisk som inte syns på enskild-ticker-nivå -
+  en strukturell riskregel, inte ännu en pris-baserad trimningsvariant.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 75
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.8433, cagr: 0.0608, max_drawdown: -0.0582, sharpe_ex2020: 0.8043, kurtosis: 8.8, n_trims: 310}
+  1000000: {sharpe: 0.7498, cagr: 0.0561, max_drawdown: -0.0585, sharpe_ex2020: 0.7463, kurtosis: 12.3, n_trims: 311}
+  10000000: {sharpe: 0.6936, cagr: 0.0529, max_drawdown: -0.0690, sharpe_ex2020: 0.7218, kurtosis: 7.6, n_trims: 309}
+  share_long_entries_capped_by_sector: 0.0
+  share_short_entries_capped_by_sector: 0.531
+result_summary: >
+  PASSED PA ALLA FYRA LASTA VILLKOREN PA DEN AVGORANDE $100k-NIVAN, OCH
+  SLAR HYP-075 PA NASTAN VARJE MATT: Sharpe 0,8433 (mot HYP-075:s
+  0,8065), MaxDD -5,82% (mot -6,05%), Sharpe ex-2020 0,8043 (mot 0,7737).
+  Kurtosis 8,8 - nagot hogre an HYP-075:s 7,7 men val inom den lasta
+  20%-toleransen (9,24).
+
+  DISCLOSURE (viktig diagnostisk detalj): branschtaket paverkade ALDRIG
+  long-benet (0 av 8582 entries, 0,0%) men SLOG IGENOM PA HALFTEN av
+  kortbenets entries (2043 av 3849, 53,1%). Detta forklarar VARFOR
+  regeln fungerade: long-benet ("rena" namn) ar redan brett (~350
+  namn/manad, ingen enskild bransch nara 25%), men kortbenet ("aktiva
+  shelf-anvandare") ar mycket smalare (~115 namn/manad, se HYP-072:s
+  disclosure) och var alltsa strukturellt mer branschkoncentrerat an
+  synligt pa ren ticker-niva - konsistent med Geminis konvergerande
+  varning om att shelf-aktivitet kan klunga sig i specifika branscher
+  (t.ex. bioteknik) under kapitalanskaffningsperioder.
+
+  Diagnostiskt: en ren portfoljstrukturell regel (ingen andring av
+  signal eller entry/exit) fann och fixade en kvarvarande koncentrations-
+  risk pa BRANSCHNIVA som varken HYP-075:s positionstak (ticker-niva)
+  eller den gratis sektor-exkluderingskontrollen (som visade att INGEN
+  enskild bransch dominerade TOTALRESULTATET, men inte testade
+  branschbalans INOM kortbenet) fangade. Ny starkaste variant i
+  HYP-072-familjen - kandidat att ersatta HYP-075 som forsta prioritet
+  for ett femte-bens-beslut, eller testas i kombination (HYP-078-monster)
+  med referensportfoljen.
+
+# TILLAGG 2026-08-13 (DSR forsta gangen berknad, Overfitting Detector-
+# rutin per CLAUDE.md, mot dagens k_total=84). $100k: SR=0,0424
+# DSR=0,5643. $1M: SR=0,0414 DSR=0,5437. $10M: SR=0,0433 DSR=0,5919.
+# Mattlig - i samma intervall som HYP-075:s tidigare berkanade DSR
+# (0,53-0,55 vid K=74), konsistent med att bada delar samma underliggande
+# koncentrationskalla (augusti 2020-episoden, se HYP-072:s robusthets-
+# genomgang). CEO-BESLUT 2026-08-13: HYP-079 (via HYP-081:s 80/20-
+# kombination med HYP-056) AR NU DEN AKTIVA REFERENSIMPLEMENTATIONEN -
+# se HYP-081:s egen registerpost for den formella overgangen.

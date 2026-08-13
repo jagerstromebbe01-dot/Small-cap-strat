@@ -1,0 +1,84 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås hela batchen och kör"), tillsammans
+# med HYP-060/061/062 - BATCH-003 (spot-only crypto, se HYP-060:s egen
+# registerpost för fullständig batch-/feasibility-motivering, samma här).
+# k_total hoppar 58->62 vid låsningstillfället, inte styckvis.
+#
+# METODOLOGISK NOT (redan diskuterad med CEO INNAN lasning, se
+# batch-presentationen): denna hypotes kombinerar INTE HYP-060 och
+# HYP-061 (bada oprovade syskon i SAMMA batch) - det skulle vara exakt
+# den typ av "kombinera icke-signifikanta strategier"-genväg spec §5b
+# forbjuder. Denna hypotes ar HYP-060:s EGEN mekanism (200-dagars
+# trendfilter) generaliserad till flera tillgangar, INGEN
+# volatilitetsmalsattning stapiad ovanpa.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-063
+date_registered: '2026-08-11'
+title: "Multi-asset 200-dagars trendfilter, likaviktat bland coins som är i trend"
+universe: "BTC/ETH/LTC/XRP/DOGE (EODHD spot .CC). Samma statiska lista
+  som hela BATCH-003, se HYP-060."
+small_cap_definition: "N/A - crypto spot, se HYP-060:s identiska motivering."
+data_range: "Samma gemensamma fönster som HYP-061/062 (från ETH:s första
+  handelsdag 2015-08-07) till 2024-12-31 huvudperiod + genuin OOS-2025."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Var och en av de 5 coins får sin EGEN 200-dagars trendkoll (samma
+  SMA_WINDOW=200-konvention som HYP-060, oberoende per coin - egen close
+  vs egen 200-dagars SMA). Portföljen har 5 lika stora "slots" (1/5
+  notional var). En slot investeras i sin coin OM den coinen är i trend
+  (close > egen SMA_200), annars hålls slotten i kontanter (RF 2%/år).
+  Total exponering varierar därmed dagligen mellan 0% och 100% beroende
+  på hur många av de 5 som är i trend samtidigt.
+
+  FRIKTION: halva Corwin-Schultz-spreaden (per coin, egen high/low) +
+  0,15% exchange-avgift, på den enskilda coinens slot-notional (1/5 av
+  totalen) vid VARJE trend-övergång för just den coinen.
+
+  ANNUALISERING: 365 dagar/år - se HYP-060:s identiska notering.
+
+  JÄMFÖRELSEPUNKT: BASELINE_BASKET (samma delade, friktionsjusterade
+  5-coin likaviktade kvartalsvisa referenskorg som HYP-061/062 använder,
+  se strategies/common/crypto_data.py::build_baseline_basket).
+
+  PASS KRÄVER ALLA TRE (huvudperioden, ingen kapitalnivåuppdelning):
+  1. Sharpe >= 0,55.
+  2. Sharpe > Sharpe (BASELINE_BASKET).
+  3. MaxDD inte sämre än -50%.
+
+  FAIL om något villkor faller.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  Diagnostiskt syfte: testar om HYP-060:s enskilda-tillgångs-trendfilter
+  generaliserar till en diversifierad multi-asset-tillämpning (samma
+  mekanism, bredare tillgångsbas) - en distinkt fråga från HYP-062:s
+  relativa-styrka-rotation, som testar OM man ska äga en coin relativt
+  de andra, inte om man ska äga den alls.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 58
+date_tested: '2026-08-11'
+result:
+  strategy: {sharpe: 0.6520, cagr: 0.2759, max_drawdown: -0.9293, deflated_sharpe_ratio: 0.3531}
+  baseline_basket: {sharpe: 1.4762, cagr: 1.4992, max_drawdown: -0.8794}
+  oos_2025: {strategy_sharpe: -1.4238, strategy_return: -0.5909, baseline_sharpe: -0.1228, baseline_return: -0.2479}
+  dsr_n_trials: 62
+result_summary: >
+  FAILED PÅ VILLKOR 2 OCH 3, TYDLIGT - SVAGASTE resultatet i BATCH-003.
+  Villkor 1 (Sharpe>=0,55) PASS men med minsta marginalen i hela batchen
+  (0,65). Villkor 2 (slå baseline): FAIL - 0,65 mot 1,48. Villkor 3
+  (MaxDD >= -50%): FAIL, -92,93%.
+
+  DIAGNOS: samma grundmönster som HYP-060 (enskild-tillgångs-trendfiltret)
+  men FÖRSTÄRKT av att fem oberoende, ofta usynkroniserade per-coin-
+  trendövergångar genererar betydligt mer friktion (fler enskilda in/ut-
+  händelser) än en enda coins filter, utan att diversifieringen kompenserar
+  - konsistent med att de fem coinsen historiskt varit högt korrelerade
+  under just de regimskiften (bull/bear) som driver 200-dagarsfiltret,
+  så "diversifieringen" gav få genuint oberoende trendsignaler. OOS-2025
+  var katastrofalt (-59,09% mot baselinens -24,79%, SÄMST i hela batchen)
+  - troligen upprepad whipsaw-friktion över fem coins samtidigt under ett
+  kärvt år. DSR 0,35 vid K=62 - lågt, konsistent med ett genuint svagt
+  resultat snarare än ett nära-miss maskerat av en tuff jämförelsepunkt
+  (till skillnad från HYP-061:s 0,986).

@@ -1,0 +1,127 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Sista testet 2026-07-31.
+#
+# EXPLICIT CEO-BESLUT ATT ATEROPPNA EJAY/KELLY (se CLAUDE.md: "Ejay ar
+# stangd - bygg inte vidare pa det utan ett explicit nytt beslut fran
+# anvandaren"): CEO bad uttryckligen om traditionell Kelly-sizing MED
+# signalstyrka, medvetet om att detta ar SAMMA MEKANISM-TYP som redan
+# dodade 7 Ejay-varianter (cirkularitet, ingen forbattring efter kontroll
+# for z-score-styrka, hog korrelation mellan viktade/oviktade varianter -
+# tested pa v6:s ursprungliga parhandels-z-score, INNAN small-cap-pivoten).
+# Denna hypotes testar SAMMA principiella mekanism men PA EN ANNAN SIGNAL/
+# STRATEGI (idiosynkratisk-vol-decilen, HYP-017/023-linjen) som aldrig
+# testats med signalstyrke-viktning tidigare - inte en bokstavlig
+# omkorning av nagon av de 7 redan dodade varianterna, men samma
+# principiella risk galler och forvantas ha samma negativa utfall.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-032
+date_registered: '2026-07-31'
+title: Traditionell Kelly-sizing med signalstyrka inom lagsta idio-vol-decilen, pa HYP-023
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD, sektor-krasch-trigger OFORANDRAD, friktion/kapacitetsspärr,
+  de tre motorfixarna). ENDA andringen: VIKTNINGEN inom den redan valda decilen - Kelly-sizing med
+  signalstyrka i stallet for lika viktning.
+
+  Formel, exakt specificerad (INTE fri, INTE justerad efter resultat):
+  - z_i = (idiosynkratisk_vol_i - tvarsnittsmedel) / tvarsnittsstd, berak nat over HELA manadens
+    behöriga universum (INTE bara decilen) vid varje ombalansering.
+  - edge_i = max(0, -z_i) - signalstyrkan; storre ju langre UNDER tvarsnittsmedlet aktien ligger
+    (konsistent med att lagre idio-vol ar "battre" i denna strategi).
+  - vikt_i PROPORTIONELL MOT edge_i / idiosynkratisk_vol_i^2 - traditionell Kelly-struktur
+    (signalstyrka/"edge" i tal jaren, egen varians i namnaren).
+  - TAK: ingen enskild position far overstiga 3x vad en likaviktad position skulle fatt (3/n_top av
+    kapitalet) - ett runt, i forvag valt tak mot patologisk koncentration i den lagst-voliga aktien,
+    INTE justerat efter att resultat setts.
+  - Vikterna normaliseras till 100% av tillgangligt kapital for nya positioner, KAPACITETSSPÄRREN
+    (max 10% av 20-dagars genomsnittlig dollarvolym per position) galler DAREFTER, precis som i
+    HYP-023:s likaviktade version.
+  - Befintliga positioner som stannar i decilen omviktas INTE lopande mellan ombalanseringar (samma
+    forenkling som HYP-023:s likaviktade version redan gor).
+
+  MOTORKRAV (samma tre som HYP-015/017/022/023): snappade ombalanseringsdatum, adjusted_close
+  genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer.
+  2. Maxdrawdown INTE samre an HYP-023:s EGET resultat pa SAMMA kapitalniva (100k: -25.46%, 1M:
+     -19.29%, 10M: -13.16%).
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte OCH HEDERLIG FORVANTAN (INNAN nagon backtest kors): denna mekanism-TYP
+  (viktning efter signalens egen z-score-styrka) ar SAMMA princip som redan dodade 7 Ejay-varianter -
+  cirkularitet (anvander samma info for BADE urval OCH storlek) och dokumenterad avsaknad av
+  forbattring efter kontroll for z-score-styrka i den ursprungliga testningen. Denna hypotes testar
+  om samma negativa utfall haller aven for idiosynkratisk-vol-decilen (en signal/strategi Ejay
+  aldrig testades pa) - den FORVANTADE utgangen ar FAIL, men CEO har explicit godkant ett sista,
+  hederligt testat forsok trots detta.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 30
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.0537, sharpe: 0.4028, calmar: 0.2277, sharpe_excl_best_trade: 0.3614, max_drawdown: -0.2358, win_rate: 0.4931, profit_factor: 1.1912, n_trades: 2186, march_2023_episode_return: -0.1030, deflated_sharpe_ratio: 0.2830}
+  1000000: {cagr: 0.0742, sharpe: 0.6394, calmar: 0.5344, sharpe_excl_best_trade: 0.5860, max_drawdown: -0.1388, win_rate: 0.4962, profit_factor: 1.2198, n_trades: 2231, march_2023_episode_return: -0.0828, deflated_sharpe_ratio: 0.6297}
+  10000000: {cagr: 0.0688, sharpe: 0.6753, calmar: 0.6257, sharpe_excl_best_trade: 0.6607, max_drawdown: -0.1099, win_rate: 0.4949, profit_factor: 1.2147, n_trades: 2241, march_2023_episode_return: -0.0246, deflated_sharpe_ratio: 0.6777}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED, MEN NYANSERAT - INTE ett rent, entydigt nederlag som fovantat.
+
+  Villkor 2 (MaxDD INTE samre an HYP-023) HOLLER PA ALLA TRE NIVAER:
+  100k -23.58% (mot -25.46%), 1M -13.88% (mot -19.29%), 10M -10.99% (mot
+  -13.16%) - Kelly-viktningen forbattrade FAKTISKT MaxDD genomgaende,
+  ibland rejalt (1M: 5.4pp battre).
+
+  Villkor 1 (Sharpe >= 0.55) FALLER ENDAST vid $100k (0.40) - men KLARAS
+  faktiskt vid bade $1M (0.64) OCH $10M (0.68). Eftersom kriteriet kravde
+  BADA villkoren PA ALLA TRE nivaer ar helhetsutfallet FAIL, men tva av
+  tre nivaer hade passerat pa egen hand.
+
+  DIAGNOS (innan detta rapporterades): sharpe_excl_best_trade foljer
+  samma gradient (0.36/0.59/0.66) - INTE en enskild-trade-artefakt, ett
+  genuint, konsekvent monster over hela perioden. Trolig forklaring
+  (INTE djupare testad har, skulle krava en egen hypotes): vid $100k ar
+  positionerna sma nog att kapacitetsspärren (10% av 20-dagars ADV)
+  SALLAN binder, sa Kelly-viktningens avsedda koncentration (upp till
+  3x likaviktad andel i de lagst-voliga namnen) far fullt genomslag -
+  vilket skadar den riskjusterade avkastningen. Vid $1M/$10M binder
+  kapacitetsspärren i allt storre utstrackning PA JUST de mest
+  koncentrerade (storst Kelly-vikt) positionerna, vilket TVINGAR
+  portfoljen tillbaka mot nagot narmare likaviktning - och Sharpen
+  narmar sig darfor HYP-023:s egen (0.72/0.75/0.72) ju hogre
+  kapitalnivan ar, snarare an att avlagsna sig fran den.
+
+  ROBUSTHET: se sharpe_excl_best_trade ovan - monstret ar konsekvent,
+  inte drivet av en enskild trade.
+
+  SLUTSATS FOR EJAY/KELLY-FRAGAN: det FORVANTADE utfallet (baserat pa de
+  7 redan dodade Ejay-varianterna) var ett entydigt FAIL, och det HOLL -
+  men INTE av samma skal som forvantat. Detta var INTE cirkularitet
+  eller "ingen skillnad mot att bara anvanda rangordningen" (Ejays
+  ursprungliga dodsorsak) - har var problemet SPECIFIKT koncentrationen
+  vid LAG kapitalniva, medan mekanismen faktiskt visade lofte vid HOG
+  kapitalniva. Detta ar en NY, informativ lardom snarare an en ren
+  bekraftelse av den gamla Ejay-diagnosen: Kelly-STIL viktning kan vara
+  vard att ateruppta i FRAMTIDEN, MEN bara med en HARDARE, explicit
+  koncentrationsspärr (INTE bara ADV-kapacitetsspärren som rakar binda
+  vid hog kapitalniva) - skulle kraeva en egen, ny, oberoende
+  pre-registrerad hypotes, INTE nagot som testas eller justeras har i
+  efterhand.
+
+  HYP-023 forblir referensimplementationen OFORANDRAD (likaviktning).
+  Ejay/Kelly-linjen ar ATER STANGD - atta misslyckade varianter nu
+  (7 ursprungliga + denna) - och kraver ANNU ETT nytt, explicit
+  CEO-beslut for att oppnas igen.
+sharpe_raw:
+  100000: 0.4028
+  1000000: 0.6394
+  10000000: 0.6753
+deflated_sharpe_ratio:
+  100000: 0.2830
+  1000000: 0.6297
+  10000000: 0.6777

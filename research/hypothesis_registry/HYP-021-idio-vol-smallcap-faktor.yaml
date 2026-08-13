@@ -1,0 +1,105 @@
+# LÅST 2026-07-30 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Signalrenhets-forfining av HYP-017 (PASSED,
+# K=16/19) - samma typ av forbattring som redan fungerade en gang
+# (HYP-014 total-vol -> HYP-015 idio-vol mot SPY gav +0.13 Sharpe utan
+# ny risk). Se konversationen 2026-07-30 for full motivering.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-021
+date_registered: '2026-07-30'
+title: Idiosynkratisk vol residualiserad mot ett small-cap-kompositfaktor (uppfoljare till HYP-017)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-017 (kvartalsvis decil-strategi, SPY-krasch-overlay OFORANDRAD
+  - samma 10-dagars/-10%/40%-mekanism - samma friktion/kapacitetsspärr, samma tre motorfixar). Enda
+  tillagget: SIGNALEN (idiosynkratisk volatilitet) beraknas mot ett ANNAT referensindex an tidigare.
+
+  Motivering: HYP-015/017:s idio-vol-signal residualiserar mot SPY (ett stor-cap-dominerat index) - men
+  "idiosynkratisk" bor rimligen betyda "vad som inte forklaras av den egna peer-gruppens gemensamma
+  rorelse", inte "vad som inte forklaras av ett annat marknadssegment". Denna hypotes ersatter SPY med
+  ett likaviktat small-cap-kompositfaktor (medelvardet av dagliga avkastningar over HELA small-cap-
+  universumet, samma prisdata som redan laddas) SOM REFERENS FOR SIGNALBERAKNINGEN (residual =
+  aktieavkastning - beta*kompositfaktor-avkastning, samma beta-metod som HYP-015/017).
+
+  VIKTIGT: PORTFOLJENS FAKTISKA HEDGE (SPY-beta-hedgen som neutraliserar marknadsexponering, samma
+  kod som HYP-017) AR OFORANDRAD - fortfarande SPY, eftersom det ar ett riktigt, likvitt, blankningsbart
+  instrument man faktiskt kan hedga med i verkligheten. Bara SIGNALENS referens andras (vilket index
+  aktien jamfors mot for att rakna ut vad som ar "idiosynkratiskt"), inte hedgeinstrumentet. Krasch-
+  overlayen (som bevakar SPY:s egen rorelse, INTE small-cap-kompositfaktorn) ar ocksa helt oforandrad.
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M). FAIL om
+  nagon niva faller under.
+
+  Diagnostiskt syfte: testar om en mer relevant peer-grupps-referens for signalen (small-cap-komposit
+  i stallet for SPY) ger en renare idiosynkratisk-vol-rangordning och darmed hogre Sharpe an HYP-017:s
+  0.72/0.75/0.72 - samma typ av "gratis" signalforbattring (utan ny risk) som redan fungerade en gang
+  nar HYP-015 ersatte total-vol med idio-vol.'
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 19
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1205, sharpe: 0.7151, calmar: 0.4180, sharpe_excl_best_trade: 0.6653, max_drawdown: -0.2882, win_rate: 0.5225, profit_factor: 1.3756, n_trades: 2092, deflated_sharpe_ratio: 0.7922}
+  1000000: {cagr: 0.1219, sharpe: 0.7432, calmar: 0.5485, sharpe_excl_best_trade: 0.6906, max_drawdown: -0.2222, win_rate: 0.5210, profit_factor: 1.3756, n_trades: 2092, deflated_sharpe_ratio: 0.8226}
+  10000000: {cagr: 0.0960, sharpe: 0.7290, calmar: 0.7068, sharpe_excl_best_trade: 0.7206, max_drawdown: -0.1359, win_rate: 0.5215, profit_factor: 1.3756, n_trades: 2092, deflated_sharpe_ratio: 0.8028}
+date_tested: 2026-07-30
+result_summary: >
+  PASSED per det lasta kriteriet (Sharpe >= 0.55 pa alla tre nivaer:
+  0.72/0.74/0.73) - MEN, viktigt att vara arlig om: detta ar INTE en
+  forbattring over HYP-017. Sharpe ar statistiskt oskiljbar fran HYP-017:s
+  0.716/0.750/0.724 (skillnaden ar brus, inte signal), och MaxDD ar
+  faktiskt nagot SAMRE vid tva av tre nivaer (-28.8% mot -27.0% vid $100k,
+  -22.2% mot -19.8% vid $1M; i praktiken oforandrat vid $10M). DSR
+  (0.79/0.82/0.80 vid K=20) ligger ocksa i samma spann som HYP-017:s
+  egen (0.80/0.83/0.80 omraknad till samma K).
+
+  TOLKNING: hypotesen som motiverade detta test - att SPY ar en
+  "fel" peer-grupp for idiosynkratisk-vol-signalen och att ett
+  small-cap-specifikt kompositfaktor skulle ge en renare rangordning -
+  fick INTE stod. SPY och ett likaviktat small-cap-kompositindex verkar
+  fanga tillrackligt liknande gemensam rorelse (bada reflekterar bred
+  marknadsriktning) att signalens rangordning i praktiken blir densamma
+  oavsett vilket som anvands som referens. Till skillnad fran HYP-014 ->
+  HYP-015 (dar total-vol -> idiosynkratisk vol GAV en verklig, matbar
+  forbattring, +0.13 Sharpe) gav DENNA signalrenhets-forfining INGET
+  matbart tillskott - varken positivt eller negativt.
+
+  SLUTSATS FOR FORTSATT ARBETE: HYP-017 forblir referensimplementationen
+  - inte for att HYP-021 ar samre, utan for att den inte ar battre, och
+  HYP-017 redan ar den mer beprovade/robusthetstestade versionen (se
+  dess "lamna-en-kris-ute"-test). HYP-021 racknas som ett eget PASSAT
+  resultat i registret (K-räknaren och pre-registreringsreglerna kravs
+  det), men bor INTE ersatta HYP-017 som den strategi man bygger vidare
+  pa.
+sharpe_raw:
+  100000: 0.7151
+  1000000: 0.7432
+  10000000: 0.7290
+# Beräknad mot K=20 (7 döda ejay-varianter + HYP-008 till HYP-020 + HYP-021 sjalv),
+# via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.7922
+  1000000: 0.8226
+  10000000: 0.8028
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/redan
+# rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR ovan star kvar fran ursprungstestet vid K=20 - aldrig omraknad,
+# trots agents/overfitting_detector/ROLE.md:s krav att gora det for
+# alla aktiva hypoteser varje gang k_total okar.
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade serier, RF=2%/ar avdraget):
+#   $100k:   DSR 0.7922 -> 0.6783
+#   $1M:     DSR 0.8226 -> 0.7168
+#   $10M:    DSR 0.8028 -> 0.6940
+#
+# Forvantad riktning (sjunker med hogre K). HYP-021 var redan
+# "statistiskt oskiljbar fran HYP-017" vid lasningstillfallet - ingen
+# forandring av den slutsatsen.

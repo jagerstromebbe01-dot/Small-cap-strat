@@ -1,0 +1,151 @@
+# LÅST 2026-08-01 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Sista aterstaende av de tre AI-foreslagna
+# HYP-023/037-tillaggen fran 5-AI-brainstormerna (stale-price-filter =
+# HYP-034 FAILED, villkorat overlay-aterintrade = HYP-037 PASSED, nu
+# blivit referens). Mekaniskt SKILD fran den redan testade Kelly-
+# sizingen (HYP-032, FAILED vid $100k men PASSED vid $1M/$10M) - denna
+# viktar pa LIKVIDITET (ADV), inte signalstyrka.
+#
+# Byggd PA HYP-037 (nuvarande referensimplementation, INTE HYP-023) -
+# ENDAST dollarallokeringen over NYA positioner vid ombalansering andras.
+# Allt annat, inklusive HYP-037:s egen villkorade overlay-aterintrades-
+# mekanism, ar HELT OFORANDRAT.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-038
+date_registered: '2026-08-01'
+title: Likviditetsviktad (roten-ur-ADV) allokering inom decilen pa HYP-037
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023/037 (2010-2024) + genuin
+  blind OOS-2025-korning (samma metod som HYP-023/034/037)
+pass_fail_criterion: 'Identisk bas som HYP-037 (idiosynkratisk volatilitet, global rankning,
+  SPY-krasch-overlay MED dess egen villkorade aterintrades-mekanism OFORANDRAD, sektor-
+  krasch-trigger OFORANDRAD - samma friktion/hedge/kapacitetsspärr, samma tre motorfixar).
+  Enda tillagget: dollarallokeringen over NYA positioner vid varje ombalansering byts fran
+  likaviktat till likviditetsviktat.
+
+  Mekanism, exakt specificerad (INTE fri, INTE anpassad efter resultat - vald INNAN nagon
+  backtest kors):
+  - For varje NY position (namn som gar in i portfoljen vid en ombalansering, INTE redan
+    hallna namn): vikt_i PROPORTIONELL mot roten ur 20-dagars dollar-ADV (samma ADV-matt
+    som redan anvands for kapacitetsspärren) - INTE linjart mot ADV, en medveten daming mot
+    det mest likvida namnet, standardkonvention i marknadspaverkansmodeller.
+  - Om ett enskilt namns ADV ar NaN eller <=0: dess vikt ERSATTS med MEDELVARDET av de
+    OVRIGA giltiga namnens roten-ur-ADV-vikter i SAMMA ombalansering (INTE noll - ett namn
+    som redan klarat idio-vol-rankningen ska inte straffas till en obefintlig position pga
+    ett enskilt datahal).
+  - Om SAMTLIGA namn i en given ombalanserings nya-namn-grupp saknar giltig ADV: fallback
+    till REN LIKAVIKTNING (samma beteende som HYP-023/037:s redan befintliga default).
+  - Vikterna normaliseras att summera till 1 over samtliga nya namn den ombalanseringen,
+    multipliceras med tillgangligt cash for att ge malbelopp per namn.
+  - Kapacitetsspärren (10% av ADV normalt, 5% under HYP-037:s capacity_restricted-
+    tillstand) gäller FORTFARANDE som ett HART TAK per namn, TILLAMPAD EFTER
+    viktberakningen - SAMMA ordning och SAMMA spärr-varden som HYP-037, oforandrat.
+
+  MOTORKRAV (samma som HYP-015/017/022/023/037): snappade ombalanseringsdatum,
+  adjusted_close genomgaende, flag_implausible_liquidity().
+
+  PASS kraver ALLA TRE:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer.
+  2. Maxdrawdown INTE samre an HYP-037:s EGET redan uppnadda resultat pa SAMMA kapitalniva
+     (100k: -23.10%, 1M: -19.12%, 10M: -13.11%) - HYP-037 ar den aktuella
+     referensimplementationen, INTE HYP-023.
+  3. En fornyad blind OOS-2025-korning (samma metod som HYP-023/034/037:s egna,
+     paper_trading/HYP-038/oos_backtest_2025.py, HYP-038:s ofrandrade lasta kod) maste visa
+     Sharpe VID $10M ISOLERAT TILL 2025 SOM INTE AR SAMRE an HYP-037:s egna 0.083 pa samma
+     matt (uppdaterad jamforelsepunkt mot den nya referensen, INTE HYP-023:s 0.08).
+  FAIL om nagot av de tre villkoren faller pa nagon niva.
+
+  Diagnostiskt syfte: testar om likviditetsviktning inom decilen (mekaniskt skild fran den
+  redan testade Kelly/signalstyrke-viktningen i HYP-032) specifikt adresserar den
+  diagnostiserade kapitalnivaberoende kapacitetsbindningen genom att systematiskt allokera
+  mer kapital till de mest likvida namnen inom den redan valda decilen, utan att andra
+  sjalva urvalslogiken.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 36
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1139, sharpe: 0.6620, calmar: 0.4771, sharpe_excl_best_trade: 0.6555, max_drawdown: -0.2388, win_rate: 0.4913, profit_factor: 1.1982, n_trades: 2253, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.1024, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 46.2, deflated_sharpe_ratio: 0.6329}
+  1000000: {cagr: 0.1156, sharpe: 0.6738, calmar: 0.5390, sharpe_excl_best_trade: 0.6672, max_drawdown: -0.2144, win_rate: 0.4913, profit_factor: 1.1982, n_trades: 2253, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0881, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 46.2, deflated_sharpe_ratio: 0.6496}
+  10000000: {cagr: 0.1005, sharpe: 0.6986, calmar: 0.6242, sharpe_excl_best_trade: 0.6952, max_drawdown: -0.1611, win_rate: 0.4927, profit_factor: 1.1982, n_trades: 2253, n_sector_trigger_episodes: 8, march_2023_episode_return: -0.0196, n_capacity_restriction_episodes: 6, avg_capacity_restriction_days: 46.2, deflated_sharpe_ratio: 0.6839}
+date_tested: '2026-08-01'
+result_summary: >
+  FAILED - PA VILLKOR 2, PA ALLA TRE NIVAER (villkor 1 klarades, villkor
+  3 kordes INTE - se motivering nedan).
+
+  VIKTIG METODOLOGISK NOT INNAN RESULTATET (redovisas oppet, INTE dold):
+  den forsta implementationen av denna hypotes hade en ICKE-DETERMINISTISK
+  BUGG - malbeloppet per namn beraknades som weight_i * DEN LOPANDE
+  (redan krympande) cash-variabeln inuti kopsloopan, istallet for en
+  FRUST ogonblicksbild av cash FORE loopen. Eftersom target_tickers ar en
+  Python-mangd (set) med hash-randomiserad iterationsordning mellan
+  processkorningar, gjorde detta HELA allokeringen beroende av i vilken
+  SLUMPMASSIG ordning namnen racknades upp - samma kommando gav TRE OLIKA
+  MaxDD-varden (-20.2%, -15.99%, -16.8%) i tre korningar av "identisk"
+  kod innan buggen hittades. FIXAD (se strategies/HYP-038/backtest.py,
+  "rebalance_cash"-ogonblicksbilden) och verifierad deterministisk
+  (tva efterfoljande korningar av samma kommando gav IDENTISKT resultat)
+  INNAN nagot av nedanstaende resultat togs som giltigt. Detta ar en
+  allvarlig kodkvalitetslardom - flaggad har for framtida hypoteser som
+  inkluderar viktad (icke-likaviktad) allokering: TESTA ALLTID
+  determinism (kor samma kommando minst tva ganger) INNAN resultat
+  rapporteras, eftersom Python-mangders iterationsordning inte ar
+  garanterat stabil mellan processer.
+
+  Villkor 1 (Sharpe >= 0.55): 0.66/0.67/0.70 - PASS pa alla tre, men
+  TYDLIGT LAGRE an HYP-037:s 0.73/0.75/0.70 vid 100k/1M.
+
+  Villkor 2 (MaxDD inte samre an HYP-037:s -23.10%/-19.12%/-13.11%):
+  FAIL PA ALLA TRE NIVAER, och forsamringen VAXER MED KAPITALNIVA -
+  motsatt den avsedda effekten (likviditetsviktning skulle specifikt
+  hjalpa vid HOG kapitalniva dar kapacitetsspärren binder hardast):
+  -23.88% (100k, 0.78pp samre), -21.44% (1M, 2.32pp samre), -16.11%
+  (10M, 3.00pp samre - den STORSTA forsamringen ar just dar mekanismen
+  skulle hjalpa mest).
+
+  Villkor 3 (OOS-2025-gate): KORDES INTE. Eftersom villkor 2 redan
+  FAILAR entydigt pa alla tre nivaer (inte ett gransfall - forsamringen
+  ar konsekvent och vaxande, samma typ av tydlig, ej tvetydig miss som
+  motiverade att hoppa over extra nivaer i HYP-035) skulle en
+  OOS-2025-omkorning (kostsam - kraver omladdning av hela det utokade
+  2025-universumet) inte andra den redan avgjorda FAIL-slutsatsen.
+  Redovisat oppet har, INTE en tyst avvikelse.
+
+  ATTRIBUTIONSRAPPORT: alfat forblir signifikant (13.4%/13.6%/10.7%
+  arligt, t=3.5-3.6). Sektorexponeringen SKIFTAR pa ett diagnostiskt
+  intressant satt: bankoverrepresentationen (SIC 60) MINSKAR nagot
+  (4.3x/4.2x/3.2x mot HYP-037:s 5.6x/5.0x/3.5x - likviditetsviktningen
+  nedviktar alltsa banker nagot, sannolikt for att de i snitt ar mindre
+  likvida), MEN REIT-overrepresentationen (SIC 67) OKAR (2.0x/2.0x/2.4x
+  mot 1.6x/1.7x/2.1x) - likviditetsviktningen omfordelar exponering
+  fran banker till REITs (troligen mer likvida i snitt), utan att detta
+  forbattrar den samlade riskbilden.
+
+  ROBUSTHET: sharpe_excl_best_trade nara headline-Sharpen (0.66/0.67/0.70),
+  inte en enskild-trade-artefakt. DSR vid K=37: 0.63/0.65/0.68 - matligt,
+  konsistent med FAIL men inte ren brus (alfat existerar fortfarande,
+  mekanismen bara skadar riskprofilen).
+
+  SLUTSATS: HYP-037 forblir referensimplementationen, oforandrad.
+  Likviditetsviktning inom decilen (roten-ur-ADV) hjalpte INTE den
+  diagnostiserade kapacitetsbindningen - tvartom, forsamringen vaxte
+  precis dar mekanismen var avsedd att hjalpa mest. Mekaniskt skild fran
+  den redan FAILADE Kelly-sizingen (HYP-032), men delar samma
+  overgripande lardom: att omfordela vikt INOM en redan vald decil
+  (oavsett om det sker efter signalstyrka eller likviditet) har nu
+  FAILAT TVA GANGER i denna strategifamilj, medan exponeringstimings-
+  mekanismer star pa 3/3 PASSED. Denna urskillning (VILKA namn/vikter
+  vs NAR exponering aterstalls) ar nu val etablerad over atta oberoende
+  tester.
+sharpe_raw:
+  100000: 0.6620
+  1000000: 0.6738
+  10000000: 0.6986
+deflated_sharpe_ratio:
+  100000: 0.6329
+  1000000: 0.6496
+  10000000: 0.6839

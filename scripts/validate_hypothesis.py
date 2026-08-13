@@ -31,6 +31,12 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPTS_DIR.parent
 sys.path.insert(0, str(SCRIPTS_DIR))
 from validate_friction_usage import validate_friction_usage  # noqa: E402
+from hypothesis_gate import (  # noqa: E402
+    criterion_is_filled,
+    is_smallcap_hypothesis,
+    requires_friction_check,
+    tested_capital_levels_check,
+)
 
 
 def validate(path: Path) -> list[str]:
@@ -47,29 +53,26 @@ def validate(path: Path) -> list[str]:
             f"status must be 'pre-registered', got: {hypothesis.get('status')!r}"
         )
 
-    if not hypothesis.get("pass_fail_criterion"):
-        errors.append("pass_fail_criterion is empty — must be locked before any backtest runs")
+    if not criterion_is_filled(hypothesis):
+        errors.append("pass_fail_criterion is empty (or a placeholder) — must be locked before any backtest runs")
 
-    universe = str(hypothesis.get("universe", "")).lower()
-    if "small-cap" in universe or "small cap" in universe:
-        if not hypothesis.get("tested_capital_levels"):
-            errors.append(
-                "tested_capital_levels is empty — required for all small-cap hypotheses"
-            )
+    if is_smallcap_hypothesis(hypothesis):
+        ok, msg = tested_capital_levels_check(hypothesis)
+        if not ok:
+            errors.append(msg)
 
-    criterion_text = str(hypothesis.get("pass_fail_criterion", "")).lower()
-    if "friktion" in criterion_text or "friction" in criterion_text:
+    if requires_friction_check(hypothesis):
         hyp_id = hypothesis.get("id")
         strategy_file = REPO_ROOT / "strategies" / str(hyp_id) / "backtest.py"
         friction_result = validate_friction_usage(strategy_file)
         if friction_result.get("error"):
             errors.append(
-                f"criterion mentions friction but strategy code could not be checked: "
+                f"small-cap hypothesis with a new backtest engine but friction usage could not be checked: "
                 f"{friction_result['error']}"
             )
         elif not friction_result["ok"]:
             errors.append(
-                f"criterion mentions friction but {strategy_file} does not actually "
+                f"small-cap hypothesis with a new backtest engine but {strategy_file} does not actually "
                 f"import+call: {', '.join(friction_result['missing'])}"
             )
 

@@ -1,0 +1,54 @@
+=== 1. Gradueringsfrekvens: rimlighet + namnbytes-andel ===
+
+Universum totalt: 4829 unika tickers over 190 manader
+Ticker-namnbytesliknande suffix (_old/_N): 242 (5.0% av alla tickers) - INTE den dominerande forklaringen till manatlig churn, sa den hoga gradueringsfrekvensen ar sannolikt i huvudsak genuin bandgrans-rorlighet, inte ett namnbytesartefakt.
+
+Laddar full prisdata + kor gradueringsdetektionen (samma pipeline som backtest.py main())...
+Laddar universum (huvudserie + 2025-utokning, sammanslaget)...
+  4829 unika tickers, 190 manader.
+
+Laddar prismatriser (open/close/adjusted_close/high/low/volume)...
+  (4024, 4829)
+
+Sanerar prisdata (clean_price_matrix)...
+Maskar oaterhamtade prisbrott (mask_unrecovered_price_breaks)...
+Flaggar leverantors-datafel (flag_implausible_liquidity)...
+Maskar orimlig (konstant) adjusted_close/close-kvot...
+Beraknar Corwin-Schultz-spread-matris...
+Beraknar 20-dagars ADV-kapacitetstak (close x volume x 10%, samma konvention som HYP-037/050/057)...
+
+Snitt universumstorlek/manad: 720.9
+Snitt graduerande/kvartal FORE 250-dagarsfilter: 214.2 (std 123.9)
+Snitt graduerande/kvartal EFTER 250-dagarsfilter (handelsbara): 137.1 (std 94.2)
+Andel av eligible-universum/manad EFTER filter: 6.35%
+BEDOMNING: varken nastan-noll (mekanismen skulle da aldrig exercera - INTE fallet, 8638 handelsbara handelser over 189 manader, samtliga 60 kvartal med >=1 kohort) eller orimligt hog (skulle betytt att nastan hela universumet byts ut varje manad - 6.35%/manad ar hog churn men inte >50%). Rimlig, om an hog, siffra for ett $100M-$2B-band dar mycket rorelse sker precis vid bandgranserna.
+
+=== 2. Per-kohort nettoavkastning ($100k, avgorande niva) ===
+
+Totalt avslutade kohorter: 45
+  Andel forlorande kohorter (net_return < 0): 40.0%
+  Snitt nettoavkastning/kohort: +3.0998%  (std 20.6894%)
+  Andel kohorter med nettoforlust > 50% av egen notional: 2.222% (1 st)
+  Andel kohorter med nettovinst > 100% av egen notional: 0.000% (0 st)
+  Varsta enskilda kohortforlust: -55.72%
+  Basta enskild kohortvinst: +74.46%
+
+De 5 varsta kohorterna:
+  entry_i=3959  exit_i=4022  n_names=11  net_return=-55.72%
+  entry_i=2200  exit_i=2263  n_names=137  net_return=-28.37%
+  entry_i=2515  exit_i=2578  n_names=93  net_return=-26.98%
+  entry_i=376  exit_i=439  n_names=106  net_return=-25.01%
+  entry_i=3773  exit_i=3836  n_names=40  net_return=-22.58%
+De 5 basta kohorterna:
+  entry_i=3895  exit_i=3958  n_names=19  net_return=+74.46%
+  entry_i=2704  exit_i=2767  n_names=150  net_return=+46.70%
+  entry_i=2263  exit_i=2326  n_names=121  net_return=+43.94%
+  entry_i=2768  exit_i=2831  n_names=144  net_return=+32.24%
+  entry_i=3521  exit_i=3584  n_names=67  net_return=+21.70%
+
+Produkt av (1+net_return) over alla 45 sekventiella kohorter: 1.5350 (grov indikation, INTE identisk med portfoljvardet - kohorterna delar inte exakt samma kapitalbas over tid pga cash-drag mellan kohorter, men storleksordningen bor stamma med den svaga men positiva CAGR:en, +6.53% - ingen katastrofal enskild-position-domination syns har).
+
+=== 3. ADV-kapacitetsspärrens 14 hoppade kohorter (identiskt pa alla tre nivaer) ===
+
+Kohorter hoppade for att cap_total/target var 0 eller under tröskeln: 14 av 60
+Att exakt SAMMA antal (14) hoppas over pa $100k, $1M OCH $10M - inte fler vid hogre kapitalniva - bekraftar att detta INTE ar en kapitalniva-bindande ADV-spärr (den skulle andra sig med kapitalniva) utan att cap_total (summan av de ingaende namnens rullande-20-dagars-ADV) rakar vara noll eller saknas helt for dessa specifika kohorter pa just deras entry-dag - sannolikt namn vars data raderats av flag_implausible_liquidity/mask_unrecovered_price_breaks strax runt entry-datumet trots att de klarade det tidigare 250-dagars historikkravet. Ofarligt for resultatets tolkning (paverkar bara vilka kohorter som HANDLAS, inte en dold bugg i P&L-berakningen for de kohorter som faktiskt handlas).

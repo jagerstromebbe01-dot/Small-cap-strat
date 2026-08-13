@@ -1,0 +1,107 @@
+# LÅST 2026-08-12 av CEO i chatt. Del av samma 5-kandidat-batch
+# (HYP-082 till HYP-086, k_total 78 -> 83). Konvergent förslag från
+# Gemini i samma brainstormrunda som HYP-079/080.
+#
+# FEASIBILITY: kräver INGEN ny datahämtning - data/cache/sec_filing_index.jsonl
+# lagrar redan ALLA 8-K:s med fullständigt items-fält (RELEVANT_FORMS
+# inkluderar "8-K" ofiltrerat på item-kod, se strategies/common/sec_filing_index.py).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-086
+date_registered: '2026-08-12'
+title: "8-K-katalysatortiming som extra kortbenskrav på HYP-079"
+universe: "N/A - samma engine/signal som HYP-079 (inklusive branschtak),
+  oförändrad utom short-benets extra krav nedan."
+small_cap_definition: "N/A - se HYP-072:s redan låsta definition, oförändrad."
+data_range: "Samma period som HYP-079, samma redan hämtade SEC
+  filings-index (data/cache/sec_filing_index.jsonl)."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Bygger direkt på HYP-079:s redan låsta signal, klassificering,
+  branschtak OCH positionstak. LONG-benet ("rena" namn, 0 S-3-
+  familjefilingar inom 24 månader) HELT OFÖRÄNDRAT.
+
+  NY, YTTERLIGARE KVALIFICERINGSREGEL FÖR SHORT-BENET: en ticker som
+  redan uppfyller HYP-072:s "aktiv shelf-användare"-kriterium (≥2
+  S-3-familjefilingar inom trailing 12 månader, varav ≥1 inom trailing
+  6 månader) kvalificerar för SHORT-benet ENDAST OM den ÄVEN har filat
+  minst en 8-K inom de senaste 30 KALENDERDAGARNA (räknat från
+  ombalanseringsdatumet, strikt före) vars items-fält innehåller minst
+  en av: "1.01" (Entry into a Material Definitive Agreement), "3.02"
+  (Unregistered Sales of Equity Securities), eller "8.01" (Other
+  Events). Namn som uppfyller de gamla S-3-kriterierna men INTE detta
+  extra 8-K-krav exkluderas helt från short-benet (hamnar varken i
+  long- eller short-benet, samma "varken/eller"-hantering som redan
+  finns för mellanliggande namn).
+
+  Branschtaket och positionstaket tillämpas OFÖRÄNDRADE på det
+  (mindre) resulterande short-benet.
+
+  MOTORKRAV: identiska med HYP-079.
+
+  PASS KRÄVER ALLA FYRA, PÅ DEN AVGÖRANDE $100k-NIVÅN, DÖMT MOT
+  HYP-079:S EGNA REDAN UPPMÄTTA TAL:
+  1. Sharpe (huvudperiod) >= 0,8433.
+  2. MaxDD INTE sämre än -5,82%.
+  3. Sharpe med HELA kalenderåret 2020 exkluderat >= 0,8043.
+  4. Kurtosis (hela huvudperioden, $100k) < 10,56 (20% tolerans ovanför
+     HYP-079:s 8,8).
+
+  FAIL om något villkor faller vid $100k, ELLER om det nya kravet
+  krymper short-benet till i genomsnitt färre än 10 namn/månad (för
+  litet för att vara en meningsfull, diversifierad kortsida) - i så
+  fall redovisas det öppet som ett feasibility-relaterat FAIL, inte ett
+  tyst bortfall.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): genomsnittligt antal namn i
+  short-benet per månad FÖRE och EFTER det nya 8-K-kravet (för att
+  kvantifiera hur mycket kravet faktiskt filtrerar).
+
+  Diagnostiskt syfte: testar om en TIDSMÄSSIG utlösande händelse (en
+  konkret avtalshändelse eller ospecificerad väsentlig händelse nära
+  inpå) förbättrar träffsäkerheten jämfört med att shorta ALLA namn med
+  passiv, strukturell shelf-aktivitet oavsett om något faktiskt håller
+  på att hända just nu - en övergång från en ren strukturell obalans-
+  signal till en delvis händelsedriven timing-komponent, men UTAN att
+  ändra den ekonomiska grundtesen (anticiperat utbud).
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 78
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.4793, cagr: 0.0519, max_drawdown: -0.2004, sharpe_ex2020: 0.6037, kurtosis: 7.0, avg_short_names: 43.1}
+  1000000: {sharpe: 0.3778, cagr: 0.0443, max_drawdown: -0.2392, sharpe_ex2020: 0.5395, kurtosis: 7.5, avg_short_names: 43.1}
+  10000000: {sharpe: 0.2224, cagr: 0.0322, max_drawdown: -0.2256, sharpe_ex2020: 0.3681, kurtosis: 9.4, avg_short_names: 43.1}
+result_summary: >
+  FAILED PA VILLKOR 1-3 PA DEN AVGORANDE $100k-NIVAN (villkor 4,
+  kurtosis, PASSERADE med god marginal: 7,0). Sharpe 0,4793 (mot kravet
+  0,8433), MaxDD -20,04% (mot -5,82%, en KRAFTIG forsamring), Sharpe
+  ex-2020 0,6037 (mot 0,8043).
+
+  DISCLOSURE: genomsnittligt antal short-namn/manad foll fran HYP-079:s
+  ~115 (se HYP-072:s ursprungliga disclosure) till 43,1 - fortfarande
+  over feasibility-golvet (10) sa inget feasibility-FAIL, men en
+  betydande krympning (~63%) av short-benets bredd.
+
+  DIAGNOS: att krava en FARSK 8-K-katalysator utover det redan
+  etablerade shelf-kriteriet minskade diversifieringen tillrackligt for
+  att aterinfora betydande MaxDD-risk (-20% till -24%), trots att den
+  faktiska koncentrationen PA ENSKILD-TICKER-NIVA (kurtosis) forbattrades
+  nagot. Namnen som blir kvar efter filtret ar sannolikt systematiskt
+  mer volatila/handelseladdade (per konstruktion - de har just haft en
+  vasentlig handelse) an den bredare, lugnare shelf-populationen, vilket
+  gor DEM till en risikablare, inte tryggare, delmangd trots den
+  teoretiskt battre "timing"-logiken.
+
+  Diagnostiskt: en overgang fran ren strukturell obalans-signal till
+  handelsedriven timing hjalpte INTE har - motsatsen till hypotesen.
+  Bredd (fler, lugnare namn) verkar viktigare an precision (farre,
+  "hetare" namn) for just denna mekanism, konsistent med registrets
+  ovriga monster (branschtaket, HYP-079, fungerade genom att BEHALLA
+  bredd samtidigt som koncentrationen minskades - inte genom att
+  krympa urvalet).

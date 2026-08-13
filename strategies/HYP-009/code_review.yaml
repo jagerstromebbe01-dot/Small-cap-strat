@@ -1,0 +1,75 @@
+# Coder-B kodgranskning av HYP-009 (/agents/coder_b/ROLE.md)
+# Granskar Coder-A:s implementation mot research/strategy_specs/HYP-009-spec.md.
+# Coder-B ändrar ALDRIG Coder-A:s kod - bara detta granskningsresultat.
+
+hypothesis_id: HYP-009
+file_reviewed: strategies/HYP-009/backtest.py
+spec_reviewed: research/strategy_specs/HYP-009-spec.md
+reviewed_against: strategies/HYP-008/backtest.py
+reviewer: coder_b
+coder_b_approved: true
+coder_b_notes: >
+  Diffade strategies/HYP-009/backtest.py rad-för-rad mot
+  strategies/HYP-008/backtest.py (diff -u). Enda funktionella skillnader:
+  (1) BORROW_ANNUAL_RATE = 0.0 istället för 0.03 (rad 75), borrow_cost()
+  anropas fortfarande identiskt (rad 385) - inte hoppats över. (2) Ny
+  konstant SPREAD_COST_MULTIPLIER = 0.0 (rad 76-79) som multiplicerar
+  spread-kostnadstermen vid både exit (rad 314, "proceeds -= proceeds *
+  (exit_spread / 2) * SPREAD_COST_MULTIPLIER") och entry (rad 369,
+  "effective_entry = cp * (1 + entry_spread / 2 * SPREAD_COST_MULTIPLIER)")
+  - corwin_schultz_spread()-beräkningen själv (compute_spread_matrix,
+  rad 259-263) är orörd och körs identiskt med HYP-008, bara
+  kostnadseffekten nollställs, exakt som kriteriet kräver. Alla övriga
+  rader som skiljer sig är kommentarer/docstrings som beskriver
+  ablationen - ingen ändring av par-identifiering, z-score, beta,
+  entry/exit-logik, positionsstorlek (FIXED_FRAC), MAX_POS,
+  kapacitetsspärren (MAX_ADV_PCT, oförändrad rad 81), universum,
+  datakälla eller period (FULL_START/FULL_END identiska med HYP-008).
+  RF_ANNUAL/2/252-hedgefinansieringstermen i hedge_pnl (rad 386) är
+  också oförändrad mot HYP-008 - korrekt, spec §3/kriteriet nämner bara
+  borrow_cost och spread som friktionstermer att nollställa.
+
+  Körde scripts/validate_hypothesis.py mot
+  research/hypothesis_registry/HYP-009-friction-ablation.yaml -> exit 0
+  ("validly pre-registered hypothesis"). Körde
+  scripts/validate_friction_usage.py mot strategies/HYP-009/backtest.py
+  -> exit 0 (bekräftar AST-nivå att både corwin_schultz_spread och
+  borrow_cost importeras OCH anropas, inte bara nollställda genom att
+  tas bort - vilket är precis vad kriteriet och spec §3 kräver för att
+  ablationen ska bevisa något).
+
+  Kontrollerade att pass_fail_criterion, status och
+  tested_capital_levels i HYP-009-friction-ablation.yaml är orörda
+  (Coder har inte skrivit till dem) och att implementationen matchar
+  kriteriets ordagranna beskrivning (annual_rate=0.0,
+  spread-kostnadstermen multiplicerad med 0, båda funktionerna
+  fortfarande anropade). Inga avvikelser hittade. Godkänd.
+revision_history:
+  - date: '2026-07-28'
+    reviewer: coder_b
+    approved: true
+    notes: >
+      Första granskningen. Diff mot HYP-008/backtest.py, körning av
+      validate_hypothesis.py och validate_friction_usage.py (båda exit
+      0), och manuell kontroll mot spec §3/kriteriets ordalydelse -
+      inga avvikelser. Se coder_b_notes ovan för detaljer. Godkänd för
+      vidare körning av Backtester.
+  - date: '2026-07-29'
+    reviewer: claude (CEO-beslut, prestandaoptimering)
+    approved: true
+    notes: >
+      backtest.py ersatt med en prestandaoptimerad version (compute_beta
+      och run_backtest vektoriserade med numpy istället för Python-loopar
+      med pandas .loc[]-uppslag - körtid för hela HYP-009 gick fran
+      100+ minuter till ~6-8 minuter). INGEN ändring av ekonomisk logik,
+      trösklar, eller ordning - se filens uppdaterade docstring för
+      detaljer. Verifierat numeriskt IDENTISKT mot den tidigare (redan
+      godkända) versionen på full skala (5162 tickers, alla tre
+      kapitalnivåer, 0.0 skillnad i portfolio_value/trade_log) innan
+      utbytet - se scripts/validate_beta_optimization.py och
+      scripts/validate_run_backtest_optimization.py. Detta var INTE en
+      ny Coder-A/Coder-B-omgång genom kedjan, utan ett CEO-godkänt byte
+      gjort direkt i chatt - loggat här för att granskningsspåret ska
+      förbli komplett, i linje med samma princip som resten av filen.
+      validate_hypothesis.py och validate_friction_usage.py körda om
+      mot den nya filen - båda exit 0.

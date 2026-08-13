@@ -1,0 +1,99 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås kör"), tillsammans med HYP-067 -
+# batch (2 kandidater). Se HYP-067:s registerpost för full ursprungs-
+# motivering (samma diagnostik, samma dag). k_total hoppar 65->67 vid
+# lasningstillfallet, inte styckvis.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-068
+date_registered: '2026-08-11'
+title: "Volatilitetsmålsättning (HYP-056:s exakta mekanik) på HYP-066:s återköpsdecil"
+universe: "N/A - portföljnivå-overlay på HYP-066:s redan existerande,
+  färdigberäknade portfölj. Ingen ny small-cap-signal, inget nytt
+  handelsuniversum."
+small_cap_definition: "N/A - se HYP-056:s identiska motivering (ren
+  portföljnivå-exponeringsskalning, ingen ny backtest-motor)."
+data_range: "Samma period som HYP-066 (2010-01-01 till 2024-12-31
+  huvudperiod + genuin OOS-2025), återanvänder HYP-066:s redan
+  beräknade (redan SPY-beta-hedgade) portföljvärdesserier oförändrade,
+  per kapitalnivå."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja - IDENTISK
+  mekanik som HYP-056, applicerad på HYP-066 istället för HYP-047):
+
+  Vid VARJE veckoslut: beräkna HYP-066:s portföljs (per kapitalnivå,
+  redan SPY-beta-hedgad, oförändrad) rullande 60-dagars realiserade
+  volatilitet (annualiserad std av dagliga avkastningar). Jämför mot
+  samma portföljs egen rullande 2-års (504 handelsdagars) TRAILING
+  MEDIAN-volatilitet. skala = MIN(1,0, mål-volatilitet / dagens 60-
+  dagars-volatilitet), golv 0,3 (ALDRIG över 1,0 - ingen hävstång,
+  samma avgränsning som HYP-056). Övrigt kapital i kontanter (RF 2%/år).
+
+  PASS KRÄVER ALLA TRE, PÅ ALLA TRE KAPITALNIVÅER:
+  1. Sharpe (med overlay) >= 0,55.
+  2. Sharpe (med overlay) > HYP-066:s EGEN Sharpe på SAMMA kapitalnivå
+     (0,3072/0,3079/0,3393).
+  3. MaxDD (med overlay) BÄTTRE (mindre negativ) än HYP-066:s EGEN
+     MaxDD på samma nivå (-66,85%/-70,90%/-72,64%).
+
+  FAIL om någon nivå faller under något villkor.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): snitt-/lägsta exponeringsskala,
+  andel veckor under 1,0 - samma disclosure-mönster som HYP-056.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  Diagnostiskt syfte: testar om kontinuerlig portföljnivå-volatilitets-
+  skalning (reagerar på EGEN realiserad volatilitet oavsett källa -
+  marknadsbred ELLER idiosynkratisk) fångar HYP-066:s diagnostiserade
+  risk bättre än en marknadsspecifik SPY-krasch-trigger skulle ha gjort.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 65
+date_tested: '2026-08-11'
+result:
+  100000: {sharpe: 0.2949, cagr: 0.0678, max_drawdown: -0.5894, deflated_sharpe_ratio: 0.0476, oos_2025_sharpe: 0.5712, oos_2025_total_return: 0.1948}
+  1000000: {sharpe: 0.2929, cagr: 0.0681, max_drawdown: -0.6262, deflated_sharpe_ratio: 0.0459, oos_2025_sharpe: 0.2759, oos_2025_total_return: 0.0569}
+  10000000: {sharpe: 0.2388, cagr: 0.0325, max_drawdown: -0.6275, deflated_sharpe_ratio: 0.0650, oos_2025_sharpe: 0.2328, oos_2025_total_return: 0.0472}
+  exposure_scale_disclosure_100k: {avg_scale: 0.891, min_scale: 0.300, pct_weeks_below_1: 0.429}
+  dsr_n_trials: 67
+result_summary: >
+  FAILED PA VILLKOR 1 OCH 2 PA ALLA TRE NIVAER. Villkor 1 (Sharpe>=0,55):
+  FAIL - Sharpe blev 0,2949/0,2929/0,2388, INTE battre utan SAMRE an
+  HYP-066:s egna 0,3072/0,3079/0,3393 (villkor 2 ocksa FAIL, samma
+  riktning). Villkor 3 (MaxDD battre an HYP-066) PASSADE DOCK TYDLIGT
+  pa alla tre: -58,94%/-62,62%/-62,75% mot HYP-066:s -66,85%/-70,90%/
+  -72,64% (7,9-9,9pp forbattring).
+
+  MEKANISMEN EXERCERADES GENUINT: golvet 0,3 triggades (lagsta-skala
+  0,300 pa alla nivaer), 42,9-44,4% av veckorna hade skala <1,0 - inte
+  ett no-op.
+
+  DIAGNOS: till skillnad fran HYP-056 (samma mekanik PASSADE tydligt pa
+  HYP-047) fungerar volatilitetsmalsattning HAR sammre - CAGR foll
+  kraftigt (6,78%/6,81%/3,25% mot HYP-066:s 16,45%/16,72%/7,69%,
+  storsta relativa fallet i registrets historia for denna mekanism-
+  familj) samtidigt som MaxDD bara forbattrades mattligt (jamfort med
+  hur mycket avkastning som offrades). Konsistent med den diagnostik
+  som motiverade batchen: en 60-dagars TRAILING volatilitetssignal
+  reagerar for langsamt pa idiosynkratiska enskilda-position-blowups
+  (till skillnad fran marknadsbred volatilitet, som HYP-047:s bas
+  domineras av) - overlayn skalar ner exponeringen i EFTERHAND av att
+  volatiliteten redan stigit, inte INNAN den specifika positionens
+  kollaps, och betalar da priset (lagre CAGR under lugna perioder)
+  utan att fa motsvarande skydd nar det galler.
+
+  DSR extremt lag (0,05-0,07 vid K=67) - konsistent med ett genuint
+  svagt, inte bara otillrackligt starkt, resultat.
+
+  OOS-2025 var faktiskt starkt (Sharpe 0,23-0,57, positiv avkastning
+  pa alla tre) - men huvudperiodens villkor 1/2 FAILAR redan entydigt,
+  sa detta ar INTE gating.
+
+  HYP-047/056 forblir referensen. Se HYP-067 (samma batch) for det
+  parallella stop-loss-resultatet - BADA BATCH-004-kandidaterna
+  FAILADE. SLUTSATS FOR HELA UPPFOLJNINGSTRADEN (HYP-066->067/068):
+  varken en direkt per-position-atgard eller en portfoljbred
+  volatilitetsskalning raddade den ra aterkopssignalen - den
+  diagnostiserade idiosynkratiska risken visade sig svarare att
+  mekaniskt atgarda an forvantat, med bagge de tva mest etablerade
+  riskverktygen i registret.

@@ -1,0 +1,86 @@
+# LÅST 2026-07-30 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. PEAD (Post-Earnings-Announcement Drift) via
+# SUE (Standardized Unexpected Earnings) - kraver INGEN analytikerkonsensus
+# (till skillnad fran den klassiska PEAD-litteraturens andra variant),
+# darfor INTE blockerad av EODHD:s 403-fel pa Fundamentals-access. Ny
+# datakalla: data/fetch_eps_history.py, SEC EDGAR companyfacts-API,
+# ateranvander redan byggd ticker->CIK-mappning. Se konversationen
+# 2026-07-30 for full motivering.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-020
+date_registered: '2026-07-30'
+title: PEAD via SUE (Standardized Unexpected Earnings) pa small-cap
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World for pris/friktion, SEC EDGAR companyfacts for EPS/filingsdatum, samma period 2011-2024
+pass_fail_criterion: 'Aterananvander HYP-015:s motor (universum, friktion, SPY-hedge, kapacitetsspärr, de
+  tre motorfixarna) - RENT SIGNALTEST, ingen krasch-overlay/stop-loss/vol-skalning, i linje med principen
+  att utvardera en kandidatsignals egen edge FORE nagon riskoverlay (se konversationen 2026-07-30).
+
+  Signal: SUE = (EPS denna kvartal - EPS samma kvartal foregaende ar) / std(de senaste 8 kvartalens
+  motsvarande overraskning), Foster/Olsen/Shevlin (1984) "saisong-random-walk"-varianten - KRAVER INGEN
+  analytikerkonsensus. Anvander URSPRUNGLIGA rapportens filingsdatum (tidigaste "filed"-varde per
+  (fiskalar, fiskalkvartal), INTE periodens slutdatum och INTE senare omrakningar/andringar) for att
+  undvika framatblick - signalen "blir kand" av marknaden forst da, snappad till FORSTA FAKTISKA
+  HANDELSDAG PA ELLER EFTER filingsdatumet.
+
+  Berattigande vid ombalansering: en ticker maste (a) vara i small-cap-universumet den manaden OCH
+  (b) ha ett SUE-varde vars filingsdatum ligger inom de senaste ~63 handelsdagarna (~3 manader) - annars
+  raknas signalen som inaktuell och tickern ar inte berattigad den manaden. Ga LANG i HOGSTA SUE-decilen
+  (mest positiva earnings-overraskning), manatlig ombalansering (PEAD ar en snabbare-roterande signal
+  an lagvol/storlek, samma konvention som HYP-012:s momentum anvander).
+
+  Friktion: Corwin-Schultz-spread + 3% arlig borrow-kostnad, identiskt med HYP-008/012/015 - AKTIV fran
+  dag ett. SPY-beta-hedge, samma kapacitetsspärr (MAX_ADV_PCT=0.10) som HYP-015.
+
+  MOTORKRAV (samma tre som HYP-015/016/017/018/019, redan byggda i strategies/common/): snappade
+  ombalanseringsdatum, adjusted_close genomgaende, flag_implausible_liquidity().
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M). FAIL om
+  nagon niva faller under.
+
+  Diagnostiskt syfte: PEAD ar en av de mest robusta, replikerade anomalierna i den akademiska
+  litteraturen (Bernard & Thomas 1989 och hundratals uppfoljande studier) - testar om den overlever
+  i small-cap efter realistisk friktion, med en analytiker-oberoende SUE-definition som undviker
+  EODHD:s Fundamentals-blockering helt.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 18
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.0083, sharpe: 0.1046, calmar: 0.0161, sharpe_excl_best_trade: 0.1033, max_drawdown: -0.5127, win_rate: 0.5256, profit_factor: 1.3663, n_trades: 1094, deflated_sharpe_ratio: 0.0689}
+  1000000: {cagr: 0.0269, sharpe: 0.1651, calmar: 0.0588, sharpe_excl_best_trade: 0.1475, max_drawdown: -0.4565, win_rate: 0.5303, profit_factor: 1.3659, n_trades: 1090, deflated_sharpe_ratio: 0.1051}
+  10000000: {cagr: 0.0359, sharpe: 0.2006, calmar: 0.0758, sharpe_excl_best_trade: 0.1906, max_drawdown: -0.4741, win_rate: 0.5336, profit_factor: 1.3846, n_trades: 1102, deflated_sharpe_ratio: 0.1291}
+date_tested: 2026-07-30
+result_summary: >
+  FAILED pa alla tre kapitalnivaer. Sharpe 0.10/0.17/0.20 - langt under
+  0.55-tröskeln. MaxDD djup (-51%/-46%/-47%) trots svagt positiv Sharpe
+  - liknande "tunn genomsnittlig edge, tung svans"-monster som HYP-012
+  (momentum). sharpe_excl_best_trade nara identisk med full sharpe pa
+  alla nivaer (0.10/0.15/0.19) - INGEN dominerande enskild-trade-artefakt
+  denna gang, till skillnad fran flera tidigare hypoteser (ESSA/ARDMQ/COL).
+
+  Tolkning: PEAD via saisong-random-walk-SUE (Foster/Olsen/Shevlin 1984,
+  ingen analytikerkonsensus) visar INGEN tydlig, exploaterbar edge i
+  small-cap efter realistisk friktion. Detta sager INTE nodvandigtvis
+  att PEAD-anomalin i sig ar dod - den klassiska litteraturen anvander
+  ofta analytiker-baserad overraskning (kraver EODHD Fundamentals, som
+  fortfarande ar blockerad, 403) snarare an saisong-SUE, och 2474 av 5162
+  tickers hade overhuvudtaget ett anvandbart SUE-varde (kraver ~4-5 ars
+  EPS-historik per bolag) - en betydande del av universumet saknar signal
+  helt, vilket kan spada ut en genuin men koncentrerad edge. Skiljer
+  saisong-SUE:s formaga att fanga PEAD fran analytiker-baserad SUE:s
+  formaga ar INTE undersokt har.
+sharpe_raw:
+  100000: 0.1046
+  1000000: 0.1651
+  10000000: 0.2006
+# Beräknad mot K=19 (7 döda ejay-varianter + HYP-008/009/011/012/013/014/015/016/017/018/019 + HYP-020 sjalv),
+# via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.0689
+  1000000: 0.1051
+  10000000: 0.1291

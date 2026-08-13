@@ -1,0 +1,55 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "cagr": NaN,
+      "sharpe": 0.08199732301323528,
+      "calmar": NaN,
+      "max_drawdown": -2.0555172340352064,
+      "n_events": 931
+    },
+    {
+      "capital_level": 1000000,
+      "cagr": NaN,
+      "sharpe": -0.31789890369373175,
+      "calmar": NaN,
+      "max_drawdown": -2.301567991872233,
+      "n_events": 931
+    },
+    {
+      "capital_level": 10000000,
+      "cagr": NaN,
+      "sharpe": 0.32606845560897724,
+      "calmar": NaN,
+      "max_drawdown": -1.7883553668209196,
+      "n_events": 931
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": 0.26501245287519887,
+      "oos_2025_max_drawdown": -0.0,
+      "n_days_oos": 250
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": 0.6183599443388181,
+      "oos_2025_max_drawdown": -0.0,
+      "n_days_oos": 250
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 1.2380575357143473,
+      "oos_2025_max_drawdown": -0.0,
+      "n_days_oos": 250
+    }
+  ],
+  "overall": "FAILED",
+  "n_events_final": 931,
+  "score_distribution_at_trigger": {
+    "2": 6218,
+    "3": 592,
+    "4": 196
+  }
+}

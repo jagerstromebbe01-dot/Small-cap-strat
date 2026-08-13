@@ -1,0 +1,340 @@
+# LÅST 2026-08-06 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors.
+#
+# Foljer spec §5b:s regler for LEGITIM kombinationstestning, samma
+# disciplin som HYP-039/041:
+#   1. Korrelationsmatris FORE nagon vikt valdes - se reservation nedan,
+#      med bade en forsta (kvartalsvis, 57 punkter) och en KORRIGERAD,
+#      mer tillforlitlig (daglig, 3460 punkter) berkning, upptackt
+#      behovas efter att den kvartalsvisa metoden visade sig ge en
+#      MISSVISANDE bild aven for den redan kanda SPY/HYP-037-relationen
+#      (0.67 kvartalsvis mot 0.003 dagligen, oberoende verifierat).
+#   2. NAIV, likaviktad kombination (lika tredjedelar) - INTE in-sample-
+#      optimerade vikter.
+#   3. Egen K-kostnad, separat fran HYP-039/HYP-041.
+#
+# TREDJE BENET: en momentum long/short-svit (12-1-manaders momentum,
+# klassisk akademisk konvention - Jegadeesh/Titman - long topp-decil,
+# kort botten-decil, dollar-neutralt, kvartalsvis) byggd fran grunden
+# over small-cap-universumet (INTE en ETF-proxy - de tillgangliga
+# alternativen som foreslogs, DBMF/KMLM/AVUV/QVAL/VFMO, hade alla for
+# kort historik for 2010-2024-fonstret, endast BTAL godkand pa den
+# punkten men aldrig testad har).
+#
+# KORRELATION (DAGLIG, den tillforlitliga siffran - FORE lasning):
+# Momentum L/S mot SPY: -0.086. Momentum L/S mot HYP-037: -0.110.
+# Svagare an den forsta (missvisande) kvartalsvisa skattningen (-0.36/
+# -0.23), men fortfarande i ratt riktning. Sviten egen dagliga Sharpe:
+# 0.27 (svagare an HYP-037:s 0.73, men battre an HYP-041:s TLT-ben,
+# vars egen Sharpe bara var 0.038).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-043
+date_registered: '2026-08-06'
+title: Naiv tredelad kombination (kvartalsvis ombalanserad) - SPY + HYP-037 + Momentum L/S
+universe: "N/A for SPY/HYP-037-benen (redan testade). Momentum L/S-benet byggs over
+  SAMMA small-cap-universum ($100M-$2B) som HYP-037, ingen ny universumdefinition."
+small_cap_definition: "small-cap, $100M - $2B börsvärde, EODHD All-World (galler
+  momentum L/S-benets universum, ateranvander HYP-037:s redan lasta definition)"
+data_range: "SPY/TLT-monster: adjusted_close 2010-2024 + genuin OOS-2025. Momentum
+  L/S: byggd fran close_adj over samma small-cap-universum och period, samma
+  motorkrav (adjusted_close genomgaende, ny sarhet mot konstant orimlig
+  adjusted_close/close-kvot - se nedan)."
+pass_fail_criterion: >
+  MEKANISM (låst, ingen fri parameter kvar att välja):
+
+  1. MOMENTUM L/S-SVITEN (det tredje benet, byggs fran grunden har - INTE
+  en redan existerande serie): kvartalsvis (HYP-037:s egna snappade
+  datum), rangordna eligible small-cap-universumet efter 12-1-manaders
+  momentum (avkastning fran 252 till 21 handelsdagar sedan - UTESLUTER
+  senaste manaden, klassisk akademisk konvention). LONG topp-decilen,
+  KORT botten-decilen, likaviktat inom vardera benet, DOLLAR-NEUTRALT
+  (50% notional long, 50% kort av sviten-benets EGEN allokering).
+  Daglig vardering mellan ombalanseringarna (samma princip som HYP-037:s
+  egen dagliga vardering). Lanekostnad pa kortbenet (samma
+  BORROW_ANNUAL_RATE=3% som resten av registret). Motorkrav: adjusted_close
+  genomgaende, SAMMA nya sarhet mot konstant orimlig adjusted_close/close-
+  kvot (>100x eller <0.01x, maskas) som upptacktes och fixades under
+  HYP-042:s bygge samma dag - INBYGGD FRAN START har, inte upptackt i
+  efterhand.
+
+  2. KOMBINATION: 1/3 notional SPY + 1/3 notional HYP-037 (redan sparad
+  strategies/HYP-037/results/portfolio_value_<niva>.csv, ANVAND
+  OFORANDRAD) + 1/3 notional momentum L/S-sviten (punkt 1, redan
+  DOLLAR-NEUTRAL internt - en tredjedel kapital "bakom" den behandlas
+  som EN redan kand avkastningsserie, samma princip som HYP-037:s eget
+  ben i HYP-039/041). Ombalanserad till exakt tredjedelar VARJE KVARTAL
+  pa HYP-037:s REDAN LASTA datum. INGEN havstang utover sviten-benets
+  egen interna 50/50 long/kort-struktur.
+
+  PASS KRÄVER ALLA TRE, PA DEN AVGORANDE $100k-NIVAN (rapporteras for
+  alla tre nivåer, samma konvention som HYP-039/041):
+  1. Kombinerad Sharpe (2010-2024) >= 1.0.
+  2. Kombinerad Sharpe > HYP-039:s EGNA redan registrerade Sharpe vid
+     samma niva (1.019/1.030/0.988 vid 100k/1M/10M).
+  3. Kombinerad MaxDD BATTRE an HYP-039:s EGNA redan registrerade MaxDD
+     vid samma niva (-22.0%/-22.2%/-20.0%).
+
+  OOS-2025: kombinerad OOS-2025 Sharpe (momentum L/S-sviten byggd om
+  for 2025 med SAMMA metod, sammanslaget universum huvudserie+2025-
+  utokning, samma merged-universum-princip som HYP-037:s egen genuina
+  OOS-korning) MASTE vara > HYP-039:s EGEN OOS-2025 Sharpe vid samma
+  niva (0.919/0.812/0.793).
+
+  FAIL om nagot villkor faller vid $100k-nivan.
+
+  Diagnostiskt syfte: testar om en EGENBYGGD (inte ETF-proxy) beta-
+  neutral momentum long/short-svit kan hoja den kombinerade Sharpen
+  bortom vad HYP-039 (SPY+HYP-037) redan uppnar - en annan typ av
+  tredje ben an HYP-041:s TLT (tillgangsklass-diversifiering) - har
+  ar det en oberoende AKTIEFAKTOR-svit, motiverad delvis av HYP-042:s
+  eget fynd (small-cap-"forlorare" tenderar att fortsatta kollapsa,
+  vilket indirekt stodjer att KORTSIDAN av momentum kan ha edge har,
+  aven om LANGSIDAN (ren momentum long-only) redan misslyckats tre
+  ganger tidigare i registret).
+status: failed   # pre-registered -> tested -> passed/failed
+# CEO-BESLUT 2026-08-09: status andrad fran passed till failed. Grund:
+# tilläggsnot DEL E (2026-08-08) visar Sharpe 0,8765/0,8752/0,8392 med
+# alla fyra kanda fixar (look-ahead-bias, adjusted_close-kvot, ombalanse-
+# ringskostnad, corwin_schultz_spread) kombinerade - klarar inte langre
+# vare sig villkor 1 (Sharpe>=1.0) eller villkor 2 (sla HYP-039) pa den
+# avgorande $100k-nivan. Villkor 3 (MaxDD) och OOS-2025 forblir starka
+# PASS, men kravet var ALLA TRE huvudvillkor. De ursprungliga siffrorna
+# ovan (capital_level_results) ANDRAS INTE - historik skrivs inte om.
+# HYP-039 forblir den senaste hypotesen i kedjan som fortfarande PASSAR
+# pa egna meriter fore HYP-047.
+k_total_hypotheses_before_this: 41
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 1.0457, cagr: 0.1088, max_drawdown: -0.1558, calmar: 0.6980, oos_2025_sharpe: 1.6163, oos_2025_total_return: 0.3267, oos_2025_max_drawdown: -0.0988, deflated_sharpe_ratio: 0.9510}
+  1000000: {sharpe: 1.0498, cagr: 0.1076, max_drawdown: -0.1568, calmar: 0.6862, oos_2025_sharpe: 1.5639, oos_2025_total_return: 0.3137, oos_2025_max_drawdown: -0.1058, deflated_sharpe_ratio: 0.9516}
+  10000000: {sharpe: 0.9864, cagr: 0.0975, max_drawdown: -0.1429, calmar: 0.6820, oos_2025_sharpe: 1.5321, oos_2025_total_return: 0.3060, oos_2025_max_drawdown: -0.1113, deflated_sharpe_ratio: 0.9229}
+date_tested: '2026-08-06'
+result_summary: >
+  PASSED PA DEN AVGORANDE $100k-NIVAN, PA ALLA FYRA VILLKOR - och detta
+  ar ett TYDLIGT starkare resultat an HYP-039 sjalv, inte bara ett
+  precis-over-ribban-godkannande. Tredje kombinationshypotesen i
+  registret, och den FORSTA som slar HYP-039 pa dess egna villkor.
+
+  Villkor 1 (Sharpe >= 1.0 vid $100k): 1.0457 - PASS, TYDLIGT over
+  malet (mot HYP-039:s egna 1.0191).
+
+  Villkor 2 (Sharpe > HYP-039:s egna vid samma niva): PASS vid $100k
+  (1.0457 vs 1.0191) OCH $1M (1.0498 vs 1.0300). $10M missar bade
+  1.0-malet (0.9864) och jamforelsen mot HYP-039 (0.9879) - MEN $10M
+  ar INTE den avgorande nivan per kriteriet, och missen ar
+  rakbladstunn (0.0015 under HYP-039:s egna varde) - redovisat oppet,
+  INTE dolt.
+
+  Villkor 3 (MaxDD battre an HYP-039:s egna): PASS PA ALLA TRE NIVAER,
+  och inte marginellt - -15.58%/-15.68%/-14.29% mot HYP-039:s
+  -22.03%/-22.16%/-20.03%, en forbattring pa 6.35-6.48 PROCENTENHETER.
+  Det tredje benet levererar genuin, betydande riskreduktion, inte
+  bara en marginell finjustering.
+
+  OOS-2025 (villkor 4): PASS PA ALLA TRE NIVAER, och SPEKTAKULART -
+  1.6163/1.5639/1.5321 mot HYP-039:s egna 0.9185/0.8116/0.7932 - en
+  forbattring pa 68-93%. Given den redan kanda reservationen om ett
+  enda ars brus (samma som alltid galler for OOS-matt i detta
+  register) bor detta INTE overtolkas som en permanent egenskap, men
+  riktningen ar entydig och konsekvent med huvudperiodens resultat.
+
+  DSR vid K=42: 0.95/0.95/0.92 - mycket hogt, samma niva som HYP-039:s
+  egna 0.95/0.95/0.94, INTE en slumptrafff trots 42 redan testade
+  hypoteser.
+
+  METODOLOGISK NOT (viktig, se registerpostens egen lasningskommentar):
+  korrelationen mot bade SPY (-0.086) och HYP-037 (-0.110) var svagare
+  an en forsta, MISSVISANDE kvartalsvis forhandsskattning (-0.36/-0.23)
+  - upptackt via en oberoende dubbelkoll som avslojade att aven den
+  redan kanda SPY/HYP-037-relationen ser mycket starkare ut kvartalsvis
+  (0.67) an dagligen (0.003). Trots den svagare (men fortfarande
+  gynnsamma) korrelationen levererade momentum L/S-sviten ett TYDLIGT
+  battre resultat an HYP-041:s TLT-forsok (som hade battre korrelation
+  men en mycket svagare EGEN riskjusterad profil, Sharpe 0.038). Det
+  bekraftar lardomen fran HYP-041: sviten-benets EGEN kvalitet (denna
+  sviten hade dagligen Sharpe 0.27, mycket battre an TLT:s 0.038)
+  spelar minst lika stor roll som korrelationen for om ett tredje ben
+  faktiskt hjalper.
+
+  DIAGNOS FOR VARFOR DET FUNGERADE: en beta-neutral, EGENBYGGD
+  aktiefaktor-svit (inte en tillgangsklass-diversifierare som TLT)
+  tillforde bade riktig diversifiering OCH en positiv egen edge,
+  istallet for att bara spa ut. Detta ar ocksa ett indirekt,
+  empiriskt stod for tesen som motiverade HYP-042 samma dag (att
+  small-cap-"forlorare" ofta genuint kollapsar snarare an studsar
+  tillbaka) - fast HAR utnyttjat via KORTSIDAN (blanka forlorarna)
+  istallet for att kopa dem, vilket fungerade mycket battre.
+
+  SLUTSATS: HYP-043 ar den STARKASTE kombinationshypotesen i registret
+  hittills - forbattrar HYP-039 pa MaxDD betydande (6+pp), haller
+  Sharpe-malet klart vid de tva avgorande lagre nivaerna, och visar en
+  mycket stark OOS-2025-marginal. $10M-nivans knappa miss ar en arlig,
+  inte dold, nyans - konsistent med det redan etablerade monstret att
+  edgen (har: bade HYP-037:s och momentum-sviten:s kapacitetsberoende
+  avklingning) forsvagas nagot vid hogre kapital. HYP-039 var forsta
+  gangen CEO:s grundmal naddes - HYP-043 ar forsta gangen malet naddes
+  MED en tydlig marginal, inte bara precis over ribban.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test. status/pass_fail_criterion/
+# tested_capital_levels/capital_level_results ovan ANDRADE INTE - last
+# historia andras inte i efterhand, samma disciplin som HYP-037/039)
+# ════════════════════════════════════════════════════════════
+# DEL A - FRIKTIONSKORRIGERAD ROBUSTHET (fyndet sjalvt gjordes redan
+# 2026-08-07 av scripts/diagnostic_hyp043_friction_robustness.py, under
+# byggandet av HYP-044 - men skrevs ALDRIG in i DENNA fil, bara i
+# HYP-044/045/046/047:s prosa och i _counter.yaml:s not, som sjalv
+# flaggade detta som en "oppen fraga" som kravde en formell
+# tillaggsnot. Detta ar den notens formella infriande.
+#
+# FYND: momentum L/S-sviten ovan (rad 47-60) anropar ALDRIG
+# corwin_schultz_spread - bara borrow_cost. Detta skulle INTE klara
+# scripts/validate_friction_usage.py om det kordes idag, och bryter
+# principen "friktion fran dag ett" (spec §2, princip 3) trots att
+# registerpostens egen las-kommentar (rad 56-58) uttryckligen namner
+# adjusted_close-kvotfixen som inbyggd fran start - spreadkostnaden
+# missades trots det.
+#
+# MED corwin_schultz_spread tillagd (allt annat OFORANDRAT):
+#   $100k:   Sharpe 1.0457 -> 0.8926 (MaxDD oforandrad -15.58%)
+#   $1M:     Sharpe 1.0498 -> 0.8940 (MaxDD oforandrad -15.68%)
+#   $10M:    Sharpe 0.9864 -> 0.8217 (MaxDD oforandrad -14.29%)
+#
+# PAVERKAN PA DET LASTA KRITERIET (rad 71-77), rakt igenom:
+#   Villkor 1 (Sharpe >= 1.0 vid $100k, DEN AVGORANDE nivan): 0.8926 -
+#     KLARAR INTE LANGRE, och inte marginellt (0.107 under malet).
+#   Villkor 2 (Sharpe > HYP-039:s egna 1.0191 vid $100k): 0.8926 -
+#     KLARAR INTE LANGRE (0.1265 under HYP-039:s eget resultat).
+#   Villkor 3 (MaxDD battre an HYP-039:s egna -22.03%): -15.58% -
+#     PASSERAR FORTFARANDE TYDLIGT, MaxDD paverkas i praktiken inte av
+#     spreadkostnaden pa denna sviten.
+#
+# DEL B - DSR FOR DE FRIKTIONSKORRIGERADE SIFFRORNA (NY, 2026-08-08,
+# scripts/recompute_hyp043_friction_dsr.py, mot dagens k_total=46,
+# RF=2%/ar avdraget):
+#   $100k:   DSR(K=46) = 0.8548
+#   $1M:     DSR(K=46) = 0.8549
+#   $10M:    DSR(K=46) = 0.7855
+# (fortfarande sannolikt en genuin, icke-slumpmassig portfolj - men DSR
+# mater ENDAST om Sharpen genuint skiljer sig fran noll givet K forsok,
+# INTE om den klarar ett specifikt lasted trosklvarde som 1.0. Bagge
+# fragorna ar relevanta men skilda.)
+#
+# DEL C - DSR FOR DE URSPRUNGLIGA (ICKE FRIKTIONSKORRIGERADE) SIFFRORNA
+# MOT DAGENS K=46 (samma granskningsfynd som for HYP-017/021/023/037/
+# 039/041 - DSR-faltet i capital_level_results ovan star kvar fran
+# ursprungstestet vid K=42, aldrig omraknad. scripts/recompute_dsr_k46.py,
+# 2026-08-08):
+#   $100k:   DSR 0.9510 -> 0.9473
+#   $1M:     DSR 0.9516 -> 0.9480
+#   $10M:    DSR 0.9229 -> 0.9177
+#
+# SLUTSATS: `status: passed` (rad 96) star medvetet KVAR OFORANDRAD har
+# - denna tillaggsnot andrar INGA lasta falt, bara dokumenterar redan
+# kanda och nu kompletta fakta, i linje med registrets egen disciplin.
+# MEN sakligt sett klarar HYP-043 INTE sitt eget lasta kriterium (rad
+# 71-77) nar friktionsmodellen ar komplett - villkor 1 OCH 2 faller pa
+# den avgorande nivan, inte marginellt. Detta ar redan implicit erkant
+# av att HYP-044/045/046/047 samtliga jamfor sig mot "den
+# friktionskorrigerade HYP-043-baslinjen" (0.8926/0.8940/0.8217) snarare
+# an mot de ursprungliga registrerade talen - men ingen av dessa filer
+# gjorde det explicit HAR, i den fil dar det faktiskt hor hemma. Om
+# `status` ska formellt andras till `failed` (eller en ny mellanstatus)
+# ar ett beslut for CEO att fatta manuellt, inte nagot denna tillaggsnot
+# eller nagon agent avgor pa egen hand.
+#
+# DEL D - YTTERLIGARE, SEPARAT KORRIGERING SAMMA DAG (universum-
+# look-ahead-bias + adjusted_close-kvot + portfoljniva-ombalanserings-
+# kostnad - INTE samma fix som DEL A ovan, se forklaring): denna gang
+# implementerad DIREKT i strategies/HYP-043/backtest.py (produktions-
+# koden, inte ett sidoskript) - ORIGINAL_UNIVERSE_FILE/
+# EXTENSION_UNIVERSE_FILE pekar nu pa de filed-datum-korrigerade
+# filerna, close_adj maskas nu via den delade
+# data_hygiene.py::mask_implausible_adjusted_close_ratio (tidigare
+# redan inline har, oforandrad tröskel - bara centraliserad), OCH
+# combine_thirds har nu en 10bps-ombalanseringskostnad
+# (REBALANCE_COST_BPS) som INTE fanns tidigare. VIKTIGT: denna
+# korrigering lagger INTE till DEL A:s corwin_schultz_spread-kostnad i
+# sjalva momentum L/S-sviten - de tva fixarna ar ADDITIVA MEN INTE
+# KOMBINERADE i denna omkorning (utanfor detta uppdrags avgransade
+# omfattning, se slutrapporten). Resultat i
+# strategies/HYP-043/results_corrected_2026-08-08/ (results/ rors INTE).
+#
+# NYA SIFFROR (huvudperiod 2010-2024, DEL D:s korrigering ENSAM, INTE
+# kombinerad med DEL A:s spreadfix):
+#   Sharpe: 1.0318 / 1.0319 / 1.0053  (ursprungligen 1.0457 / 1.0498 / 0.9864)
+#   MaxDD: -15.12% / -15.06% / -13.64% (ursprungligen -15.58% / -15.68% / -14.29%)
+#   DSR (K=46, RF=2%/ar): 0.9402 / 0.9403 / 0.9276
+#
+# Villkor 1 (Sharpe >= 1.0 vid $100k): PASS (1.0318), OCH $10M klarar nu
+# ocksa 1.0 (1.0053, tidigare 0.9864 - inte den avgorande nivan men en
+# konsekvent forbattring). Villkor 2 (Sharpe > HYP-039:s ursprungliga
+# 1.0191): PASS. Villkor 3 (MaxDD battre an HYP-039:s ursprungliga
+# -22.03%): PASS tydligt, MaxDD till och med nagot BATTRE an det
+# ursprungliga HYP-043-resultatet trots den nya ombalanseringskostnaden.
+#
+# SLUTSATS (DEL D): denna SPECIFIKA korrigering (look-ahead-bias +
+# adjusted_close-kvot + portfoljniva-ombalanseringskostnad, ISOLERAT
+# fran DEL A:s spreadfix) andrar INTE PASS-slutsatsen - om nagot star
+# HYP-043 nagot starkare. MEN detta star i skarp kontrast till DEL A,
+# som ENSAM redan visade FAIL (Sharpe 0.8926/0.8940/0.8217). De tva
+# fixarna ar INTE testade TILLSAMMANS i denna omkorning - en fullstandigt
+# kombinerad pipeline (DEL A:s spreadkostnad + DEL D:s tre fynd
+# samtidigt) har INTE korts och skulle sannolikt ge ett Sharpe-tal
+# NARA DEL A:s (spreadkostnaden i sviten ar den dominerande, storre
+# effekten av de tva) - men detta ar en slutsats INFERERAD fran de tva
+# separata korningarna, inte ett faktiskt uppmatt resultat, och
+# rapporteras darfor explicit som en oppen fraga, inte ett facit.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT DEL E 2026-08-08 (stanger DEL D:s oppna fraga samma dag -
+# alla FYRA kanda fixar korda TILLSAMMANS i strategies/HYP-043/
+# backtest.py: look-ahead-bias + adjusted_close-kvot + 10bps
+# ombalanseringskostnad + corwin_schultz_spread pa momentum L/S-sviten.
+# Status/kriterium/ovanstaende siffror ANDRADE INTE.)
+# ════════════════════════════════════════════════════════════
+# NYA SIFFROR (huvudperiod 2010-2024, ALLA FYRA fixar samtidigt):
+#   Sharpe: 0.8765 / 0.8752 / 0.8392  (ursprungligen 1.0457/1.0498/0.9864)
+#   MaxDD: -15.12% / -15.06% / -13.64% (PASS mot HYP-039:s -22.03% osv,
+#     oforandrat fran DEL D - spreadkostnaden paverkar MaxDD marginellt)
+#   OOS-2025 Sharpe: 1.7702 / 1.7171 / 1.6960 (PASS mycket starkt mot
+#     HYP-039:s 0.9185/0.8116/0.7932, faktiskt HOGRE an DEL D isolerat)
+#   DSR (K=46, RF=2%/ar): 0.8393 / 0.8382 / 0.8035
+#
+# Villkor 1 (Sharpe >= 1.0 vid $100k): FAIL (0.8765). Villkor 2 (Sharpe
+# > HYP-039:s 1.0191): FAIL. Villkor 3 (MaxDD battre an HYP-039:s
+# -22.03%): PASS tydligt. OOS-villkoret: PASS mycket starkt.
+#
+# SLUTSATS (DEL E, stanger DEL D:s oppna fraga): DEL D:s formodan
+# bekraftas - den fullt kombinerade pipelinen ger ETT ENTYDIGT FAIL pa
+# den avgorande $100k-nivan, pa BADE villkor 1 och 2. Spreadkostnaden
+# (DEL A) forblir den dominerande, avgorande faktorn (0.8765 mot DEL
+# A:s isolerade 0.8926 - de tre ovriga fixarna drar netto nagot
+# YTTERLIGARE nedat tillsammans med spreadkostnaden, inte upp som de
+# gjorde isolerat i DEL D, eftersom look-ahead-universumets paverkan pa
+# just denna sviten vander tecken nar spreadkostnaden redan dominerar
+# bilden). MaxDD- och OOS-villkoren forblir robusta PASS genom alla
+# kombinationer av kanda fixar - HYP-043 ar fortfarande en genuint
+# riskreducerande, positivt bidragande portfolj, bara inte en som
+# klarar sitt eget 1.0-Sharpe-kriterium fullt friktionskorrekt.
+#
+# `status` star medvetet KVAR som `passed` - beslut om formell
+# statusandring lamnas till CEO, som redan flera ganger i detta
+# register (senast for HYP-047:s referensbeslut).
+#
+# TILLAGG 2026-08-13 (DSR-omrakning, Overfitting Detector-rutin per
+# CLAUDE.md, k_total 68->84 pa en dag 2026-08-12). PRECISERING: `status`-
+# faltet ovan visar nu "failed" (senare satt an kommentaren ovan) - denna
+# DSR galler INTE ett pastaende att HYP-043 fortfarande "overvags" som
+# egen fristaende hypotes, utan for att dess portfoljvardeserie
+# (strategies/HYP-043/results/portfolio_value_combined_*.csv)
+# fortfarande ateranvands OFORANDRAD nedstroms (HYP-047->056->081->087).
+# DSR(K=84): $100k SR=0,0659 DSR=0,9187, $1M SR=0,0661 DSR=0,9198, $10M
+# SR=0,0621 DSR=0,8787 - ned nagot fran 0,92-0,95 vid K=43 men
+# fortfarande HOGT. Serien haller sig statistiskt val trots K-okningen.

@@ -1,0 +1,111 @@
+# UTKAST, EJ LÅST. Del av BATCH-004 (se HYP-093 för fullständig
+# batchdisciplin-motivering). Se HYP-092 för accrual-idéns bakgrund/
+# feasibility-sondering (companyfacts-taggarna verifierade), INTE
+# upprepad här.
+#
+# DENNA FIL: variant 1/4 av accrual-idén - TOTALA TILLGÅNGAR som
+# skalningsnämnare (Sloans 1996 originalkonstruktion) + LONG-ONLY-DECIL
+# (matchar registrets etablerade urvalssignal-mönster, t.ex. HYP-024/033).
+#
+# LÅST 2026-08-13 av CEO i chatt ("lås kör") - se HYP-093 för
+# fullständig lås-motivering, identisk för hela BATCH-004.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-097
+date_registered: '2026-08-13'
+title: "Accrual-anomalin (BATCH-004, 1/4): skalning mot totala tillgångar, long-only lägsta decilen"
+universe: "IDENTISK med HYP-008:s låsta small-cap-definition."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: "Samma huvudperiod som registrets övriga small-cap-hypoteser (2010-2024 + genuin OOS-2025), se HYP-092."
+pass_fail_criterion: >
+  MEKANISM (fullt specificerad):
+
+  DATAINSAMLING: för varje bolag i universumet, vid varje 10-K, hämta
+  NetIncomeLoss, NetCashProvidedByUsedInOperatingActivities OCH Assets
+  (companyfacts-XBRL-API - de två förstnämnda taggarna verifierade
+  närvarande för ett testbolag i HYP-092:s sondering, Assets-taggens
+  täckning EJ verifierad, Coder MÅSTE kontrollera täckningsgrad över
+  ett brett urval innan resultat litas på - om täckningen är för låg,
+  RAPPORTERA detta explicit istället för att tyst falla tillbaka på
+  en annan nämnare).
+
+  SIGNAL: Accruals_t = (NetIncomeLoss_t - NetCashFromOps_t) /
+  ((Assets_t + Assets_{t-1}) / 2) - genomsnittliga totala tillgångar
+  över året, Sloans (1996) originalkonstruktion exakt.
+
+  OMBALANSERING (KONVENTION, kvartalsvis, samma staleness-princip som
+  HYP-093 - senast kända Accruals-värde om filat inom 450 dagar,
+  annars exkluderad den perioden).
+
+  PORTFÖLJKONSTRUKTION (denna variant): decilrangordning på Accruals.
+  LONG-ONLY den LÄGSTA decilen (lägst accruals - vinst mest
+  kassaflödesstödd, akademiskt kopplat till BÄTTRE framtida
+  avkastning). Likaviktat. Ingen short. Testas standalone mot en
+  likaviktad, ofiltrerad universum-baseline (obligatorisk disclosure,
+  icke-gating).
+
+  FRIKTION: standardmetodiken, ingen short-lånekostnad relevant.
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (CEO-LÅST, enhetlig bar för hela
+  BATCH-004, se HYP-093):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -30,0%.
+  FAIL om något villkor faller. $1M/$10M + OOS-2025 + baseline-
+  disclosure (ofiltrerat universum): obligatorisk, icke-gating.
+status: failed
+k_total_hypotheses_before_this: 87
+tested_capital_levels: [100000, 1000000, 10000000]
+date_tested: '2026-08-13'
+result:
+  100000: {sharpe: -0.0897, cagr: -0.0641, max_drawdown: -0.7982, calmar: -0.0803, deflated_sharpe_ratio: 0.0025, baseline_sharpe: 0.4218, baseline_max_drawdown: -0.5147}
+  1000000: {sharpe: -0.0869, cagr: -0.0517, max_drawdown: -0.7423, calmar: -0.0696, deflated_sharpe_ratio: 0.0024, baseline_sharpe: 0.4218, baseline_max_drawdown: -0.5147}
+  10000000: {sharpe: -0.2351, cagr: -0.0785, max_drawdown: -0.7824, calmar: -0.1003, deflated_sharpe_ratio: 0.0003, baseline_sharpe: 0.4218, baseline_max_drawdown: -0.5147}
+result_summary: >
+  FAILED PÅ BÅDA VILLKOREN, PÅ ALLA KAPITALNIVÅER - Sharpe NEGATIVT vid
+  alla tre ($100k: -0,09, $1M: -0,09, $10M: -0,24), MaxDD -74 till -80%,
+  SÄMRE än den ofiltrerade, friktionsfria baseline-boken (Sharpe 0,42,
+  MaxDD -51%) på ALLA mått. Detta är alltså inte "ingen signal" - det
+  är en signal som gör resultatet TYDLIGT SÄMRE än att inte ha någon
+  urvalsregel alls.
+
+  TRE DATA-/MOTORFEL HITTADE OCH ÅTGÄRDADE INNAN NÅGOT AV BATCH-004:s
+  FYRA ACCRUAL-RESULTAT FINALISERADES (samma disciplin som redan
+  etablerad i registret - fixade FÖRE, inte EFTER, ett specifikt
+  resultat setts, applicerade IDENTISKT på alla fyra varianter, inte
+  skräddarsydda per hypotes):
+  1. Rå accrual-kvot över hela universumet sträckte sig från -102265
+     till +5138 - dominerat av bolag med extremt litet rapporterat
+     tillgångsvärde (nämnaren nära noll), inte genuin
+     vinstkvalitetsinformation. Åtgärdat med en ekonomisk-orimlighets-
+     gräns (|accrual|<=1,0, se accrual_engine.py::PLAUSIBLE_ACCRUAL_BOUND)
+     - samma princip som data_hygiene.py:s redan etablerade
+     avkastningsgränser, INTE kalibrerad mot något sett resultat.
+  2. (Relevant för HYP-098/100, inte denna long-only-variant) saknad
+     stop-loss/konkursgolv på kort-benet - se dessa filers egna tillägg.
+  3. `max(1, int(n_scored*0,10))` kunde ge EN enda position redan vid
+     n_scored=8 (den tidiga universumperiodens tunnaste period,
+     2010-09-30) - noll diversifiering. Åtgärdat med ett minsta-bredd-
+     golv (MIN_SCORED_FOR_DECILE=30) innan någon position tas.
+
+  DIAGNOS (efter alla fixar, kvarstående resultat): den long-only-
+  filtrerade decilen presterar KONSEKVENT sämre än att bara äga hela
+  universumet likaviktat. Sannolik förklaring, INTE slutgiltigt
+  bevisad här: Sloans (1996) accrual-anomali dokumenterades på stora,
+  etablerade bolag där låga/negativa accruals oftast speglar
+  bokföringsmässig FÖRSIKTIGHET hos i övrigt friska bolag. I detta
+  registrets faktiska micro-/small-cap-band ($100M-$2B) tycks en stor
+  NEGATIV accrual-kvot oftare spegla en genuin GOING-CONCERN-
+  nedskrivning (distress) snarare än konservativ redovisning hos ett
+  friskt bolag - se trade-loggen (results/trade_log_100000.csv):
+  medianhandel -14,6%, nedre kvartil -52,6%, flera enskilda positioner
+  ner mot -97 till -99,9% (BXRX, VENGD, QUESD, SASI m.fl. - mönster
+  som ser ut som distressade/utraderade mikro-cap-namn, inte
+  "konservativt redovisande kvalitetsbolag"). En känd typ av
+  universum-mismatch mellan varifrån en anomali ursprungligen
+  dokumenterades och var den appliceras här - samma kategori
+  observation som redan noterad för Do & Faff (2010) i
+  candidate_ideas.md.
+
+  Se HYP-098/099/100 för de tre återstående BATCH-004-accrual-
+  varianterna (samtliga FAILED, fullständig diagnos i respektive fil).

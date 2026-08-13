@@ -1,0 +1,230 @@
+# LÅST 2026-08-04 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Foljer spec §5b:s regler for LEGITIM
+# kombinationstestning (INTE en genvag runt tidigare misslyckanden -
+# HYP-037 ar redan en oberoende, individuellt godkand hypotes, INTE en
+# "raddning" av nagot som failat):
+#   1. Korrelationsmatris FORE nagon vikt valdes: SPY vs HYP-037 dagliga
+#      avkastningar 2011-2024, korrelation = -0.003 (praktiskt taget
+#      noll) - berknad INNAN detta kriterium las.
+#   2. NAIV, likaviktad kombination (50/50) - INTE in-sample-optimerade
+#      vikter (Markowitz/Kelly etc. explicit forbjudet av spec §5b).
+#   3. OOS-testning: aterananvander HYP-037:s egen redan byggda genuina
+#      OOS-2025-korning (paper_trading/HYP-037/oos_2025_results/).
+#   4. Denna kombinationsmetod raknas som ETT eget K-test, separat fran
+#      bade SPY och HYP-037:s egna K-bidrag.
+#
+# MOTIV: CEO:s grundmal for hela projektet ar konstant avkastning >10%/ar
+# OCH Sharpe >1 - ett hogt krav som varken SPY ensamt (Sharpe 0.72 over
+# 2011-2024, en OVANLIGT stark period, MaxDD -33.7%) eller HYP-037 ensamt
+# (Sharpe 0.72-0.75) nar pa egen hand. Eftersom de tva ar praktiskt taget
+# OKORRELERADE (-0.003) foreslar portfoljteorins standardformel
+# (kombinerad Sharpe = sqrt(S1^2 + S2^2) for oberoende strommar, vid
+# fritt skalbara vikter) en TEORETISK optimal kombinerad Sharpe ~1.02 -
+# over malet. Detta testar om en REALISTISK, ENKEL (ej hangivet
+# optimerad) 50/50-kombination faktiskt nar dit, inte bara den teoretiska
+# gransen.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-039
+date_registered: '2026-08-04'
+title: Naiv 50/50-kombination (kvartalsvis ombalanserad) - SPY + HYP-037
+universe: "N/A - portfoljniva-kombination av tva redan existerande, oberoende testade
+  avkastningsserier (SPY som tillgangsklass, HYP-037 som redan godkand small-cap-strategi).
+  Ingen ny small-cap-signal, inget nytt small-cap-universum - tested_capital_levels nedan
+  galler HYP-037-benets redan testade kapitalnivaer, inte en ny small-cap-hypotes i sig."
+small_cap_definition: "N/A for denna hypotes - se universe-faltet. HYP-037-benet anvander
+  redan HYP-037:s egen lasta $100M-$2B-definition, oforandrad."
+data_range: "SPY adjusted_close + HYP-037:s redan berknade portfoljvardesserier, 2011-2024
+  + genuin OOS-2025 (aterananvander paper_trading/HYP-037/oos_2025_results/, ingen ny
+  OOS-korning byggs for denna hypotes)"
+pass_fail_criterion: 'Ren PORTFOLJMATEMATIK pa tva redan kanda, redan individuellt testade
+  avkastningsserier - INGEN ny backtest-motor, INGEN ny signal, INGEN nytt kostnads-/
+  hedgepalagg utover vad de tva delserierna redan sjalva inkluderar (SPY:s eget kvoterade
+  pris, HYP-037:s redan kostnadsjusterade portfoljvarde enligt dess eget redan lasta,
+  redan testade regelverk). Kombinerad portfoljvarde-serie =
+  50% notional i SPY (adjusted_close, dagliga
+  avkastningar) + 50% notional i HYP-037 (redan sparad strategies/HYP-037/results/
+  portfolio_value_<niva>.csv, ANVAND OFORANDRAD), ombalanserad till EXAKT 50/50 VARJE
+  KVARTAL pa HYP-037:s REDAN LASTA ombalanseringsdatum (ateranvander en befintlig frekvens,
+  valjer INGEN ny fri parameter). INGEN havstang. Testas separat vid alla tre av HYP-037:s
+  redan testade kapitalnivaer (100k/1M/10M) for HYP-037-benet - SPY-benet skalar trivialt
+  och paverkas inte av kapitalniva.
+
+  PASS kraver ALLA TRE, PA MINST kapitalnivan $100k (rapporteras for alla tre, men $100k ar
+  den avgorande nivan eftersom HYP-037:s egen edge redan ar kand att avta vid hogre
+  kapitalniva - se HYP-037:s registerpost):
+  1. Kombinerad Sharpe (2011-2024, portfoljserien efter ombalansering) >= 1.0 - det
+     uttryckliga malet, INTE projektets generella 0.55-golv for enskilda alfahypoteser.
+  2. Kombinerad MaxDD (samma period) BATTRE (mindre negativ) an SPY:s EGEN -33.7% pa samma
+     period - bekraftar genuin riskreduktion genom diversifiering, inte bara en utspadd
+     medelvardesberakning som rakar se battre ut.
+  3. OOS-2025 kombinerad Sharpe (aterananvander HYP-037:s redan byggda genuina blinda
+     OOS-2025-serie + SPY:s egna 2025-avkastningar, SAMMA 50/50-kvartalsombalansering) ar
+     POSITIV (> 0) - ett medvetet MJUKARE krav an villkor 1, given den redan flera ganger
+     dokumenterade reservationen att ett enda ars Sharpe-skattning har hog statistisk
+     osakerhet (samma reservation som HYP-023/034/037:s egna OOS-tester).
+  FAIL om nagot villkor faller vid $100k-nivan. Resultat vid $1M/$10M rapporteras alltid
+  fullstandigt (ingen cherry-picking), men $100k ar den kriterie-avgorande nivan given ovan.
+
+  Diagnostiskt syfte: testar om portfoljteorins teoretiska lofte (tva praktiskt taget
+  okorrelerade Sharpe-0.72-strommar, kombinerat optimalt ~1.02) haller aven for en enkel,
+  ICKE-optimerad 50/50-vikt - inte bara den teoretiska ovre gransen. Detta ar forsta gangen
+  i projektets historia en kombinationshypotes testas, per spec §5b:s explicita regler
+  (korrelationsmatris fore vikt, naiv vikt, OOS, eget K-bidrag).'
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 37
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 1.0191, cagr: 0.1337, max_drawdown: -0.2203, calmar: 0.6071, oos_2025_sharpe: 0.9185, oos_2025_total_return: 0.1195, oos_2025_max_drawdown: -0.1382, deflated_sharpe_ratio: 0.9515}
+  1000000: {sharpe: 1.0300, cagr: 0.1322, max_drawdown: -0.2216, calmar: 0.5965, oos_2025_sharpe: 0.8116, oos_2025_total_return: 0.1023, oos_2025_max_drawdown: -0.1327, deflated_sharpe_ratio: 0.9544}
+  10000000: {sharpe: 0.9879, cagr: 0.1181, max_drawdown: -0.2003, calmar: 0.5898, oos_2025_sharpe: 0.7932, oos_2025_total_return: 0.0939, oos_2025_max_drawdown: -0.1057, deflated_sharpe_ratio: 0.9365}
+date_tested: '2026-08-04'
+result_summary: >
+  PASSED - PA DEN AVGORANDE $100k-NIVAN, ALLA TRE VILLKOR. Forsta gangen
+  i projektets historia CEO:s uttalade grundmal (konstant CAGR >10%/ar
+  OCH Sharpe >1) faktiskt uppnas i en backtest.
+
+  Villkor 1 (Sharpe >= 1.0 vid $100k): 1.019 - PASS, marginellt over
+  malet. $1M ocksa PASS (1.030, faktiskt HOGST av de tre nivaerna). $10M
+  MISSAR knappt (0.988) - kriteriet kravde bara $100k, sa detta AR ett
+  giltigt PASS, men den lilla forsamringen vid $10M ar INTE dold: den
+  ar konsistent med HYP-037:s egen redan kanda kapacitetsberoende
+  avklingning (Sharpe 0.73/0.75/0.70 i sig sjalv) som naturligt propagerar
+  in i kombinationen. "Battre an malet vid $100k/$1M, precis under vid
+  $10M" ar en arlig, inte en dold, bild.
+
+  Villkor 2 (MaxDD battre an SPY:s -33.7%): PASS pa ALLA TRE nivaer,
+  och tydligt - -22.0%/-22.2%/-20.0%, en forbattring pa 11.7-13.7
+  procentenheter mot SPY ensamt. Detta AR den genuina riskreduktionen
+  diversifieringsargumentet forutspadde, inte bara en utspadd
+  medelvardesberakning.
+
+  Villkor 3 (OOS-2025 Sharpe > 0): PASS pa ALLA TRE nivaer (0.919/0.812/
+  0.793) - klart positivt, om an lagre an bade huvudbacktestens Sharpe
+  och den ursprungliga teoretiska uppskattningen (~1.02, se kriteriets
+  motivering). 249 handelsdagar - samma kanda reservation om
+  enskild-ars-brus som redan dokumenterad i HYP-023/034/037:s egna
+  OOS-test galler har ocksa, men riktningen (positiv, inte negativ eller
+  noll) ar tydlig.
+
+  ROBUSTHET: DSR vid K=38 (deflated_sharpe_ratio.py, med den FAKTISKA
+  avkastningsseriens skevhet/kurtosis, INTE antagen normalfordelning):
+  0.95/0.95/0.94 - mycket hogt, konsistent med att detta INTE ar en
+  slumpmassig trafffavtemplering trots K=38 redan testade hypoteser.
+  Kurtosis ar forhojd (9.9-12.5, mot normalfordelningens 3) vilket
+  speglar bade SPY:s egna kanda svansrisk (2020, 2022) och HYP-037:s
+  krasch-overlay-mekanik - redovisat, inte dolt, men DSR-berakningen
+  kontrollerar redan for detta explicit (skevhet/kurtosis ar INPUT till
+  DSR-formeln, inte en separat varning).
+
+  METODOLOGISK NOT: detta ar EN kombinationsmetod (naiv 50/50, kvartalsvis
+  ombalanserad) av MANGA teoretiskt mojliga - per spec §5b raknas varje
+  DISTINKT kombinationsmetod som ett eget K-test. Detta resultat sager
+  INGET om huruvida en annan viktning (t.ex. 40/60, riskparitet, eller
+  volatilitetsviktad) skulle vara battre eller samre - att testa flera
+  vikter i EFTERHAND for att hitta den "basta" skulle vara exakt den typ
+  av facit-anpassning spec:en ar byggd for att forhindra. 50/50 var det
+  lasta, naiva valet, INNAN nagot resultat sags - det ar det som
+  rapporteras har, inget annat.
+
+  SLUTSATS: den kombinerade 50/50-portfoljen (SPY + HYP-037, kvartalsvis
+  ombalanserad) uppnar CEO:s uttalade mal vid $100k/$1M, med en tydlig,
+  reell riskreduktion pa alla tre nivaer. Detta ar INTE en ny
+  "referensimplementation" i samma bemarkelse som HYP-017/023/037 (det
+  ar en portfoljniva-konstruktion OVANPA en redan godkand strategi, inte
+  en konkurrerande small-cap-signal) - men det ar ett konkret, testat
+  svar pa den strategiska fraga CEO stallde 2026-08-04.
+sharpe_raw:
+  100000: 1.0191
+  1000000: 1.0300
+  10000000: 0.9879
+deflated_sharpe_ratio:
+  100000: 0.9515
+  1000000: 0.9544
+  10000000: 0.9365
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSVALIDERING 2026-08-05 (samma session) - INTE en ny hypotes/
+# K-test, status/kriterium ANDRADE INTE. Se HYP-037:s egen registerpost
+# for full detalj om den underliggande look-ahead-bias-fixen i universum-
+# konstruktionen (SEC-inlamningsdatum istallet for periodslut-datum).
+# ════════════════════════════════════════════════════════════
+# HYP-039 vilar direkt pa HYP-037:s portfoljvarde-serie. Kordes darfor
+# genom samma sidotest (scripts/test_hyp039_filed_date_universe.py +
+# scripts/test_hyp039_oos2025_filed_date.py) mot HYP-037:s FILED-DATUM-
+# KORRIGERADE serier - ren portfoljmatematik, samma metod, ingen ny
+# backtest-motor, resultat i strategies/HYP-039/results_filed_date_test/.
+#
+# RESULTAT: samtliga tre lasta villkor haller PA ALLA TRE kapitalnivaer,
+# och den tidigare svagaste punkten blir BATTRE, inte samre:
+#   Villkor 1 (Sharpe >= 1.0): 1.019/1.026/1.012 (tidigare 1.019/1.030/
+#     0.988 - $10M gick fran att MISSA malet till att KLARA det).
+#   Villkor 2 (MaxDD battre an SPY:s -33.7%): -21.5%/-21.5%/-19.4%
+#     (tidigare -22.0%/-22.2%/-20.0%) - fortfarande en tydlig, reell
+#     riskreduktion pa alla tre nivaer.
+#   Villkor 3 (OOS-2025 Sharpe > 0): 0.886/0.843/0.829 (tidigare 0.919/
+#     0.812/0.793) - fortfarande klart positivt pa alla tre nivaer.
+#
+# SLUTSATS: HYP-039:s PASS star pa fast grund aven under ett fullstandigt
+# look-ahead-bias-fritt universum - faktiskt starkare an det ursprungliga
+# resultatet vid den tidigare mest oroande punkten ($10M). Detta star i
+# kontrast mot HYP-037:s EGEN interna jamforelse mot HYP-023 (som blir
+# ett oavgjort resultat vid $10M under samma korrigering, se HYP-037:s
+# registerpost) - men den nyansen paverkar INTE HYP-039:s eget resultat,
+# eftersom HYP-039:s kriterium aldrig kravde att HYP-037 "vinner" mot
+# HYP-023, bara att KOMBINATIONEN nar sitt eget mal.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare - INTE en ny hypotes/K-test, status/kriterium/redan
+# rapporterade siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# DSR ovan star kvar fran ursprungstestet vid K=39 - aldrig omraknad,
+# trots agents/overfitting_detector/ROLE.md:s krav att gora det for
+# alla aktiva hypoteser varje gang k_total okar. HYP-039 ar fortfarande
+# citerad som jamforelsepunkt i flera senare hypotesers OOS-kriterium.
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade kombinerade serie, RF=2%/ar avdraget):
+#   $100k:   DSR 0.9515 -> 0.9436
+#   $1M:     DSR 0.9544 -> 0.9469
+#   $10M:    DSR 0.9365 -> 0.9268
+#
+# Mycket liten forandring (K=39->46 ar en relativt liten relativ okning,
+# och HYP-039:s hoga rasa Sharpe gor DSR mindre kanslig for K-okningar
+# i detta intervall). Ingen forandring av tidigare PASS-slutsats.
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08, DEL 2 (samma dag, SEPARAT fran DSR-omrakningen
+# ovan - INTE en ny hypotes/K-test, status/kriterium ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# Fullstandig omkorning: HYP-037-benet ar nu dess FULLSTANDIGT
+# korrigerade resultat (filed-datum-universum + maskad adjusted_close-
+# kvot, se HYP-037:s egen tilläggsnot DEL 2 - VIKTIGT: HYP-037:s EGET
+# villkor 2 flippar dar till FAIL, men det paverkar INTE HYP-039:s eget
+# kriterium, som aldrig kravde att HYP-037 slar HYP-023). Dessutom
+# tillagd en tidigare saknad portfoljniva-ombalanseringskostnad (10bps
+# pa omallokerat belopp per kvartalsvis ombalansering, se
+# strategies/HYP-039/backtest.py::REBALANCE_COST_BPS). OOS-2025-benet
+# ANVANDS OKORRIGERAT (paper_trading/HYP-037/oos_2025_results/, samma
+# scope-avgransning som noterad i HYP-037:s tilläggsnot).
+#
+# NYA SIFFROR (huvudperiod 2011-2024):
+#   Sharpe: 1.017 / 1.022 / 1.019  (tidigare 1.0191 / 1.0300 / 0.9879)
+#   MaxDD: -21.4% / -21.3% / -19.2% (tidigare -22.03% / -22.16% / -20.03%)
+#   DSR (K=46, RF=2%/ar): 0.9413 / 0.9434 / 0.9410
+#
+# Villkor 1 (Sharpe >= 1.0): PASS pa ALLA TRE nivaer - $10M gar fran att
+# missa (0.988) till att klara (1.019) trots den nya kostnaden, samma
+# monster som redan sett i den tidigare (universum-bara) sidotestet.
+# Villkor 2 (MaxDD battre an SPY:s -33.7%): PASS tydligt pa alla tre,
+# oforandrat. Villkor 3 (OOS-2025 Sharpe > 0): oforandrat PASS (0.917/
+# 0.810/0.792, samma okorrigerade OOS-serie som tidigare).
+#
+# SLUTSATS: HYP-039:s PASS star KVAR, oforandrad slutsats, under den
+# fullstandigt korrigerade pipelinen - faktiskt nagot starkare vid $10M
+# an tidigare, trots att bade universumfixen OCH den nya ombalanserings-
+# kostnaden nu bada verkar samtidigt.

@@ -1,0 +1,108 @@
+# LÅST 2026-08-09 av CEO i chatt. Del av BATCH-002 (7 kandidater,
+# HYP-048 till HYP-054) - se HYP-048:s registerpost för fullständig
+# batch-motivering och procedurregler.
+#
+# KONVERGENSURVAL: föreslogs OBEROENDE av två av fyra externa AI-källor
+# (ChatGPT #6, en separat Claude-session #1), besläktat med Groks
+# vol-of-vol-förslag (#6).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-051
+date_registered: '2026-08-09'
+title: Tvärsnittsdispersion som exponeringsregim på momentum L/S-sviten
+universe: "N/A för själva regimsignalen (mäts över hela eligible-universumet,
+  ingen ny urvalslogik). Appliceras som overlay PÅ HYP-043:s redan byggda
+  momentum L/S-svit (ORÖRD i övrigt), samma small-cap-universum ($100M-$2B)."
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World (återanvänder
+  HYP-037/043:s redan låsta definition)
+data_range: EODHD All-World, samma huvudperiod (2010-2024) + genuin blind OOS-2025
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar):
+
+  REGIMINDIKATOR: daglig tvärsnitts-standardavvikelse av samtliga eligible-
+  namns dagliga avkastningar (INTE tidsserie-volatilitet för ett enskilt
+  index - genuint tvärsnittsmått, beräknat separat varje handelsdag över
+  hela det aktuella månadens eligible-universum). Rullande 2-års (504
+  handelsdagars) percentil av detta mått.
+
+  TRIGGER: när dagens tvärsnittsdispersion faller under sin egen 20:e
+  percentil (extremt LÅG dispersion - tecken på att korrelationen mellan
+  namn stigit och den idiosynkratiska drivkraften momentum L/S-sviten
+  bygger på är svagare än normalt), HALVERAS nettoexponeringen (både
+  long- och kortbenet) i momentum L/S-sviten tills dispersionen åter
+  överstiger 20:e percentilen. Kontrolleras VARJE handelsdag, appliceras
+  vid nästa handelsdag efter trigger.
+
+  Momentum L/S-sviten i övrigt HELT OFÖRÄNDRAD (samma 12-1-månaders
+  signal, decilstorlek, kvartalsvis ombalansering, friktion som HYP-043:s
+  redan korrigerade, spreadinklusive variant).
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  1. Sharpe för sviten MED overlay > sviten UTAN overlay (HYP-043:s egen
+     isolerade, fullt korrigerade momentum L/S-serie, se dess DEL A/E-
+     tilläggsnoter för referensvärdet).
+  2. MaxDD för sviten MED overlay INTE sämre än UTAN.
+
+  FAIL om något villkor faller vid $100k.
+
+  Diagnostiskt syfte: testar om en tvärsnittsstruktur-baserad regimsignal
+  (skiljer sig från alla redan använda pris-nivå-kraschtriggrar) kan
+  skydda momentum L/S-sviten specifikt under perioder då dess grundtes
+  (idiosynkratisk, aktiespecifik prisbildning) är som svagast.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 49
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: -0.1013, cagr: -0.0054, max_drawdown: -0.7300, calmar: -0.0074, oos_2025_sharpe: 1.7320, oos_2025_total_return: 0.8381, oos_2025_max_drawdown: -0.2066, deflated_sharpe_ratio: 0.0039}
+  1000000: {sharpe: -0.1013, cagr: -0.0054, max_drawdown: -0.7300, calmar: -0.0074, oos_2025_sharpe: 1.7320, oos_2025_total_return: 0.8381, oos_2025_max_drawdown: -0.2066, deflated_sharpe_ratio: 0.0039}
+  10000000: {sharpe: -0.1013, cagr: -0.0054, max_drawdown: -0.7300, calmar: -0.0074, oos_2025_sharpe: 1.7320, oos_2025_total_return: 0.8381, oos_2025_max_drawdown: -0.2066, deflated_sharpe_ratio: 0.0039}
+date_tested: '2026-08-09'
+result_summary: >
+  FAILED PA BADA VILLKOREN, VID ALLA TRE KAPITALNIVAER (identiskt over
+  nivaerna - denna konstruktion, precis som HYP-043s egen sviten, har
+  ingen ADV-kapacitetsspärr som gor resultatet kapitalnivaberoende).
+
+  Villkor 1 (Sharpe MED overlay > Sharpe UTAN overlay): FAIL. MED
+  dispersionsoverlay: Sharpe -0.1013. UTAN (HYP-043:s egen isolerade,
+  fullt korrigerade momentum L/S-serie fran DEL E,
+  momentum_ls_sleeve_pv.csv i results_corrected_2026-08-08/): Sharpe
+  +0.0184. Overlayn gjorde sviten SAMRE, inte battre - fran ett redan
+  svagt positivt tal till ett negativt.
+
+  Villkor 2 (MaxDD MED overlay inte samre an UTAN): FAIL. MED overlay:
+  -73.00%. UTAN: -72.35%. Overlayn andrade i praktiken inte den
+  strukturella MaxDD:n (bada extremt djupa for den ISOLERADE,
+  odiversifierade sviten - jfr HYP-043:s egen KOMBINERADE tredjedels-
+  portfolj, dar samma svit bidrar till en portfolj-Sharpe pa 0.88 och en
+  portfolj-MaxDD pa -15%, en helt annan risknivа nar den blandas med
+  SPY/HYP-037-benen).
+
+  Determinismkontroll: den lokalt aterberknade UTAN-overlay-serien
+  (Sharpe 0.0184, MaxDD -72.35%) matchar HYP-043s egen sparade referens
+  exakt - ingen skillnad, konstruktionen ar korrekt aterskapad.
+
+  DSR (K=50, RF=2%/ar, MED overlay-serien) = 0.0039 - i praktiken noll,
+  konsistent med en negativ rа Sharpe.
+
+  OOS-2025 (informativt, ej gating): MED overlay Sharpe 1.7320 (MaxDD
+  -20.66%), UTAN overlay Sharpe 1.5623 (MaxDD -29.74%) - i OOS-perioden
+  hade overlayn faktiskt HJALPT (battre Sharpe OCH battre MaxDD), rakt
+  motsatt monster mot huvudperioden. Overlayn var aktiv (halverad
+  exponering) 593 av 3710 handelsdagar (16.0%) over hela perioden.
+
+  DIAGNOS: tvarsnittsdispersionens 20:e percentil-trigger fångar en
+  TILLRACKLIGT ovanlig regim (16% av dagarna, klart mer sällsynt an
+  HYP-048s 47%-troskel) men halveringen av exponeringen visar sig i
+  praktiken INTE skydda mot momentum-sviten-sarskilda risken under
+  huvudperioden - konsistent med registrets etablerade monster att rena
+  OMFÖRDELNINGS-/exponeringsjusterings-forsok utan en genuin regimbytes-
+  mekanism (till skillnad fran HYP-017/023/037/047s prisniva-
+  krasch-triggar, som alla ar PASSED) tenderar att misslyckas. Den
+  omvanda OOS-2025-riktningen (dar overlayn faktiskt hjalper) understryker
+  att detta INTE ar ett robust, generaliserbart skydd - bara en
+  huvudperiod/OOS-diskrepans, INTE grund for att ompröva det redan
+  lasta, FAILADE kriteriet i efterhand.

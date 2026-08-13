@@ -1,0 +1,135 @@
+# LÅST 2026-08-12 av CEO i chatt ("ja skriv alla tre som pre
+# registrerade kandidater", efter en riktad diagnos av HYP-072:s
+# koncentrationsrisk samma dag - se HYP-072:s registerpost, tillägget
+# daterat 2026-08-12, för den fullständiga robusthetsgenomgången som
+# motiverar denna hypotes). Del av en 3-kandidat-batch (HYP-075 till
+# HYP-077, samtliga riskhanterings-/konstruktionsvarianter PÅ HYP-072:s
+# redan validerade signal, inte nya alfakällor) - k_total ökar med 3
+# vid låsningstillfället (71 -> 74).
+#
+# VARFÖR DENNA KANDIDAT, INTE STOP-LOSS ELLER VOL-MÅLSÄTTNING: HYP-072:s
+# diagnostiserade svaghet är INTE förlustrisk (MaxDD är redan -6,18%,
+# ett av registrets bästa) och INTE en regimberoende period - det är
+# KONCENTRATION: en handfull extrema VINNARE (t.ex. BRTXD, +25625% på
+# en position under en enda ombalanseringsperiod) dominerar den
+# rapporterade Sharpen/DSR:n oproportionerligt. Stop-loss (skydd mot
+# förlorare, redan 0/6 i registret) och volatilitetsmålsättning (skydd
+# mot dåliga PERIODER, redan tre-fyra PASSADE varianter men CEO har
+# uttryckligen efterfrågat MINDRE av den kategorin i denna session)
+# löser båda fel problem här. Denna hypotes riktar sig direkt mot
+# KONCENTRATIONEN i enskilda POSITIONER, symmetriskt för både lång- och
+# kortbenet.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-075
+date_registered: '2026-08-12'
+title: "Positionstak på HYP-072 - symmetrisk trimning av positioner som mer än tredubblats"
+universe: "N/A - samma engine/signal som HYP-072:s deltest A (full_ls),
+  oförändrad. Ingen ny small-cap-signal, inget nytt universum."
+small_cap_definition: "N/A - se HYP-072:s redan låsta definition, oförändrad."
+data_range: "Samma period som HYP-072 (2010-01-01 till 2024-12-31 huvudperiod
+  + genuin OOS-2025), samma SEC filings-index (data/cache/sec_filing_index.jsonl)."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Bygger direkt på HYP-072:s redan låsta klassificering ("aktiv shelf-
+  användare" / "ren") och samma månatliga ombalansering (deltest A:s
+  full_ls-läge, dollarneutralt 50/50 long/kort). Ingen ändring av VILKA
+  namn som väljs eller VARFÖR - bara en tillagd, symmetrisk regel för
+  HUR STOR en redan öppnad position tillåts bli innan nästa ombalansering.
+
+  NY REGEL (kontrolleras VARJE handelsdag, utöver den befintliga
+  månatliga ombalanseringen): för varje öppen position (long eller
+  kort), jämför dagens marknadsvärde (long) respektive skuldvärde
+  (kort) mot värdet vid SENASTE entry eller senaste trimning (det som
+  inträffat sist). Om det aktuella värdet är >= 3,0x det referensvärdet
+  (positionen har mer än TREDUBBLATS i storlek sedan den senast
+  sattes), TRIMMA positionen nästa handelsdag tillbaka till EXAKT sitt
+  ursprungliga dollarvärde vid den senaste entryn/trimningen (sälj
+  överskottet för long, minska skuldnotionalen i motsvarande grad för
+  kort), med Corwin-Schultz-spread på trim-transaktionen. En trimmad
+  position kan trimmas igen om den återigen tredubblas räknat från sitt
+  NYA (redan trimmade) referensvärde - ingen gräns på antal trimningar
+  per position.
+
+  Tröskeln 3,0x är vald för att vara tillräckligt hög att INTE klippa
+  vanlig, sund avkastningsspridning i en likaviktad small-cap-korg, men
+  tillräckligt låg att fånga just den typ av extrem, enskild
+  koncentration (10-170x) som redan identifierats i HYP-072:s
+  robusthetsgranskning.
+
+  MOTORKRAV: identiska med HYP-072 (samma tre grundfixar, samma
+  borrow_cost 3%/år, samma Corwin-Schultz-spread, samma ADV-kapacitetsspärr).
+
+  PASS KRÄVER ALLA FYRA, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre kapitalnivåer):
+  1. Sharpe (huvudperiod) >= 0,55 (standardgolvet).
+  2. MaxDD INTE sämre än -50% (standardtaket).
+  3. Sharpe med HELA kalenderåret 2020 exkluderat >= 0,4894 (HYP-072:s
+     EGEN redan uppmätta ex-2020-Sharpe vid $100k, se dess registerpost)
+     - testar om regeln bevarar eller förbättrar prestandan i "normala"
+     år, inte bara de extrema.
+  4. Kurtosis för den dagliga avkastningsserien (hela huvudperioden,
+     $100k) < 366,2 (HYP-072:s EGEN redan uppmätta baskurtosis) - ett
+     DIREKT test att koncentrationsrisken faktiskt minskat, inte bara
+     påstås ha gjort det.
+
+  FAIL om något villkor faller vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal trimningar totalt och per
+  kapitalnivå, andel av trimningarna som gällde long- respektive
+  kortbenet, samt Sharpe/MaxDD/kurtosis-jämförelse rad för rad mot
+  HYP-072:s redan rapporterade tal (inte bara villkor 3-4:s tröskelvärden).
+
+  Diagnostiskt syfte: testar om en ren storlekshanteringsregel (ingen
+  ändring av signalen) kan bevara HYP-072:s redan starka MaxDD och
+  låga korrelation mot befintlig portfölj samtidigt som den gör
+  avkastningen mindre beroende av enstaka extrema positioner.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 71
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.8065, cagr: 0.0596, max_drawdown: -0.0605, sharpe_ex2020: 0.7737, kurtosis: 7.7, n_trims: 311, deflated_sharpe_ratio: 0.5543}
+  1000000: {sharpe: 0.7122, cagr: 0.0547, max_drawdown: -0.0585, sharpe_ex2020: 0.7104, kurtosis: 10.1, n_trims: 311, deflated_sharpe_ratio: 0.5266}
+  10000000: {sharpe: 0.6408, cagr: 0.0508, max_drawdown: -0.0743, sharpe_ex2020: 0.6714, kurtosis: 7.6, n_trims: 313, deflated_sharpe_ratio: 0.5293}
+result_summary: >
+  PASSED PA ALLA FYRA LASTA VILLKOREN PA DEN AVGORANDE $100k-NIVAN, OCH
+  SLAR HYP-072 PA NASTAN VARJE MATT. Sharpe 0,8065 (mot HYP-072:s 0,7704).
+  MaxDD -6,05% (jamforbart med HYP-072:s -6,18%). Sharpe ex-2020 0,7737 -
+  langt over bade 0,4894-tröskeln OCH HYP-072:s egen ex-2020-siffra,
+  vilket visar att "normala" ar faktiskt star sig BATTRE nar
+  koncentrationsrisken tas bort, inte bara att den extrema 2020-episoden
+  dampas. Kurtosis 7,7 - en DRAMATISK forbattring fran HYP-072:s 366,2
+  (48x lagre), i praktiken normalfordelningsniva (3,0 = normal). 311-313
+  trimningar utfordes over hela perioden.
+
+  SPARCHECK: varsta enskilda vinsttradet i $100k-boken foll fran
+  HYP-072:s +25625% (BRTXD) till +533% (AXRX, 2012-12) - positionstaket
+  fungerade exakt som designat, ingen enskild position tillats langre
+  dominera. Varsta forlusttradet ofOrandrat (FTSV -676%, samma
+  kortbensmekanism som HYP-072, ej berord av denna regel eftersom den ar
+  symmetrisk och redan aktiv dar - ingen ny bugg).
+
+  DSR (K=74, RF=2%/ar) = 0,5543/0,5266/0,5293 - LAGRE an HYP-072:s
+  0,7174 vid $100k, TROTS battre Sharpe och mycket lagre kurtosis. INTE
+  en motsagelse: DSR-formeln straffar avkastningsseriens SKEVHET
+  (skew=-1,96 vid $100k, mot HYP-072:s +13,95) separat fran kurtosis -
+  att klippa de extrema VINSTERNA gjorde fordelningen mer NEGATIVT skev
+  (forlustsvansen blir relativt sett mer framtradande nar vinstsvansen
+  kapas), vilket DSR-formeln (som anvander bade skew och kurt i sin
+  varianstermer) rakar straffa nastan lika hart som den ursprungliga
+  positiva skevheten belonade. Bade Sharpe-forbattringen OCH DSR-
+  forsamringen ar akta, matematiska konsekvenser av samma ingrepp -
+  ingendera doljs har.
+
+  Diagnostiskt: en symmetrisk, ren storlekshanteringsregel (ingen
+  signalandring) bevarar och till och med FORBATTRAR HYP-072:s kärnedge,
+  och loser den diagnostiserade koncentrationsrisken nastan helt (7,7 mot
+  366,2 i kurtosis) - men gor INTE DSR-siffran hogre, vilket visar att
+  "mindre koncentrerad" och "mer statistiskt sakerstalld givet K forsok"
+  inte alltid ar samma sak.

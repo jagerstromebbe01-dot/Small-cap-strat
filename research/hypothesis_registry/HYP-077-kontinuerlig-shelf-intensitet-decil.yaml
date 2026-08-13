@@ -1,0 +1,123 @@
+# LÅST 2026-08-12 av CEO i chatt ("ja skriv alla tre som pre
+# registrerade kandidater"). Del av samma 3-kandidat-batch som
+# HYP-075/HYP-076 (k_total 71 -> 74 vid låsningstillfället).
+#
+# SKILLNAD MOT HYP-075/HYP-076 (viktigt): de två föregående är
+# RISKÖVERLÄGG ovanpå HYP-072:s OFÖRÄNDRADE signal (samma binära
+# "aktiv"/"ren"-klassificering). Denna hypotes ändrar i stället SJÄLVA
+# SIGNALKONSTRUKTIONEN - en kontinuerlig, tidsviktad shelf-intensitet
+# med decilrangordning i stället för en binär tröskel - vilket
+# strukturellt sprider ut long-/kortbenen bredare (fler, jämnare vägda
+# namn) och därför bör minska enskild-namn-koncentration genom
+# KONSTRUKTION snarare än genom EFTERHANDSINGRIPANDE. En tredje,
+# mekanistiskt distinkt väg mot samma diagnostiserade problem.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-077
+date_registered: '2026-08-12'
+title: "Kontinuerlig shelf-intensitet med decilrangordning (alternativ konstruktion till HYP-072)"
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+  (HYP-008:s redan låsta definition, filed-datum-korrigerat universum)
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: Samma period som HYP-072 (2010-01-01 till 2024-12-31 huvudperiod +
+  genuin OOS-2025), samma SEC filings-index (data/cache/sec_filing_index.jsonl).
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  SIGNAL (kontinuerlig, ersätter HYP-072:s binära "aktiv"/"ren"-
+  klassificering helt): för varje ticker och varje månatligt
+  ombalanseringstillfälle, beräkna
+    shelf_score = SUMMA över samtliga S-3-familjefilingar (S-3/S-3-A/
+    S-3ASR/424B3/424B5) inom de senaste 24 kalendermånaderna av
+    exp(-ln(2) * ålder_i_dagar / 90)
+  (en tidsviktad summa där varje filing bidrar fullt vid ombalanserings-
+  tillfället och avtar med halveringstid 90 dagar - samma 90-dagars
+  konstant som en medveten, i förväg vald parameter, inte anpassad efter
+  resultat).
+
+  RANGORDNING OCH POSITION: rangordna HELA det eligible-universumet
+  efter shelf_score, FALLANDE ordning. SHORT toppdecilen (10% högst
+  shelf_score - de mest intensiva, nyligen aktiva shelf-användarna).
+  LONG bottendecilen (10% lägst shelf_score - i praktiken nästan
+  uteslutande score=0-namn). TIE-BREAK för lika shelf_score (framför
+  allt bland de många score=0-namnen i bottendecilen): tickersymbol i
+  STIGANDE alfabetisk ordning (neutral, deterministisk, förutbestämd
+  regel - INTE vald för att gynna något specifikt resultat).
+  Likaviktat inom vardera decilen, dollarneutralt (50/50 long/kort av
+  benets egen allokering).
+
+  MOTORKRAV: identiska med HYP-072 (samma tre grundfixar,
+  borrow_cost 3%/år, Corwin-Schultz-spread, ADV-kapacitetsspärr).
+
+  PASS KRÄVER ALLA FYRA, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre kapitalnivåer):
+  1. Sharpe (huvudperiod) >= 0,55.
+  2. MaxDD INTE sämre än -50%.
+  3. Sharpe med HELA kalenderåret 2020 exkluderat >= 0,4894 (HYP-072:s
+     egen ex-2020-Sharpe vid $100k).
+  4. Kurtosis för den dagliga avkastningsserien (hela huvudperioden,
+     $100k) < 366,2 (HYP-072:s egen baskurtosis).
+
+  FAIL om något villkor faller vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): genomsnittligt antal namn per
+  decil per månad (för att verifiera att decilerna inte är försumbart
+  små), andel av bottendecilen som är score=0 (ren tie-break-fördelning)
+  samt Sharpe/MaxDD/kurtosis-jämförelse rad för rad mot HYP-072:s redan
+  rapporterade tal.
+
+  Diagnostiskt syfte: testar om en bredare, kontinuerligt rangordnad
+  konstruktion av SAMMA underliggande ekonomiska mekanism (anticiperat
+  aktieutbud) ger en strukturellt jämnare avkastningsfördelning än
+  HYP-072:s binära tröskelregel, utan att förlita sig på ett
+  efterhandsingripande (till skillnad från HYP-075/HYP-076).
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 71
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.7006, cagr: 0.1208, max_drawdown: -0.1196, sharpe_ex2020: 0.4994, kurtosis: 536.6, deflated_sharpe_ratio: 0.6044}
+  1000000: {sharpe: 0.7537, cagr: 0.0730, max_drawdown: -0.1094, sharpe_ex2020: 0.6757, kurtosis: 34.8, deflated_sharpe_ratio: 0.5607}
+  10000000: {sharpe: 0.5000, cagr: 0.0546, max_drawdown: -0.1312, sharpe_ex2020: 0.5420, kurtosis: 70.3, deflated_sharpe_ratio: 0.2568}
+  avg_n_eligible_per_month: 696.5
+  avg_n_per_decile: 69.6
+  share_zero_score_in_long_decile: 1.0
+result_summary: >
+  FAILED PA VILLKOR 4 (kurtosis) PA DEN AVGORANDE $100k-NIVAN, TROTS ATT
+  VILLKOR 1-3 PASSERADE (Sharpe 0,7006 >= 0,55; MaxDD -11,96% >= -50%;
+  Sharpe ex-2020 0,4994 >= 0,4894 - en MARGINELL passering, bara 0,01
+  over tröskeln). Villkor 4: kurtosis 536,6, HOGRE an HYP-072:s egen
+  366,2 - alltsa VARRE, inte battre, trots hypotesens uttryckliga syfte
+  att minska koncentration genom bredare deciler.
+
+  DIAGNOS: bottendecilen bestar till 100% av score=0-namn (tie-break-
+  fordelningen slog igenom fullt ut - se disclosure), dvs. i praktiken
+  SAMMA "rena"-population som HYP-072:s befintliga klassificering, men
+  nu begransad till EXAKT 10% (~70 namn/manad) istallet for HYP-072:s
+  bredare "ren"-grupp (~50,5% av universumet, se HYP-072:s disclosure).
+  En SMALARE long-korg (70 istallet for ~350 namn) okar - inte minskar -
+  enskild-namn-koncentrationen, rakt motsatt den avsedda effekten. Detta
+  ar en direkt, forklarad konsekvens av konstruktionen (tie-break pa
+  alfabetisk ordning bland tusentals identiska score=0-namn slumpar i
+  praktiken fram en GODTYCKLIG, smal delmangd av den redan breda "rena"-
+  gruppen), inte en bugg eller ett datafel.
+
+  MaxDD forsamrades ocksa (-11,96% mot HYP-072:s -6,18%) - konsistent
+  med samma diagnos (smalare korg = mer koncentrerad risk, inte mindre).
+
+  DSR (K=74) = 0,6044/0,5607/0,2568 - mattlig vid $100k men irrelevant
+  har eftersom Villkor 4 redan avgor FAIL.
+
+  Diagnostiskt: den kontinuerliga tidsviktningen i sig (exponentiellt
+  avtagande shelf_score) var INTE problemet - problemet var att
+  DECILRANGORDNING pa en signal dar en majoritet av universumet delar
+  samma (noll-)varde oavsiktligt SMALNAR AV long-benet jamfort med
+  HYP-072:s binara "alla score=0-namn"-regel. En framtida variant som
+  vill behalla den kontinuerliga poangen men undvika denna fallgrop
+  skulle behova en annan LONG-regel (t.ex. "alla score=0-namn", som i
+  HYP-072, snarare an "bottendecilen av score") - men det vore en ny,
+  separat hypotes, inte en efterhandsjustering av denna.

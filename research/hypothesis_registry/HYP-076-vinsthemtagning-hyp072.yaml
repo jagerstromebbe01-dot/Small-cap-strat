@@ -1,0 +1,112 @@
+# LÅST 2026-08-12 av CEO i chatt ("ja skriv alla tre som pre
+# registrerade kandidater"). Del av samma 3-kandidat-batch som
+# HYP-075/HYP-077 (k_total 71 -> 74 vid låsningstillfället).
+#
+# SKILLNAD MOT HYP-075 (viktigt, för att undvika att detta bara blir en
+# kosmetisk variant av samma idé): HYP-075 är en SYMMETRISK, UPPREPBAR
+# storlekstak som gäller BÅDA benen och kan trigga om och om igen.
+# Denna hypotes är en ENGÅNGSHÄNDELSE per position, gäller ENDAST
+# LONG-benet, och lämnar den kvarvarande positionen helt orörd resten
+# av hållperioden oavsett vad som händer sedan - en riktig
+# "vinsthemtagning", inte ett återkommande tak. Kortbenets motsvarande
+# skydd (mot en skenande, förlustdrivande blankning) täcks redan av
+# HYP-075:s symmetriska regel - att göra samma sak här vore en
+# duplicering, inte en ny hypotes.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-076
+date_registered: '2026-08-12'
+title: "Vinsthemtagning på HYP-072:s långben - engångsdelförsäljning vid dubblering"
+universe: "N/A - samma engine/signal som HYP-072:s deltest A (full_ls),
+  oförändrad. Ingen ny small-cap-signal, inget nytt universum."
+small_cap_definition: "N/A - se HYP-072:s redan låsta definition, oförändrad."
+data_range: "Samma period som HYP-072 (2010-01-01 till 2024-12-31 huvudperiod
+  + genuin OOS-2025), samma SEC filings-index."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Bygger direkt på HYP-072:s redan låsta klassificering och månatliga
+  ombalansering (deltest A:s full_ls-läge). Kortbenet är HELT OFÖRÄNDRAT
+  mot HYP-072 (ingen vinsthemtagningsregel där - se motivering ovan).
+
+  NY REGEL (endast LONG-benet, kontrolleras VARJE handelsdag): för varje
+  long-position, övervaka från entry/senaste ombalansering. FÖRSTA
+  gången (en gång per sammanhängande hållperiod - inte upprepat) en
+  positions marknadsvärde når >= 2,0x sitt värde vid entry/senaste
+  ombalansering (dvs. positionen har DUBBLATS), sälj nästa handelsdag
+  EXAKT 50% av då kvarvarande antal aktier till aktuellt pris (med
+  Corwin-Schultz-spread), banka in likviden som kontanter fram till
+  nästa ombalansering. Ingen ytterligare åtgärd sker för den
+  kvarvarande positionen under resten av hållperioden, oavsett hur
+  mycket den sedan rör sig i endera riktningen - en engångshändelse,
+  inte ett återkommande tak (till skillnad från HYP-075).
+
+  MOTORKRAV: identiska med HYP-072.
+
+  PASS KRÄVER ALLA FYRA, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för
+  alla tre kapitalnivåer):
+  1. Sharpe (huvudperiod) >= 0,55.
+  2. MaxDD INTE sämre än -50%.
+  3. Sharpe med HELA kalenderåret 2020 exkluderat >= 0,4894 (HYP-072:s
+     egen ex-2020-Sharpe vid $100k).
+  4. Kurtosis för den dagliga avkastningsserien (hela huvudperioden,
+     $100k) < 366,2 (HYP-072:s egen baskurtosis).
+
+  FAIL om något villkor faller vid $100k.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal vinsthemtagningshändelser
+  totalt och per kapitalnivå, genomsnittlig avkastning för den sålda
+  50%-andelen vid händelsetillfället (för att verifiera att regeln
+  faktiskt triggar på starka vinnare, inte brus), samt
+  Sharpe/MaxDD/kurtosis-jämförelse rad för rad mot HYP-072:s redan
+  rapporterade tal.
+
+  Diagnostiskt syfte: testar om en riktad, engångs-vinsthemtagning på
+  just de mest extrema uppgångarna (spegelbilden av en stop-loss, men
+  mot motsatt svans av fördelningen) räcker för att dämpa
+  kurtosis/skevhet utan att bygga ett strukturellt tak som kan klippa
+  legitim, upprepad vinsttillväxt (den risk HYP-075:s upprepbara regel
+  bär).
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 71
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.8622, cagr: 0.0748, max_drawdown: -0.0588, sharpe_ex2020: 0.6681, kurtosis: 169.2, n_profit_takes: 732, deflated_sharpe_ratio: 0.7380}
+  1000000: {sharpe: 0.7399, cagr: 0.0573, max_drawdown: -0.0660, sharpe_ex2020: 0.6396, kurtosis: 7.8, n_profit_takes: 735, deflated_sharpe_ratio: 0.5760}
+  10000000: {sharpe: 0.5650, cagr: 0.0482, max_drawdown: -0.0864, sharpe_ex2020: 0.5667, kurtosis: 7.5, n_profit_takes: 735, deflated_sharpe_ratio: 0.4113}
+result_summary: >
+  PASSED PA ALLA FYRA LASTA VILLKOREN PA DEN AVGORANDE $100k-NIVAN -
+  HOGSTA RAA SHARPEN AV SAMTLIGA HYP-072-VARIANTER (inklusive HYP-072
+  sjalv och HYP-075): 0,8622. MaxDD -5,88%. Sharpe ex-2020 0,6681 - klart
+  over 0,4894-tröskeln. Kurtosis 169,2 - forbattrad fran HYP-072:s 366,2
+  men INTE lika langt som HYP-075:s 7,7 (forvantat, se sparcheck nedan -
+  regeln lamnar halva positionen okontrollerad efter forsta
+  vinsthemtagningen).
+
+  SPARCHECK: BRTXD-tradet finns KVAR i toppen (+12762% pa den kvarvarande
+  halvan, mot HYP-072:s +25625% pa hela positionen) - regeln halverade
+  korrekt dollarpaverkan fran just detta enskilda extremfall men eliminerade
+  den inte, till skillnad fran HYP-075:s upprepbara tak som kapade den till
+  +533%. Detta ar EXAKT det designade beteendet (en engangshandelse,
+  inte ett tak) - inte ett fel.
+
+  DSR (K=74, RF=2%/ar) = 0,7380/0,5760/0,4113 - vid $100k HOGST av
+  SAMTLIGA HYP-072-varianter (inklusive HYP-072 sjalv, 0,7174), trots
+  hogre kurtosis an HYP-075. Skevheten (skew=+5,28, fortfarande positiv
+  men mycket lagre an HYP-072:s +13,95) forklarar skillnaden mot HYP-075
+  (som fick negativ skev och darmed en hardare DSR-straff, se HYP-075:s
+  registerpost) - en engångs-halvering bevarar mer av den ursprungliga
+  positiva skevheten an ett upprepat tak, vilket rakar ge en gynnsammare
+  DSR-profil har.
+
+  Diagnostiskt: en riktad, engångs-vinsthemtagning fangar en stor del av
+  koncentrationsfordelen utan att bygga ett strukturellt, upprepat tak -
+  och ger dessutom den HOGSTA DSR:n av alla testade HYP-072-varianter vid
+  $100k. Tillsammans med HYP-075 ger detta CEO tva genuint forbattrade,
+  oberoende alternativ till HYP-072:s ursprungliga konstruktion att valja
+  mellan (eller kombinera) for ett eventuellt femte-bens-beslut.

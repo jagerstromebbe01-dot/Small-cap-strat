@@ -1,0 +1,103 @@
+# LÅST 2026-07-30 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Detta ar den mest DIREKTA testen av projektets
+# EGEN kartekonstas (kapacitetsbegransning okar med minskande storlek) -
+# till skillnad fran HYP-012/013/014/015 som alla importerade en redan
+# kand stor-cap-faktor (momentum, reversal, vol) och testade om den OCKSA
+# fungerar i small-cap. Har testas storlek I SIG som signal, inom det
+# redan small-cap-klassificerade bandet. Se konversationen 2026-07-30.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-019
+date_registered: '2026-07-30'
+title: Storlekssortering inom small-cap-bandet ($100M-$2B)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/012/015 (2011-2024)
+pass_fail_criterion: 'Samma universum/friktion/hedge/kapacitetsspärr och kvartalsvisa ombalansering som
+  HYP-015 (aterananvander samma motor - lagfrekvent decil-strategi, quarterly, INGEN vol-skalning eller
+  krasch-overlay har - detta ar ett RENT signaltest, i linje med principen att utvardera en kandidatsignals
+  egen edge FORE nagon riskoverlay laggs pa, se konversationen 2026-07-30).
+
+  Signal: marknadsvarde per ticker per manad, fran redan befintlig data/cache/market_cap_by_ticker_month.csv
+  (samma kalla som redan anvands for universumklassificeringen - ingen ny datainhamtning). Ga LANG i
+  LAGSTA marknadsvardes-decilen INOM det redan small-cap-klassificerade bandet ($100M-$2B) - INTE en
+  jamforelse mot large-cap (det ar redan projektets grundantagande), utan en test av om storlek I SIG
+  predikterar avkastning AVEN inom small-cap-bandet. Kvartalsvis ombalansering (storlek ar en langsamt
+  roterande karakteristika, samma konvention som HYP-014/015 anvander for lagvolatilitet).
+
+  Friktion: Corwin-Schultz-spread + 3% arlig borrow-kostnad, identiskt med HYP-008/012/015 - AKTIV fran
+  dag ett, inte valfri. SPY-beta-hedge, samma kapacitetsspärr (MAX_ADV_PCT=0.10) som HYP-015.
+
+  MOTORKRAV (samma tre som HYP-015/016/017/018, redan byggda i strategies/common/): snappade
+  ombalanseringsdatum, adjusted_close genomgaende (bade signal-relevant avkastningsberakning och
+  positionsvardering), flag_implausible_liquidity().
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M). FAIL om
+  nagon niva faller under.
+
+  Diagnostiskt syfte: detta ar den mest direkta testen av projektets ursprungliga kapacitetsbegransnings-
+  hypotes hittills - alla tidigare hypoteser (HYP-012/013/014/015) importerade en redan kand stor-cap-
+  faktor och fragade om den OCKSA fungerar i small-cap; denna fragar i stallet om SJALVA STORLEKEN,
+  inom ett universum som redan ar klassificerat som small-cap, bar en egen, kvarvarande edge - vilket
+  ar precis vad kapacitetsbegransningsmekanismen (Berk & Green 2004, se research/candidate_ideas.md)
+  formellt forutsager om den ar sann.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 17
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.0612, sharpe: 0.2347, calmar: 0.0786, sharpe_excl_best_trade: 0.2877, max_drawdown: -0.7787, win_rate: 0.4316, profit_factor: 1.5907, n_trades: 2952, deflated_sharpe_ratio: 0.0893}
+  1000000: {cagr: 0.0667, sharpe: 0.2325, calmar: 0.0972, sharpe_excl_best_trade: -0.1411, max_drawdown: -0.6862, win_rate: 0.4316, profit_factor: 1.5907, n_trades: 2952, deflated_sharpe_ratio: 0.0760}
+  10000000: {cagr: 0.0642, sharpe: 0.2406, calmar: 0.1427, sharpe_excl_best_trade: 0.2415, max_drawdown: -0.4500, win_rate: 0.4316, profit_factor: 1.5907, n_trades: 2952, deflated_sharpe_ratio: 0.0971}
+date_tested: 2026-07-30
+result_summary: >
+  FAILED, decisively, pa alla tre kapitalnivaer. Sharpe 0.23/0.23/0.24 -
+  langt under 0.55-tröskeln, och lagst DSR (0.08/0.08/0.10) av alla
+  hypoteser testade denna session. MaxDD ar det VARSTA av alla hypoteser
+  hittills testade i hela projektet: -77.9%/-68.6%/-45.0% (jamfor HYP-012
+  momentum -68% till -76%, och HYP-014/015 lagvol/idio-vol -30% till
+  -48%). Storlek I SIG, som ren signal inom det redan small-cap-
+  klassificerade bandet, bar alltsa INTE en tydlig egen edge - snarare
+  extrem svansrisk utan motsvarande kompensation. Tolkning: de allra
+  minsta bolagen inom $100M-$2B-bandet ar sannolikt dominerade av
+  nödlidande-risk (distress), illikviditet och forcerad-forsaljnings-/
+  avnoterings-risk snarare an av en ren kapacitetsbegransningsfordel -
+  kapacitetsmekanismen (Berk & Green 2004) verkar INTE ge nettopositiv,
+  exploaterbar edge nar den testas sa har direkt, atminstone inte utan
+  ytterligare riskhantering (som redan visat sig svar att fa ratt for
+  andra signaler, se HYP-016/018).
+
+  VIKTIG KAND DATABEGRANSNING (upptackt vid granskning av utstickande
+  trades - paverkar INTE FAIL-slutsatsen har, men bor noteras for
+  framtida arbete): sharpe_excl_best_trade swingar KRAFTIGT vid $1M
+  (0.23 -> -0.14, dvs blir NEGATIV utan den enskilt basta traden) - den
+  traden ar ANNU en ESSA-artefakt (+29 682% pa en trade, 2012-12-31).
+  Radata visar att ESSA hade en TREDJE, tidigare okand permanent
+  felaktig prisregim (december 2012 - februari 2013, pris ~$3000 mot
+  normalt ~$10, sannolikt ANNU en leverantors-tickerkollision) UTOVER
+  de tva redan dokumenterade fallen (sporadiska helgdags-relaterade
+  enstaka-dagshopp 2011-2023, och den permanenta regimen fran
+  2023-12-15). Varken flag_implausible_liquidity() (dollarvolymen i
+  detta 2012-fallet ar hog i pris men LAG i volym, under
+  implausibilitetstroskeln) eller clean_price_matrix()s lokala-median-
+  filter (den falska regimen varade over en manad, lang nog att dominera
+  sitt eget 21-dagarsfonster och darfor tolkas som en "akta"
+  omvardering) fangade detta. ESSA har nu bekraftat orsakat problem i
+  MINST TRE separata hypoteser (HYP-014, HYP-015/017, HYP-019) via minst
+  TRE distinkta undermonster som befintliga statistiska filter bara
+  delvis fangar. REKOMMENDATION: overvag ett explicit ticker-uteslutnings-
+  register (deny-list) for kant problematiska tickers som ESSA, som ett
+  komplement till de statistiska filtren - inte utfort har, flaggat for
+  separat uppfoljning.
+sharpe_raw:
+  100000: 0.2347
+  1000000: 0.2325
+  10000000: 0.2406
+# Beräknad mot K=18 (7 döda ejay-varianter + HYP-008/009/011/012/013/014/015/016/017/018 + HYP-019 sjalv),
+# via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.0893
+  1000000: 0.0760
+  10000000: 0.0971

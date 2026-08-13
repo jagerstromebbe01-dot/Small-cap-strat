@@ -1,0 +1,45 @@
+# UTKAST, EJ LÅST. Del av BATCH-004 (se HYP-093 för fullständig
+# batchmotivering, INTE upprepad här).
+#
+# DENNA FIL: variant 3/4 av textlikhets-idén - JACCARD-likhetsmått
+# (ordmängder, enklare/mer manuellt granskningsbar än cosine/TF-IDF)
+# + EGET FRISTÅENDE BEN (samma konstruktion som HYP-093).
+#
+# LÅST 2026-08-13 av CEO i chatt ("lås kör") - se HYP-093 för
+# fullständig lås-motivering, identisk för hela BATCH-004.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-095
+date_registered: '2026-08-13'
+title: "Risk Factors-textlikhet (BATCH-004, 3/4): Jaccard-likhet, eget long/short-ben"
+universe: "IDENTISK med HYP-091:s/HYP-093:s."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: "IDENTISK med HYP-093:s."
+pass_fail_criterion: >
+  MEKANISM: IDENTISK datainsamling/extraktion och ombalansering som
+  HYP-093 - se den filen. SKILLNAD 1 (signal): Jaccard-likhet på
+  ordmängder (unika ord, versalgemener normaliserade, engelska
+  stoppord borttagna - samma stoppordslista som HYP-093/094 för
+  konsistens) mellan detta årets och föregående årets Item 1A-text,
+  istället för cosine/TF-IDF. Jaccard = |A∩B| / |A∪B| - enklare att
+  manuellt granska/verifiera än TF-IDF-viktade vektorer, men ignorerar
+  ordfrekvens (räknar bara närvaro/frånvaro), en genuin metodskillnad
+  med egen motivering, inte en kosmetisk variant.
+
+  SKILLNAD 2 (portföljkonstruktion): IDENTISK med HYP-093 - eget
+  fristående long/short-ben, tredjedelsindelning, long övre
+  (stabilast), short nedre (mest förändrat), likaviktat, dollar-
+  neutralt. Testas standalone.
+
+  FRIKTION: standardmetodiken, identisk med HYP-093.
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (CEO-LÅST, enhetlig bar för hela
+  BATCH-004, se HYP-093):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -30,0%.
+  FAIL om något villkor faller. $1M/$10M + OOS-2025: obligatorisk
+  disclosure.
+status: pre-registered
+k_total_hypotheses_before_this: 87
+tested_capital_levels: [100000, 1000000, 10000000]

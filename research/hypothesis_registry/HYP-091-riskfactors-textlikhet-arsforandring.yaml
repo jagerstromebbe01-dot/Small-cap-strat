@@ -1,0 +1,87 @@
+# UTKAST, EJ LÅST. status: draft (INTE pre-registered) - pass_fail_criterion
+# saknas medvetet, får ENDAST fyllas i av CEO manuellt i chatt.
+#
+# Bakgrund: textklustret från 2026-08-12:s cross-AI-konvergensrunda
+# (research/candidate_ideas.md) - HÖGST extern konvergens av alla sex
+# kluster den dagen (två oberoende externa AI:n, identisk konstruktion),
+# medvetet parkerat tills de billigare kandidaterna (HYP-072/073/074)
+# gett resultat - de har det nu (072→075→079→081, sex FAILED
+# uppföljare 082-086). Plockas upp igen 2026-08-13 på CEO:s begäran.
+#
+# FEASIBILITY VERIFIERAD (2026-08-13, sonderingskörning, ingen K-kostnad):
+# 10-K-primärdokument är fritt hämtningsbara via samma submissions-API/
+# Archives-URL-mönster som redan används för 8-K-item-signalen
+# (HYP-072-familjen). Testat mot ett verkligt dokument (GameStop 10-K,
+# 2024-03-26): en naiv "Item 1A"-strängsökning ger BRUS (TOC-post,
+# korsreferenser i löptext) - men EFTER html.unescape() (avkoda HTML-
+# entiteter FÖRE sökning, inte bara strippa taggar) framträder den
+# RIKTIGA sektionsrubriken tydligt som ett distinkt VERSALT mönster
+# ("ITEM 1A. RISK FACTORS ...") - skiljer sig pålitligt från TOC ("Item
+# 1A. Risk Factors 6", följt av sidnummer) och korsreferenser
+# ("Item 1A of this Form 10-K under..."). Detta är en disclosad,
+# testad heuristik, inte en olöst risk - men extraktionsrobusthet över
+# ETT enda testat bolag bevisar inte robusthet över hela universumet;
+# Coder-steget måste stickprovsverifiera mot ett bredare urval INNAN
+# resultat litas på (samma disciplin som redan etablerad för
+# small-cap-universumets egna datakvalitetskontroller).
+#
+# UPPDATERING 2026-08-13: CEO valde att testa BÅDA öppna designfrågorna
+# som en full korsning (2x2=4 varianter) - se HYP-093 t.o.m. HYP-096,
+# som är de fyra konkreta, fullt specificerade varianterna av denna idé.
+# Denna fil (HYP-091) förblir det ARKIVERADE, ospecificerade utkastet -
+# ERSATT av batchen, INTE själv pre-registrerad eller körd.
+#
+# status: draft -> (CEO fyller pass_fail_criterion) -> pre-registered -> tested -> passed/failed
+
+id: HYP-091
+date_registered: null
+title: "Risk Factors-textlikhet år-över-år (Item 1A, 10-K) som ny, oberoende alfasignal"
+universe: >
+  Samma small-cap-universum som redan etablerat i registret ($100M-$2B,
+  HYP-008:s låsta definition) - inget nytt urvalskriterium. Begränsas i
+  PRAKTIKEN till bolag som (a) faktiskt lämnar 10-K (inte alla
+  small-cap-bolag gör det på ett sätt som är lätt att matcha mot CIK,
+  se sec_edgar_adapter.py:s egen dokumenterade begränsning om
+  namnmatchning i skala) och (b) har MINST TVÅ på varandra följande
+  årliga 10-K-inlämningar att jämföra (ett bolags FÖRSTA 10-K har ingen
+  föregångare att mäta likhet mot - exkluderas det året, inte ett fel).
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition, ingen ändring."
+data_range: >
+  Begränsas av SEC EDGAR:s praktiska fulltextdokumenttäckning (äldre
+  filingar finns som skannade bilder eller sämre strukturerad HTML före
+  ~2001) - exakt startår för en tillförlitlig, bred körning är INTE
+  verifierat här, måste fastställas av Coder innan låsning av
+  data_range slutgiltigt (troligen 2005-2010+ för rimlig HTML-kvalitet,
+  en gissning, inte verifierad).
+mechanism_sketch: >
+  ATT DISKUTERAS/LÅSAS, EJ en färdig mekanism-spec:
+
+  1. För varje bolag i universumet, vid varje ny 10-K-inlämning: hämta
+     primärdokumentet (samma submissions-API+Archives-URL-mönster som
+     redan verifierat för 8-K-signalen), extrahera Item 1A-sektionen
+     via den testade VERSAL-rubrik-heuristiken ovan (kräver bredare
+     stickprovsverifiering innan tillit).
+  2. Beräkna textlikhet mellan detta års Item 1A-text och FÖREGÅENDE
+     års Item 1A-text (samma bolag) - kandidatmått: cosine-likhet på
+     TF-IDF-viktade ord-vektorer, eller enklare Jaccard-likhet på
+     ordmängder/n-gram-shingles. VAL EJ GJORT HÄR - cosine/TF-IDF är
+     den vanligare akademiska konstruktionen (Cohen, Malloy & Nguyen
+     2020, "Lazy Prices", Journal of Finance) och rekommenderas, men
+     Jaccard är enklare att implementera och granska manuellt.
+  3. LÅG likhet (stor förändring i riskspråk år-över-år) - akademiskt
+     kopplat till SÄMRE framtida avkastning (marknaden underreagerar
+     på förändringen). Kandidat-konstruktion: kort/undvik bolag i den
+     lägsta likhets-decilen, long (eller neutral) resten - exakt
+     tröskel/konstruktion INTE avgjord här.
+  4. Ombalansering: HÄNDELSESTYRD (varje ny 10-K uppdaterar det bolagets
+     signal omedelbart, samma "kontinuerlig" stil som redan används i
+     HYP-072/077), INTE en fast kalenderfrekvens - eftersom 10-K:er
+     lämnas utspritt över året per bolags egna räkenskapsårsslut.
+
+  ÖPPEN FRÅGA TILL CEO: long/short-konstruktion (kort låg-likhet-decilen
+  som ett fristående alfa-ben, eller undvikande-filter i en redan
+  existerande long-bok) - inte avgjord här, påverkar om detta blir ett
+  nytt SJÄTTE ben eller en modifierare av ett befintligt.
+pass_fail_criterion: ""  # TOMT AVSIKTLIGT - CEO fyller i manuellt i chatt.
+status: draft   # INTE pre-registered
+k_total_hypotheses_before_this: 87  # informativt, dagens k_total - ökar EJ _counter.yaml

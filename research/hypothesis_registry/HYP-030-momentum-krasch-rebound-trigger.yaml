@@ -1,0 +1,148 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Uppfoljare till HYP-012 (cross-sectional
+# momentum, FAILED pga katastrofal maxdrawdown, INTE avsaknad av
+# genomsnittlig edge) och HYP-016 (vol-hanterad momentum via Barroso &
+# Santa-Clara 2015, FAILED - portfoljens EGEN volatilitetsskalning
+# rorde knappt MaxDD, -76% med skalning mot -78% utan). Se
+# research/candidate_ideas.md, posten daterad 2026-07-30 (Daniel &
+# Moskowitz 2016, den ANDRA delen av deras mekanism - inte samma som
+# redan citerades for HYP-016).
+#
+# HEDERLIG KALIBRERING (INNAN kriteriet lastes): HYP-016:s egna
+# baseline_sharpe_no_scaling (den KORRIGERADE motorns oskalade
+# momentum-Sharpe, INTE HYP-012:s ursprungliga buggiga 0.16/0.12-tal
+# fran fore ombalanserings-/split-fixarna) ar 0.1264/0.1336/-0.0762
+# vid 100k/1M/10M - SVAGT positiv vid laga nivaer, NEGATIV vid $10M.
+# Detta ar ett genuint, mer spekulativt test an idio-vol-overlayen
+# (HYP-015->017) var - dar den bakomliggande signalen redan hade en
+# tydligare positiv rå edge innan riskverktyget lades pa. Forvantningar
+# ska kalibreras darefter.
+#
+# DUBBEL ANVANDNING: denna hypotes utvarderas i FORSTA HAND som en
+# fristaende alfa-kandidat (samma golv som alla andra: Sharpe >= 0.55
+# pa alla tre nivaer). Om den INTE klarar det, loggas anda korrelationen
+# mot HYP-023:s avkastningsserie (informationsmassigt, INTE en del av
+# PASS/FAIL) - en framtida, SEPARAT och oberoende pre-registrerad
+# kombinationshypotes (per spec avsnitt 5b: korrelationsmatris forst,
+# naiv likaviktning, OOS-test, egen K-kostnad) skulle kunna anvanda det
+# datat, men beslutas INTE har och nu.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-030
+date_registered: '2026-07-31'
+title: Momentum-krasch-trigger (förlorar-rebound) på cross-sectional momentum small-cap
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/012/016 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-012/016 (12-1-manaders momentum - kumulativ avkastning over
+  12 manader, EXKLUSIVE senaste manaden, Jegadeesh & Titman 1993 - gar lang i TOPPDECILEN, manatlig
+  ombalansering (ME), samma friktion/SPY-beta-hedge/kapacitetsspärr som HYP-008). INGEN
+  volatilitetsskalning av bruttoexponeringen (HYP-016:s mekanism, redan FAILED - fullinvesterad
+  exponering varje manad, som HYP-012). Enda tillagget: en krasch-trigger BYGGD PA MOMENTUM-
+  RANKNINGENS EGEN BOTTENDECIL (forlorarna), INTE SPY och INTE portfoljens egen volatilitet.
+
+  Bottendecil-komposit (INTE valfri, samma likaviktade metod som HYP-021/023:s kompositfaktorer):
+  likaviktat medelvarde av dagliga avkastningar over BOTTENDECILEN av samma manads momentum-rankning
+  (de 10% med LAGST 12-1-manaders momentum bland manadens eligible-universum) - byggs om varje
+  manad i takt med ombalanseringen, anvander ALDRIG framtida rankningsdata.
+
+  Trigger, exakt specificerad (INTE fri, ateranvander SPY-overlayens redan lasta magnitud fran
+  HYP-017 for konsistens - INTE en ny, ej motiverad siffra): om bottendecil-kompositens EGNA
+  kumulativa avkastning over de senaste 10 handelsdagarna OVERSTIGER +10% (en kraftig rebound hos
+  tidigare forlorare - MOTSATT RIKTNING mot SPY-overlayens nedgangstrigger, men SAMMA magnitud och
+  fonster), skars momentumpositionerna ner till 40% av dagens varde (pro rata, samma friktion som en
+  vanlig exit), EN gang per sammanhangande episod. Ateruppbyggnad sker INTE automatiskt - forst vid
+  nasta ordinarie manatliga ombalansering (samma asymmetri som SPY-overlayen i HYP-017).
+
+  MOTORKRAV (LOCKAT, samma tre som HYP-015/016/017 - se HYP-016:s granskning 2026-07-29 som
+  identifierade dessa defekter): snappade ombalanseringsdatum (strategies/common/rebalancing.py),
+  adjusted_close genomgaende (signal OCH positionsvardering), flag_implausible_liquidity()
+  (max_market_cap=2_000_000_000, window=20, multiplier=1.0).
+
+  PASS kraver BADA (samma tva som HYP-016, samma motivering - MaxDD-villkoret ar INTE godtyckligt
+  utan den direkta, forhandsspecificerade testen mot HYP-012:s dokumenterade -72%/-78%-felorsak):
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer.
+  2. Maxdrawdown battre (mindre negativ) an -50% pa SAMTLIGA tre kapitalnivaer.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  YTTERLIGARE, INFORMATIONSMASSIGT KRAV (INTE del av PASS/FAIL, men OBLIGATORISKT att rapportera
+  oavsett utfall): berakna och logga korrelationen mellan denna strategis dagliga avkastningsserie
+  och HYP-023:s dagliga avkastningsserie over den overlappande backtestperioden - forbereder for en
+  eventuell FRAMTIDA, separat och oberoende pre-registrerad kombinationshypotes (spec avsnitt 5b),
+  men UTGOR INTE ett beslut att kombinera dem och kostar ingen egen K.
+
+  Diagnostiskt syfte: HYP-012 hade en svagt positiv (INTE stark - se hederlig kalibrering ovan) ra
+  Sharpe men kraschade pa maxdrawdown - en kand "momentum crash"-signatur (Daniel & Moskowitz 2016).
+  HYP-016 testade om att skala EXPONERINGEN mot portfoljens EGEN volatilitet racker - det gjorde det
+  inte. Denna hypotes testar en ANNAN mekanism ur SAMMA studie: kraschen drivs specifikt av att
+  TIDIGARE FORLORARE studsar kraftigt (inte av generell marknadsnedgang eller forhojd portfoljvol) -
+  en riktad trigger pa just den signaturen, i stallet for en generisk risk-proxy, kan tamja
+  svansrisken dar de tva tidigare forsoken misslyckades.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 28
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: -0.0414, sharpe: 0.0161, calmar: -0.0481, sharpe_excl_best_trade: -0.0144, max_drawdown: -0.8603, win_rate: 0.4933, profit_factor: 2.7538, n_trades: 9422, n_rebound_trigger_episodes: 80, correlation_with_hyp023: 0.2381, deflated_sharpe_ratio: 0.0211}
+  1000000: {cagr: -0.0289, sharpe: 0.0402, calmar: -0.0348, sharpe_excl_best_trade: 0.0148, max_drawdown: -0.8301, win_rate: 0.4930, profit_factor: 2.7538, n_trades: 9422, n_rebound_trigger_episodes: 80, correlation_with_hyp023: 0.2295, deflated_sharpe_ratio: 0.0231}
+  10000000: {cagr: -0.0483, sharpe: -0.2001, calmar: -0.0651, sharpe_excl_best_trade: -0.2028, max_drawdown: -0.7421, win_rate: 0.4930, profit_factor: 2.7538, n_trades: 9422, n_rebound_trigger_episodes: 80, correlation_with_hyp023: 0.4636, deflated_sharpe_ratio: 0.0026}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED, KRAFTIGT - villkor 1 (Sharpe >= 0.55) missas med bred marginal
+  (0.02/0.04/-0.20, i praktiken noll eller negativt), och villkor 2
+  (MaxDD battre an -50%) missas ANNU KRAFTIGARE: -86.0%/-83.0%/-74.2% -
+  INTE bara ett misslyckande att forbattra, utan STRIKT SAMRE an
+  HYP-016:s egen ODIAGNOSTISERADE oskalade baslinje (-78.0%/-76.2%/
+  -71.3%, se HYP-016:s registrering). Triggern gjorde saken TYDLIGT
+  varre, inte bara "ingen forbattring".
+
+  DIAGNOS (innan detta rapporterades som FAIL): bottendecil-forlorar-
+  kompositen triggade 80 GANGER over 2011-2024 (4-14 ganger PER AR,
+  spritt over ALLA 14 ar - inte koncentrerat till kanda kris-/rebound-
+  perioder). Jamfor med SPY-overlayens 5 episoder (HYP-017) eller
+  sektor-triggerns 8 episoder (HYP-023) over SAMMA period. Detta
+  bekraftar den KANDA, ACCEPTERADE RISKEN som redan flaggades i
+  pass_fail_criterion INNAN testet kordes: en small-cap-forlorar-
+  komposit har naturligt mycket hogre volatilitet an SPY eller en
+  bank-/finanssektorkomposit (bottendecilen av momentum ar per
+  definition redan pressade, ofta distressade, "penny-stock"-liknande
+  bolag dar tillfalliga studsar pa +10%/10 dagar ar RUTIN, inte
+  sallsynta krascher). Mekanismen mater alltsa i praktiken vanligt
+  small-cap-brus, inte genuina Daniel & Moskowitz-kraschrebound-
+  handelser - och genererade 9422 trades (mot HYP-016:s baslinje pa
+  betydligt farre), vilket i sig kostar friktion vid varje falskt larm.
+
+  ROBUSTHET: sharpe_excl_best_trade forblir -0.01/0.01/-0.20 -
+  i praktiken oforandrat, sa det svaga/negativa resultatet ar INTE en
+  saknad enskild-trade-artefakt utan ett systematiskt fenomen.
+
+  INFORMATIONSMASSIGT (krav i kriteriet, INTE del av PASS/FAIL):
+  korrelation mot HYP-023:s avkastningsserie ar 0.24/0.23/0.46 - mattlig
+  positiv korrelation, INTE lag. Aven om denna hypotes hade klarat
+  Sharpe/MaxDD-golvet hade den alltsa inte varit en sarskilt stark
+  diversifieringskandidat mot HYP-023 - ytterligare ett skal att inte
+  prioritera en framtida kombinationshypotes har.
+
+  SLUTSATS: den riktade mekanismen (Daniel & Moskowitz forlorar-rebound-
+  signatur, till skillnad fran HYP-016:s generella vol-skalning) var
+  mekaniskt val motiverad men den PRAKTISKA IMPLEMENTATIONEN (en likaviktad
+  bottendecil-komposit som trigger-kalla) ar for brusig for small-cap for
+  att fungera som avsett. En framtida forsok (om nagot) skulle behova en
+  mindre brusig proxy for "genuin kraschrebound" - t.ex. ett krav pa
+  SAMTIDIG bred marknadsuppgang (SPY) UTOVER forlorar-kompositens egen
+  rorelse, for att skilja en riktig markandsbred rebound fran rutinmassig
+  small-cap-volatilitet - men det kraver sin egen, nya, oberoende
+  pre-registrerade hypotes, inte en efterhandsjustering av denna. HYP-023
+  forblir referensimplementationen. Momentum-familjen (HYP-012/016/030)
+  har nu tre oberoende misslyckade forsok och bor betraktas som stangd
+  om inte en fundamentalt annorlunda mekanism foreslas.
+sharpe_raw:
+  100000: 0.0161
+  1000000: 0.0402
+  10000000: -0.2001
+deflated_sharpe_ratio:
+  100000: 0.0211
+  1000000: 0.0231
+  10000000: 0.0026

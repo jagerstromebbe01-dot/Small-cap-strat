@@ -1,0 +1,55 @@
+{
+  "scaling": "assets",
+  "construction": "long_only",
+  "results": [
+    {
+      "capital_level": 100000,
+      "sharpe": -0.08970605659550127,
+      "max_drawdown": -0.7981535144727778,
+      "cagr": -0.06406211679090035,
+      "calmar": -0.0802629013457602,
+      "dsr": 0.002509955350981547,
+      "n_trades": 732,
+      "baseline_sharpe": 0.4218218293018534,
+      "baseline_max_drawdown": -0.514708970116849,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": -0.08691186805908285,
+      "max_drawdown": -0.7422786766714716,
+      "cagr": -0.051652511994559114,
+      "calmar": -0.06958641493809235,
+      "dsr": 0.002398863696733487,
+      "n_trades": 732,
+      "baseline_sharpe": 0.4218218293018534,
+      "baseline_max_drawdown": -0.514708970116849,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": -0.23511820882999018,
+      "max_drawdown": -0.782411886451478,
+      "cagr": -0.07850126692046266,
+      "calmar": -0.10033240583357497,
+      "dsr": 0.00034837697416927906,
+      "n_trades": 732,
+      "baseline_sharpe": 0.4218218293018534,
+      "baseline_max_drawdown": -0.514708970116849,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    }
+  ],
+  "overall": "FAIL"
+}

@@ -1,0 +1,101 @@
+# LÅST 2026-07-31 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Del av BATCH-001 (5 kandidater, HYP-025 till
+# HYP-029) - se CLAUDE.md, avsnitt "Batch Hypothesis Generation" for de
+# procedurregler som galler: alla 5 skrevs i EN omgang, INGEN backtest
+# kord och INGA resultat sedda mellan kandidaterna, hela batchen las av
+# CEO samtidigt, k_total okar med 5 vid lasningstillfallet.
+#
+# MALFALL: samma som HYP-025 (se den filen for full bakgrund). Denna
+# kandidat ar batchens MOTSATTA boundary-fall - GRUNDARE troskel an
+# HYP-018:s -20%, INTE djupare. Sanity-check: om djupare trosklar
+# (HYP-025/026/027) inte hjalper, testar denna om annu mer aggressiv
+# nedskarning ar riktningen bort fran problemet snarare an mot det -
+# vilket skulle stodja HYP-018:s egen "forsakringspremie"-diagnos annu
+# tydligare.
+#
+# Byggd PA HYP-023 (nuvarande referensimplementation), stop-loss som
+# TREDJE lager efter SPY-overlay och sektor-trigger.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-029
+date_registered: '2026-07-31'
+title: Per-position stop-loss -15% pa HYP-023 (BATCH-001, kandidat 5/5)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015/017/023 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-023 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, SPY-krasch-overlay OFORANDRAD, sektor-krasch-trigger pa bank-/finanskomposit
+  OFORANDRAD - samma friktion/hedge/kapacitetsspärr, samma tre motorfixar). Enda tillagget: ett
+  TREDJE lager, ett DAGLIGT per-position stop-loss - EFTER bade SPY-overlayen och sektor-triggern i
+  samma loop-iteration (samma ordning som HYP-018).
+
+  Stop-loss, exakt specificerad (INTE fri, INTE anpassad efter denna eller nagon annan kandidats
+  resultat - vald INNAN nagon backtest i BATCH-001 kors):
+  - Kontrolleras VARJE handelsdag.
+  - Trigger: en enskild positions avkastning sedan koptillfallet (pa adjusted_close) faller under
+    -15% - EN ENDA DAGS observation racker (ingen flerdagarsbekraftelse). GRUNDARE an HYP-018:s
+    -20%, motsatt riktning mot batchens ovriga djup-varianter.
+  - Vid trigger: STANG HELA positionen (samma mekanik som HYP-018).
+  - Aterkop sker INTE automatiskt - forst vid nasta ordinarie kvartalsvisa ombalansering.
+  - Ordning: SPY-overlay -> sektor-trigger -> stop-loss-kontroll, i den ordningen, samma dag.
+
+  MOTORKRAV (samma som HYP-015/017/022/023): snappade ombalanseringsdatum, adjusted_close
+  genomgaende, flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer.
+  2. Maxdrawdown STRIKT BATTRE an HYP-023:s EGET resultat pa SAMMA kapitalniva (100k: battre an
+     -25.46%, 1M: battre an -19.29%, 10M: battre an -13.16%).
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte: boundary-sanity-check i MOTSATT riktning mot batchens ovriga fyra kandidater -
+  testar om en GRUNDARE (mer aggressiv, fler falska larm) troskel gor saken tydligt varre, vilket
+  skulle stodja att problemet verkligen ar "forsakringspremien" (for manga falska larm) snarare an
+  nagon annan mekanism, och darmed indirekt starka tolkningen av HYP-025/026/027:s resultat oavsett
+  utfall.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 23
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1103, sharpe: 0.7090, calmar: 0.5015, sharpe_excl_best_trade: 0.6671, max_drawdown: -0.2199, win_rate: 0.5328, profit_factor: 1.9669, n_trades: 2198, march_2023_episode_return: -0.1430, deflated_sharpe_ratio: 0.7374}
+  1000000: {cagr: 0.1099, sharpe: 0.7189, calmar: 0.5679, sharpe_excl_best_trade: 0.6757, max_drawdown: -0.1935, win_rate: 0.5328, profit_factor: 1.9669, n_trades: 2198, march_2023_episode_return: -0.1004, deflated_sharpe_ratio: 0.7499}
+  10000000: {cagr: 0.0870, sharpe: 0.6656, calmar: 0.6682, sharpe_excl_best_trade: 0.6570, max_drawdown: -0.1302, win_rate: 0.5332, profit_factor: 1.9669, n_trades: 2198, march_2023_episode_return: -0.0353, deflated_sharpe_ratio: 0.6794}
+date_tested: 2026-07-31
+result_summary: >
+  FAILED. Sharpe 0.71/0.72/0.67 klarar 0.55-golvet, MEN MaxDD-villkoret
+  haller BARA vid $100k OCH $10M (-21.99% respektive -13.02% mot
+  HYP-023:s -25.46%/-13.16% - batchens STORSTA 100k-forbattring, 3.5pp).
+  Vid $1M blir MaxDD svagt samre (-19.35% mot -19.29%, batchens minsta
+  1M-marginal - bara 0.06pp) - fortfarande en FAIL enligt "strikt
+  battre pa ALLA tre"-kriteriet, men narmast att klara det av alla fem.
+
+  Denna kandidat var batchens boundary-sanity-check (GRUNDARE troskel
+  an HYP-018:s -20%, motsatt riktning mot ovriga fyra). Att den INTE
+  gjorde saken tydligt varre - tvartom gav den batchens basta resultat
+  vid bade $100k och $10M - nyanserar HYP-018:s egen "forsakringspremie
+  vager for tungt"-diagnos: mer aggressiv nedskarning (fler falska larm,
+  fler exits totalt - 2198 trades, flest i batchen) verkar INTE
+  entydigt skadligt har, vilket antyder att sambandet mellan
+  trosklens djup och nettoeffekt ar mer komplext an en enkel
+  "djupare = farre falska larm = battre"-logik.
+
+  Se HYP-025 (samma batch, kandidat 1/5) for den fullstandiga
+  BATCH-001-jamforelsetabellen och den delade tolkningen.
+
+  ROBUSTHET: sharpe_excl_best_trade forblir 0.67/0.68/0.66 - fortfarande
+  over 0.55-golvet, ingen enskild-trade-artefakt.
+
+  SLUTSATS: HYP-023 forblir referensimplementationen OFORANDRAD, men av
+  hela batchen ar detta den kandidat som kom NARMAST att klara kriteriet
+  - vard att ha i minnet om branschkoncentrationsfragan tas upp igen.
+sharpe_raw:
+  100000: 0.7090
+  1000000: 0.7189
+  10000000: 0.6656
+deflated_sharpe_ratio:
+  100000: 0.7374
+  1000000: 0.7499
+  10000000: 0.6794

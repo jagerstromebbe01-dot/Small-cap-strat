@@ -1,0 +1,55 @@
+# LÅST 2026-07-29 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Del av en grupp om tre (HYP-012/013/014) -
+# pivot fran par-baserad handel (HYP-008/009/011, alla FAILED) till
+# klassiska, litteraturgrundade faktorer som inte kraver korrelerade par.
+# Se konversationen 2026-07-29 for full motivering och kallor.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-012
+date_registered: '2026-07-29'
+title: Cross-sectional momentum (12-1 manader) pa small-cap
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008 (2011-2024)
+pass_fail_criterion: 'Small-cap-universum ($100M-$2B, EODHD, 2011-2024), samma friktionsmodell (Corwin-Schultz-spread
+  + 3% borrow) och SPY-beta-hedge som HYP-008. Signal: 12-1-manaders momentum (kumulativ avkastning over
+  12 manader, EXKLUSIVE senaste manaden - standardkonvention, Jegadeesh & Titman 1993). Gar lang i toppdecilen
+  (kapacitetsbegransat), manatlig ombalansering. Samma kapacitetsspärr (MAX_ADV_PCT=0.10 av 20-dagars
+  snittlig dollarvolym) som HYP-008 - INTE valfri, aktiv fran dag ett.
+
+  PASS kraver Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M). FAIL om nagon
+  nivå faller under.
+
+  Diagnostiskt syfte: momentum ar historiskt en av de starkaste dokumenterade anomalierna, men akademisk
+  forskning visar att den lider mest av transaktionskostnader och har en uppskattad global kapacitetsgrans
+  runt $5-6 miljarder - detta testar om small-cap-momentum overlever en realistisk friktionsmodell, inte
+  bara om signalen existerar teoretiskt.'
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 10
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 0.1618, calmar: 0.0274, sharpe_excl_best_trade: -0.2691, max_drawdown: -0.7791, win_rate: 0.4233, profit_factor: 1.2364, n_trades: 3395, deflated_sharpe_ratio: 0.1320}
+  1000000: {sharpe: 0.1207, calmar: 0.0158, sharpe_excl_best_trade: 0.1149, max_drawdown: -0.7671, win_rate: 0.4233, profit_factor: 1.2364, n_trades: 3395, deflated_sharpe_ratio: 0.1030}
+  10000000: {sharpe: -0.0114, calmar: -0.0209, sharpe_excl_best_trade: -0.0134, max_drawdown: -0.7227, win_rate: 0.4236, profit_factor: 1.2364, n_trades: 3395, deflated_sharpe_ratio: 0.0404}
+date_tested: 2026-07-29
+result_summary: >
+  FAILED på samtliga tre kapitalnivåer (Sharpe 0.16/0.12/-0.01). Momentum
+  visar en svag, i det närmaste noll edge efter friktion på small-cap -
+  inte den kraftiga effekten litteraturen visar för andra universum,
+  konsistent med forskningens egen varning om att momentum lider mest av
+  transaktionskostnader (uppskattad global kapacitetsgräns ~$5-6md).
+  MaxDD mycket djup (-72% till -78%) trots ungefär noll-Sharpe -
+  klassiska momentum-krascher (regimskiften) dominerar riskbilden mer än
+  den genomsnittliga avkastningen.
+sharpe_raw:
+  100000: 0.1618
+  1000000: 0.1207
+  10000000: -0.0114
+# Beräknad mot K=13 (7 döda ejay-varianter + HYP-008/009/011 + HYP-012/013/014 själva), via scripts/deflated_sharpe_ratio.py
+deflated_sharpe_ratio:
+  100000: 0.1320
+  1000000: 0.1030
+  10000000: 0.0404

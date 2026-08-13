@@ -1,0 +1,146 @@
+# LÅST 2026-08-13 av CEO i chatt ("30 dagars snitt, sr>1.0 maxdd<25%").
+# De två öppna punkterna från utkastet löstes: 30-dagars genomsnittlig
+# residual (inte enskild dag), Sharpe > 1,0 (strängare än HYP-089:s
+# 0,70 - motiverat i utkastet av att detta är en mer spekulativ,
+# sonderingsdriven konstruktion). Batch-alternativet (flera
+# ombalanseringsfrekvenser samtidigt) valdes INTE - en enskild
+# hypotes, månadsvis, som skissat.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-090
+date_registered: '2026-08-13'
+title: "Crypto tvärsnitts-momentum (omvänt tecken mot HYP-089) på utjämnad OLS-residual, MÅNADSVIS ombalansering"
+universe: >
+  IDENTISK med HYP-089:s redan låsta universumregler (dynamiskt,
+  730 dagars historik, $5M/dag rullande 90-dagars dollarvolym,
+  kvartalsvis omvärdering, golv 6 mynt, samma 28 kandidatmynt exkl.
+  UNI/MATIC) - se HYP-089:s registerpost för fullständig motivering,
+  inte upprepad här.
+small_cap_definition: "N/A - identisk motivering som HYP-089."
+data_range: >
+  Samma princip som HYP-089: huvudperiod från första kvartalsvisa
+  omvärdering med >=8 kvalificerande mynt (2018-12-31, samma datum som
+  HYP-089:s faktiska körning) till 2024-12-31. Genuin OOS-2025 därefter.
+pass_fail_criterion: >
+  IDENTISKT med HYP-089:s universum-, kapacitets- och friktionsregler
+  (dynamiskt universum, MAX_ADV_PCT=0,10-kapacitetsspärr, Corwin-
+  Schultz-spread + 0,15% avgift, 365-dagars annualisering) - se dess
+  registerpost, INTE upprepad eller ändrad här. Friktionsmodellen
+  sänks/ändras MEDVETET INTE bara för att HYP-089 misslyckades på just
+  friktion - det vore att flytta målstolpen efter ett sett resultat.
+
+  TVÅ ÄNDRINGAR MOT HYP-089, BÅDA CEO-LÅSTA:
+
+  1. RIKTNING (omvänd mot HYP-089, motiverad av dess diagnostiska
+     sonderingskörning - se dess registerpost): long den ÖVRE
+     tredjedelen av tvärsnitts-residualerna (mest positiva - myntet
+     har presterat BÄTTRE än sin egen BTC-beta predicerar, "fortsättning"),
+     short den NEDRE tredjedelen (mest negativa). Samma
+     tertilkonstruktion (golv 6 mynt totalt, minst 2/sida) som HYP-089
+     i övrigt.
+
+  2. SIGNAL (CEO-LÅST, ny mot HYP-089): istället för enskild dags
+     residual, GENOMSNITTET av de dagliga OLS-residualerna (samma
+     rullande 90-kalenderdagars beta-skattning mot BTC som HYP-089,
+     oförändrad) över de senaste 30 KALENDERDAGARNA fram till och med
+     beslutsdatumet. Kräver minst 20 av dessa 30 dagar ha ett giltigt
+     beräknat dagligt residualvärde (samma princip som HYP-089:s
+     MIN_PAIRS_FOR_OLS-golv, skalad till det kortare snittfönstret) -
+     annars exkluderas myntet från den månadens ranking (räknas inte
+     mot MIN_UNIVERSE_SIZE-golvet för handel den månaden).
+
+  OMBALANSERING: MÅNADSVIS (CEO-LÅST, istället för HYP-089:s veckovisa)
+  - hela benet byggs om vid varje kalendermånadsslut (samma
+  snap_rebalance_dates-konvention, snappat till närmast föregående
+  handelsdag). Universum-omvärderingen förblir KVARTALSVIS, oförändrad
+  från HYP-089.
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (huvudperioden, CEO-LÅST):
+  1. Sharpe (friktionsjusterad) > 1,00.
+  2. MaxDD inte sämre än -25,0%.
+
+  FAIL om något villkor faller vid $100k-nivån.
+
+  $1M och $10M rapporteras som OBLIGATORISK, ICKE-GATING disclosure,
+  samma mönster som HYP-089.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating, samma syfte som HYP-089):
+  korrelation av strategins dagliga avkastning mot (a) BTC buy-and-hold,
+  (b) SPY buy-and-hold, över huvudperioden. Antal kvalificerande mynt
+  per omvärderingsdatum över tid. Genomsnittlig brutto BTC-beta-
+  exponering. Andel månader där golvet (<6 mynt, eller <6 mynt med
+  giltig 30-dagars residual) slog till. Jämförelse rad för rad mot
+  HYP-089:s egna redan uppmätta tal (samma kapitalnivåer) för att
+  kvantifiera hur mycket av skillnaden som kommer från
+  riktningsbytet+signalutjämningen kontra ombalanseringsfrekvensen.
+
+  Diagnostiskt syfte: testar om HYP-089:s sonderingsfynd (en genuin,
+  stark men veckovis-friktionsdödad fortsättningseffekt i tvärsnitts-
+  residualen) håller som en EGEN, formellt låst och testad hypotes när
+  både riktningen rättas och ombalanseringsfrekvensen sänks för att ge
+  signalen en rimlig chans mot friktionskostnaden.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 86
+date_tested: '2026-08-13'
+result:
+  100000: {sharpe: -1.9277, cagr: -0.7370, max_drawdown: -0.9997, deflated_sharpe_ratio: 7.37e-15, oos_2025_sharpe: -0.8344}
+  1000000: {sharpe: -1.9277, cagr: -0.7370, max_drawdown: -0.9997, deflated_sharpe_ratio: 7.37e-15, oos_2025_sharpe: -0.8344}
+  10000000: {sharpe: -1.9398, cagr: -0.7379, max_drawdown: -0.9997, deflated_sharpe_ratio: 5.74e-15, oos_2025_sharpe: -0.8433}
+disclosure:
+  corr_vs_btc_100k: 0.0294
+  corr_vs_spy_100k: 0.0435
+  avg_gross_long_100k: 1.000
+  avg_gross_short_100k: 1.000
+  avg_n_universe: 18.8
+  avg_n_scored: 18.8
+  avg_n_long: 5.9
+  avg_n_short: 5.9
+  pct_months_below_floor: 0.0
+  n_rebalances: 73
+  avg_monthly_friction_cost_by_year: {2018: 0.0614, 2019: 0.0796, 2020: 0.0904, 2021: 0.1348, 2022: 0.1039, 2023: 0.0652, 2024: 0.0910}
+result_summary: >
+  FAILED PÅ BÅDA VILLKOREN, PÅ ALLA KAPITALNIVÅER - men MARKANT mindre
+  katastrofalt än HYP-089. Sharpe -1,93/-1,93/-1,94 (mot HYP-089:s
+  -6,06/-6,06/-6,01). MaxDD -99,97% (mot -100,00% - fortfarande i
+  praktiken en total utplåning, bara marginellt mindre extremt). CAGR
+  -73,70%/-73,70%/-73,79% (mot -99,95%). DSR i praktiken noll (K=87).
+  OOS-2025 Sharpe -0,83 (avkastning -36,7%) - fortfarande klart
+  negativt, men inte lika extremt som huvudperioden.
+
+  DIAGNOS (jämfört mot HYP-089:s friktions-per-tillfälle, se dess
+  registerpost): frekvensen sänktes framgångsrikt från ~52 till 73
+  ombalanseringar över hela perioden (faktiskt 73 månatliga tillfällen
+  över 6 år, mot HYP-089:s ~313 veckovisa) - en riktig ~4,3x minskning
+  i ANTAL tillfällen friktion betalas. MEN genomsnittlig friktionskostnad
+  PER TILLFÄLLE förblev nästan OFÖRÄNDRAD (9,4% snitt per månad, mot
+  HYP-089:s 9,0% snitt per vecka - se avg_monthly_friction_cost_by_year
+  ovan, konsekvent 6-13% varje år, ingen förbättrande trend över tid
+  trots växande universum). Det betyder att 30-dagars-snittningen av
+  residualen INTE gav den förväntade ökningen i rangordningens
+  persistens månad till månad - benen byggs fortfarande om nästan i
+  sin helhet varje ombalanseringstillfälle, oavsett om det sker
+  veckovis eller månadsvis. Nettoeffekten: total friktionskostnad över
+  hela perioden sjönk (färre tillfällen vann över nästan oförändrad
+  kostnad per tillfälle), vilket förklarar varför resultatet är
+  betydligt MINDRE extremt än HYP-089 (Sharpe -1,93 mot -6,06) - men
+  inte tillräckligt för att komma i närheten av de låsta villkoren
+  (Sharpe>1,00, MaxDD>=-25%).
+
+  SLUTSATS: att bara sänka ombalanseringsfrekvensen adresserar
+  ANTALET friktionstillfällen, inte TURNOVER PER TILLFÄLLE - dessa är
+  två separata problem, och denna körning löste bara det förra. Den
+  bakomliggande instabiliteten i tvärsnittsrangordningen (vilka mynt
+  som hamnar i topp/botten-tredjedelen) verkar bestå även vid en
+  30-dagars-utjämnad signal och månadsvis hålltid, inte bara vid
+  HYP-089:s enskilda-dags/veckovisa konstruktion.
+
+  KONSEKVENS: denna hypotes, EXAKT SOM LÅST, är formellt FAILED. En
+  eventuell tredje uppföljningshypotes skulle behöva adressera TURNOVER
+  PER TILLFÄLLE direkt (t.ex. en minsta hålltid/hysteresbrand som
+  hindrar en position från att bytas ut om inte signalen flyttat sig
+  förbi en tydlig marginal, inte bara lägre frekvens) - INTE ännu en
+  ren frekvenssänkning, och INTE en efterhandsjustering av denna redan
+  låsta och testade kriteriet.

@@ -1,0 +1,84 @@
+# UTKAST, EJ LÅST. status: draft - pass_fail_criterion saknas medvetet,
+# fylls ENDAST i av CEO manuellt i chatt. Del av BATCH-004 (8 kandidater,
+# HYP-093 till HYP-100, CEO-godkänd 2026-08-13 som en full 2x2-korsning
+# av de öppna designfrågorna i HYP-091 (textlikhet) och HYP-092
+# (accrual) - se dessa två filer för fullständig bakgrund/feasibility-
+# sondering, INTE upprepad här. Samma batchdisciplin som redan etablerad
+# (BATCH-001/002/003): alla 8 kandidater dras i EN sittning, noll
+# backtester körs mellan utkasten, CEO låser HELA batchen samtidigt
+# (k_total ökar med 8 på en gång, inte styckvis), alla 8 resultat
+# rapporteras oavsett utfall - ingen cherry-picking.
+#
+# DENNA FIL: variant 1/4 av textlikhets-idén - COSINE/TF-IDF-likhetsmått
+# + EGET FRISTÅENDE BEN (long/short, inte ett undvikande-filter).
+#
+# LÅST 2026-08-13 av CEO i chatt ("lås kör", efter att CEO delegerade
+# sifferförslaget till Claude med uttrycklig efterhandsgranskning -
+# CEO föreslog: "du får avgöra rimliga sharpe och maxdd och nr2 sen ev
+# godkänner jag", Claude föreslog Sharpe>0,70/MaxDD>=-30% enhetligt för
+# alla 8 + disclosure ej gating, CEO godkände och lås samma meddelande).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-093
+date_registered: '2026-08-13'
+title: "Risk Factors-textlikhet (BATCH-004, 1/4): cosine/TF-IDF-likhet, eget long/short-ben"
+universe: "IDENTISK med HYP-091:s (=HYP-008:s låsta small-cap-definition). Se HYP-091 för den fullständiga motiveringen kring 10-K-täckningsbegränsningar."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: >
+  Samma som HYP-091: begränsas av SEC EDGAR:s praktiska
+  fulltextdokumenttäckning, exakt startår ej verifierat, Coder-jobb att
+  fastställa innan låsning av data_range slutgiltigt.
+pass_fail_criterion: >
+  MEKANISM (fullt specificerad, inga fria parametrar utom
+  pass/fail-siffrorna som CEO fyller i nedan):
+
+  DATAINSAMLING (KONVENTION, återanvänder HYP-091:s verifierade metod
+  oförändrad): för varje bolag i universumet, vid varje 10-K-inlämning,
+  hämta primärdokumentet (submissions-API + Archives-URL, samma mönster
+  som HYP-072-familjen) och extrahera Item 1A-sektionen via den testade
+  VERSAL-rubrik-heuristiken (html.unescape() FÖRE sökning, matcha mot
+  versalt "ITEM 1A. RISK FACTORS"-mönster, avgränsa mot nästa
+  versala "ITEM 1B"). Coder MÅSTE stickprovsverifiera extraktionen mot
+  minst 20 slumpmässigt valda bolag/år INNAN resultat litas på - detta
+  är en hård förutsättning, inte en rekommendation, given den kända
+  TOC-brus-risken.
+
+  SIGNAL: cosine-likhet på TF-IDF-viktade ordvektorer (standard
+  scikit-learn-implementation, engelska stoppord borttagna, inga
+  ytterligare fria val) mellan detta årets och föregående årets Item
+  1A-text, SAMMA bolag. Bolag utan en föregående 10-K att jämföra mot
+  exkluderas det året (inget värde, inte ett nollvärde).
+
+  OMBALANSERING (KONVENTION, kvartalsvis - avviker MEDVETET från
+  HYP-091:s skiss om "händelsestyrd" ombalansering för
+  implementerbarhet/konsistens med registrets etablerade
+  snap_rebalance_dates-mönster): vid varje kvartalsslut, använd det
+  SENAST KÄNDA likhetsvärdet per bolag (från dess senaste 10-K, om
+  filat inom de senaste 450 kalenderdagarna - annars exkluderas bolaget
+  den kvartalsperioden som "för gammal data", samma stalenessprincip
+  som redan används i small-cap-universumkonstruktionen).
+
+  PORTFÖLJKONSTRUKTION (denna variant): tredjedelsindelning på
+  likhetsvärdet. LÅNG den ÖVRE tredjedelen (mest STABILT riskspråk),
+  SHORT den NEDRE tredjedelen (mest FÖRÄNDRAT riskspråk - akademiskt
+  kopplat till sämre framtida avkastning, Cohen/Malloy/Nguyen 2020).
+  Likaviktat inom varje ben, dollar-neutralt mellan benen. Fristående
+  ben, testas STANDALONE här - INTE kombinerat med någon annan
+  hypotes (en eventuell framtida kombination är sin egen, separat
+  pre-registrerade hypotes med eget K, per spec §5b).
+
+  FRIKTION: standardmetodiken (Corwin-Schultz halva spreaden + samma
+  borrow-kostnadsmodell som resten av registret för kortbenet).
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (huvudperioden, CEO-LÅST, enhetlig
+  bar för alla 8 BATCH-004-kandidater):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -30,0%.
+  FAIL om något villkor faller vid $100k-nivån. $1M/$10M + OOS-2025:
+  obligatorisk, icke-gating disclosure (samma mönster som HYP-089/090).
+  Baseline-jämförelse (ofiltrerat universum): informativ disclosure,
+  INTE ett tredje gating-villkor (CEO-LÅST beslut).
+status: pre-registered
+k_total_hypotheses_before_this: 87  # informativt - hela BATCH-004 (8) ökar k_total samtidigt vid CEO-lås, inte denna fil ensam
+tested_capital_levels: [100000, 1000000, 10000000]

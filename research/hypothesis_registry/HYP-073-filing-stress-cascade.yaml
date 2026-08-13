@@ -1,0 +1,151 @@
+# LÅST 2026-08-12 av CEO i chatt ("gör det sen välje och skriv 2-3
+# kandidater", efter en cross-AI-konvergensanalys samma dag - se
+# research/candidate_ideas.md, posten daterad 2026-08-12). Del av samma
+# 3-kandidat-batch som HYP-072/HYP-074 (k_total 68 -> 71 vid
+# låsningstillfället, samtliga tre låsta samtidigt).
+#
+# KONVERGENSURVAL: tre externa AI-källor föreslog varianter av
+# "revisorsbyte/going-concern" (olika djup) + Claudes egen avbrutna
+# riktning. Denna hypotes använder EN källas mer ovanliga andraordnings-
+# formulering ("Filing Stress Cascade" - inträffar en filinganomali, ökar
+# sannolikheten för nästa?) i stället för att bara mäta ett enskilt
+# revisorsbyte isolerat - mindre konventionellt, och undviker samtidigt
+# det textparsnings-/NLP-beroende som "going-concern-språk" annars skulle
+# kräva.
+#
+# FEASIBILITY (verifierad via webbsökning 2026-08-12, INNAN låsning): SEC
+# submissions-API:et (data.sec.gov/submissions/CIK##########.json)
+# innehåller ett strukturerat `items`-fält för 8-K-inlämningar (t.ex.
+# "4.01" = revisorsbyte, "4.02" = non-reliance/omräkning av tidigare
+# finansiella rapporter) samt fullständig `form`+`filingDate`-historik
+# (inkl. NT 10-K/NT 10-Q, 10-K/A, 10-Q/A). INGEN NLP eller
+# dokumenttextparsning krävs - allt bygger på strukturerad filingsmetadata.
+# Delar samma nya datamodul (SEC submissions-API) som HYP-072 - byggs en
+# gång, återanvänds. Item-kodens historiska täckningsdjup för hela
+# 2010-2024-perioden är INTE verifierad per enskild ticker (bara att
+# fältet finns i API-strukturen) - se explicit feasibility-FAIL-klausul
+# nedan.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-073
+date_registered: '2026-08-12'
+title: "Filing Stress Cascade - organisatorisk rapporteringsfriktion som andraordnings-eventsignal"
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla (HYP-008:s
+  redan låsta definition, filed-datum-korrigerat universum)
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World för priser, 2010-01-01 till 2024-12-31 (huvudperiod) +
+  genuin blind OOS-2025. SEC EDGAR submissions-API (form+items+filingDate) för
+  hela samma period per ticker (delad ny datamodul med HYP-072).
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  STRESS-HÄNDELSER (fyra binära flaggor, var och en detekterad rent via
+  formtyp/item-kod i SEC submissions-API:et, EN gång per DISTINKT typ inom
+  fönstret, inte per förekomst):
+  1. NT 10-K eller NT 10-Q filad (sen inlämning).
+  2. 10-K/A eller 10-Q/A filad (omarbetning/ändring av tidigare rapport).
+  3. 8-K filad med item "4.01" (revisorsbyte).
+  4. 8-K filad med item "4.02" (non-reliance på tidigare finansiella
+     rapporter - den mest direkta strukturerade proxyn för en kommande
+     omräkning/restatement).
+
+  SCORE: vid varje handelsdag, räkna antalet DISTINKTA stress-händelsetyper
+  (0-4, inte antal förekomster) som inträffat för tickern under de
+  senaste 12 kalendermånaderna (rullande fönster).
+
+  TRIGGER OCH POSITION: när score för en ticker första gången når >= 2 inom
+  fönstret (dvs. minst två OLIKA stress-händelsetyper inom 12 månader), gå
+  SHORT nästa handelsdag efter den händelse som fällde avgörandet. Likaviktat
+  över samtliga namn triggade samma kalendervecka (undviker
+  överkoncentration i en enskild triggerdag, samma konvention som HYP-050).
+  Håll FAST 60 handelsdagar (låst - motiverat som en avvägning mellan att ge
+  den organisatoriska friktionstesen tid att spela ut och att undvika
+  kontamination med redan testad 6-12-månaders momentumdrift). Ingen lång
+  sida (ett stress-score är inget informativt LÅGT-score-tecken i sig, till
+  skillnad från ett HÖGT score - samma asymmetriska hantering som redan
+  etablerad för HYP-035/HYP-054).
+
+  MOTORKRAV: samma tre grundfixar (filed-datum-universum, maskad
+  adjusted_close-kvot, flag_implausible_liquidity()) samt
+  mask_unrecovered_price_breaks() (byggd 2026-08-09), borrow_cost 3%/år samt
+  Corwin-Schultz-spread på entry/exit - friktion inbyggd från start.
+
+  PASS KRÄVER, PÅ DEN AVGÖRANDE $100k-NIVÅN (rapporteras för alla tre):
+  1. Sharpe (efter friktion) >= 0.55.
+  2. MaxDD INTE sämre än -50% (samma explicita tak som HYP-050/HYP-072,
+     motiverat av registrets upprepade small-cap-short-katastrofer).
+
+  FAIL om något villkor faller vid $100k, ELLER om
+  datafeasibility-kontrollen (körs FÖRST, innan backtest) visar att
+  `items`-fältet eller formtyp-historiken är opålitligt gles för ett giltigt
+  stickprov över hela 2010-2024-perioden - i så fall avbryts hypotesen innan
+  backtest körs, redovisas öppet som ett feasibility-FAIL (samma disciplin
+  som HYP-052).
+
+  OBLIGATORISK DISCLOSURE (icke-gating): fördelning av triggade positioner
+  efter exakt score vid triggertillfället (score=2 vs score=3 vs score=4) -
+  för att verifiera om "kaskad"-effekten är monoton eller bara driven av de
+  mest extrema fallen; samt andel triggade positioner som redan var i
+  finansiell distress vid triggertillfället (samma postmortem-kontroll som
+  HYP-050 fick).
+
+  Diagnostiskt syfte: testar om en FÖRSTA rapporteringsstörning ökar
+  sannolikheten för en KEDJA av framtida kostnader/kapitalproblem som
+  marknaden underskattar - en organizational-friction-mekanism som varken
+  kräver ett pristrend, en volatilitetspremie eller en index-/
+  regimexponering, och som skiljer sig från ett isolerat revisorsbyte genom
+  att kräva SAMVERKAN mellan minst två oberoende administrativa
+  varningssignaler.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 68
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-12'
+result:
+  100000: {sharpe: 0.0820, max_drawdown: -2.0555, oos_2025_sharpe: 0.2650}
+  1000000: {sharpe: -0.3179, max_drawdown: -2.3016, oos_2025_sharpe: 0.6184}
+  10000000: {sharpe: 0.3261, max_drawdown: -1.7884, oos_2025_sharpe: 1.2381}
+  n_events: 931
+  score_distribution_at_trigger: {2: 6218, 3: 592, 4: 196}
+result_summary: >
+  FAILED PA BADA VILLKOREN PA DEN AVGORANDE $100k-NIVAN, KATASTROFALT.
+  Sharpe 0,0820 (mot golvet 0,55). MaxDD -205,55% - langt utanfor det
+  explicita -50%-taket (samma typ av tak som redan motiverats av HYP-050s
+  -98% MaxDD-katastrof).
+
+  KODBUGG UPPTACKT OCH FIXAD 2026-08-12 (fore denna siffra faststalldes):
+  forsta korningen visade MaxDD -752,77% pa grund av en storleks-
+  sattningsbugg i det korta benet - nya positioner storleksattes mot
+  `cash`, som obegransat vaxer av blankningslikvider fran REDAN OPPNA
+  positioner utan att motsvarande skuld dras av forst, vilket later
+  exponeringen snoboll okontrollerat over manader med manga overlappande
+  triggade kohorter. Fixad till att storleksatta nya positioner mot
+  AVSTAENDE kapacitet av capital_level (redan hallna positioners varde
+  subtraherat forst) - samma fix porterad till HYP-072 och HYP-074:s
+  korta ben. SIFFRORNA OVAN AR EFTER FIXEN.
+
+  Aven EFTER fixen ar MaxDD (-178% till -230% over de tre nivaerna)
+  fortfarande langt over taket - INTE langre nagon kvarvarande kodbugg
+  (spar-check: 15 av 575 trades i $100k-korningen hade en enskild
+  forlust over 100% av positionens notional, varst -448,6% (GOPHD,
+  2018-01-26) - storleksordningar konsistenta med genuina small-cap-
+  blankningssqueeze, INTE de 10 000x-100 000x-artefakter som tidigare
+  identifierade databuggar (SSN/ESSA/ABWND) gav). Detta ar alltsa ett
+  AKTA resultat: score>=2-triggern (931 handelser, fordelning 6218 vid
+  score=2/592 vid score=3/196 vid score=4) exponerar boken for genuin,
+  obegransad blankningsrisk i small-cap utan nagon stop-loss-mekanism -
+  exakt det monster registret redan dokumenterat sex ganger tidigare
+  (HYP-025-029 stop-loss-familjen, HYP-050) som skalet till varfor
+  small-cap-blankning kraver explicit svansriskkontroll.
+
+  DSR ej beraknad (Sharpe redan tydligt under golvet pa alla nivaer,
+  ingen ytterligare berakning paverkar den lasta PASS/FAIL-slutsatsen).
+
+  Diagnostiskt: den strukturerade filings-metadata-signalen (form+item-
+  koder, ingen NLP) visar INGEN matbar riskjusterad edge i denna form -
+  organisatorisk friktion som en fristaende kortsignal misslyckas av
+  samma grundlaggande skal som all annan oskyddad small-cap-blankning i
+  detta register, inte av ett problem specifikt for just denna signal.

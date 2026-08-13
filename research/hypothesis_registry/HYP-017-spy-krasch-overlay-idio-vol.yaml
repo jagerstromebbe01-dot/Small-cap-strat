@@ -1,0 +1,235 @@
+# LÅST 2026-07-29 av CEO i chatt, innan denna hypotes sätts pre-registered
+# eller nagon backtest kors. Uppfoljare till HYP-015 (idiosynkratisk vol,
+# FAILED men basta resultatet, K=15) - direkt riktad mot den diagnostiserade
+# felorsaken till HYP-015:s -48%/-47%/-31% MaxDD: en enda systemisk handelse
+# (covid-kraschen, topp 2020-01-03/2020-02-19, botten 2020-03-24/2020-04-06,
+# IDENTISK pa alla tre kapitalnivaer) dar SPY-beta-hedgen (126-dagars
+# trailing-beta) inte hann reagera i tid - portfoljen foll -46.3% under en
+# manad da SPY sjalv foll -33.7% under samma fonster. Diagnosen uteslot
+# bade enskilda-namn-blowups och branschkoncentration (se konversationen
+# 2026-07-29). Se research/candidate_ideas.md for kallmotivering.
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-017
+date_registered: '2026-07-29'
+title: SPY-krasch-overlay pa idiosynkratisk volatilitet (uppfoljare till HYP-015)
+universe: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+small_cap_definition: small-cap, $100M - $2B börsvärde, EODHD All-World som datakälla
+data_range: EODHD All-World, samma period som HYP-008/015 (2011-2024)
+pass_fail_criterion: 'Identisk bas som HYP-015 (idiosynkratisk volatilitet, lagsta decilen, kvartalsvis
+  ombalansering, samma friktion/hedge/kapacitetsspärr, samma tre motorfixar - snappade ombalanseringsdatum,
+  adjusted_close genomgaende, likviditetsfilter). Enda tillagget: en DAGLIG (INTE bara vid kvartalsvis
+  ombalansering) krasch-overlay pa SPY-niva, riktad direkt mot den diagnostiserade felorsaken i HYP-015.
+
+  Krasch-overlay, exakt specificerad (INTE valfri, inga fria parametrar att justera efter att resultat
+  setts - trosklarna ar valda som runda, forsvarbara varden INNAN nagon backtest kors, inte anpassade
+  efter covid-episodens exakta magnitud):
+  - Trigger: SPY:s EGEN kumulativa avkastning over de senaste 10 handelsdagarna. Kontrolleras VARJE
+    handelsdag, inte bara vid kvartalsslut.
+  - Om SPY:s 10-dagars-avkastning < -10%: skar bruttoexponeringen (alla befintliga innehav) till 40%
+    av det varde de annars skulle haft DEN DAGEN - saljs PRO RATA over alla innehav samma dag, med
+    samma friktion (halva Corwin-Schultz-spreaden) som en vanlig ombalanserings-exit. Utfors bara EN
+    gang per aktiverings-episod (upprepas inte varje dag triggern forblir aktiv, for att undvika att
+    saljas ner under 40% flera ganger i rad).
+  - Overlayen ATERSTALLER INTE exponeringen automatiskt nar SPY aterhamtar sig - normal exponering
+    (100%) aterkommer forst vid NASTA ordinarie kvartalsvisa ombalansering (samma mekanik som redan
+    finns for vanlig decil-omval). Detta ar en medveten forenkling: overlayen ar asymmetrisk (snabb
+    att skara ner, normal hastighet att aterstalla) for att undvika en andra uppsattning fria
+    tidsparametrar for aterinträde, vilket skulle oka risken for i efterhand anpassade val.
+  - Kapacitetsspärr, friktion (Corwin-Schultz + 3% borrow), SPY-beta-hedge: ALLA oforandrade och
+    AKTIVA fran HYP-015, INTE ersatta av denna overlay - overlayen ar ett TILLAGG ovanpa, inte en
+    ersattning.
+
+  MOTORKRAV (samma tre som HYP-015/016, redan byggda i strategies/common/): snappade
+  ombalanseringsdatum, adjusted_close genomgaende (bade signal och positionsvardering),
+  flag_implausible_liquidity().
+
+  PASS kraver BADA:
+  1. Sharpe (efter friktion) >= 0.55 pa SAMTLIGA tre kapitalnivaer (100k/1M/10M).
+  2. Maxdrawdown battre (mindre negativ) an -30% pa SAMTLIGA tre kapitalnivaer - valt som HYP-015:s
+     REDAN OBSERVERADE basta resultat (10M-nivan, dar kapacitetsspärren raka tvingade in mer likvida
+     namn och dampade covid-skadan till -30.5%) - kravet ar alltsa att uppna vid VARJE kapitalniva
+     vad som redan hander av en slump vid EN niva, inte ett godtyckligt tal.
+  FAIL om nagon niva faller under nagotdera villkoret.
+
+  Diagnostiskt syfte: testar om en snabb, marknadsniva-baserad krasch-brytare (som reagerar pa SPY:s
+  EGEN realiserade rorelse, inte en langsam 126-dagars trailing-beta eller portfoljens egen volatilitet
+  - den senare visade sig redan i HYP-016 knappt paverka MaxDD) kan tamja den specifika, diagnostiserade
+  svansrisken i HYP-015 utan att forstora den underliggande edgen.'
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 15
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {cagr: 0.1191, sharpe: 0.7162, calmar: 0.4418, sharpe_excl_best_trade: 0.6669, max_drawdown: -0.2696, win_rate: 0.5157, profit_factor: 1.3511, n_trades: 2071, deflated_sharpe_ratio: 0.8208}
+  1000000: {cagr: 0.1217, sharpe: 0.7500, calmar: 0.6155, sharpe_excl_best_trade: 0.6981, max_drawdown: -0.1977, win_rate: 0.5152, profit_factor: 1.3511, n_trades: 2071, deflated_sharpe_ratio: 0.8535}
+  10000000: {cagr: 0.0970, sharpe: 0.7241, calmar: 0.7239, sharpe_excl_best_trade: 0.7160, max_drawdown: -0.1339, win_rate: 0.5162, profit_factor: 1.3511, n_trades: 2071, deflated_sharpe_ratio: 0.8250}
+date_tested: 2026-07-29
+result_summary: >
+  PASSED på SAMTLIGA tre kapitalnivåer och BÅDA villkoren - FÖRSTA
+  GODKÄNDA HYPOTESEN i projektets historia (K=16, efter 7 döda
+  ejay-varianter + 8 tidigare FAILED small-cap-hypoteser). Sharpe
+  0.72/0.75/0.72 (tröskel 0.55), MaxDD -27.0%/-19.8%/-13.4% (tröskel
+  bättre än -30%), CAGR 11.9%/12.2%/9.7% (högre än HYP-015:s ~8%, inte
+  bara lägre risk utan även högre avkastning). DSR 0.82/0.85/0.83 vid
+  K=16 - klart starkast av alla hypoteser testade hittills, om än
+  fortfarande under en strikt 0.95-tröskel.
+
+  Robusthetskontroller (innan detta rapporterades som PASS):
+  1. sharpe_excl_best_trade förblir 0.667/0.698/0.716 - alla fortfarande
+     över 0.55 även utan den enskilt bästa traden - INTE en artefakt av
+     en dominerande outlier (samma kontroll som avslöjade ESSA/ARDMQ/COL
+     i tidigare hypoteser).
+  2. Krasch-overlayen triggade på 10 dagar fördelade över 5 OBEROENDE,
+     välkända marknadsstressperioder över hela 2011-2024 - inte bara
+     covid-kraschen som motiverade hypotesen: 2011-08-04 (amerikanska
+     skuldtakskrisen/S&P-nedgraderingen), 2015-08-24 ("Black Monday",
+     Kinas devalvering), 2018-12-24 ("julafton-massakern"), 2020-02-27
+     till 2020-03-16 (covid, flera triggningar), 2022-06-16 och
+     2022-09-26 (2022 års björnmarknad). Detta minskar (men eliminerar
+     inte helt - se KÄND METODOLOGISK RESERVATION nedan) risken att
+     mekanismen bara är en tunad engångslösning för den ena kända
+     covid-episoden.
+  3. Overlay-trades har i ISOLATION negativ förväntad avkastning
+     (genomsnitt -7.9%, win rate 31%, mot rebalance-exits genomsnitt
+     +7.6%, win rate 61%) - konsistent med hur en genuin
+     krasch-/svansriskskyddsmekanism FÖRVÄNTAS bete sig (kostar lite i
+     normala/skakiga perioder, betalar sig i svansutfall). Det är INTE
+     ett tecken på fel - det är signaturen av att mekanismen fungerar
+     som avsedd.
+
+  KÄND METODOLOGISK RESERVATION (för protokollet, inte löst här):
+  mekanismens EXAKTA parametrar (SPY 10-dagars-avkastning, -10%-tröskel,
+  40%-nedskärning) valdes som runda, ej facit-anpassade tal - men
+  BESLUTET att bygga en marknadsnivå-krasch-brytare över huvud taget var
+  direkt informerat av att ha diagnostiserat covid-kraschen som HYP-015:s
+  konkreta felorsak i just denna data. Detta är en mildare form av
+  samma risk pre-registreringssystemet finns till för att skydda mot.
+  Robusthetskontroll 2 ovan (5 oberoende krascher, inte bara covid)
+  väger emot att detta är ren efterhandsanpassning, men elimnerar den
+  inte helt - flaggat explicit för framtida granskning/replikering
+  (t.ex. out-of-sample-test pa data efter 2024 nar sådan finns
+  tillgänglig).
+
+  UPPDATERING 2026-07-30 ("lamna-en-kris-ute"-robusthetstest, diagnostik
+  - INGEN K-kostnad, INGEN andring av status/kriterium): kort om
+  scripts/diagnostic_hyp017_leave_one_crisis_out.py kor om HYP-017:s
+  exakta backtest 5 ganger, en gang per krisepisod, med overlayen
+  FORHINDRAD att trigga just under DEN episoden (men aktiv for de andra
+  4). Resultat: PASS haller pa ALLA SEX scenarier (fullt resultat + 5
+  lamna-ute-varianter) pa alla tre kapitalnivaer. Covid ar, vantat, mest
+  paverkande - utan covid-skydd blir MaxDD vid $1M -23.8% (mot -19.8%
+  fullt) - men aven DA passerar alla tre nivaer fortfarande bade
+  Sharpe- och MaxDD-kriteriet. Detta ar den starkaste robusthetssignal
+  som gar att fa utan riktig out-of-sample-data: resultatet ar INTE
+  skort av att ha "tur" med en enda kand historisk handelse. Loser inte
+  HELT den metodologiska reservationen ovan (parametrarna las fortfarande
+  med vetskap om vilken TYP av handelser som skulle behova fangas) men
+  ett rejalt styrkebesked.
+
+  UPPDATERING 2026-07-30 (friktions-stresstest + skeptisk granskning,
+  diagnostik - INGEN K-kostnad): tva separata fynd, ett positivt och ett
+  allvarligt negativt.
+
+  (a) POSITIVT - friktions-stresstest (scripts/diagnostic_hyp017_friction_stress_test.py):
+  aven vid kraftigt pessimistiska antaganden (2x Corwin-Schultz-spread,
+  9% arlig borrow-kostnad - 3x baslinjens 3%) hall Sharpe sig over
+  0.55-golvet pa alla tre nivaer (0.633/0.674/0.654 mot baslinjens
+  0.716/0.750/0.724), och MaxDD rorde sig knappt. Strategin ar INTE skor
+  mot att friktionsmodellen underskattar verkliga kostnader.
+
+  (b) ALLVARLIGT NEGATIVT - branschkoncentration: en granskning av
+  ALLA 696 unika tickers som nagonsin handlats visar att 27.3% har ett
+  bank-/finansrelaterat namn (bancorp, savings, bank, thrift, financial,
+  trust) - mot bara 7.0% i HELA small-cap-basuniversumet (5162 tickers).
+  En ~4x overrepresentation. Forklaringen ar begriplig (reglerade banker/
+  sparbanker har typiskt mycket stabila, lagvolatila kurser, vilket en
+  lagst-volatilitet-siktning naturligt plockar upp) - men det betyder att
+  strategins verkliga risk INTE ar generell aktiemarknadsrisk minus lite,
+  utan i hog grad bankspecifik risk (ranteneto, kreditcykel, regulatorisk
+  risk, korrelerad bankpanik).
+
+  Detta ar INTE hypotetiskt - det hande i var egen data: den amerikanska
+  regionbankskrisen mars 2023 (SVB/Signature Bank) gav portfoljen en
+  -14.8% nedgang (2023-02-01 till 2023-05-01, $100k-nivan) MEDAN SPY VAR
+  +1.5% SAMMA PERIOD. Krasch-overlayen (som bara bevakar SPY:s egen
+  rorelse) triggade ALDRIG under denna period, eftersom SPY sjalv knappt
+  paverkades - kraschen var sektorspecifik, inte marknadsbred. Detta ar
+  exakt den typ av handelse strategins koncentrerade bankexponering gor
+  den mest sarbar for, och det enda befintliga skyddsverktyget ar
+  strukturellt blint for just den.
+
+  SJALVKRITIK: det tidigare "lamna-en-kris-ute"-testet (2026-07-30,
+  ovan) missade detta helt, eftersom det bara undersokte de 5 datum dar
+  overlayen FAKTISKT triggade - inte perioder dar portfoljen tog skada
+  UTAN att overlayen nagonsin reagerade. Marsdrawdown 2023 foll dessutom
+  kronologiskt inom en langre, redan "crash_related"-klassificerad
+  drawdown-episod (2022-03-30 till 2023-05-12) i en tidigare, for grov
+  episod-dekomponering - vilket felaktigt dolde att just mars 2023-delen
+  av den episoden var HELT oskyddad. En battre metodik hade kollat
+  overlay-status dag-for-dag under HELA episoden, inte bara klassificerat
+  hela episoden som "skyddad" for att ETT av flera kanda krisdatum rakade
+  falla nagonstans inom dess langa tidsspann.
+
+  ATGARDAT: INTE HAR. Kraver antingen ett branschtak i decilvalet eller
+  en andra, sektorspecifik krasch-trigger (t.ex. en regionbanksindex-
+  baserad signal i stallet for/utover SPY) - flaggat som en konkret,
+  val motiverad nasta atgard, inte byggt i denna session.
+
+  UPPDATERING 2026-07-30 (CEO-BESLUT - REFERENSSTATUS OVERFORD):
+  branschkoncentrationen adresserades i tva uppfoljande hypoteser.
+  HYP-022 (statiskt 15%-tak pa bank-/finansinnehav) FAILED - loste
+  mars 2023 men forsamrade MaxDD vid $1M/$10M genom att ta bort
+  banksektorns stabiliserande roll under en langre, icke-bankrelaterad
+  2022-bjornmarknad. HYP-023 (dynamisk, handelsetriggad sektor-krasch-
+  trigger pa ett bank-/finanskompositindex, samma arkitektur som denna
+  hypotes SPY-overlay) PASSED - loser mars 2023-sarbarheten (mars
+  2023-episoden -14.0%/-8.2%/-2.3% mot denna hypotes -14.8%) UTAN att
+  ge upp nagot pa Sharpe eller MaxDD (MaxDD battre pa alla tre nivaer,
+  om an marginellt vid $1M/$10M). CEO har DARFOR UTSETT HYP-023 TILL
+  DEN NYA REFERENSIMPLEMENTATIONEN. Denna hypotes (HYP-017) FORBLIR
+  PASSED och kvarstar i registret som forsta godkanda hypotesen och
+  grunden HYP-023 byggde vidare pa - men ar INTE langre den aktiva
+  referensen for framtida jamforelser/utveckling. Se
+  research/hypothesis_registry/HYP-023-sektor-krasch-trigger-hyp017.yaml.
+sharpe_raw:
+  100000: 0.7162
+  1000000: 0.7500
+  10000000: 0.7241
+# Ursprungligen beräknad mot K=16: 0.8208/0.8535/0.8250.
+# OMRAKNAD 2026-07-30 mot K=19 (efter HYP-018/019/020, alla FAILED) -
+# fortfarande "under övervägande" som flaggskeppsresultatet. DSR sjonk
+# bara marginellt (K=16->19, en 19% okning i antal forsok) eftersom
+# Sharpen ligger sa pass langt over "forvantat maximum av en slump"-
+# niva att en mattlig K-okning knappt paverkar den.
+deflated_sharpe_ratio:
+  100000: 0.7993
+  1000000: 0.8345
+  10000000: 0.8042
+
+# ════════════════════════════════════════════════════════════
+# TILLAGGSNOT 2026-08-08 (granskningsfynd, tre oberoende adversariella
+# granskare, samma fynd oberoende av varandra - INTE en ny hypotes/
+# K-test, status/pass_fail_criterion/tested_capital_levels/redan
+# rapporterade Sharpe/MaxDD/CAGR-siffror ANDRADE INTE)
+# ════════════════════════════════════════════════════════════
+# agents/overfitting_detector/ROLE.md kraver att DSR raknas om for ALLA
+# hypoteser under overvagande varje gang k_total okar, inte bara for
+# senaste testet. Detta hade aldrig gjorts har - DSR-faltet ovan star
+# kvar fran ursprungstestet vid K=19 (k_total_hypotheses_before_this).
+#
+# OMRAKNAD mot dagens k_total=46 (scripts/recompute_dsr_k46.py,
+# 2026-08-08, samma sparade portfolio_value-serier, RF=2%/ar avdraget
+# per registrets egen sharpe()-konvention):
+#   $100k:   DSR 0.7993 -> 0.6794
+#   $1M:     DSR 0.8345 -> 0.7250
+#   $10M:    DSR 0.8042 -> 0.6876
+#
+# SLUTSATS: forvantad, korrekt riktning (DSR SJUNKER med hogre K, se
+# scripts/deflated_sharpe_ratio.py:s egen sanity-check) - HYP-017 ar
+# inte langre aktiv referens (avlost av HYP-023->037->047) men citeras
+# fortfarande som ancestor i senare hypotesers motivering, darav
+# vardet av att halla DSR-faltet a jour. Fortfarande klart over 0.5,
+# ingen forandring av tidigare PASS-slutsats.
