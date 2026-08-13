@@ -467,3 +467,101 @@ infrastruktur. Textklustret (Risk Factors-likhet m.fl.) parkerades
 medvetet - högst extern konvergens men högst byggkostnad, bör
 utvärderas i en egen, ostressad session efter att de billigare
 kandidaterna gett resultat.
+
+---
+
+## [Datum, 2026-08-13] — statusuppdatering + ny brainstormrunda
+
+CEO-läge samma dag: hävstång formellt stängd (se HYP-081/088:s
+registerposter), crypto-spåret uttömt (HYP-060-064 riktade + HYP-089/090
+marknadsneutrala, 7/7 FAILED), och dilution-pipeline-familjen (HYP-072→
+HYP-081) bedömd utmjölkad efter sex raka FAILED-uppföljare (082-086).
+CEO efterfrågade en ny brainstormrunda för genuint ny, oberoende alfa.
+
+**PÅMINNELSE - TEXTKLUSTRET FRÅN 2026-08-12 ÄR FORTFARANDE LEVANDE, INTE
+AVFÄRDAT:** det parkerades uttryckligen "tills de billigare kandidaterna
+gett resultat" (se ovan) - det har de nu (072/075/079/081 gav faktiskt
+resultat, plus sex FAILED uppföljare). Detta var det kluster med HÖGST
+extern konvergens av alla sex (Risk Factors-textlikhet: två oberoende
+externa källor, IDENTISK konstruktion). Byggkostnaden är känd och
+avgränsad (kräver faktisk dokumenttexthämtning från SEC EDGAR - inte
+byggd ännu, men inget okänt hinder). Detta är sannolikt den enskilt
+starkaste kandidaten att greenlighta först, inte en ny idé bland andra.
+
+Nedan: Claudes EGNA, oberoende genererade kandidater för denna runda
+(skrivna innan någon extern AI konsulterats, samma disciplin som
+2026-08-09/12). Undviker medvetet allt redan dött (se de långa listorna
+av FAILED-familjer i registret: pardhandel, momentum/reversal utan
+riskhantering, lågvol/kvalitet/52v-högsta L/S, PEAD/SUE, Kelly/Ejay,
+återköp/nettoemission, sektorlikviditets-lead-lag, kort ränta som
+carry).
+
+**Källa:** Egen idé (Claude, 2026-08-13)
+
+**Kort beskrivning (kandidat A — accrual-anomalin, PROMOVERAD från
+2026-08-09-listans kandidat 3):** Sloan (1996) - bolag med höga
+periodiseringar (vinst ej stödd av kassaflöde) har historiskt sämre
+framtida avkastning än bolag vars vinst är kassaflödesgrundad. Byggbar
+på samma `companyfacts`-XBRL-API som redan används för
+utdelnings-/nyemissions-/återköpsdata (`NetIncomeLoss` och
+`NetCashProvidedByUsedInOperatingActivities`, båda standardtaggar) -
+låg extra infrastrukturkostnad, ingen ny datakälla.
+
+**Varför relevant:** Strukturellt skild från de två redan misslyckade
+redovisningssignalerna i registret (book-to-market HYP-033, PEAD/SUE
+HYP-020/044) - mäter vinstKVALITET, inte värdering eller överraskning.
+Ingen ny feasibility-osäkerhet kvar att lösa - redo att skrivas som
+spec direkt om CEO promoverar den.
+
+---
+
+**Källa:** Cohen, L., & Frazzini, A. (2008). "Economic Links and
+Predictable Returns." Journal of Finance, 63(4), 1977-2011.
+
+**Kort beskrivning (kandidat B — leverantörskedje-lead-lag):** Visar
+att en akties avkastning kan predikteras av avkastningen hos dess
+KÄNDA STORKUNDER/leverantörer (ekonomiska länkar dokumenterade i
+10-K-kundkoncentrationsupplysningar), eftersom marknaden systematiskt
+underreagerar på information som kräver att aktivt spåra dessa länkar -
+en uppgift för dyr/obskyr för de flesta investerare att göra
+systematiskt, särskilt för small-cap-leverantörer till större kunder.
+
+**Varför relevant:** En AV DE STARKASTE kapacitetsbegränsnings-
+berättelserna av alla kandidater hittills - kräver att aktivt bygga och
+underhålla en länkgraf, exakt den typ av arbete stora institutioner
+inte gör för small-cap-namn. Strukturellt helt skild från allt redan
+testat (inget annat i registret använder INTER-bolags-länkar). HÖG
+DATAOSÄKERHET, flaggas explicit: kräver extraktion av
+kundkoncentrations-text ur 10-K Item 1/MD&A (namngivna storkunder
+över en tröskel, t.ex. >10% av intäkter) - sannolikt textutvinning,
+inte en ren XBRL-tagg, closer i kostnad till textklustret ovan än till
+kandidat A.
+
+---
+
+**Källa:** Egen idé (Claude, 2026-08-13), löst grundad i akademisk
+litteratur om analytikerbevakning och synlighet (t.ex. Hong &
+Kacperczyk (2010) om bevakningsluckors marknadseffekter)
+
+**Kort beskrivning (kandidat C — analytikerbevakning INITIERAS/TAPPAS
+HELT):** Inte forecast-SPRIDNING (redan föreslaget 2026-08-09, kandidat
+6, ej byggt) utan bevakningens EXISTENS: ett small-cap-bolag som får
+sin FÖRSTA analytiker, eller tvärtom förlorar SIN SISTA (noll
+bevakning kvar), som en diskret regimförändringssignal - inte en
+kontinuerlig variabel.
+
+**Varför relevant:** Direkt attention-baserad kapacitetsbegränsnings-
+mekanism (institutioner screenar ofta bort namn utan analytikerbevakning
+helt, oavsett fundamenta) - skild från kandidat 6:s spridningsmått.
+SAMMA DATAOSÄKERHET som redan flaggad för kandidat 6: small-cap i detta
+börsvärdesband har ofta gles/obefintlig bevakning i EODHD - måste
+verifieras innan byggstart, sannolikt den svagaste länken i denna
+runda.
+
+---
+
+**Öppen fråga till CEO, inte avgjord här:** samma process som
+2026-08-12 (klistra in en delad brainstormprompt i externa AI-
+konversationer parallellt) för konvergensfördelen, eller gå vidare
+direkt på textklustret (redan hög konvergens, känd kostnad) plus
+kandidat A (redo, låg kostnad) utan en ny extern runda?

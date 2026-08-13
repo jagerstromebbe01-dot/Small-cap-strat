@@ -1,0 +1,94 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "sharpe": -1.9277453838456102,
+      "cagr": -0.7370006193670485,
+      "max_drawdown": -0.99972216343427,
+      "dsr": 7.368888685204468e-15,
+      "n_days": 2193
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": -1.9277453838456102,
+      "cagr": -0.7370006193670485,
+      "max_drawdown": -0.99972216343427,
+      "dsr": 7.368888685204468e-15,
+      "n_days": 2193
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": -1.9397734443902985,
+      "cagr": -0.7379111942136876,
+      "max_drawdown": -0.9997031323076021,
+      "dsr": 5.738925763859044e-15,
+      "n_days": 2193
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": -0.8344408587236711,
+      "oos_2025_return": -0.36656268778922585
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": -0.8344408587236711,
+      "oos_2025_return": -0.36656268778922585
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": -0.8432922715334389,
+      "oos_2025_return": -0.3688348355052178
+    }
+  ],
+  "disclosures": [
+    {
+      "capital_level": 100000,
+      "corr_vs_btc": 0.02936764403866594,
+      "corr_vs_spy": 0.04354337003818063,
+      "avg_gross_long": 1.0,
+      "avg_gross_short": 1.0,
+      "avg_n_universe": 18.84931506849315,
+      "avg_n_scored": 18.84931506849315,
+      "avg_n_long": 5.904109589041096,
+      "avg_n_short": 5.904109589041096,
+      "pct_months_below_floor": 0.0,
+      "n_rebalances": 73
+    },
+    {
+      "capital_level": 1000000,
+      "corr_vs_btc": 0.02936764403866594,
+      "corr_vs_spy": 0.04354337003818063,
+      "avg_gross_long": 1.0,
+      "avg_gross_short": 1.0,
+      "avg_n_universe": 18.84931506849315,
+      "avg_n_scored": 18.84931506849315,
+      "avg_n_long": 5.904109589041096,
+      "avg_n_short": 5.904109589041096,
+      "pct_months_below_floor": 0.0,
+      "n_rebalances": 73
+    },
+    {
+      "capital_level": 10000000,
+      "corr_vs_btc": 0.026623159184280723,
+      "corr_vs_spy": 0.04230047827585696,
+      "avg_gross_long": 0.9768593921878386,
+      "avg_gross_short": 0.9811009305549326,
+      "avg_n_universe": 18.84931506849315,
+      "avg_n_scored": 18.84931506849315,
+      "avg_n_long": 5.904109589041096,
+      "avg_n_short": 5.904109589041096,
+      "pct_months_below_floor": 0.0,
+      "n_rebalances": 73
+    }
+  ],
+  "main_start": "2018-12-31",
+  "main_end": "2024-12-31",
+  "dsr_n_trials": 87,
+  "pass_fail": {
+    "condition_1_sharpe": false,
+    "condition_2_maxdd": false
+  },
+  "overall": "FAILED"
+}

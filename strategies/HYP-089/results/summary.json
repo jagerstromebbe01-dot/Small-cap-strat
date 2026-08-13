@@ -1,0 +1,88 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "sharpe": -6.060443167139324,
+      "cagr": -0.9995067095396378,
+      "max_drawdown": -1.0,
+      "dsr": 1.7450428212192826e-121,
+      "n_days": 2193
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": -6.060443167139324,
+      "cagr": -0.9995067095396378,
+      "max_drawdown": -1.0,
+      "dsr": 1.7450428212192826e-121,
+      "n_days": 2193
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": -6.010815666953884,
+      "cagr": -0.9994197838247728,
+      "max_drawdown": -1.0,
+      "dsr": 1.4245765282914186e-119,
+      "n_days": 2193
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": -6.54409585274834,
+      "oos_2025_return": -0.9994342378848303
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": -6.5440119012703315,
+      "oos_2025_return": -0.9994331690825285
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": -6.53377551207032,
+      "oos_2025_return": -0.9994200573874602
+    }
+  ],
+  "disclosures": [
+    {
+      "capital_level": 100000,
+      "corr_vs_btc": 0.03316384573360346,
+      "corr_vs_spy": -0.026224526188103416,
+      "avg_gross_long": 1.0,
+      "avg_gross_short": 1.0,
+      "avg_n_universe": 18.773162939297123,
+      "avg_n_long": 5.881789137380192,
+      "avg_n_short": 5.881789137380192,
+      "pct_weeks_below_floor": 0.0
+    },
+    {
+      "capital_level": 1000000,
+      "corr_vs_btc": 0.03316384573360346,
+      "corr_vs_spy": -0.026224526188103416,
+      "avg_gross_long": 1.0,
+      "avg_gross_short": 1.0,
+      "avg_n_universe": 18.773162939297123,
+      "avg_n_long": 5.881789137380192,
+      "avg_n_short": 5.881789137380192,
+      "pct_weeks_below_floor": 0.0
+    },
+    {
+      "capital_level": 10000000,
+      "corr_vs_btc": 0.03238958058033742,
+      "corr_vs_spy": -0.026858379437035323,
+      "avg_gross_long": 0.9831999578560566,
+      "avg_gross_short": 0.9806552751127237,
+      "avg_n_universe": 18.773162939297123,
+      "avg_n_long": 5.881789137380192,
+      "avg_n_short": 5.881789137380192,
+      "pct_weeks_below_floor": 0.0
+    }
+  ],
+  "main_start": "2018-12-31",
+  "main_end": "2024-12-31",
+  "dsr_n_trials": 86,
+  "pass_fail": {
+    "condition_1_sharpe": false,
+    "condition_2_maxdd": false
+  },
+  "overall": "FAILED"
+}
