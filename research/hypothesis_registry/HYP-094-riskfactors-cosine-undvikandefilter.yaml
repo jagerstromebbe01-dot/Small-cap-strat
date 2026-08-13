@@ -1,0 +1,49 @@
+# UTKAST, EJ LÅST. Del av BATCH-004 (se HYP-093 för fullständig
+# batchmotivering, INTE upprepad här).
+#
+# DENNA FIL: variant 2/4 av textlikhets-idén - COSINE/TF-IDF-likhetsmått
+# + UNDVIKANDE-FILTER (long-only bred bok som exkluderar de mest
+# textförändrade bolagen, INTE ett short-ben).
+#
+# LÅST 2026-08-13 av CEO i chatt ("lås kör") - se HYP-093 för
+# fullständig lås-motivering, identisk för hela BATCH-004.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-094
+date_registered: '2026-08-13'
+title: "Risk Factors-textlikhet (BATCH-004, 2/4): cosine/TF-IDF-likhet, undvikande-filter"
+universe: "IDENTISK med HYP-091:s/HYP-093:s."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: "IDENTISK med HYP-093:s."
+pass_fail_criterion: >
+  MEKANISM: IDENTISK datainsamling, extraktion, signal (cosine/TF-IDF)
+  och ombalansering som HYP-093 - se den filen, inte upprepad här. ENDA
+  SKILLNADEN är portföljkonstruktionen:
+
+  PORTFÖLJKONSTRUKTION (denna variant): LONG-ONLY, likaviktat över HELA
+  det kvalificerande universumet (samma small-cap-band som HYP-008)
+  UTOM den nedre tredjedelen på likhetsvärdet (mest förändrat
+  riskspråk), som exkluderas helt (nollvikt, inget short-ben). Detta
+  testar UNDVIKANDE-FÖRMÅGA (skyddar en bred long-bok från de sämsta
+  namnen) snarare än ett fristående alfa-ben - en strukturellt annan
+  fråga än HYP-093:s. Ingen kombination med någon annan hypotes här -
+  testas standalone mot en likaviktad, ofiltrerad baseline av samma
+  universum (samma jämförelsemönster som redan används i registret,
+  t.ex. HYP-056 mot sin baseline).
+
+  FRIKTION: standardmetodiken, ingen short-lånekostnad relevant
+  (long-only).
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (CEO-LÅST, enhetlig bar för hela
+  BATCH-004, se HYP-093):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -30,0%.
+  FAIL om något villkor faller. $1M/$10M + OOS-2025: obligatorisk
+  disclosure. Denna variant rapporterar ÄVEN, som obligatorisk
+  icke-gating disclosure: Sharpe/MaxDD för samma universum HELT
+  OFILTRERAT (baseline), för att isolera undvikande-filtrets egen
+  effekt - INTE ett tredje gating-villkor (CEO-LÅST).
+status: pre-registered
+k_total_hypotheses_before_this: 87
+tested_capital_levels: [100000, 1000000, 10000000]

@@ -1,0 +1,73 @@
+# UTKAST, EJ LÅST. status: draft (INTE pre-registered) - pass_fail_criterion
+# saknas medvetet, får ENDAST fyllas i av CEO manuellt i chatt.
+#
+# Bakgrund: kandidat A från 2026-08-13:s brainstormrunda (research/
+# candidate_ideas.md), promoverad från 2026-08-09-listans kandidat 3
+# (Sloan 1996, "Do Stock Prices Fully Reflect Information in Accruals
+# and Cash Flows about Future Earnings?", The Accounting Review 71(3)).
+# Strukturellt skild från de två redan misslyckade redovisningssignalerna
+# i registret (book-to-market HYP-033 FAILED, PEAD/SUE HYP-020/044
+# FAILED) - mäter vinstKVALITET (redovisad vinst utan kassaflödesstöd),
+# inte värdering eller vinstöverraskning.
+#
+# FEASIBILITY VERIFIERAD (2026-08-13, sonderingskörning, ingen K-kostnad):
+# testat direkt mot companyfacts-XBRL-API:et (samma redan validerade
+# källa som utdelnings-/emissions-/återköpspipelinerna använder) -
+# standardtaggarna NetIncomeLoss och
+# NetCashProvidedByUsedInOperatingActivities finns BÅDA närvarande för
+# ett testat bolag. Ingen ny datakälla eller ny integrationstyp krävs -
+# lägsta byggkostnaden av alla kandidater i denna runda.
+#
+# UPPDATERING 2026-08-13: CEO valde att testa BÅDA öppna designfrågorna
+# som en full korsning (2x2=4 varianter) - se HYP-097 t.o.m. HYP-100,
+# som är de fyra konkreta, fullt specificerade varianterna av denna idé.
+# Denna fil (HYP-092) förblir det ARKIVERADE, ospecificerade utkastet -
+# ERSATT av batchen, INTE själv pre-registrerad eller körd.
+#
+# status: draft -> (CEO fyller pass_fail_criterion) -> pre-registered -> tested -> passed/failed
+
+id: HYP-092
+date_registered: null
+title: "Accrual-anomalin (Sloan 1996) - vinstkvalitet via kassaflöde-minus-resultat, decilrangordning"
+universe: "IDENTISK med HYP-008:s låsta small-cap-definition ($100M-$2B), ingen ändring."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: >
+  Samma huvudperiod som registrets övriga small-cap-hypoteser
+  (2010-2024 + genuin OOS-2025), begränsat av vilket år
+  companyfacts-API:ets historik faktiskt sträcker sig tillbaka till per
+  bolag (varierar - INTE verifierat i detalj här, Coder-jobb).
+mechanism_sketch: >
+  ATT DISKUTERAS/LÅSAS, EJ en färdig mekanism-spec:
+
+  1. Vid varje bolags årliga 10-K-rapportering: hämta NetIncomeLoss och
+     NetCashProvidedByUsedInOperatingActivities (companyfacts-API,
+     verifierat ovan) för räkenskapsåret.
+  2. Accruals = (NetIncomeLoss - NetCashProvidedByUsedInOperatingActivities)
+     / skalningsnämnare. Sloans ORIGINALKONSTRUKTION skalar mot
+     GENOMSNITTLIGA TOTALA TILLGÅNGAR (kräver Assets-taggen, täckning
+     EJ verifierad här) - alternativ: skala mot marknadsvärde (redan
+     beräknat i small-cap-pipelinen via sec_edgar_adapter.py, garanterat
+     tillgängligt men avviker från den akademiska originalkonstruktionen).
+     VAL EJ GJORT HÄR.
+  3. Tvärsnittsrangordning (decil eller tredjedel, EJ avgjort) på
+     Accruals vid varje årlig uppdatering: LÅGA accruals (vinst
+     kassaflödesstödd, hög kvalitet) - akademiskt kopplat till BÄTTRE
+     framtida avkastning. HÖGA accruals - SÄMRE framtida avkastning.
+     Kandidat-konstruktion: long lägsta decilen, short (eller undvik)
+     högsta - exakt konstruktion INTE avgjord här (rent long-only-filter
+     vore mer i linje med registrets redan etablerade urvalssignal-
+     mönster, t.ex. HYP-024/033; long/short vore en ny konstruktionstyp
+     för en ren urvalssignal i detta register).
+  4. Ombalansering: ÅRSVIS (matchar den naturliga rapporteringsfrekvensen),
+     HÄNDELSESTYRD per bolag (samma stil som HYP-091) snarare än en
+     gemensam kalenderdag för alla bolag samtidigt - EJ avgjort om detta
+     ska snappas till en gemensam kvartalsvis ombalanseringsdag istället
+     för enkelhets skull.
+
+  ÖPPEN FRÅGA TILL CEO: skalningsnämnare (totala tillgångar vs
+  marknadsvärde) och long-only vs long/short-konstruktion - båda
+  påverkar resultatet materiellt och bör beslutas INNAN implementation,
+  inte efter att ha sett vilket alternativ som råkar se bättre ut.
+pass_fail_criterion: ""  # TOMT AVSIKTLIGT - CEO fyller i manuellt i chatt.
+status: draft   # INTE pre-registered
+k_total_hypotheses_before_this: 87  # informativt, dagens k_total - ökar EJ _counter.yaml

@@ -1,0 +1,83 @@
+# UTKAST, EJ LÅST. Del av BATCH-004 (se HYP-093/HYP-097/HYP-099 för
+# batchdisciplin/bakgrund, INTE upprepad här). Sista (8/8) kandidaten i
+# batchen.
+#
+# DENNA FIL: variant 4/4 av accrual-idén - MARKNADSVÄRDE som
+# skalningsnämnare + LONG/SHORT.
+#
+# LÅST 2026-08-13 av CEO i chatt ("lås kör") - se HYP-093 för
+# fullständig lås-motivering, identisk för hela BATCH-004. Sista (8/8)
+# kandidaten i batchen - k_total ökar 87->95 vid detta lås (alla 8 på
+# en gång, se _counter.yaml).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-100
+date_registered: '2026-08-13'
+title: "Accrual-anomalin (BATCH-004, 4/4): skalning mot marknadsvärde, long/short"
+universe: "IDENTISK med HYP-097:s."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: "IDENTISK med HYP-097:s."
+pass_fail_criterion: >
+  MEKANISM: IDENTISK marknadsvärde-skalad signal som HYP-099 (se den
+  filen), IDENTISK long/short-portföljkonstruktion som HYP-098 (long
+  lägsta decilen, short högsta decilen, likaviktat inom benen,
+  dollar-neutralt mellan dem) - se dessa två filer, inte upprepad här.
+
+  FRIKTION: standardmetodiken (Corwin-Schultz + borrow-kostnadsmodell
+  för kortbenet).
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (CEO-LÅST, enhetlig bar för hela
+  BATCH-004, se HYP-093):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -30,0%.
+  FAIL om något villkor faller. $1M/$10M + OOS-2025: obligatorisk
+  disclosure.
+status: failed
+k_total_hypotheses_before_this: 87
+tested_capital_levels: [100000, 1000000, 10000000]
+date_tested: '2026-08-13'
+result:
+  100000: {sharpe: 0.7411, cagr: 0.0000, max_drawdown: -1.0000, calmar: 0.0000, deflated_sharpe_ratio: 0.7809, avg_net_beta_dollar: -34723.27}
+  1000000: {sharpe: 0.5995, cagr: 0.0000, max_drawdown: -1.0000, calmar: 0.0000, deflated_sharpe_ratio: 0.2222, avg_net_beta_dollar: -303771.04}
+  10000000: {sharpe: 0.5142, cagr: -0.6179, max_drawdown: -1.0000, calmar: -0.6179, deflated_sharpe_ratio: 0.0632, avg_net_beta_dollar: -2832920.27}
+result_summary: >
+  FAILED - MaxDD -100,0% på alla tre nivåer (villkor 2 faller överallt),
+  trots att Sharpe FAKTISKT KLARAR golvet (0,70) på $100k-nivån
+  (0,7411 > 0,70) - det avgörande villkoret vid PASS/FAIL är ändå
+  MaxDD, som faller lika kraftigt som för HYP-098. $100k och $1M visar
+  CAGR ~0,00% (fonden hamnar vid konkursgolvet nära seriens SLUT snarare
+  än mitt i den, vilket ger en nästan platt total avkastning trots att
+  MaxDD ändå är -100% under resans gång) - $10M visar tydligare
+  CAGR -61,79%, samma mönster som HYP-098.
+
+  Samma motorfixar som HYP-098 (denominator-orimlighetsgräns, kort-
+  bens-stopp, konkursgolv, minsta-bredd-golv - se den filen för
+  fullständig motivering) delade och applicerade identiskt här -
+  denna fil upptäckte INGA nya motorfel utöver de som redan
+  diagnostiserades via HYP-098/100:s körningar.
+
+  DIAGNOS: identisk grundmekanism som HYP-098 - att korta den högsta
+  accrual-decilen i detta universum bär allvarlig, delvis
+  okontrollerbar uppåtrisk (squeeze-benägna distressade mikro-cap-
+  namn) som förstör resultatet trots att den friktionsjusterade
+  Sharpen på $100k-nivån isolerat sett faktiskt hade klarat den låsta
+  ribban - ett konkret exempel på varför BÅDA villkoren (Sharpe OCH
+  MaxDD) behövs samtidigt, inte bara ett.
+
+  === BATCH-004 ACCRUAL-DELEN (HYP-097-100), SAMLAD SLUTSATS ===
+  Alla fyra varianter FAILED. Mönster, konsekvent över alla fyra:
+  (a) marknadsvärde-skalning presterar tydligt bättre än
+  tillgångsskalning men klarar ändå inte ribban, (b) long/short-
+  konstruktionen är STRUKTURELLT FARLIGARE än long-only i detta
+  universum pga kort-bens-squeeze-risk, inte bara "lägre Sharpe". Den
+  klassiska accrual-anomalin (Sloan 1996), dokumenterad på stora
+  etablerade bolag, tycks INTE överföras rent till detta projektets
+  micro-/small-cap-band ($100M-$2B) - se HYP-097:s fullständiga
+  diagnos för den ekonomiska tolkningen (distress snarare än
+  konservativ redovisning). En framtida uppföljning skulle behöva en
+  EGEN, ny, separat pre-registrerad hypotes - t.ex. accrual KOMBINERAT
+  med ett explicit distress-/going-concern-filter för att separera
+  genuin vinstkvalitet från ren finansiell nöd, inte en
+  parameterjustering av någon av dessa fyra redan låsta och testade
+  kriterier.

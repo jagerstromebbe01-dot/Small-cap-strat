@@ -1,0 +1,52 @@
+{
+  "scaling": "market_cap",
+  "construction": "long_short",
+  "results": [
+    {
+      "capital_level": 100000,
+      "sharpe": 0.5628928529416293,
+      "max_drawdown": -0.9999990099497733,
+      "cagr": -0.6211429133933467,
+      "calmar": -0.6211435283566378,
+      "dsr": 0.19918522071146544,
+      "n_trades": 1550,
+      "avg_net_beta_dollar": -57841.75419911239,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": -0.2263872922363645,
+      "max_drawdown": -0.9999990099497734,
+      "cagr": -0.6211429133933467,
+      "calmar": -0.6211435283566377,
+      "dsr": 4.2757101367329594e-05,
+      "n_trades": 1556,
+      "avg_net_beta_dollar": -532863.9333600575,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": 0.5911831455648628,
+      "max_drawdown": -0.9999990099497734,
+      "cagr": -0.6211429133933467,
+      "calmar": -0.6211435283566377,
+      "dsr": 0.2275653946395046,
+      "n_trades": 1561,
+      "avg_net_beta_dollar": -3138743.91374709,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    }
+  ],
+  "overall": "FAIL"
+}

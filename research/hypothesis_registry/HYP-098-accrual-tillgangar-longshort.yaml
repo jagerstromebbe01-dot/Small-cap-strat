@@ -1,0 +1,91 @@
+# UTKAST, EJ LÅST. Del av BATCH-004 (se HYP-093/HYP-097 för
+# batchdisciplin/bakgrund, INTE upprepad här).
+#
+# DENNA FIL: variant 2/4 av accrual-idén - TOTALA TILLGÅNGAR som
+# skalningsnämnare + LONG/SHORT (dollar-neutralt, ny konstruktionstyp
+# för en ren urvalssignal i detta register).
+#
+# LÅST 2026-08-13 av CEO i chatt ("lås kör") - se HYP-093 för
+# fullständig lås-motivering, identisk för hela BATCH-004.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-098
+date_registered: '2026-08-13'
+title: "Accrual-anomalin (BATCH-004, 2/4): skalning mot totala tillgångar, long/short"
+universe: "IDENTISK med HYP-097:s."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: "IDENTISK med HYP-097:s."
+pass_fail_criterion: >
+  MEKANISM: IDENTISK datainsamling/signal/ombalansering som HYP-097 -
+  se den filen. ENDA SKILLNADEN är portföljkonstruktionen:
+
+  PORTFÖLJKONSTRUKTION (denna variant): LONG lägsta decilen (som
+  HYP-097), SHORT den HÖGSTA decilen (högst accruals - vinst minst
+  kassaflödesstödd, akademiskt kopplat till SÄMRE framtida avkastning).
+  Likaviktat inom varje ben, dollar-neutralt mellan benen. Fristående
+  ben, testas standalone.
+
+  FRIKTION: standardmetodiken (Corwin-Schultz + borrow-kostnadsmodell
+  för kortbenet, samma som resten av registret).
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (CEO-LÅST, enhetlig bar för hela
+  BATCH-004, se HYP-093):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -30,0%.
+  FAIL om något villkor faller. $1M/$10M + OOS-2025: obligatorisk
+  disclosure.
+status: failed
+k_total_hypotheses_before_this: 87
+tested_capital_levels: [100000, 1000000, 10000000]
+date_tested: '2026-08-13'
+result:
+  100000: {sharpe: 0.4006, cagr: -0.6211, max_drawdown: -1.0000, calmar: -0.6211, deflated_sharpe_ratio: 0.0063, avg_net_beta_dollar: -40931.82}
+  1000000: {sharpe: 0.5056, cagr: -0.6211, max_drawdown: -1.0000, calmar: -0.6211, deflated_sharpe_ratio: 0.0163, avg_net_beta_dollar: -263702.66}
+  10000000: {sharpe: 0.4878, cagr: -0.6211, max_drawdown: -1.0000, calmar: -0.6211, deflated_sharpe_ratio: 0.0520, avg_net_beta_dollar: -889265.08}
+result_summary: >
+  FAILED PÅ BÅDA VILLKOREN, PÅ ALLA KAPITALNIVÅER. Sharpe under 0,70-
+  golvet på alla tre (0,40/0,51/0,49) trots att inget är negativt -
+  MaxDD -100,0% (fonden går till sitt konkursgolv, samma exakta
+  CAGR -62,11% på alla tre nivåer - ett tecken på att SAMMA underliggande
+  händelse(r) i tid driver utplåningen oavsett kapitalnivå).
+
+  TVÅ YTTERLIGARE MOTORFEL HITTADE OCH ÅTGÄRDADE HÄR (utöver
+  denominator-orimlighetsgränsen som delas med HYP-097, se den filen),
+  BÅDA INNAN detta resultat finaliserades, BÅDA applicerade identiskt
+  på HYP-100 (den andra long/short-varianten) och på textlikhets-
+  batchens egna long/short-konstruktion (HYP-093/095):
+  1. SAKNAD STOP-LOSS PÅ KORT-BENET: en första körning gav MaxDD
+     -326,71% och odefinierad (NaN) CAGR - matematiskt inkoherent
+     (portföljvärdet blev NEGATIVT). Grundorsak: detta universum har
+     verifierat förekommande extrema uppåtrörelser (t.ex. en +3190%-
+     trade i HYP-097:s long-ben) - utan ett dagligt kontrollerat
+     per-position-stopp kan en enskild "squeeze" växa obegränsat
+     mellan kvartalsvisa ombalanseringar. Åtgärdat med ett dagligt
+     kontrollerat stopp (SHORT_STOP_LOSS_THRESHOLD=1,0, dvs täck
+     positionen om priset mer än fördubblats från entry) - samma
+     princip som redan etablerad för portföljnivå-hävstång i
+     HYP-059/065/087/088, här applicerad per enskild position.
+  2. KONKURSGOLV: även med stoppet ovan (108 separata stop-loss-
+     händelser utlöstes över 15 år, se trade_log_100000.csv) kunde
+     MÅNGA ackumulerade squeeze-förluster fortfarande driva
+     nettoportföljvärdet negativt i aggregat - en long-only-bok kan
+     ALDRIG bryta noll (ett pris kan inte bli negativt), men en
+     long/short-konstruktion kan matematiskt göra det utan en explicit
+     spärr. Åtgärdat genom att golva portföljvärdet vid ~0 om det
+     någonsin skulle bli ≤0 (samma "fonden är konkursad och skulle ha
+     stoppats av en mäklare"-princip som redan implicit gäller för alla
+     long-only-konstruktioner i registret).
+  3. Minsta-bredd-golv (MIN_SCORED_FOR_DECILE=30, se HYP-097) - delad
+     fix, påverkade denna variant marginellt (inget garanterat enskilt
+     dag-ett-utslag sågs här, till skillnad från HYP-100).
+
+  DIAGNOS: att korta den HÖGSTA accrual-decilen i detta micro-/small-
+  cap-band bär en allvarlig, delvis okontrollerbar svansrisk (våldsamma
+  uppåtrörelser i redan distressade/spekulativa mikro-cap-namn - samma
+  namntyp som redan diagnostiserad i HYP-097:s long-ben) som även en
+  rimlig per-position-stopp inte helt kan skydda mot (overnight-gap-
+  risk - ett pris kan hoppa förbi stoppnivån på en enda handelsdag utan
+  att någon mellanliggande handel var möjlig). Detta är en genuin,
+  strukturell egenskap hos att korta denna typ av namn, inte ett
+  kvarstående motorfel.
