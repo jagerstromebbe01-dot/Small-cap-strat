@@ -1,0 +1,96 @@
+# LÅST 2026-08-13 av CEO i chatt ("kör dsr sen 1" - punkt 1 var att
+# formalisera hävstångsuppföljningen). HYP-087:s 3,0x-DISCLOSURE
+# ($100k: Sharpe 1,1387, CAGR 16,44%, MaxDD -14,06%, NOLL marginalanrop)
+# var slående nog för att motivera en EGEN, dedikerad låsning - samma
+# procedur som redan etablerad i registret (HYP-059:s diagnostik valde
+# HYP-065:s nivå INNAN låsning, ingen K-kostnad för själva diagnostiken/
+# disclosuren - K betalas här, vid den faktiska låsningen och körningen
+# av HYP-088 som sitt eget test).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-088
+date_registered: '2026-08-13'
+title: "Hävstång (3,0x, gating) med marginalanrop/tvingad nedskalning som overlay på HYP-081"
+universe: "N/A - portföljnivå-hävstång på HYP-081:s redan existerande,
+  färdigberäknade kombinerade portfölj. Ingen ny small-cap-signal, inget
+  nytt handelsuniversum, ingen ny prismatris, ingen ny backtest-motor."
+small_cap_definition: "N/A - se HYP-059/065/087:s identiska motivering."
+data_range: "Samma period som HYP-081/087 (2010-2024 huvudperiod +
+  genuin OOS-2025), återanvänder HYP-081:s redan beräknade
+  portföljvärdesserier oförändrade."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja - IDENTISK
+  marginalanrops-mekanism som HYP-059/065/087, ENDA skillnaden är
+  hävstångsNIVÅN, 3,0x istället för 2,5x):
+
+  Hävstång FAST vid 3,0x (GATING) på HYP-081:s redan kombinerade
+  portföljvärdesserie, FAKTISK daglig compoundering. Lånekostnad på det
+  lånade kapitalet: RF (2%/år) + KONSERVATIV spread (1,5%/år) = 3,5%/år
+  totalt (gating-antagande). Stressad spread (3,0%/år, 4,5%/år totalt)
+  samt hävstångsnivåerna 1,5x/2,0x/2,5x rapporteras för ALLA tre
+  kapitalnivåer som OBLIGATORISK, ICKE-GATING disclosure.
+
+  MARGINALANROP (identiskt med HYP-059/065/087): om portföljens EGEN
+  levererade drawdown från sitt rullande högsta-vattenmärke når -15%,
+  tvingas hävstången SAMMA dag ner till 1,0x + 0,5% forced-sale-
+  slippage på den nedskalade notionalen. Återlåning GRADVIS
+  (+0,05x/handelsvecka), ENDAST när drawdown återhämtat sig förbi -5%.
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN (huvudperioden
+  2010-2024, konservativ spread):
+  1. Sharpe (marginalanrops-justerad) >= 1,0.
+  2. CAGR > HYP-081:s EGEN redan uppmätta CAGR vid $100k (7,87%) med
+     minst +5,0 procentenheter marginal, dvs > 12,87% (SAMMA
+     jämförelsepunkt som HYP-087 använde - inte en flyttad måltavla).
+  3. MaxDD inte sämre än -20%.
+
+  FAIL om något villkor faller vid $100k-nivån under gating-antagandet.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal marginalanrop, andel
+  dagar under målhävstången, per nivå och spread-antagande, samt
+  jämförelse rad för rad mot HYP-087:s egna redan rapporterade 2,5x-tal
+  (för att kvantifiera den faktiska avvägningen mellan de två
+  hävstångsnivåerna, inte bara konstatera att båda "passerar").
+
+  Diagnostiskt syfte: testar om 3,0x-nivån - som redan visats i HYP-087:s
+  disclosure ge CAGR tydligt över 16% utan marginalanrop - håller för en
+  formell, dedikerad låsning och därmed kan bli den nya
+  hävstångsstandarden istället för 2,5x.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 84
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+date_tested: '2026-08-13'
+result:
+  100000: {sharpe: 1.1387, cagr: 0.1644, max_drawdown: -0.1406, calmar: 1.170, deflated_sharpe_ratio: 0.9587, n_margin_calls: 0, oos_2025_sharpe: 1.4636}
+  1000000: {sharpe: 1.1095, cagr: 0.1601, max_drawdown: -0.1405, calmar: 1.139, deflated_sharpe_ratio: 0.9485, n_margin_calls: 0, oos_2025_sharpe: 1.5138}
+  10000000: {sharpe: 1.0591, cagr: 0.1466, max_drawdown: -0.1370, calmar: 1.070, deflated_sharpe_ratio: 0.9252, n_margin_calls: 0, oos_2025_sharpe: 1.6434}
+result_summary: >
+  PASSADE PA ALLA TRE VILLKOREN, PA ALLA TRE KAPITALNIVAER, MED ZERO
+  MARGINALANROP - identiska tal som HYP-087:s disclosure (samma
+  deterministiska berkning), nu formellt lasta och testade som eget
+  villkor. Sharpe 1,1387/1,1095/1,0591 (marginal mot 1,0-golvet: +0,14/
+  +0,11/+0,06). CAGR 16,44%/16,01%/14,66%. MaxDD -14,06%/-14,05%/-13,70%.
+  DSR (K=85) 0,93-0,96 - fortfarande mycket hogt trots hogre havstang.
+
+  JAMFORELSE MOT HYP-087:s 2,5x ($100k): Sharpe 1,1387 mot 1,1631 (2,5x
+  nagot hogre marginal mot 1,0-golvet), CAGR 16,44% mot 14,31% (3,0x
+  ger +2,13pp mer avkastning), MaxDD -14,06% mot -11,59% (3,0x ger
+  2,47pp djupare drawdown). En AKTA avvagning, inte en entydig seger for
+  nagondera nivan - 3,0x byter en liten bit Sharpe-marginal och nagot
+  djupare drawdown mot betydligt hogre CAGR, fortfarande inom det lasta
+  -20%-taket med god marginal.
+
+  Diagnostiskt: bade 2,5x (HYP-087) och 3,0x (HYP-088) haller nu som
+  formellt lasta, testade havstangsnivaer pa HYP-081-basen, bada UTAN
+  ett enda marginalanrop over hela 15-arsperioden - en kvalitativt
+  annan situation an HYP-059/065:s tidigare, mer anstrangda resultat.
+  Valet mellan dem (eller ett mellanlage) ar en explicit CEO-avvagning
+  mellan Sharpe-marginal och CAGR-hojd, inte ett teknisk sporsmal -
+  inget automatiskt val gors har.
+- 10000000
