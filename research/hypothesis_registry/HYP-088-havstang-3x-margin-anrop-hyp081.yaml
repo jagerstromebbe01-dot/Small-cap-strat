@@ -177,3 +177,9 @@ result_summary: >
 # här, skulle kräva en egen, ny, separat låsning. Detta är alltså inte
 # primärt en "vilken nivå"-fråga utan en "hävstång eller inte, given
 # denna mekanismdesign"-fråga.
+#
+# CEO-BESLUT 2026-08-13 (SLUTGILTIGT): given ovanstående, INGEN hävstång
+# adopteras. HYP-088 (denna hypotes) kvarstår PASSED, oförändrad, som
+# dokumenterat, testat, men EJ adopterat alternativ - inte längre en
+# del av den faktiska referensimplementationen. Se HYP-081:s egen
+# registerpost, tillägg, för det fullständiga beslutet och motiveringen.

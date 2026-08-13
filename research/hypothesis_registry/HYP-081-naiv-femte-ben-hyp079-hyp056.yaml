@@ -106,3 +106,17 @@ result_summary: >
 # statistisk konfidens givet K=84 testade varianter - konsistent med att
 # diversifiering over genuint oberoende kallor ar exakt den mekanism DSR
 # formeln belönar mest.
+
+# CEO-BESLUT 2026-08-13 (SLUTGILTIGT, efter HYP-088:s syntetiska
+# stresstest, se dess egen registerpost, tillägg 1-4): INGEN hävstång
+# adopteras som standard. HYP-081 (obelånad) förblir den FAKTISKA,
+# ENDA referensimplementationen - inte HYP-081+HYP-088 som tidigare
+# antaget. Skälet: stresstestet visade att marginalanropsmekanismens
+# golv (alltid 1,0x, aldrig lägre) gör att hävstångsNIVÅN knappt
+# skyddar mot ett tillräckligt djupt/utdraget scenario (1,5x gav
+# -38,9%, 3,0x gav -43,3% i samma konstruerade extremfall - bara
+# 4,4pp skillnad). Det är alltså inte primärt en nivåfråga utan en
+# hävstång-eller-inte-fråga givet denna mekanismdesign, och CEO valde
+# ingen. HYP-087 och HYP-088 kvarstår PASSED, oförändrade, som
+# dokumenterade, testade, men EJ adopterade alternativ. Väg till högre
+# CAGR sker hädanefter via ny alfa, inte via denna hävstångsmekanism.

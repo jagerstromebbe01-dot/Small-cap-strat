@@ -4,7 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current state
 
-This repository is **pre-build**. It currently contains only [mini_hedge_fund_build_spec_v3.md](mini_hedge_fund_build_spec_v3.md) — no code, no `/agents/`, `/research/`, or `/data/` directories exist yet, and there is no git history. There are no build/lint/test commands yet because no code has been written.
+This repository is **past pre-build** — `/research/hypothesis_registry/`, `/data/`, `/strategies/`, and `/scripts/` are all populated and under git history. As of 2026-08-13, `k_total = 85` (`research/hypothesis_registry/_counter.yaml`).
+
+**Reference implementation:** HYP-081 (naive fifth-leg small-cap combination, unlevered). Historical: Sharpe 1.38, CAGR 7.9%, MaxDD -4.2%, DSR 0.99-1.00 at K=84.
+
+**Leverage: not adopted.** HYP-087 (2.5x) and HYP-088 (3.0x margin-call overlay on HYP-081) both PASSED cleanly with zero real margin calls over 15 years, and 3.0x was briefly locked as the leverage standard on 2026-08-13. A same-day synthetic stress test (`scripts/diagnostic_hyp088_stress_test_all_levels.py`, see HYP-088's registry addenda) then showed the mechanism's delever floor is always 1.0x (never lower), so the chosen leverage level barely changes the outcome in a sufficiently deep/prolonged decline (1.5x: -38.9% vs 3.0x: -43.3% in the same constructed extreme scenario — only 4.4pp apart). The CEO reversed the leverage decision the same day: **HYP-081 unlevered is the sole reference implementation**; HYP-087/HYP-088 remain PASSED and documented but not adopted. Higher CAGR is pursued via new alpha, not this leverage mechanism, unless a future, separately pre-registered redesign (genuine delevering below 1.0x) is built.
+
+For the full narrative and all intermediate decisions (Ejay closure, HYP-039/043/047/056 reference-chain history, the HYP-072 dilution-pipeline alpha family, the crypto pilot batch HYP-060-064, all FAILED), read the hypothesis registry directly rather than this file — it is the audit trail, this file is a pointer to it.
 
 **Treat `mini_hedge_fund_build_spec_v3.md` as the binding contract for this project.** It is written in Swedish by the user (the "CEO" in the doc's own terminology) and is meant to be read in full before doing any work here — do not paraphrase from this summary instead of reading it. If you deviate from the spec, update the spec itself (owned by the "Documentation" agent role) rather than silently drifting from it. If a new branch/agent is ever added (e.g. the deferred "Hypothesis Miner"), it must be added to the spec explicitly.
 
