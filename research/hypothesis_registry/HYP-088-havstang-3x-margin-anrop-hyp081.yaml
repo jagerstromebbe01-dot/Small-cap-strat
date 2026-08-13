@@ -100,3 +100,46 @@ result_summary: >
 # femte-bens-kombination) + HYP-088 (3,0x hävstång med marginalanrop).
 # HYP-087 kvarstår PASSED, oförändrad, som ett dokumenterat, testat
 # alternativ - inte längre den valda nivån.
+#
+# TILLÄGG 2026-08-13 (syntetiskt stresstest, CEO-begärt, INGEN K-kostnad,
+# ändrar INGET låst resultat - scripts/diagnostic_hyp088_synthetic_stress_test.py,
+# kör den EXAKTA, redan låsta simulate_leverage_with_margin_calls-funktionen
+# oförändrad mot konstruerade syntetiska serier, ingen omimplementation):
+# motiverat av att marginalanropsmekanismen ALDRIG faktiskt triggat över
+# de 15 riktiga historiska åren (0 anrop på alla nivåer, se result ovan) -
+# ett overifierat skyddsnät i praktiken.
+#
+# FYND 1 (bekräftat korrekt): trigger-, slippage- och återlåningslogiken
+# fungerar exakt som låst - verifierat mot en manuell, oberoende
+# parallellberäkning (scenario 1) och ett exakt +0,05x/vecka-schema
+# (scenario 3).
+#
+# FYND 2 (VIKTIGT, tidigare okänt): en DELVIS återhämtning som inte
+# tydligt passerar RELEVER_GATE (-5%) kan lämna strategin FAST vid låg
+# hävstång (nära 1,0x) på obestämd tid, även under en lugn/flat marknad
+# därefter (scenario 2a - 220 extra flata dagar ändrade ingenting).
+# Hävstången återställs INTE automatiskt bara för att tiden går, bara
+# när drawdown genuint förbättras förbi tröskeln. Detta är en verklig,
+# hittills odokumenterad egenskap hos mekanismen - inte ett fel, men ett
+# skäl till att portföljens FAKTISKA hävstång kan avvika länge från
+# målnivån 3,0x efter en händelse, vilket i sin tur kan sänka realiserad
+# avkastning under en efterföljande återhämtningsperiod jämfört med vad
+# backtesten (som aldrig upplevde detta scenario) antyder.
+#
+# FYND 3 (VIKTIGAST, riskrelevant): i ett scenario tydligt VÄRRE än
+# något i 2010-2025 (-35% underliggande nedgång utan omedelbar studs)
+# når den levererade drawdownen -43,35% - LÅNGT UTANFÖR HYP-088:s egna
+# -20%-tak. -20%-villkoret höll i backtesten bara för att inget så
+# extremt någonsin inträffade under just den perioden - det är INTE en
+# garanti mot framtida extremfall, bara en observation om vad som
+# faktiskt hänt hittills. Skyddsnätet hjälper dock kraftigt (-43% mot
+# -73% UTAN marginalanrop i samma scenario, en 30 procentenheters
+# förbättring) - skillnaden mellan allvarlig skada och praktiskt taget
+# total förlust, men INTE ett hårt golv vid -20%.
+#
+# SLUTSATS: mekanismens KOD är korrekt och gör vad den är designad för
+# att göra. Men den historiska backtestens "0 marginalanrop, MaxDD aldrig
+# sämre än -14%"-resultat ger en falsk trygghetskänsla om att -20%-taket
+# alltid håller - det höll bara för att det aldrig prövades på riktigt.
+# Verklig kapitalinsats med denna hävstång bör ske med medvetenhet om
+# båda dessa fynd, inte bara backtestens redan kända, goda tal.
