@@ -84,4 +84,26 @@ result_summary: >
   starkare byggstenen - HYP-079 fungerar genuint som femte ben, och ar
   nu den att foredra framfor HYP-075 for ett eventuellt CEO-beslut om
   permanent femte-bens-status.
+
+# CEO-BESLUT 2026-08-13: HYP-081 AR NU REFERENSIMPLEMENTATIONEN. Samma
+# monster som tidigare overgangar (HYP-017->023, HYP-023->037, HYP-037-
+# >043->047, HYP-047->056 2026-08-11). HYP-056 kvarstar PASSED,
+# oforandrad, men ar inte langre aktiv referens (se dess egen registerpost,
+# tillagg 2026-08-13). Beslutet bekraftades samma dag som en direkt
+# uppfoljningshypotes (HYP-087, havstang 2,5x pa HYP-081) redan hade
+# PASSAT med god marginal och for forsta gangen tog CAGR tydligt over
+# 15% (14,31% vid 2,5x-gating, 16,44% vid 3,0x-disclosure) utan ett enda
+# marginalanrop pa nagon niva - se HYP-087:s egen registerpost.
+#
+# TILLAGG 2026-08-13 (DSR forsta gangen berknad, Overfitting Detector-
+# rutin per CLAUDE.md, mot dagens k_total=84). $100k: SR=0,0872
+# DSR=0,9959. $1M: SR=0,0854 DSR=0,9945. $10M: SR=0,0830 DSR=0,9916.
+# EXTREMT HOGT - bland registrets basta DSR-tal nagonsin, HOGRE an
+# HYP-056:s egna redan utmarkta 0,97-0,98. Detta ar ett starkt,
+# oberoende statistiskt stod for referensbeslutet ovan: en naiv
+# kombination av flera redan individuellt validerade, lag-korrelerade
+# byggstenar ger inte bara battre Sharpe/MaxDD utan ocksa markant hogre
+# statistisk konfidens givet K=84 testade varianter - konsistent med att
+# diversifiering over genuint oberoende kallor ar exakt den mekanism DSR
+# formeln belönar mest.
 - 10000000

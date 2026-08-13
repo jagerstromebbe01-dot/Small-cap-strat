@@ -236,3 +236,10 @@ result_summary: >
 # att MEKANISMEN generaliserar utanfor 2010-2024, men detta ar INTE en
 # tredje fullstandig validering av hela HYP-047 - bara av ett av dess
 # fyra ben.
+#
+# TILLAGG 2026-08-13 (DSR-omrakning, Overfitting Detector-rutin per
+# CLAUDE.md, k_total 68->84 pa en dag 2026-08-12). DSR(K=84): $100k
+# SR=0,0728 DSR=0,9656, $1M SR=0,0733 DSR=0,9667, $10M SR=0,0692
+# DSR=0,9439 - ned marginellt fran 0,96-0,98 vid K=47. HYP-047 haller
+# sig EXCEPTIONELLT val trots att K nastan dubblerats sedan
+# ursprungslasningen - fortfarande bland registrets starkaste DSR-tal.

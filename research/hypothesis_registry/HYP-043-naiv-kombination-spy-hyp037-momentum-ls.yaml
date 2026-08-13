@@ -327,3 +327,14 @@ result_summary: >
 # `status` star medvetet KVAR som `passed` - beslut om formell
 # statusandring lamnas till CEO, som redan flera ganger i detta
 # register (senast for HYP-047:s referensbeslut).
+#
+# TILLAGG 2026-08-13 (DSR-omrakning, Overfitting Detector-rutin per
+# CLAUDE.md, k_total 68->84 pa en dag 2026-08-12). PRECISERING: `status`-
+# faltet ovan visar nu "failed" (senare satt an kommentaren ovan) - denna
+# DSR galler INTE ett pastaende att HYP-043 fortfarande "overvags" som
+# egen fristaende hypotes, utan for att dess portfoljvardeserie
+# (strategies/HYP-043/results/portfolio_value_combined_*.csv)
+# fortfarande ateranvands OFORANDRAD nedstroms (HYP-047->056->081->087).
+# DSR(K=84): $100k SR=0,0659 DSR=0,9187, $1M SR=0,0661 DSR=0,9198, $10M
+# SR=0,0621 DSR=0,8787 - ned nagot fran 0,92-0,95 vid K=43 men
+# fortfarande HOGT. Serien haller sig statistiskt val trots K-okningen.

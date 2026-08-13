@@ -450,3 +450,19 @@ deflated_sharpe_ratio:
 # (satt av CEO 2026-08-09) star darfor kvar KORREKT, men motiveringen
 # i praktiken vilar nu pa tva rakbladstunna marginaler snarare an ett
 # brett, entydigt misslyckande.
+#
+# TILLAGG 2026-08-13 (DSR-omrakning, Overfitting Detector-rutin per
+# CLAUDE.md - k_total gick fran 68 till 84 pa en enda dag 2026-08-12,
+# betydande eftersläpning sedan forra omrakningen vid K=46).
+# PRECISERING: HYP-037s EGEN status ar "failed" (se ovan) - denna DSR
+# ar INTE ett pastaende att HYP-037 fortfarande "overvags" som egen
+# hypotes. Den beraknas for att HYP-037s FAKTISKA AVKASTNINGSSERIE
+# (strategies/HYP-037/results/portfolio_value_*.csv) fortfarande
+# ateranvands OFORANDRAD som byggsten i hela den nu aktiva kedjan
+# (HYP-039->041->043->047->056->081->087) - deras EGNA lasta kriterier
+# kravde aldrig att HYP-037 slar HYP-023, bara att serien ateranvands
+# som given indata. DSR(K=84): $100k SR=0,0464 DSR=0,6242, $1M
+# SR=0,0475 DSR=0,6486, $10M SR=0,0440 DSR=0,5654 - ned fran 0,74-0,76
+# vid K=37. Meningsfull forsamring, men paverkar inte nagot lopande
+# beslut direkt (serien anvands som redan-kand, redan-friktionsjusterad
+# indata, inte som ett fristaende PASS-anspraq).

@@ -119,3 +119,13 @@ result_summary: >
   HYP-072-familjen - kandidat att ersatta HYP-075 som forsta prioritet
   for ett femte-bens-beslut, eller testas i kombination (HYP-078-monster)
   med referensportfoljen.
+
+# TILLAGG 2026-08-13 (DSR forsta gangen berknad, Overfitting Detector-
+# rutin per CLAUDE.md, mot dagens k_total=84). $100k: SR=0,0424
+# DSR=0,5643. $1M: SR=0,0414 DSR=0,5437. $10M: SR=0,0433 DSR=0,5919.
+# Mattlig - i samma intervall som HYP-075:s tidigare berkanade DSR
+# (0,53-0,55 vid K=74), konsistent med att bada delar samma underliggande
+# koncentrationskalla (augusti 2020-episoden, se HYP-072:s robusthets-
+# genomgang). CEO-BESLUT 2026-08-13: HYP-079 (via HYP-081:s 80/20-
+# kombination med HYP-056) AR NU DEN AKTIVA REFERENSIMPLEMENTATIONEN -
+# se HYP-081:s egen registerpost for den formella overgangen.

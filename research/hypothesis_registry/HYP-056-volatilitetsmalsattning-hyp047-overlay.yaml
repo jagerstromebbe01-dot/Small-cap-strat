@@ -153,3 +153,26 @@ result_summary: >
   Kraver CEO-BESLUT for att formellt bli ny referensimplementation -
   inte automatiskt (samma disciplin som HYP-047 sjalv fick 2026-08-08).
   HYP-047 forblir referensimplementationen tills vidare, oforandrad.
+
+  CEO-BESLUT 2026-08-11: HYP-056 AR NU REFERENSIMPLEMENTATIONEN.
+  HYP-047 kvarstar PASSED i registret (bade dess ursprungliga siffror
+  och den 2026-08-08/09-korrigerade tilläggsnoten star oforandrade)
+  men ar inte langre aktiv referens - samma monster som HYP-017->023,
+  HYP-023->037 och HYP-037->043->047-overgangarna. Beslutet togs samma
+  dag som tva uppfoljningshypoteser (HYP-059 havstang pa HYP-047,
+  HYP-065 havstang pa HYP-056) redan hade jamfort de bada mot varandra -
+  HYP-065 (pa HYP-056-basen) presterade tydligt battre (CAGR upp till
+  15.20% med Sharpe kvar over 1.0, mot HYP-059:s tak pa ~11-13%),
+  vilket i sig understryker att HYP-056:s lagre egna MaxDD (-5.9% till
+  -6.0% mot HYP-047:s -8.2% till -8.7%) ar en genuint battre bas att
+  bygga vidare pa, inte bara en isolerat starkare enskild siffra.
+
+# TILLAGG 2026-08-13 (DSR-omrakning, Overfitting Detector-rutin per
+# CLAUDE.md, k_total 68->84 pa en dag 2026-08-12). DSR(K=84): $100k
+# SR=0,0770 DSR=0,9799, $1M SR=0,0767 DSR=0,9790, $10M SR=0,0751
+# DSR=0,9734 - ned marginellt fran 0,98-0,99 vid K=56. HYP-056 haller
+# sig utmarkt trots K-okningen. VIKTIGT SAMMANHANG: HYP-056 ar INTE
+# langre aktiv referens - CEO-BESLUT 2026-08-13 gjorde HYP-081 (HYP-056
+# + HYP-079 som femte ben, se HYP-081:s egen registerpost) till ny
+# referensimplementation, samma monster som overgangen hit fran
+# HYP-047. HYP-056 kvarstar PASSED, oforandrad, som byggsten.
