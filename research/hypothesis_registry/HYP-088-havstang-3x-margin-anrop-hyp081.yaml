@@ -93,4 +93,10 @@ result_summary: >
   Valet mellan dem (eller ett mellanlage) ar en explicit CEO-avvagning
   mellan Sharpe-marginal och CAGR-hojd, inte ett teknisk sporsmal -
   inget automatiskt val gors har.
-- 10000000
+
+# CEO-BESLUT 2026-08-13: 3,0x (HYP-088, denna hypotes) VALD som den
+# faktiska hävstångsstandarden ovanpå HYP-081, inte 2,5x (HYP-087).
+# Fullständig referensimplementation är därmed: HYP-081 (obelånad
+# femte-bens-kombination) + HYP-088 (3,0x hävstång med marginalanrop).
+# HYP-087 kvarstår PASSED, oförändrad, som ett dokumenterat, testat
+# alternativ - inte längre den valda nivån.
