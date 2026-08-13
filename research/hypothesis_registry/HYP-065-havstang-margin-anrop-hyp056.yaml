@@ -1,0 +1,129 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås kör"), innan denna hypotes sätts
+# pre-registered eller någon backtest körs.
+#
+# URSPRUNG: uppföljning på HYP-059 (hävstång på HYP-047, PASSED men bara
+# ~11% CAGR, missade CEO:s 15%/20%-mål). CEO valde att testa samma idé
+# på HYP-056 istället, eftersom HYP-056 har mycket lägre egen MaxDD
+# (-5.9% till -6.0%, mot HYP-047:s -8.2% till -8.7%) tack vare dess
+# volatilitetsmålsättningsoverlay - mer "headroom" innan hävstångens
+# marginalanrop börjar bita.
+#
+# DIAGNOSTIK INNAN LÅSNING (scripts/diagnostic_hyp056_leverage_margin_calls.py,
+# ingen K-kostnad, IDENTISK marginalanrops-mekanism som redan validerades
+# metodologiskt i HYP-059 - INGEN ny kalibrering av mekanismens egna
+# parametrar här, bara en ny hävstångsNIVÅ vald baserat på var Sharpen
+# börjar kollapsa): bekräftade hypotesen - 2,5x ger CAGR 14,0-15,2%
+# (huvudperiod) med Sharpe fortfarande >=1,0 på alla tre nivåer, mot
+# HYP-059:s bästa ~11-13% CAGR. 3,0x kollapsar (Sharpe 0,79-0,83, 3-4
+# marginalanrop, 48-64% av dagarna nedskalade).
+#
+# KÄND, ÖPPET REDOVISAD RESERVATION INNAN LÅSNING: $10M-nivåns Sharpe
+# (1,0032 i diagnostiken) ligger RAKBLADSTUNT på 1,0-golvet - en marginal
+# på bara 0,0032. Flaggat explicit innan låsning, inte efteråt.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-065
+date_registered: '2026-08-11'
+title: "Hävstång (2,5x) med marginalanrop/tvingad nedskalning som overlay på HYP-056"
+universe: "N/A - portföljnivå-hävstång på HYP-056:s redan existerande,
+  färdigberäknade volatilitetsmålsatta portfölj. Ingen ny small-cap-signal,
+  inget nytt handelsuniversum, ingen ny prismatris."
+small_cap_definition: "N/A - se HYP-056/HYP-059:s identiska motivering.
+  Ingen ny backtest-motor (ren portföljnivå-hävstångsmatematik)."
+data_range: "Samma period som HYP-056 (2010-2024 huvudperiod + genuin
+  OOS-2025), återanvänder HYP-056:s redan beräknade, volatilitetsmålsatta
+  kombinerade avkastningsserier oförändrade."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja - IDENTISK
+  marginalanrops-mekanism som HYP-059, ENDA skillnaden är basen (HYP-056
+  istället för HYP-047) och hävstångsNIVÅN):
+
+  Hävstång FAST vid 2,5x på HYP-056:s redan kombinerade, volatilitets-
+  målsatta portföljvärdesserie, FAKTISK daglig compoundering. Lånekostnad
+  på det lånade kapitalet (1,5x): RF (2%/år) + KONSERVATIV spread
+  (1,5%/år) = 3,5%/år totalt, primärt (gating) antagande.
+
+  MARGINALANROP (identiskt med HYP-059): om portföljens EGEN levererade
+  drawdown från sitt rullande högsta-vattenmärke når -15%, tvingas
+  hävstången SAMMA dag ner till 1,0x + 0,5% forced-sale-slippage på den
+  nedskalade notionalen. Återlåning GRADVIS (+0,05x/handelsvecka), ENDAST
+  när drawdown återhämtat sig förbi -5%.
+
+  Stressad finansieringsspread (3,0%/år, 4,5%/år totalt) samt
+  hävstångsnivåerna 1,5x/2,0x/3,0x rapporteras för ALLA tre kapitalnivåer
+  som OBLIGATORISK, ICKE-GATING disclosure.
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN (huvudperioden
+  2010-2024, konservativ spread):
+  1. Sharpe (marginalanrops-justerad) >= 1,0.
+  2. CAGR > HYP-056:s egen korrigerade CAGR vid $100k (8,31%) med minst
+     +5,0 procentenheter marginal, dvs > 13,31%.
+  3. MaxDD inte sämre än -20%.
+
+  FAIL om något villkor faller vid $100k-nivån under gating-antagandet.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal marginalanrop, andel
+  dagar under målhävstången, per nivå och spread-antagande, samt
+  Sharpe-marginalen mot 1,0-golvet vid $10M specifikt (given den redan
+  kända rakbladstunna marginalen i diagnostiken).
+
+  Diagnostiskt syfte: testar om HYP-056:s lägre egna MaxDD (jämfört med
+  HYP-047) ger tillräckligt med "headroom" för att hävstång ska komma
+  närmare CEO:s CAGR-mål (>15%, gärna >20%) utan att offra Sharpe-golvet
+  - en direkt uppföljning på HYP-059:s otillräckliga lyft.
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 63
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 1.0519, cagr: 0.1456, max_drawdown: -0.1572, calmar: 0.926, oos_2025_sharpe: 1.6300, oos_2025_total_return: 0.3364, deflated_sharpe_ratio: 0.9363}
+  1000000: {sharpe: 1.0390, cagr: 0.1520, max_drawdown: -0.1498, calmar: 1.015, oos_2025_sharpe: 1.6081, oos_2025_total_return: 0.3267, deflated_sharpe_ratio: 0.9298}
+  10000000: {sharpe: 1.0032, cagr: 0.1403, max_drawdown: -0.1407, calmar: 0.997, oos_2025_sharpe: 1.6221, oos_2025_total_return: 0.3197, deflated_sharpe_ratio: 0.9095}
+date_tested: '2026-08-11'
+result_summary: >
+  PASSED PÅ ALLA TRE VILLKOR, PÅ ALLA TRE KAPITALNIVÅER - klart starkare
+  än HYP-059 (hävstång på HYP-047). Sharpe 1,0519/1,0390/1,0032 (villkor
+  1, >=1,0) - $10M PASSAR men RAKBLADSTUNT (marginal 0,0032), precis
+  som diagnostiken förutspådde och redovisade INNAN låsning. CAGR
+  14,56%/15,20%/14,03% mot HYP-056:s egna 8,31%/8,26%/7,80% + 5,0pp-
+  kravet (13,31%/13,26%/12,80%) - PASS på alla tre, med god marginal
+  utom vid $10M (1,23pp). MaxDD -15,72%/-14,98%/-14,07%, klart innanfor
+  -20%-taket (villkor 3).
+
+  MOT CEO:S UTTALADE MÅL (CAGR>15%, gärna >20%, Sharpe>1,0): NÄRMARE ÄN
+  NÅGONSIN TIDIGARE I HÄVSTÅNGSSPÅRET. $1M-nivån (15,20%) KLARAR
+  FAKTISKT 15%-golvet med Sharpe fortfarande över 1,0 (1,039) - första
+  gången i registret hela målet nås samtidigt, om än bara vid en av tre
+  kapitalnivåer och med tunn marginal på båda mätpunkterna. $100k och
+  $10M ligger strax under 15% (14,56%/14,03%). 20%-ambitionen är
+  fortfarande långt borta.
+
+  DISCLOSURE (icke-gating, alla nivåer):
+  - Stressad spread (4,5%/år totalt, samma 2,5x): Sharpe faller UNDER
+    1,0 på $100k (0,9077) och $10M (0,8047), och även vid $1M (0,8535)
+    - resultatet är, precis som HYP-059, känsligt för finansierings-
+    spread-antagandet.
+  - 1,5x/2,0x (bägge spreadantaganden): lägre CAGR (9,1-13,0%) men
+    Sharpe håller sig klart över 1,0 i alla fall utom stressad 2,0x
+    vid $100k (0,92) - säkrare men når inte 15%-målet.
+  - 3,0x: Sharpe kollapsar (0,66-0,83), 3-4 marginalanrop, 48-65% av
+    dagarna nedskalade - bekräftar diagnostikens fynd att 3,0x är för
+    aggressivt för denna bas.
+
+  DSR vid K=64: 0,9363/0,9298/0,9095 - högt, konsistent med ett genuint
+  positivt resultat.
+
+  SLUTSATS: HYP-056:s lägre egna MaxDD gav exakt den "headroom" som
+  motiverade denna uppföljning - hävstång kommer nu genuint nära (och
+  vid en nivå, förbi) CEO:s CAGR-mål utan att offra Sharpe-golvet
+  systematiskt, ett tydligt steg förbi HYP-059:s ~11% tak. Kvarstående
+  osäkerhet: $10M:s rakbladstunna Sharpe-marginal och känsligheten för
+  finansieringsspreaden gör detta INTE till en okomplicerad seger -
+  HYP-056 (ohävstångad) förblir referensimplementationen. Om denna
+  hävstångsvariant ska bli en aktiv, rapporterad strategi kräver det
+  ett eget CEO-beslut, samma mönster som HYP-047/056/059.

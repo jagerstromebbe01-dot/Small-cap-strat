@@ -1,0 +1,26 @@
+{
+  "strategy": {
+    "sharpe": 1.1745404666770596,
+    "cagr": 0.858101115477119,
+    "max_drawdown": -0.9232717851518061,
+    "dsr": 0.9799480748266196
+  },
+  "buy_and_hold": {
+    "sharpe": 1.4279042759930307,
+    "cagr": 1.408064493012819,
+    "max_drawdown": -0.9317753590982943
+  },
+  "oos_2025": {
+    "strategy_sharpe": -1.4697581682904495,
+    "strategy_return": -0.4475033131587368,
+    "buy_and_hold_sharpe": -0.020211464147845744,
+    "buy_and_hold_return": -0.07319367855915593
+  },
+  "dsr_n_trials": 62,
+  "pass_fail": {
+    "condition_1_sharpe_floor": true,
+    "condition_2_vs_buy_hold": false,
+    "condition_3_maxdd": false,
+    "overall": "FAILED"
+  }
+}

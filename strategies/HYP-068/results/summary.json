@@ -1,0 +1,109 @@
+{
+  "main": [
+    {
+      "capital_level": 100000,
+      "sharpe": 0.2949126123815816,
+      "cagr": 0.06784134719598489,
+      "max_drawdown": -0.5894313966086722,
+      "calmar": 0.11509625647075135,
+      "n_days": 3586,
+      "dsr": 0.047570409159042516
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": 0.2928732899813952,
+      "cagr": 0.06805941127225368,
+      "max_drawdown": -0.6262381224847288,
+      "calmar": 0.10867976386077223,
+      "n_days": 3586,
+      "dsr": 0.0459495043189343
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": 0.2388064302041674,
+      "cagr": 0.03251347076717104,
+      "max_drawdown": -0.6274643844587956,
+      "calmar": 0.051817237077471344,
+      "n_days": 3586,
+      "dsr": 0.0650072283032096
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": 0.5711803002736187,
+      "oos_2025_max_drawdown": -0.327179845427226,
+      "oos_2025_total_return": 0.19477543913774098
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": 0.2758949330789206,
+      "oos_2025_max_drawdown": -0.2836577614566293,
+      "oos_2025_total_return": 0.05689580258703053
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 0.23280220403908128,
+      "oos_2025_max_drawdown": -0.2319960173185042,
+      "oos_2025_total_return": 0.047171748197736285
+    }
+  ],
+  "hyp066_main_ref": {
+    "100000": {
+      "sharpe": 0.3072,
+      "max_drawdown": -0.6685
+    },
+    "1000000": {
+      "sharpe": 0.3079,
+      "max_drawdown": -0.709
+    },
+    "10000000": {
+      "sharpe": 0.3393,
+      "max_drawdown": -0.7264
+    }
+  },
+  "exposure_scale_disclosure": {
+    "100000": {
+      "n_decisions": 744,
+      "avg_scale": 0.8914427703924913,
+      "min_scale": 0.3,
+      "pct_weeks_below_1": 0.42876344086021506
+    },
+    "1000000": {
+      "n_decisions": 744,
+      "avg_scale": 0.8808319901195643,
+      "min_scale": 0.3,
+      "pct_weeks_below_1": 0.4435483870967742
+    },
+    "10000000": {
+      "n_decisions": 744,
+      "avg_scale": 0.8635168899811297,
+      "min_scale": 0.3,
+      "pct_weeks_below_1": 0.4422043010752688
+    }
+  },
+  "dsr_n_trials": 67,
+  "pass_fail": {
+    "per_level": [
+      {
+        "level": 100000,
+        "c1_floor": false,
+        "c2_vs_sharpe": false,
+        "c3_vs_maxdd": true
+      },
+      {
+        "level": 1000000,
+        "c1_floor": false,
+        "c2_vs_sharpe": false,
+        "c3_vs_maxdd": true
+      },
+      {
+        "level": 10000000,
+        "c1_floor": false,
+        "c2_vs_sharpe": false,
+        "c3_vs_maxdd": true
+      }
+    ],
+    "overall": "FAILED"
+  }
+}

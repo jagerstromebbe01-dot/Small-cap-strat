@@ -1,0 +1,98 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås hela batchen och kör"), tillsammans
+# med HYP-061/062/063, innan någon backtest kördes. Se BATCH-003 nedan.
+#
+# BATCH-003 (spot-only crypto, se CLAUDE.md "Batch Hypothesis Generation"):
+# första vidgningen av sökrymden till en ny tillgångsklass sedan projektet
+# startade - EXPLICIT CEO-BESLUT 2026-08-11 (widen scope-diskussion samma
+# dag, "kanske crypto" -> feasibility-koll -> "spot only" -> denna batch).
+# Fyra kandidater, dragna i EN blind omgång (ingen backtest kord, inga
+# resultat sedda mellan dem), lasta SAMTIDIGT - k_total hoppar 58->62 vid
+# lasningstillfallet.
+#
+# FEASIBILITY (verifierad 2026-08-11, INNAN lasning, direkt mot API:et):
+# EODHDs .CC-endpoint fungerar for spot-OHLCV utan ny integration (samma
+# redan betalda nyckel). BTC/LTC/XRP/DOGE har 11-14.5 ars historik, ETH
+# ~9.4 ar. Marknadsvarde/fundamentals for crypto gav 403 Forbidden pa
+# denna EODHD-plan - universumet ar darfor en STATISK i forvag vald
+# lista, inte market-cap-bandad. Funding rate/derivat INTE tillgangligt
+# via EODHD - darfor SPOT ONLY, ingen blankning.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-060
+date_registered: '2026-08-11'
+title: "BTC solo, 200-dagars trendfilter (long/kontant) mot buy-and-hold"
+universe: "N/A - enda instrumentet ar BTC-USD.CC (EODHD spot), ingen
+  urvalsprocess. Statiskt vald pa grund av langst tillforlitliga
+  spothistorik (2010-07-13-), verifierat direkt mot API:et 2026-08-11."
+small_cap_definition: "N/A - crypto spot, inte small-cap-aktier. Kapitalnivå-
+  kravet (spec §4) och den kodtvingade friktionskontrollen (requires_friction_check)
+  gäller därför inte formellt denna hypotes - friktion (spread+avgift, se
+  mekanismen) byggs ändå in självpåtaget, redovisat explicit nedan, per
+  spec §2 princip 3:s allmänna anda."
+data_range: "BTC-USD.CC hela tillgängliga historiken (2010-07-13-2024-12-31
+  huvudperiod, verifierat 5651 rader inkl. 2025) + genuin OOS-2025
+  (2025-01-01-2025-12-31)."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Daglig stängningskurs (close) jämförs mot ett 200-dagars glidande medel
+  (SMA_WINDOW=200, samma konvention som bear catcher/HYP-047). close >
+  SMA_200 -> 100% BTC. close <= SMA_200 -> 100% kontant (RF_ANNUAL=2%/år).
+
+  FRIKTION (utöver spreaden): vid VARJE övergång in i/ut ur BTC-positionen,
+  halva Corwin-Schultz-spreaden (på BTC:s egen high/low) + 0,15%
+  exchange-avgift, på den notional som flyttas.
+
+  ANNUALISERING: 365 dagar/år (crypto handlas alla kalenderdagar, INTE
+  252 handelsdagar som resten av registret - se strategies/common/crypto_data.py).
+  Sharpe/CAGR i denna hypotes är INTE direkt jämförbara med registrets
+  övriga (252-dagars) tal.
+
+  JÄMFÖRELSEPUNKT: naiv buy-and-hold BTC (rå avkastning, ingen friktion,
+  samma tidsfönster som strategin - från första dag SMA_200 kan beräknas).
+
+  PASS KRÄVER ALLA TRE (huvudperioden 2010-2024, ingen kapitalnivåuppdelning
+  - se small_cap_definition):
+  1. Sharpe (365-dagars annualiserad, friktionsjusterad) >= 0,55.
+  2. Sharpe (strategin) > Sharpe (buy-and-hold BTC, samma fönster).
+  3. MaxDD inte sämre än -50%.
+
+  FAIL om något villkor faller.
+
+  OOS-2025: rapporteras informativt (Sharpe, MaxDD, total avkastning mot
+  buy-and-hold BTC samma period), ej gating.
+
+  Diagnostiskt syfte: testar den klassiska frågan (trendföljning vs
+  buy-and-hold på ett enskilt, extremt volatilt tillgångsslag) med en
+  mekanism som redan är validerad i sin ursprungliga (managed futures/
+  aktiekrasch-timing) tillämpning i detta register.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 58
+date_tested: '2026-08-11'
+result:
+  strategy: {sharpe: 1.1745, cagr: 0.8581, max_drawdown: -0.9233, deflated_sharpe_ratio: 0.9799}
+  buy_and_hold: {sharpe: 1.4279, cagr: 1.4081, max_drawdown: -0.9318}
+  oos_2025: {strategy_sharpe: -1.4698, strategy_return: -0.4475, buy_and_hold_sharpe: -0.0202, buy_and_hold_return: -0.0732}
+  dsr_n_trials: 62
+result_summary: >
+  FAILED PA VILLKOR 2 OCH 3. Villkor 1 (Sharpe>=0,55) PASS med bred marginal
+  (1,17). Villkor 2 (slå buy-and-hold): FAIL - trendfiltret gav Sharpe 1,17
+  mot buy-and-holds 1,43, och CAGR 85,8% mot buy-and-holds 140,8%. Villkor
+  3 (MaxDD >= -50%): FAIL, -92,33% (till och med SÄMRE än buy-and-holds
+  egna -93,18%, i praktiken ingen skillnad - trendfiltret undvek inte
+  BTC:s djupaste drawdowns).
+
+  DIAGNOS: BTC:s eget buy-and-hold-Sharpe över 2010-2024 är extremt högt
+  (1,43) på grund av en i praktiken monoton flerårig uppgång (cent-nivå
+  till tiotusentals dollar) - ett klassiskt, väldokumenterat mönster i
+  trendföljningslitteraturen: ett 200-dagars filter kostar avkastning i
+  starka, ihållande bull-trender genom att missa återhämtningar efter
+  korta dippar, samtidigt som BTC:s allra djupaste drawdowns (85-90%+)
+  är SÅ extrema att ens periodvis kontant-exponering inte räddar
+  MaxDD-talet nämnvärt. OOS-2025 bekräftar mönstret dramatiskt
+  (trendfilter -44,75% mot buy-and-holds -7,32% - filtret whipsades
+  troligen under ett kärvt, range-bundet 2025). DSR 0,98 vid K=62 (räknar
+  hela BATCH-003 som en gemensam sökfamilj) - hög, men irrelevant här
+  eftersom det gating-avgörande villkoret inte var den absoluta Sharpe-
+  golvet utan jämförelsen mot buy-and-hold, som föll tydligt.

@@ -1,0 +1,26 @@
+{
+  "strategy": {
+    "sharpe": 0.651996486417577,
+    "cagr": 0.2759258558773756,
+    "max_drawdown": -0.9293430959520402,
+    "dsr": 0.35313863150366337
+  },
+  "baseline_basket": {
+    "sharpe": 1.4762335927830719,
+    "cagr": 1.4991786701165801,
+    "max_drawdown": -0.8793559202246803
+  },
+  "oos_2025": {
+    "strategy_sharpe": -1.423773724903067,
+    "strategy_return": -0.5908726214513422,
+    "baseline_sharpe": -0.12276135161074746,
+    "baseline_return": -0.2479104905563274
+  },
+  "dsr_n_trials": 62,
+  "pass_fail": {
+    "condition_1_sharpe_floor": true,
+    "condition_2_vs_baseline": false,
+    "condition_3_maxdd": false,
+    "overall": "FAILED"
+  }
+}

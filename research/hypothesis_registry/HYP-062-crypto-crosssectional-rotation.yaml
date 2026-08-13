@@ -1,0 +1,79 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås hela batchen och kör"), tillsammans
+# med HYP-060/061/063 - BATCH-003 (spot-only crypto, se HYP-060:s egen
+# registerpost för fullständig batch-/feasibility-motivering, samma här).
+# k_total hoppar 58->62 vid låsningstillfället, inte styckvis.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-062
+date_registered: '2026-08-11'
+title: "Tvärsnittsrotation, topp-K=2 av 5 coins efter 90-dagars trend, månadsvis"
+universe: "BTC/ETH/LTC/XRP/DOGE (EODHD spot .CC). Samma statiska lista
+  som hela BATCH-003, se HYP-060."
+small_cap_definition: "N/A - crypto spot, se HYP-060:s identiska motivering."
+data_range: "Samma gemensamma fönster som HYP-061 (från ETH:s första
+  handelsdag 2015-08-07) till 2024-12-31 huvudperiod + genuin OOS-2025."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  MÅNADSVIS ombalansering (snap_rebalance_dates, kalendermånadsslut).
+  Vid varje beslutsdatum: rangordna de 5 coins efter TRAILING 90-dagars
+  kumulativ avkastning (räknat i kalenderdagar, samma 365-dagarsbas som
+  resten av batchen).
+
+  PORTFÖLJ: TVÅ lika stora slots (50% notional var). Varje slot tilldelas
+  den högst rankade coin som INTE redan upptar en annan slot OCH har
+  POSITIV trailing 90-dagars avkastning. Om färre än 2 coins kvalificerar
+  (positiv trend), lämnas motsvarande slot(ar) i kontanter (RF 2%/år) -
+  INGEN coin med negativ trend tvingas in för att fylla en slot.
+
+  FRIKTION: halva Corwin-Schultz-spreaden (per coin, egen high/low) +
+  0,15% exchange-avgift, på notional som flyttas vid varje månatlig
+  ombalansering (byte av vilken coin som upptar en slot, eller in/ut ur
+  kontanter).
+
+  ANNUALISERING: 365 dagar/år - se HYP-060:s identiska notering.
+
+  JÄMFÖRELSEPUNKT: BASELINE_BASKET (samma delade, friktionsjusterade
+  5-coin likaviktade kvartalsvisa referenskorg som HYP-061/063 använder,
+  se strategies/common/crypto_data.py::build_baseline_basket).
+
+  PASS KRÄVER ALLA TRE (huvudperioden, ingen kapitalnivåuppdelning):
+  1. Sharpe >= 0,55.
+  2. Sharpe > Sharpe (BASELINE_BASKET).
+  3. MaxDD inte sämre än -50%.
+
+  FAIL om något villkor faller.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  Diagnostiskt syfte: testar om relativ styrka mellan coins (cross-
+  sectional momentum, samma familj som HYP-043:s momentum L/S-svit i
+  aktiedelen, men long-only här) ger mervärde över att bara äga alla
+  fem lika viktat.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 58
+date_tested: '2026-08-11'
+result:
+  strategy: {sharpe: 0.8083, cagr: 0.4278, max_drawdown: -0.9473, deflated_sharpe_ratio: 0.5501}
+  baseline_basket: {sharpe: 1.4762, cagr: 1.4992, max_drawdown: -0.8794}
+  oos_2025: {strategy_sharpe: -0.6458, strategy_return: -0.4565, baseline_sharpe: -0.1228, baseline_return: -0.2479}
+  dsr_n_trials: 62
+result_summary: >
+  FAILED PÅ VILLKOR 2 OCH 3, TYDLIGT. Villkor 1 (Sharpe>=0,55) PASS
+  (0,81). Villkor 2 (slå baseline): FAIL - 0,81 mot baselinens 1,48,
+  klart sämre. Villkor 3 (MaxDD >= -50%): FAIL, -94,73% (SÄMRE än
+  baselinens redan höga -87,94%).
+
+  DIAGNOS: koncentration i bara 1-2 av 5 coins (mot baselinens 5)
+  ökade den idiosynkratiska risken utan att den 90-dagars-momentum-
+  signalen gav tillräcklig kompensation - konsistent med registrets
+  redan etablerade mönster (5 oberoende FAIL för reversal/lead-lag-
+  liknande urvalsmekanismer i aktiedelen: HYP-013/042/050/055/057)
+  att relativ-styrka-/urvalskonstruktioner har det svårt i detta slags
+  test, nu även bekräftat i en helt ny tillgångsklass. OOS-2025 var
+  ännu sämre för strategin (-45,65% mot baselinens -24,79%) - momentum-
+  rotationen chase:ade sannolikt lokala toppar i en redan svag period.
+  DSR 0,55 vid K=62 - måttligt, konsistent med ett svagt/brusigt snarare
+  än ett genuint negativt resultat, men inte i närheten av att rädda
+  ett tydligt FAIL på båda avgörande villkoren.

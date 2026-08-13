@@ -1,0 +1,161 @@
+# LÅST 2026-08-11 av CEO i chatt ("låst kör"), innan denna hypotes sätts
+# pre-registered eller någon backtest körs.
+#
+# URSPRUNG: CEO bad om en riktig, pre-registrerad hävstångshypotes på
+# HYP-047 (referensimplementationen - INTE HYP-056, som är avsiktligt
+# hävstångsfri per design, se dess egen "EXPLICIT AVGRÄNSNING"). Bygger
+# vidare på scripts/diagnostic_hyp047_leverage_exploration.py (ren
+# diagnostik, ingen K-kostnad, redan körd innan denna session) som visade
+# att FAKTISK daglig hävstångscompoundering (inte naiv algebraisk
+# skalning) med bara en statisk lånekostnad-spread ger ett begränsat
+# lyft (~11-13% CAGR vid 1,5-2,0x, innan Sharpe kryper mot/under 1,0).
+#
+# UTÖKNING INNAN LÅSNING (scripts/diagnostic_hyp047_leverage_margin_calls.py,
+# fortfarande ren diagnostik, ingen K-kostnad): lade till en verklig
+# marginalanrop/tvingad-nedskalning-mekanism utöver spreaden. Design:
+# DRAWDOWN-triggad (egen levererad drawdown från rullande högsta-
+# vattenmärke), INTE klassisk Reg-T-procent - HYP-047:s egen implicerade
+# årsvol (~5-6%) är för låg för att ett Reg-T-underhållskrav (25%) någonsin
+# skulle triggas för den här boken (skulle kräva en encardaglig rörelse
+# på ~-33% vid 2,0x), vilket hade gjort mekanismen till en icke-händelse.
+#
+# KÄND, ÖPPET REDOVISAD RESERVATION INNAN LÅSNING: marginalanropen
+# triggades bara 0-2 gånger över hela perioden oavsett nivå i diagnostiken,
+# eftersom HYP-047:s diversifiering redan håller dess EGEN drawdown grund
+# (~8,5%) - denna specifika marginalmodell genomgår därför aldrig ett
+# genuint allvarligt stress-scenario i backtesten (skulle kräva att
+# diversifieringen/hedgen bryter samman samtidigt som marknaden kraschar,
+# ett scenario som per definition är underrepresenterat i historiken).
+# Realistisk för det som HAR hänt, men styrker INTE hur illa hävstång
+# skulle slå vid ett genuint svansrisk-scenario.
+#
+# ÄRLIGT FASTSLAGET INNAN LÅSNING (CEO-instruktion): CEO:s mål (CAGR>15%,
+# gärna >20%, Sharpe>1,0) nås INTE av hävstång ensam under realistisk
+# friktion på någon testad nivå (1,25x-2,0x). Detta kriterium testar
+# därför INTE om hävstång når det absoluta målet (skulle garanterat
+# FAILA givet diagnostiken) utan om hävstång ger en GENUIN, disciplinerad
+# förbättring över HYP-047:s egen baslinje utan att offra Sharpe-golvet -
+# samma princip som HYP-045/056 testar överlag mot HYP-047, inte mot ett
+# absolut CAGR-tal.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-059
+date_registered: '2026-08-11'
+title: Hävstång (1,5x) med marginalanrop/tvingad nedskalning som overlay på HYP-047
+universe: "N/A - portföljnivå-hävstång på HYP-047:s redan existerande, färdigberäknade
+  fyrbenskombination (samma serier som HYP-056 återanvänder). Ingen ny small-cap-signal,
+  inget nytt handelsuniversum, ingen ny prismatris."
+small_cap_definition: "N/A - se HYP-047:s egen redan låsta definition, oförändrad.
+  Ingen ny backtest-motor (ren portföljnivå-hävstångsmatematik på redan kostnadsjusterade
+  serier), se HYP-056:s exakt samma undantagsmönster."
+data_range: "Samma period som HYP-047 (2010-2024 huvudperiod + genuin OOS-2025),
+  återanvänder HYP-047:s redan beräknade (korrigerade, 2026-08-08) kombinerade
+  avkastningsserier oförändrade."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  Hävstång FAST vid 1,5x på HYP-047:s redan kombinerade (25/25/25/25)
+  portföljvärdesserie, FAKTISK daglig compoundering (inte algebraisk
+  skalning). Lånekostnad på det lånade kapitalet (0,5x): riskfri ränta
+  (2%/år) + KONSERVATIV spread (1,5%/år), dvs 3,5%/år totalt, som primärt
+  (gating) antagande.
+
+  MARGINALANROP/TVINGAD NEDSKALNING (utöver spreaden): om portföljens EGEN
+  levererade drawdown från sitt rullande högsta-vattenmärke når -15%,
+  tvingas hävstången SAMMA dag ner till 1,0x (hela det lånade kapitalet
+  löses in), plus en forced-sale-slippage-kostnad på 0,5% av den
+  nedskalade notionalen. Återlåning sker GRADVIS (+0,05x per handelsvecka)
+  och ENDAST när drawdown från samma högsta-vattenmärke återhämtat sig
+  förbi -5%.
+
+  Stressad finansieringsspread (3,0%/år, 4,5%/år totalt) samt
+  hävstångsnivåerna 1,25x/1,75x/2,0x rapporteras för ALLA tre kapitalnivåer
+  som OBLIGATORISK, ICKE-GATING disclosure (för att synliggöra hur känsligt
+  resultatet är för dessa antaganden).
+
+  PASS KRÄVER ALLA TRE, PÅ DEN AVGÖRANDE $100k-NIVÅN (huvudperioden
+  2010-2024, konservativ spread):
+  1. Sharpe (marginalanrops-justerad) >= 1,0.
+  2. CAGR > HYP-047:s egen korrigerade CAGR vid $100k (8,56%) med minst
+     +2,0 procentenheter marginal, dvs > 10,56%.
+  3. MaxDD inte sämre än -20% (sanity-tak - hävstång försämrar per
+     definition MaxDD mot HYP-047:s egna -8,67%, detta är INTE ett
+     "bättre än baslinjen"-krav utan ett explicit yttre tak).
+
+  FAIL om något villkor faller vid $100k-nivån under det gating-antagandet
+  (1,5x, konservativ spread).
+
+  OOS-2025: rapporteras informativt (Sharpe, MaxDD, total avkastning),
+  ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): antal marginalanrop, andel dagar
+  under målhävstången, per nivå och spread-antagande - för att verifiera
+  att mekanismen faktiskt exercerades (eller den kända reservationen om
+  att den sällan/aldrig gör det bekräftas explicit i resultatet).
+
+  Diagnostiskt syfte: testar om måttlig, disciplinerad hävstång (1,5x)
+  med en realistisk marginalanrop-mekanism (inte bara en kostnadsspread)
+  ger en genuin, Sharpe-bevarande förbättring över HYP-047 - INTE om
+  hävstång ensam når CEO:s absoluta CAGR-mål (redan känt från diagnostiken
+  att det inte gör det).
+status: passed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 57
+tested_capital_levels:
+- 100000
+- 1000000
+- 10000000
+capital_level_results:
+  100000: {sharpe: 1.0348, cagr: 0.1101, max_drawdown: -0.1312, calmar: 0.839, oos_2025_sharpe: 1.7886, oos_2025_total_return: 0.3946, deflated_sharpe_ratio: 0.9311}
+  1000000: {sharpe: 1.0348, cagr: 0.1092, max_drawdown: -0.1280, calmar: 0.853, oos_2025_sharpe: 1.7305, oos_2025_total_return: 0.3789, deflated_sharpe_ratio: 0.9313}
+  10000000: {sharpe: 1.0041, cagr: 0.1007, max_drawdown: -0.1240, calmar: 0.812, oos_2025_sharpe: 1.7120, oos_2025_total_return: 0.3703, deflated_sharpe_ratio: 0.9145}
+date_tested: '2026-08-11'
+result_summary: >
+  PASSED PA ALLA TRE VILLKOR, PA ALLA TRE KAPITALNIVAER (inte bara den
+  avgorande $100k-nivan). Sharpe 1.0348/1.0348/1.0041 (villkor 1, >=1.0),
+  CAGR 11.01%/10.92%/10.07% mot HYP-047:s egna 8.56%/8.52%/7.95% + 2.0pp-
+  kravet (10.56%/10.52%/9.95%) - PASS pa alla tre, om an $10M med minsta
+  marginalen (0.12pp). MaxDD -13.12%/-12.80%/-12.40%, klart innanfor
+  -20%-taket (villkor 3).
+
+  KRITISK, OPPET REDOVISAD NYANS: pa den LASTA gating-konfigurationen
+  (1,5x, konservativ spread) TRIGGADE MARGINALANROPS-MEKANISMEN ALDRIG
+  (0 anrop, 0.0% av dagarna under malhafstangen, PA ALLA TRE NIVAER).
+  Detta PASS ar darfor i praktiken IDENTISKT med vad en ren statisk-
+  spread-modell (utan marginalanrop) skulle ha gett vid 1,5x - den
+  extra friktionsmekanismen som byggdes for detta test bidrog INGET
+  till just detta resultat. Marginalanropen borjar bara trigga (0-2
+  ganger) vid 1,75x-2,0x, INTE vid den lasta 1,5x-nivan - se disclosure
+  nedan. Detta ar EXAKT den kanda reservation som redan stod i
+  registerpostens header innan lasning (mekanismen kraver en djupare
+  drawdown an HYP-047:s diversifierade bok historiskt haft, aven med
+  1,5x hafstang pa toppen) - bekraftad, inte motbevisad, av resultatet.
+
+  DISCLOSURE (icke-gating, alla nivaer):
+  - Stressad spread (4,5%/ar totalt, samma 1,5x): Sharpe faller UNDER
+    1,0 pa ALLA TRE nivaer (0.9467/0.9459/0.9089) - resultatet ar
+    kansligt for finansieringsspread-antagandet, INTE robust mot en
+    dyrare lanekostnad.
+  - 1,25x (bagge spreadantaganden): Sharpe 1.02-1.07, CAGR 8.6-9.8%,
+    0 marginalanrop - lagre risk, lagre lyft.
+  - 1,75x: Sharpe 0.88-1.01, CAGR 10.4-12.1%, 0-1 marginalanrop
+    (8.0-8.5% av dagarna under mal vid $100k/$1M, 0% vid $10M).
+  - 2,00x: Sharpe 0.83-0.98, CAGR 10.1-12.6%, 1-2 marginalanrop
+    (10.6-19.7% av dagarna under mal) - hogsta CAGR men Sharpe under
+    1,0 i tre av fyra spread/nivakombinationer.
+
+  DSR vid K=58: 0.9311/0.9313/0.9145 - hogt, konsistent med ett genuint
+  positivt resultat snarare an en slumptraff, trots ett redan hogt K.
+
+  SLUTSATS MOT CEO:s UTTALADE MAL (CAGR>15%, gärna >20%, Sharpe>1,0):
+  INTE UPPNATT. Bästa gating-CAGR (11,0% vid $100k) och till och med
+  bästa disclosure-CAGR (12,6% vid 2,0x) ligger langt under 15%-golvet.
+  Detta bekraftar, formellt och pre-registrerat (inte bara diagnostiskt),
+  den slutsats diagnostiken redan indikerade: hävstång på HYP-047 ger en
+  genuin, DSR-hog, men MATTLIG forbattring (~2-4pp CAGR-lyft over
+  baslinjen med Sharpe bevarad vid mattliga nivaer) - inte en losning pa
+  gapet till det ultimata CAGR-malet. HYP-047 (ohavstangad) forblir
+  referensimplementationen - denna hypotes lager INTE automatiskt till
+  ny referens (kraver eget CEO-beslut, samma monster som HYP-047/056),
+  och givet hur langt fran malet resultatet ligger ar det oklart om ett
+  sadant beslut ens ar motiverat.

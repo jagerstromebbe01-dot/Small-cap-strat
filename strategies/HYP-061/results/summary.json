@@ -1,0 +1,32 @@
+{
+  "with_overlay": {
+    "sharpe": 1.468301976295386,
+    "cagr": 1.2653321528169994,
+    "max_drawdown": -0.7730544186330326,
+    "dsr": 0.9856751115446317
+  },
+  "baseline_basket": {
+    "sharpe": 1.4762335927830719,
+    "cagr": 1.4991786701165801,
+    "max_drawdown": -0.8793559202246803
+  },
+  "oos_2025": {
+    "with_overlay_sharpe": -0.11840825022291754,
+    "with_overlay_return": -0.18588718287633144,
+    "baseline_sharpe": -0.12276135161074746,
+    "baseline_return": -0.2479104905563274
+  },
+  "exposure_scale_disclosure": {
+    "n_decisions": 491,
+    "avg_scale": 0.9143466311640087,
+    "min_scale": 0.3,
+    "pct_weeks_below_1": 0.2790224032586558
+  },
+  "dsr_n_trials": 62,
+  "pass_fail": {
+    "condition_1_sharpe_floor": true,
+    "condition_2_vs_baseline": false,
+    "condition_3_maxdd_vs_baseline": true,
+    "overall": "FAILED"
+  }
+}

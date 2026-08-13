@@ -1,0 +1,85 @@
+# LÅST 2026-08-11 av CEO i chatt ("lås hela batchen och kör"), tillsammans
+# med HYP-060/062/063 - BATCH-003 (spot-only crypto, se HYP-060:s egen
+# registerpost för fullständig batch-/feasibility-motivering, samma här).
+# k_total hoppar 58->62 vid låsningstillfället, inte styckvis.
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-061
+date_registered: '2026-08-11'
+title: "Volatilitetsmålsättning (HYP-056:s exakta mekanik) på 5-coin likaviktad crypto-korg"
+universe: "BTC/ETH/LTC/XRP/DOGE (EODHD spot .CC), likaviktad korg. Samma
+  statiska lista som hela BATCH-003, se HYP-060."
+small_cap_definition: "N/A - crypto spot, se HYP-060:s identiska motivering."
+data_range: "Gemensamt fönster från första kvartalsslut på/efter ETH:s
+  första handelsdag (2015-08-07, yngst av de fem) till 2024-12-31
+  huvudperiod + genuin OOS-2025."
+pass_fail_criterion: >
+  MEKANISM (låst, inga fria parametrar kvar att välja):
+
+  BASELINE_BASKET (delad referenspunkt med HYP-062/063, se
+  strategies/common/crypto_data.py::build_baseline_basket): 5 coins
+  likaviktade (1/5 var), KVARTALSVIS ombalanserade (snap_rebalance_dates,
+  samma snappningskonvention som resten av registret). Friktion (halva
+  Corwin-Schultz-spreaden + 0,15% avgift) på notional som flyttas vid
+  varje ombalansering.
+
+  OVERLAY (HYP-056:s exakta mekanik, oförändrad): vid VARJE veckoslut,
+  BASELINE_BASKET:s rullande 60-dagars realiserade volatilitet (annualiserad,
+  365-dagarsbas - se ANNUALISERING nedan) jämförs mot dess egen rullande
+  2-års (730 kalenderdagars, motsvarande HYP-056:s 504 HANDELSdagar
+  skalat till crypto:s 365-dagars kalender) TRAILING MEDIAN. skala =
+  MIN(1,0, mål/dagens-vol), golv 0,3. Övrigt kapital i kontanter (RF 2%/år).
+  Skalan kan ALDRIG överstiga 1,0 (samma avgränsning som HYP-056).
+
+  ANNUALISERING: 365 dagar/år, INTE 252 - se HYP-060:s identiska notering.
+
+  PASS KRÄVER ALLA TRE (huvudperioden, ingen kapitalnivåuppdelning):
+  1. Sharpe (med overlay) >= 0,55.
+  2. Sharpe (med overlay) > Sharpe (BASELINE_BASKET, UTAN overlay, samma
+     friktionsjusterade bas).
+  3. MaxDD (med overlay) BÄTTRE (mindre negativ) än MaxDD (BASELINE_BASKET
+     utan overlay).
+
+  FAIL om något villkor faller.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): snitt-/lägsta exponeringsskala,
+  andel veckor under 1,0 (samma disclosure-mönster som HYP-056).
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  Diagnostiskt syfte: testar om volatilitetsmålsättning fungerar på sin
+  ursprungliga hemmaplan (crypto/managed futures-tradition) lika bra som
+  den nyligen gjorde lånad till aktier (HYP-056 PASSED).
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 58
+date_tested: '2026-08-11'
+result:
+  with_overlay: {sharpe: 1.4683, cagr: 1.2653, max_drawdown: -0.7731, deflated_sharpe_ratio: 0.9857}
+  baseline_basket: {sharpe: 1.4762, cagr: 1.4992, max_drawdown: -0.8794}
+  oos_2025: {with_overlay_sharpe: -0.1184, with_overlay_return: -0.1859, baseline_sharpe: -0.1228, baseline_return: -0.2479}
+  exposure_scale_disclosure: {avg_scale: 0.914, min_scale: 0.300, pct_weeks_below_1: 0.279, n_decisions: 491}
+  dsr_n_trials: 62
+result_summary: >
+  FAILED PÅ VILLKOR 2, RAKBLADSTUNT. Villkor 1 (Sharpe>=0,55) PASS brett
+  (1,47). Villkor 2 (Sharpe > baseline): FAIL men extremt marginellt -
+  1,4683 mot 1,4762, en skillnad på bara 0,0079 Sharpe-enheter. Villkor 3
+  (MaxDD bättre än baseline): PASS TYDLIGT - -77,31% mot -87,94%, en
+  förbättring på 10,63 procentenheter.
+
+  DISCLOSURE: mekanismen exercerades genuint (golvet 0,3 triggades minst
+  en gång, snitt-skala 0,914, 27,9% av 491 veckobeslut under 1,0) - inte
+  ett no-op.
+
+  DIAGNOS: till skillnad från HYP-056 (samma mekanik på aktiesidan, PASSED
+  tydligt på alla tre villkor) missar volatilitetsmålsättning här sin egen
+  CAGR-baserade Sharpe-fördel med en hårsmån, trots en stor och tydlig
+  MaxDD-förbättring - konsistent med att crypto-basketens redan extremt
+  höga rå-CAGR (149,9%) gör varje dags reducerad exponering (även under
+  perioder som SENARE visar sig vara uppgångar) dyrare i just detta
+  tillgångsslag än i aktier. OOS-2025 visar motsatt mönster (overlayn
+  förbättrade BÅDE Sharpe och avkastning mot baseline där, -18,6% mot
+  -24,8%) - en huvudperiod/OOS-diskrepans, inte grund för omprövning av
+  det redan låsta, FAILADE kriteriet. DSR 0,986 vid K=62 - mycket högt,
+  konsistent med att detta är ett genuint, nästan-lyckat resultat snarare
+  än brus, bara inte tillräckligt för att slå en ovanligt stark baseline.
