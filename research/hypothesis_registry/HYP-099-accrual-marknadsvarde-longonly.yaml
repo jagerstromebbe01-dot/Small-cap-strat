@@ -75,3 +75,8 @@ result_summary: >
   ribban och slår fortfarande inte en enkel ofiltrerad baseline -
   samma grundmönster som HYP-097 (se dess result_summary för den
   underliggande distress-hypotesen), bara mindre extremt.
+
+# TILLÄGG 2026-08-14 (se HYP-097:s identiska tillägg för full
+# motivering, ingen ny K-kostnad, samma finaliserade kriterium
+# omkört): Sharpe 0,1357/0,1775/0,0840 (var 0,1323/0,1715/0,0864) -
+# marginell förändring. SLUTSATSEN OFÖRÄNDRAD (FAILED på alla nivåer).

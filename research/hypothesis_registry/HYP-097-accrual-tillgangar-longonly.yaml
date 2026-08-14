@@ -109,3 +109,19 @@ result_summary: >
 
   Se HYP-098/099/100 för de tre återstående BATCH-004-accrual-
   varianterna (samtliga FAILED, fullständig diagnos i respektive fil).
+
+# TILLÄGG 2026-08-14 (upptäckt vid HYP-101, ingen ny K-kostnad - samma
+# redan finaliserade kriterium, bara omkörd med korrigerad datasanering):
+# strategies/common/accrual_engine.py saknade TVÅ ytterligare
+# hygiensteg som redan fanns/finns någon annanstans i projektet -
+# mask_unrecovered_price_breaks() (permanenta prisbrott, t.ex. Chapter
+# 11-omstruktureringar) och mask_implausible_adjusted_close_ratio()
+# (konstant felaktig adjusted_close/close-kvot, ~9,5% av universumet
+# enligt HYP-043:s ursprungliga fynd). Båda nu centraliserade i
+# accrual_engine.py::clean_and_prepare_prices() och applicerade på alla
+# fem BATCH-004-skript. Omkört resultat denna hypotes: Sharpe
+# -0,1992/-0,1191/-0,0756 (var -0,0897/-0,0869/-0,2351), MaxDD
+# -80,16%/-69,41%/-63,65% (var -79,82%/-74,23%/-78,24%), CAGR
+# -7,60%/-5,04%/-3,39% (var -6,41%/-5,17%/-7,85%). SLUTSATSEN OFÖRÄNDRAD
+# (FAILED på båda villkoren, alla nivåer) - siffrorna rörde sig måttligt,
+# ingen kvalitativ förändring.

@@ -4,13 +4,13 @@
   "results": [
     {
       "capital_level": 100000,
-      "sharpe": 0.5628928529416293,
+      "sharpe": 0.5628928529416345,
       "max_drawdown": -0.9999990099497733,
       "cagr": -0.6211429133933467,
       "calmar": -0.6211435283566378,
-      "dsr": 0.19918522071146544,
-      "n_trades": 1550,
-      "avg_net_beta_dollar": -57841.75419911239,
+      "dsr": 0.19918522071147443,
+      "n_trades": 1438,
+      "avg_net_beta_dollar": -58333.56126872666,
       "pass_fail": {
         "sharpe": false,
         "maxdd": false,
@@ -19,13 +19,13 @@
     },
     {
       "capital_level": 1000000,
-      "sharpe": -0.2263872922363645,
+      "sharpe": -0.2263872922363661,
       "max_drawdown": -0.9999990099497734,
       "cagr": -0.6211429133933467,
       "calmar": -0.6211435283566377,
-      "dsr": 4.2757101367329594e-05,
-      "n_trades": 1556,
-      "avg_net_beta_dollar": -532863.9333600575,
+      "dsr": 4.2757101367326585e-05,
+      "n_trades": 1456,
+      "avg_net_beta_dollar": -536624.864538319,
       "pass_fail": {
         "sharpe": false,
         "maxdd": false,
@@ -34,13 +34,13 @@
     },
     {
       "capital_level": 10000000,
-      "sharpe": 0.5911831455648628,
+      "sharpe": 0.6691219500361046,
       "max_drawdown": -0.9999990099497734,
       "cagr": -0.6211429133933467,
       "calmar": -0.6211435283566377,
-      "dsr": 0.2275653946395046,
-      "n_trades": 1561,
-      "avg_net_beta_dollar": -3138743.91374709,
+      "dsr": 0.5107191350608998,
+      "n_trades": 1461,
+      "avg_net_beta_dollar": -3277029.7669393444,
       "pass_fail": {
         "sharpe": false,
         "maxdd": false,

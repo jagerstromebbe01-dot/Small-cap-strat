@@ -81,3 +81,9 @@ result_summary: >
   genuin vinstkvalitet från ren finansiell nöd, inte en
   parameterjustering av någon av dessa fyra redan låsta och testade
   kriterier.
+
+# TILLÄGG 2026-08-14 (se HYP-097:s identiska tillägg för full
+# motivering, ingen ny K-kostnad, samma finaliserade kriterium
+# omkört): Sharpe 0,5629/-0,2264/0,6691 (var 0,5629/-0,2264/0,5912 -
+# $10M-nivån ändrades något, $100k/$1M oförändrade). MaxDD -100% på
+# alla nivåer OFÖRÄNDRAT. SLUTSATSEN OFÖRÄNDRAD (FAILED).

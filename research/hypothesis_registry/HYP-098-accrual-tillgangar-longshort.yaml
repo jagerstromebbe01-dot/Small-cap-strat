@@ -89,3 +89,12 @@ result_summary: >
   att någon mellanliggande handel var möjlig). Detta är en genuin,
   strukturell egenskap hos att korta denna typ av namn, inte ett
   kvarstående motorfel.
+
+# TILLÄGG 2026-08-14 (se HYP-097:s identiska tillägg för full
+# motivering - två saknade datasaneringssteg i accrual_engine.py,
+# ingen ny K-kostnad, samma finaliserade kriterium omkört): Sharpe
+# 0,3519/0,4887/1,0352 (var 0,4006/0,5056/0,4878 - $10M-nivån ändrades
+# mest, gick FRÅN att klara Sharpe-golvet TILL att klara det ännu
+# tydligare, DSR 0,9992). MaxDD -100% på alla nivåer OFÖRÄNDRAT.
+# SLUTSATSEN OFÖRÄNDRAD (FAILED, MaxDD-villkoret faller på $100k
+# oavsett Sharpe-nivån på högre kapitalnivåer).

@@ -39,15 +39,8 @@ def main():
     close, close_adj, high, low, volume = ae.load_price_matrices(tickers, ae.FULL_START, ae.FULL_END)
     hedge = ae.load_hedge(ae.FULL_START, ae.FULL_END)
 
-    print("Sanerar prisdata...")
-    close, high, low = ae.clean_price_matrix(close, high, low, volume=volume)
-    close_adj = close_adj.where(close.notna())
-    implausible = ae.flag_implausible_liquidity(close, volume, max_market_cap=ae.MAX_MARKET_CAP,
-                                                 window=ae.ADV_WINDOW, multiplier=1.0)
-    close = close.mask(implausible)
-    close_adj = close_adj.mask(implausible)
-    high = high.mask(implausible)
-    low = low.mask(implausible)
+    print("Sanerar prisdata (inkl. permanenta prisnivåbrott, se accrual_engine.py 2026-08-14-tillägg)...")
+    close, close_adj, high, low = ae.clean_and_prepare_prices(close, close_adj, high, low, volume)
 
     print("Estimerar beta och spread...")
     beta_df = ae.compute_beta(close_adj, hedge, ae.BETA_WINDOW)

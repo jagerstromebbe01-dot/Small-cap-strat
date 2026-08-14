@@ -39,7 +39,10 @@ VALUE_FACTOR_FILE = CACHE_DIR / "value_factor_by_ticker.jsonl"
 import sys  # noqa: E402
 sys.path.insert(0, str(STRATEGIES_ROOT / "common"))
 from friction import borrow_cost, corwin_schultz_spread  # noqa: E402
-from data_hygiene import clean_price_matrix, flag_implausible_liquidity  # noqa: E402
+from data_hygiene import (  # noqa: E402
+    clean_price_matrix, flag_implausible_liquidity, mask_unrecovered_price_breaks,
+    mask_implausible_adjusted_close_ratio,
+)
 from rebalancing import snap_rebalance_dates  # noqa: E402
 
 FULL_START = "2010-01-01"
@@ -86,6 +89,44 @@ def trading_calendar(start, end):
     df = pd.read_csv(path, usecols=["date"], parse_dates=["date"])
     dates = df["date"].drop_duplicates().sort_values()
     return pd.DatetimeIndex(dates[(dates >= start) & (dates <= end)])
+
+
+def clean_and_prepare_prices(close, close_adj, high, low, volume):
+    """Delad saneringspipeline - UPPTÄCKT 2026-08-14 (HYP-101), TVÅ
+    separata gap i samma körning, båda redan lösta ANNANSTANS i
+    projektet men aldrig inkopplade i accrual_engine.py:
+
+    1. GPOR_old/Gulfport Energy: en riktig, permanent, ALDRIG
+       återhämtad prisnivåförändring (Chapter 11-omstrukturering 2021,
+       $715 -> $0,0455 på en dag) slank igenom clean_price_matrix()s
+       engångshopp-filter (samma mekanism som redan dokumenterad för
+       SSN/VET tidigare denna session) - fix: mask_unrecovered_price_
+       breaks(), fanns för crypto_data.py men glömdes här.
+    2. UCHC: close=$0,25 men adjusted_close=$0,0001 - en KONSTANT
+       ~2500x-kvotdiskrepans (samma "constant bad adjusted_close
+       ratio"-bugg som redan dokumenterad i data_hygiene.py:s egen
+       docstring, upptäckt vid HYP-043, sägs där påverka ~9,5% av
+       hela universumet - men den fixen (mask_implausible_adjusted_
+       close_ratio) hade ALDRIG kopplats in i denna motor förrän nu.
+
+    HYP-097-100:s redan rapporterade FAILED-resultat kan därför vara
+    påverkade av BÅDA dessa gap - se registerposternas tillägg för
+    omkörningsresultat. Centraliserad HÄR (en enda funktion, anropad av
+    alla fem HYP-097-101-skript OCH textlikhets-skripten HYP-093-096)
+    så att samma glapp inte kan uppstå igen i en framtida variant."""
+    close, high, low = clean_price_matrix(close, high, low, volume=volume)
+    close = mask_unrecovered_price_breaks(close)
+    high = high.where(close.notna())
+    low = low.where(close.notna())
+    close_adj = mask_implausible_adjusted_close_ratio(close, close_adj)
+    close_adj = close_adj.where(close.notna())
+    implausible = flag_implausible_liquidity(close, volume, max_market_cap=MAX_MARKET_CAP,
+                                              window=ADV_WINDOW, multiplier=1.0)
+    close = close.mask(implausible)
+    close_adj = close_adj.mask(implausible)
+    high = high.mask(implausible)
+    low = low.mask(implausible)
+    return close, close_adj, high, low
 
 
 def load_price_matrices(tickers, start, end):
