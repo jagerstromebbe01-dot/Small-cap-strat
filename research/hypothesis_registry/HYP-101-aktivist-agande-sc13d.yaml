@@ -1,0 +1,139 @@
+# LÅST 2026-08-14 av CEO i chatt ("godkänn kör" - CEO delegerade de fyra
+# öppna designfrågorna till Claude, samma mönster som redan etablerat
+# för BATCH-004:s Sharpe/MaxDD-bar, med uttrycklig efterhandsgranskning
+# genom att köra).
+#
+# status: pre-registered -> tested -> passed/failed
+
+id: HYP-101
+date_registered: '2026-08-14'
+title: "Aktivistiskt ägande (Schedule 13D) som katalysatorsignal"
+universe: "IDENTISK med HYP-008:s låsta small-cap-definition ($100M-$2B), ingen ändring."
+small_cap_definition: "IDENTISK med HYP-008:s låsta definition."
+data_range: >
+  Samma huvudperiod som registrets övriga small-cap-hypoteser
+  (2010-2024 + genuin OOS-2025), begränsat av SEC:s submissions-API:ets
+  praktiska historik per bolag.
+pass_fail_criterion: >
+  MEKANISM (fullt specificerad, de fyra tidigare öppna frågorna nu
+  CEO-LÅSTA):
+
+  DATAINSAMLING: utöka submissions-API-mönstret (samma ticker->CIK-
+  mappning, samma hastighetsspärr-konvention som data/fetch_10k_
+  document_index.py) till att fånga formtypen "SC 13D" (KONVENTION,
+  se punkt 1 nedan) med filingDate per bolag i universumet.
+
+  1. ENDAST INITIALA SC 13D (första gången ett bolag får ett) räknas -
+     INTE SC 13D/A-ändringar (skulle kräva tolkning av ökande/minskande
+     innehav, en egen, separat signalkonstruktion - inte byggd här).
+  2. HÅLLTID: FAST 12 månader (252 handelsdagar) efter filingdatum,
+     oavsett vad som händer däremellan - matchar längre akademiska
+     event-study-fönster, ger illikvida small-cap-namn tid att
+     prisinkorporera.
+  3. STORLEKSFILTER: INGET utöver lagens egen 5%-tröskel - varje
+     kvalificerande SC 13D räknas, ingen extra "starkare signal"-nivå
+     (skulle vara ett godtyckligt tillagt fritt parameter utan stark
+     förhandsmotivering, och skulle krympa ett redan tunt urval
+     ytterligare).
+  4. POSITIONSVIKTNING: likaviktat (1/N) mellan alla SAMTIDIGT AKTIVA
+     positioner (inom sina respektive 12-månadersfönster) vid varje
+     tillfälle - inget tak på antal samtidiga positioner (naturlig
+     utspädning vid många samtidiga händelser, ingen konstlad gräns).
+
+  OMBALANSERING: HÄNDELSESTYRD (samma "kontinuerlig" princip som redan
+  används i HYP-072/077) - entry vid varje nytt kvalificerande SC 13D-
+  filingdatum, exit exakt 252 handelsdagar senare (eller vid delisting/
+  datalucka om det inträffar först).
+
+  KAPACITETSSPÄRR: MAX_ADV_PCT=0,10 (samma konvention som resten av
+  registret) per position.
+
+  FRIKTION: standardmetodiken (Corwin-Schultz halva spreaden), ingen
+  short-lånekostnad relevant (long-only).
+
+  PASS KRÄVER BÅDA, PÅ $100K-NIVÅN (huvudperioden):
+  1. Sharpe (friktionsjusterad) > 0,70.
+  2. MaxDD inte sämre än -30,0%.
+  FAIL om något villkor faller vid $100k-nivån.
+
+  $1M och $10M: obligatorisk, icke-gating disclosure (samma mönster
+  som resten av registret) - kapacitet är en uttalad osäkerhet här,
+  eftersom antalet samtidigt kvalificerande 13D-händelser kan vara
+  litet och därmed begränsa hur mycket kapital som får plats.
+
+  OOS-2025: rapporteras informativt, ej gating.
+
+  OBLIGATORISK DISCLOSURE (icke-gating): jämförelse mot en likaviktad,
+  ofiltrerad universum-baseline (samma mönster som accrual-familjens
+  long-only-varianter). Antal unika 13D-händelser per år (visar om
+  signalen är för gles för att bära ett meningsfullt resultat).
+  Genomsnittligt antal samtidigt aktiva positioner.
+
+  Diagnostiskt syfte: testar om aktivistiskt ägande som katalysator -
+  en helt ny signaltyp (ägarstruktur, inte pris/redovisning/text) i
+  detta register - har en egen, oberoende alfakälla i small-cap-bandet.
+status: failed   # pre-registered -> tested -> passed/failed
+k_total_hypotheses_before_this: 95
+tested_capital_levels: [100000, 1000000, 10000000]
+date_tested: '2026-08-14'
+result:
+  100000: {sharpe: 0.0145, cagr: -0.0017, max_drawdown: -0.6855, calmar: -0.0025, deflated_sharpe_ratio: 0.0069, oos_2025_sharpe: 18.0416, baseline_sharpe: 0.3853, baseline_max_drawdown: -0.4800}
+  1000000: {sharpe: -0.0033, cagr: 0.0001, max_drawdown: -0.5445, calmar: 0.0002, deflated_sharpe_ratio: 0.0057, oos_2025_sharpe: 0.0, baseline_sharpe: 0.3853, baseline_max_drawdown: -0.4800}
+  10000000: {sharpe: 0.0974, cagr: 0.0213, max_drawdown: -0.4853, calmar: 0.0439, deflated_sharpe_ratio: 0.0162, oos_2025_sharpe: 2.0318, baseline_sharpe: 0.3853, baseline_max_drawdown: -0.4800}
+result_summary: >
+  FAILED PÅ BÅDA VILLKOREN, PÅ ALLA KAPITALNIVÅER. Sharpe i praktiken
+  noll (0,01/-0,00/0,10), MaxDD -49% till -69%, sämre än den
+  ofiltrerade baseline-boken (Sharpe 0,39, MaxDD -48%) på nästan alla
+  mått. CAGR i praktiken noll (-0,17% till +2,13%).
+
+  TRE MOTORFEL HITTADE OCH ÅTGÄRDADE INNAN DETTA RESULTAT
+  FINALISERADES (samma disciplin som redan etablerad denna session -
+  fixade FÖRE, inte efter, ett specifikt resultat setts):
+
+  1. KONSTRUKTIONSFEL (upptäckt vid sonderingskörning med extremt
+     orimligt resultat, CAGR +94%): den ursprungliga versionen
+     omjusterade ALLA befintliga innehav mot en ny likavikts-målsumma
+     varje gång NÅGON position (var som helst i portföljen) gick in
+     eller ut - i praktiken nästan daglig full ombalansering. För en
+     extremt lågprisad, tunt handlad aktie (ENMID, ner mot $0,0027) gav
+     detta en mekanisk "köp mer vid varje krasch"-dynamik som blåste
+     upp aktieantalet dramatiskt vid bottennoteringen - när priset
+     sedan slumpmässigt studsade gav det en konstlad vinst på +1911%
+     för en enskild position. FIX: nya positioner storleksätts EN GÅNG
+     vid entry mot likaviktsmålet DÅ, hålls sedan OFÖRÄNDRADE (bara
+     marknadsvärderade) till sitt eget schemalagda exit - standard-
+     tolkningen av en likaviktad event-portfölj (likaviktad VID
+     FORMATION), inte en efterhandsjustering.
+  2. SAKNAD PERMANENT-PRISBROTT-SANERING (GPOR_old/Gulfport Energy):
+     en riktig Chapter 11-omstrukturering 2021 ($715 -> $0,0455 på en
+     dag) gav en konstlad +127 209%-position. strategies/common/
+     accrual_engine.py anropade ALDRIG data_hygiene.py::
+     mask_unrecovered_price_breaks() - fanns med för crypto_data.py
+     (VET-fyndet) men glömdes bort när accrual_engine.py byggdes.
+  3. SAKNAD ADJUSTED_CLOSE-KVOTSANERING (UCHC): close=$0,25 men
+     adjusted_close=$0,0001, en konstant ~2500x-diskrepans - samma
+     "constant bad adjusted_close ratio"-bugg som redan dokumenterad
+     och löst i data_hygiene.py (upptäckt vid HYP-043, ~9,5% av hela
+     universumet påverkat) men ALDRIG inkopplad i accrual_engine.py.
+
+  Fix 2 och 3 centraliserade i en ny delad funktion (accrual_engine.py::
+  clean_and_prepare_prices) som ALLA fem BATCH-004-skript (HYP-097-101)
+  och alla fyra textlikhets-skript (HYP-093-096) nu använder - HYP-097-
+  100:s redan rapporterade resultat kördes om med samma fix (se deras
+  egna tillägg, dagens datum) - slutsatsen (FAILED) höll för alla fyra,
+  siffrorna justerades marginellt utom för HYP-098 vid $10M.
+
+  OBS (icke-gating, disclosureanomali): OOS-2025-Sharpe (18,04 vid
+  $100k) är ett litet-stickprov-artefakt - mycket få eller inga
+  positioner aktiva under stora delar av 2025 ger en nästan konstant
+  avkastningsserie med minimal varians, vilket ger ett meningslöst högt
+  Sharpe-tal. INTE ett tecken på en stark signal, redovisas för
+  fullständighet, inte som ett resultat att lita på.
+
+  DIAGNOS: aktivistiskt ägande (SC 13D) som katalysator visar INGEN
+  urskiljbar edge i detta small-cap-band efter datastädning - varken
+  bättre riskjusterad avkastning eller lägre risk än att bara äga
+  universumet brett. Möjlig förklaring: 13D-filers i micro-/small-cap
+  kan själva spegla att bolaget redan är i svårigheter (aktivister
+  attraheras av undervärderade ELLER problematiska bolag), en liknande
+  distress-blandning som redan diagnostiserad för accrual-familjen.

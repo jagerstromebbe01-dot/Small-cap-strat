@@ -1,0 +1,73 @@
+{
+  "results": [
+    {
+      "capital_level": 100000,
+      "sharpe": 0.014511754511485701,
+      "max_drawdown": -0.6855362831888223,
+      "cagr": -0.0017182569394785796,
+      "calmar": -0.002506442009875803,
+      "dsr": 0.006906172620508216,
+      "n_trades": 3881,
+      "n_events": 5502,
+      "baseline_sharpe": 0.3852625292075222,
+      "baseline_max_drawdown": -0.48001272619947544,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    },
+    {
+      "capital_level": 1000000,
+      "sharpe": -0.0032735453511524336,
+      "max_drawdown": -0.5445279302165799,
+      "cagr": 7.405394876380811e-05,
+      "calmar": 0.00013599660302889143,
+      "dsr": 0.0057211519695838375,
+      "n_trades": 4020,
+      "n_events": 5641,
+      "baseline_sharpe": 0.3852625292075222,
+      "baseline_max_drawdown": -0.48001272619947544,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    },
+    {
+      "capital_level": 10000000,
+      "sharpe": 0.0973645047484288,
+      "max_drawdown": -0.48533682872854744,
+      "cagr": 0.02126553234974593,
+      "calmar": 0.0438160285619699,
+      "dsr": 0.016230598259669524,
+      "n_trades": 4483,
+      "n_events": 6104,
+      "baseline_sharpe": 0.3852625292075222,
+      "baseline_max_drawdown": -0.48001272619947544,
+      "pass_fail": {
+        "sharpe": false,
+        "maxdd": false,
+        "overall": "FAIL"
+      }
+    }
+  ],
+  "oos_2025": [
+    {
+      "capital_level": 100000,
+      "oos_2025_sharpe": 18.04164069674581,
+      "oos_2025_return": 0.020038613070313405
+    },
+    {
+      "capital_level": 1000000,
+      "oos_2025_sharpe": 0.0,
+      "oos_2025_return": 0.020038613070313405
+    },
+    {
+      "capital_level": 10000000,
+      "oos_2025_sharpe": 2.0318063357830938,
+      "oos_2025_return": 0.02003861307031296
+    }
+  ],
+  "overall": "FAIL"
+}
